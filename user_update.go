@@ -331,6 +331,26 @@ func (uu *UserUpdate) ClearTokenExpiry() *UserUpdate {
 	return uu
 }
 
+// SetHash sets the "hash" field.
+func (uu *UserUpdate) SetHash(s string) *UserUpdate {
+	uu.mutation.SetHash(s)
+	return uu
+}
+
+// SetNillableHash sets the "hash" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableHash(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetHash(*s)
+	}
+	return uu
+}
+
+// ClearHash clears the value of the "hash" field.
+func (uu *UserUpdate) ClearHash() *UserUpdate {
+	uu.mutation.ClearHash()
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -512,6 +532,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.TokenExpiryCleared() {
 		_spec.ClearField(user.FieldTokenExpiry, field.TypeInt)
+	}
+	if value, ok := uu.mutation.Hash(); ok {
+		_spec.SetField(user.FieldHash, field.TypeString, value)
+	}
+	if uu.mutation.HashCleared() {
+		_spec.ClearField(user.FieldHash, field.TypeString)
 	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -881,6 +907,26 @@ func (uuo *UserUpdateOne) ClearTokenExpiry() *UserUpdateOne {
 	return uuo
 }
 
+// SetHash sets the "hash" field.
+func (uuo *UserUpdateOne) SetHash(s string) *UserUpdateOne {
+	uuo.mutation.SetHash(s)
+	return uuo
+}
+
+// SetNillableHash sets the "hash" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableHash(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetHash(*s)
+	}
+	return uuo
+}
+
+// ClearHash clears the value of the "hash" field.
+func (uuo *UserUpdateOne) ClearHash() *UserUpdateOne {
+	uuo.mutation.ClearHash()
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -1092,6 +1138,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.TokenExpiryCleared() {
 		_spec.ClearField(user.FieldTokenExpiry, field.TypeInt)
+	}
+	if value, ok := uuo.mutation.Hash(); ok {
+		_spec.SetField(user.FieldHash, field.TypeString, value)
+	}
+	if uuo.mutation.HashCleared() {
+		_spec.ClearField(user.FieldHash, field.TypeString)
 	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

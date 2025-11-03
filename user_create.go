@@ -240,6 +240,20 @@ func (uc *UserCreate) SetNillableTokenExpiry(i *int) *UserCreate {
 	return uc
 }
 
+// SetHash sets the "hash" field.
+func (uc *UserCreate) SetHash(s string) *UserCreate {
+	uc.mutation.SetHash(s)
+	return uc
+}
+
+// SetNillableHash sets the "hash" field if the given value is not nil.
+func (uc *UserCreate) SetNillableHash(s *string) *UserCreate {
+	if s != nil {
+		uc.SetHash(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -335,6 +349,10 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.TokenExpiry(); !ok {
 		v := user.DefaultTokenExpiry
 		uc.mutation.SetTokenExpiry(v)
+	}
+	if _, ok := uc.mutation.Hash(); !ok {
+		v := user.DefaultHash
+		uc.mutation.SetHash(v)
 	}
 }
 
@@ -453,6 +471,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.TokenExpiry(); ok {
 		_spec.SetField(user.FieldTokenExpiry, field.TypeInt, value)
 		_node.TokenExpiry = value
+	}
+	if value, ok := uc.mutation.Hash(); ok {
+		_spec.SetField(user.FieldHash, field.TypeString, value)
+		_node.Hash = value
 	}
 	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -795,6 +817,24 @@ func (u *UserUpsert) AddTokenExpiry(v int) *UserUpsert {
 // ClearTokenExpiry clears the value of the "token_expiry" field.
 func (u *UserUpsert) ClearTokenExpiry() *UserUpsert {
 	u.SetNull(user.FieldTokenExpiry)
+	return u
+}
+
+// SetHash sets the "hash" field.
+func (u *UserUpsert) SetHash(v string) *UserUpsert {
+	u.Set(user.FieldHash, v)
+	return u
+}
+
+// UpdateHash sets the "hash" field to the value that was provided on create.
+func (u *UserUpsert) UpdateHash() *UserUpsert {
+	u.SetExcluded(user.FieldHash)
+	return u
+}
+
+// ClearHash clears the value of the "hash" field.
+func (u *UserUpsert) ClearHash() *UserUpsert {
+	u.SetNull(user.FieldHash)
 	return u
 }
 
@@ -1165,6 +1205,27 @@ func (u *UserUpsertOne) UpdateTokenExpiry() *UserUpsertOne {
 func (u *UserUpsertOne) ClearTokenExpiry() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTokenExpiry()
+	})
+}
+
+// SetHash sets the "hash" field.
+func (u *UserUpsertOne) SetHash(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetHash(v)
+	})
+}
+
+// UpdateHash sets the "hash" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateHash() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateHash()
+	})
+}
+
+// ClearHash clears the value of the "hash" field.
+func (u *UserUpsertOne) ClearHash() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearHash()
 	})
 }
 
@@ -1702,6 +1763,27 @@ func (u *UserUpsertBulk) UpdateTokenExpiry() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearTokenExpiry() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTokenExpiry()
+	})
+}
+
+// SetHash sets the "hash" field.
+func (u *UserUpsertBulk) SetHash(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetHash(v)
+	})
+}
+
+// UpdateHash sets the "hash" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateHash() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateHash()
+	})
+}
+
+// ClearHash clears the value of the "hash" field.
+func (u *UserUpsertBulk) ClearHash() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearHash()
 	})
 }
 
