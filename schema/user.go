@@ -35,6 +35,7 @@ func (User) Fields() []ent.Field {
 		field.String("id_token").Optional().Default(""),
 		field.String("token_type").Optional().Default(""),
 		field.Int("token_expiry").Optional().Default(0),
+		field.String("hash").Optional().Default(""),
 	}
 }
 

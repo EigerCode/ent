@@ -924,6 +924,7 @@ var (
 		{Name: "id_token", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "token_type", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "token_expiry", Type: field.TypeInt, Nullable: true, Default: 0},
+		{Name: "hash", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
