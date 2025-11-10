@@ -225,6 +225,18 @@ func (f ProfileIssueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProfileIssueMutation", m)
 }
 
+// The RecoveryCodeFunc type is an adapter to allow the use of ordinary
+// function as RecoveryCode mutator.
+type RecoveryCodeFunc func(context.Context, *ent.RecoveryCodeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RecoveryCodeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RecoveryCodeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RecoveryCodeMutation", m)
+}
+
 // The ReleaseFunc type is an adapter to allow the use of ordinary
 // function as Release mutator.
 type ReleaseFunc func(context.Context, *ent.ReleaseMutation) (ent.Value, error)

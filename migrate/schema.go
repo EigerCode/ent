@@ -480,6 +480,36 @@ var (
 			},
 		},
 	}
+	// RecoveryCodesColumns holds the columns for the "recovery_codes" table.
+	RecoveryCodesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "code1", Type: field.TypeString},
+		{Name: "used1", Type: field.TypeBool, Default: false},
+		{Name: "code2", Type: field.TypeString},
+		{Name: "used2", Type: field.TypeBool, Default: false},
+		{Name: "code3", Type: field.TypeString},
+		{Name: "used3", Type: field.TypeBool, Default: false},
+		{Name: "code4", Type: field.TypeString},
+		{Name: "used4", Type: field.TypeBool, Default: false},
+		{Name: "code5", Type: field.TypeString},
+		{Name: "used5", Type: field.TypeBool, Default: false},
+		{Name: "code6", Type: field.TypeString},
+		{Name: "used6", Type: field.TypeBool, Default: false},
+		{Name: "code7", Type: field.TypeString},
+		{Name: "used7", Type: field.TypeBool, Default: false},
+		{Name: "code8", Type: field.TypeString},
+		{Name: "used8", Type: field.TypeBool, Default: false},
+		{Name: "code9", Type: field.TypeString},
+		{Name: "used9", Type: field.TypeBool, Default: false},
+		{Name: "code10", Type: field.TypeString},
+		{Name: "used10", Type: field.TypeBool, Default: false},
+	}
+	// RecoveryCodesTable holds the schema information for the "recovery_codes" table.
+	RecoveryCodesTable = &schema.Table{
+		Name:       "recovery_codes",
+		Columns:    RecoveryCodesColumns,
+		PrimaryKey: []*schema.Column{RecoveryCodesColumns[0]},
+	}
 	// ReleasesColumns holds the columns for the "releases" table.
 	ReleasesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -925,6 +955,7 @@ var (
 		{Name: "token_type", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "token_expiry", Type: field.TypeInt, Nullable: true, Default: 0},
 		{Name: "hash", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "totp_secret", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -1060,6 +1091,31 @@ var (
 			},
 		},
 	}
+	// UserRecoverycodesColumns holds the columns for the "user_recoverycodes" table.
+	UserRecoverycodesColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "recovery_code_id", Type: field.TypeInt},
+	}
+	// UserRecoverycodesTable holds the schema information for the "user_recoverycodes" table.
+	UserRecoverycodesTable = &schema.Table{
+		Name:       "user_recoverycodes",
+		Columns:    UserRecoverycodesColumns,
+		PrimaryKey: []*schema.Column{UserRecoverycodesColumns[0], UserRecoverycodesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_recoverycodes_user_id",
+				Columns:    []*schema.Column{UserRecoverycodesColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_recoverycodes_recovery_code_id",
+				Columns:    []*schema.Column{UserRecoverycodesColumns[1]},
+				RefColumns: []*schema.Column{RecoveryCodesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AgentsTable,
@@ -1080,6 +1136,7 @@ var (
 		PrintersTable,
 		ProfilesTable,
 		ProfileIssuesTable,
+		RecoveryCodesTable,
 		ReleasesTable,
 		RevocationsTable,
 		RustdesksTable,
@@ -1099,6 +1156,7 @@ var (
 		ProfileTagsTable,
 		SiteAgentsTable,
 		TenantRustdeskTable,
+		UserRecoverycodesTable,
 	}
 )
 
@@ -1141,4 +1199,6 @@ func init() {
 	SiteAgentsTable.ForeignKeys[1].RefTable = AgentsTable
 	TenantRustdeskTable.ForeignKeys[0].RefTable = TenantsTable
 	TenantRustdeskTable.ForeignKeys[1].RefTable = RustdesksTable
+	UserRecoverycodesTable.ForeignKeys[0].RefTable = UsersTable
+	UserRecoverycodesTable.ForeignKeys[1].RefTable = RecoveryCodesTable
 }

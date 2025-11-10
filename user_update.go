@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/predicate"
+	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/user"
 )
@@ -351,6 +352,26 @@ func (uu *UserUpdate) ClearHash() *UserUpdate {
 	return uu
 }
 
+// SetTotpSecret sets the "totp_secret" field.
+func (uu *UserUpdate) SetTotpSecret(s string) *UserUpdate {
+	uu.mutation.SetTotpSecret(s)
+	return uu
+}
+
+// SetNillableTotpSecret sets the "totp_secret" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableTotpSecret(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetTotpSecret(*s)
+	}
+	return uu
+}
+
+// ClearTotpSecret clears the value of the "totp_secret" field.
+func (uu *UserUpdate) ClearTotpSecret() *UserUpdate {
+	uu.mutation.ClearTotpSecret()
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -364,6 +385,21 @@ func (uu *UserUpdate) AddSessions(s ...*Sessions) *UserUpdate {
 		ids[i] = s[i].ID
 	}
 	return uu.AddSessionIDs(ids...)
+}
+
+// AddRecoverycodeIDs adds the "recoverycodes" edge to the RecoveryCode entity by IDs.
+func (uu *UserUpdate) AddRecoverycodeIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddRecoverycodeIDs(ids...)
+	return uu
+}
+
+// AddRecoverycodes adds the "recoverycodes" edges to the RecoveryCode entity.
+func (uu *UserUpdate) AddRecoverycodes(r ...*RecoveryCode) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddRecoverycodeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -390,6 +426,27 @@ func (uu *UserUpdate) RemoveSessions(s ...*Sessions) *UserUpdate {
 		ids[i] = s[i].ID
 	}
 	return uu.RemoveSessionIDs(ids...)
+}
+
+// ClearRecoverycodes clears all "recoverycodes" edges to the RecoveryCode entity.
+func (uu *UserUpdate) ClearRecoverycodes() *UserUpdate {
+	uu.mutation.ClearRecoverycodes()
+	return uu
+}
+
+// RemoveRecoverycodeIDs removes the "recoverycodes" edge to RecoveryCode entities by IDs.
+func (uu *UserUpdate) RemoveRecoverycodeIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveRecoverycodeIDs(ids...)
+	return uu
+}
+
+// RemoveRecoverycodes removes "recoverycodes" edges to RecoveryCode entities.
+func (uu *UserUpdate) RemoveRecoverycodes(r ...*RecoveryCode) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveRecoverycodeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -539,6 +596,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.HashCleared() {
 		_spec.ClearField(user.FieldHash, field.TypeString)
 	}
+	if value, ok := uu.mutation.TotpSecret(); ok {
+		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
+	}
+	if uu.mutation.TotpSecretCleared() {
+		_spec.ClearField(user.FieldTotpSecret, field.TypeString)
+	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -577,6 +640,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(sessions.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.RecoverycodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedRecoverycodesIDs(); len(nodes) > 0 && !uu.mutation.RecoverycodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RecoverycodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -927,6 +1035,26 @@ func (uuo *UserUpdateOne) ClearHash() *UserUpdateOne {
 	return uuo
 }
 
+// SetTotpSecret sets the "totp_secret" field.
+func (uuo *UserUpdateOne) SetTotpSecret(s string) *UserUpdateOne {
+	uuo.mutation.SetTotpSecret(s)
+	return uuo
+}
+
+// SetNillableTotpSecret sets the "totp_secret" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTotpSecret(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetTotpSecret(*s)
+	}
+	return uuo
+}
+
+// ClearTotpSecret clears the value of the "totp_secret" field.
+func (uuo *UserUpdateOne) ClearTotpSecret() *UserUpdateOne {
+	uuo.mutation.ClearTotpSecret()
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -940,6 +1068,21 @@ func (uuo *UserUpdateOne) AddSessions(s ...*Sessions) *UserUpdateOne {
 		ids[i] = s[i].ID
 	}
 	return uuo.AddSessionIDs(ids...)
+}
+
+// AddRecoverycodeIDs adds the "recoverycodes" edge to the RecoveryCode entity by IDs.
+func (uuo *UserUpdateOne) AddRecoverycodeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddRecoverycodeIDs(ids...)
+	return uuo
+}
+
+// AddRecoverycodes adds the "recoverycodes" edges to the RecoveryCode entity.
+func (uuo *UserUpdateOne) AddRecoverycodes(r ...*RecoveryCode) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddRecoverycodeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -966,6 +1109,27 @@ func (uuo *UserUpdateOne) RemoveSessions(s ...*Sessions) *UserUpdateOne {
 		ids[i] = s[i].ID
 	}
 	return uuo.RemoveSessionIDs(ids...)
+}
+
+// ClearRecoverycodes clears all "recoverycodes" edges to the RecoveryCode entity.
+func (uuo *UserUpdateOne) ClearRecoverycodes() *UserUpdateOne {
+	uuo.mutation.ClearRecoverycodes()
+	return uuo
+}
+
+// RemoveRecoverycodeIDs removes the "recoverycodes" edge to RecoveryCode entities by IDs.
+func (uuo *UserUpdateOne) RemoveRecoverycodeIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveRecoverycodeIDs(ids...)
+	return uuo
+}
+
+// RemoveRecoverycodes removes "recoverycodes" edges to RecoveryCode entities.
+func (uuo *UserUpdateOne) RemoveRecoverycodes(r ...*RecoveryCode) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveRecoverycodeIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1145,6 +1309,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.HashCleared() {
 		_spec.ClearField(user.FieldHash, field.TypeString)
 	}
+	if value, ok := uuo.mutation.TotpSecret(); ok {
+		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
+	}
+	if uuo.mutation.TotpSecretCleared() {
+		_spec.ClearField(user.FieldTotpSecret, field.TypeString)
+	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1183,6 +1353,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(sessions.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.RecoverycodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedRecoverycodesIDs(); len(nodes) > 0 && !uuo.mutation.RecoverycodesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RecoverycodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

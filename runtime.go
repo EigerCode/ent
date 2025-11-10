@@ -12,6 +12,7 @@ import (
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/profileissue"
+	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/revocation"
 	"github.com/open-uem/ent/rustdesk"
 	"github.com/open-uem/ent/schema"
@@ -223,6 +224,88 @@ func init() {
 	profileissue.DefaultWhen = profileissueDescWhen.Default.(func() time.Time)
 	// profileissue.UpdateDefaultWhen holds the default value on update for the when field.
 	profileissue.UpdateDefaultWhen = profileissueDescWhen.UpdateDefault.(func() time.Time)
+	recoverycodeFields := schema.RecoveryCode{}.Fields()
+	_ = recoverycodeFields
+	// recoverycodeDescCode1 is the schema descriptor for code1 field.
+	recoverycodeDescCode1 := recoverycodeFields[0].Descriptor()
+	// recoverycode.Code1Validator is a validator for the "code1" field. It is called by the builders before save.
+	recoverycode.Code1Validator = recoverycodeDescCode1.Validators[0].(func(string) error)
+	// recoverycodeDescUsed1 is the schema descriptor for used1 field.
+	recoverycodeDescUsed1 := recoverycodeFields[1].Descriptor()
+	// recoverycode.DefaultUsed1 holds the default value on creation for the used1 field.
+	recoverycode.DefaultUsed1 = recoverycodeDescUsed1.Default.(bool)
+	// recoverycodeDescCode2 is the schema descriptor for code2 field.
+	recoverycodeDescCode2 := recoverycodeFields[2].Descriptor()
+	// recoverycode.Code2Validator is a validator for the "code2" field. It is called by the builders before save.
+	recoverycode.Code2Validator = recoverycodeDescCode2.Validators[0].(func(string) error)
+	// recoverycodeDescUsed2 is the schema descriptor for used2 field.
+	recoverycodeDescUsed2 := recoverycodeFields[3].Descriptor()
+	// recoverycode.DefaultUsed2 holds the default value on creation for the used2 field.
+	recoverycode.DefaultUsed2 = recoverycodeDescUsed2.Default.(bool)
+	// recoverycodeDescCode3 is the schema descriptor for code3 field.
+	recoverycodeDescCode3 := recoverycodeFields[4].Descriptor()
+	// recoverycode.Code3Validator is a validator for the "code3" field. It is called by the builders before save.
+	recoverycode.Code3Validator = recoverycodeDescCode3.Validators[0].(func(string) error)
+	// recoverycodeDescUsed3 is the schema descriptor for used3 field.
+	recoverycodeDescUsed3 := recoverycodeFields[5].Descriptor()
+	// recoverycode.DefaultUsed3 holds the default value on creation for the used3 field.
+	recoverycode.DefaultUsed3 = recoverycodeDescUsed3.Default.(bool)
+	// recoverycodeDescCode4 is the schema descriptor for code4 field.
+	recoverycodeDescCode4 := recoverycodeFields[6].Descriptor()
+	// recoverycode.Code4Validator is a validator for the "code4" field. It is called by the builders before save.
+	recoverycode.Code4Validator = recoverycodeDescCode4.Validators[0].(func(string) error)
+	// recoverycodeDescUsed4 is the schema descriptor for used4 field.
+	recoverycodeDescUsed4 := recoverycodeFields[7].Descriptor()
+	// recoverycode.DefaultUsed4 holds the default value on creation for the used4 field.
+	recoverycode.DefaultUsed4 = recoverycodeDescUsed4.Default.(bool)
+	// recoverycodeDescCode5 is the schema descriptor for code5 field.
+	recoverycodeDescCode5 := recoverycodeFields[8].Descriptor()
+	// recoverycode.Code5Validator is a validator for the "code5" field. It is called by the builders before save.
+	recoverycode.Code5Validator = recoverycodeDescCode5.Validators[0].(func(string) error)
+	// recoverycodeDescUsed5 is the schema descriptor for used5 field.
+	recoverycodeDescUsed5 := recoverycodeFields[9].Descriptor()
+	// recoverycode.DefaultUsed5 holds the default value on creation for the used5 field.
+	recoverycode.DefaultUsed5 = recoverycodeDescUsed5.Default.(bool)
+	// recoverycodeDescCode6 is the schema descriptor for code6 field.
+	recoverycodeDescCode6 := recoverycodeFields[10].Descriptor()
+	// recoverycode.Code6Validator is a validator for the "code6" field. It is called by the builders before save.
+	recoverycode.Code6Validator = recoverycodeDescCode6.Validators[0].(func(string) error)
+	// recoverycodeDescUsed6 is the schema descriptor for used6 field.
+	recoverycodeDescUsed6 := recoverycodeFields[11].Descriptor()
+	// recoverycode.DefaultUsed6 holds the default value on creation for the used6 field.
+	recoverycode.DefaultUsed6 = recoverycodeDescUsed6.Default.(bool)
+	// recoverycodeDescCode7 is the schema descriptor for code7 field.
+	recoverycodeDescCode7 := recoverycodeFields[12].Descriptor()
+	// recoverycode.Code7Validator is a validator for the "code7" field. It is called by the builders before save.
+	recoverycode.Code7Validator = recoverycodeDescCode7.Validators[0].(func(string) error)
+	// recoverycodeDescUsed7 is the schema descriptor for used7 field.
+	recoverycodeDescUsed7 := recoverycodeFields[13].Descriptor()
+	// recoverycode.DefaultUsed7 holds the default value on creation for the used7 field.
+	recoverycode.DefaultUsed7 = recoverycodeDescUsed7.Default.(bool)
+	// recoverycodeDescCode8 is the schema descriptor for code8 field.
+	recoverycodeDescCode8 := recoverycodeFields[14].Descriptor()
+	// recoverycode.Code8Validator is a validator for the "code8" field. It is called by the builders before save.
+	recoverycode.Code8Validator = recoverycodeDescCode8.Validators[0].(func(string) error)
+	// recoverycodeDescUsed8 is the schema descriptor for used8 field.
+	recoverycodeDescUsed8 := recoverycodeFields[15].Descriptor()
+	// recoverycode.DefaultUsed8 holds the default value on creation for the used8 field.
+	recoverycode.DefaultUsed8 = recoverycodeDescUsed8.Default.(bool)
+	// recoverycodeDescCode9 is the schema descriptor for code9 field.
+	recoverycodeDescCode9 := recoverycodeFields[16].Descriptor()
+	// recoverycode.Code9Validator is a validator for the "code9" field. It is called by the builders before save.
+	recoverycode.Code9Validator = recoverycodeDescCode9.Validators[0].(func(string) error)
+	// recoverycodeDescUsed9 is the schema descriptor for used9 field.
+	recoverycodeDescUsed9 := recoverycodeFields[17].Descriptor()
+	// recoverycode.DefaultUsed9 holds the default value on creation for the used9 field.
+	recoverycode.DefaultUsed9 = recoverycodeDescUsed9.Default.(bool)
+	// recoverycodeDescCode10 is the schema descriptor for code10 field.
+	recoverycodeDescCode10 := recoverycodeFields[18].Descriptor()
+	// recoverycode.Code10Validator is a validator for the "code10" field. It is called by the builders before save.
+	recoverycode.Code10Validator = recoverycodeDescCode10.Validators[0].(func(string) error)
+	// recoverycodeDescUsed10 is the schema descriptor for used10 field.
+	recoverycodeDescUsed10 := recoverycodeFields[19].Descriptor()
+	// recoverycode.DefaultUsed10 holds the default value on creation for the used10 field.
+	recoverycode.DefaultUsed10 = recoverycodeDescUsed10.Default.(bool)
 	revocationFields := schema.Revocation{}.Fields()
 	_ = revocationFields
 	// revocationDescReason is the schema descriptor for reason field.
@@ -657,6 +740,10 @@ func init() {
 	userDescHash := userFields[17].Descriptor()
 	// user.DefaultHash holds the default value on creation for the hash field.
 	user.DefaultHash = userDescHash.Default.(string)
+	// userDescTotpSecret is the schema descriptor for totp_secret field.
+	userDescTotpSecret := userFields[18].Descriptor()
+	// user.DefaultTotpSecret holds the default value on creation for the totp_secret field.
+	user.DefaultTotpSecret = userDescTotpSecret.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.

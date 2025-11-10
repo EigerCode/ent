@@ -150,6 +150,11 @@ func Hash(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldHash, v))
 }
 
+// TotpSecret applies equality check predicate on the "totp_secret" field. It's identical to TotpSecretEQ.
+func TotpSecret(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldTotpSecret, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
@@ -1185,6 +1190,81 @@ func HashContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldHash, v))
 }
 
+// TotpSecretEQ applies the EQ predicate on the "totp_secret" field.
+func TotpSecretEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldTotpSecret, v))
+}
+
+// TotpSecretNEQ applies the NEQ predicate on the "totp_secret" field.
+func TotpSecretNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldTotpSecret, v))
+}
+
+// TotpSecretIn applies the In predicate on the "totp_secret" field.
+func TotpSecretIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldTotpSecret, vs...))
+}
+
+// TotpSecretNotIn applies the NotIn predicate on the "totp_secret" field.
+func TotpSecretNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldTotpSecret, vs...))
+}
+
+// TotpSecretGT applies the GT predicate on the "totp_secret" field.
+func TotpSecretGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldTotpSecret, v))
+}
+
+// TotpSecretGTE applies the GTE predicate on the "totp_secret" field.
+func TotpSecretGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldTotpSecret, v))
+}
+
+// TotpSecretLT applies the LT predicate on the "totp_secret" field.
+func TotpSecretLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldTotpSecret, v))
+}
+
+// TotpSecretLTE applies the LTE predicate on the "totp_secret" field.
+func TotpSecretLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldTotpSecret, v))
+}
+
+// TotpSecretContains applies the Contains predicate on the "totp_secret" field.
+func TotpSecretContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldTotpSecret, v))
+}
+
+// TotpSecretHasPrefix applies the HasPrefix predicate on the "totp_secret" field.
+func TotpSecretHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldTotpSecret, v))
+}
+
+// TotpSecretHasSuffix applies the HasSuffix predicate on the "totp_secret" field.
+func TotpSecretHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldTotpSecret, v))
+}
+
+// TotpSecretIsNil applies the IsNil predicate on the "totp_secret" field.
+func TotpSecretIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldTotpSecret))
+}
+
+// TotpSecretNotNil applies the NotNil predicate on the "totp_secret" field.
+func TotpSecretNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldTotpSecret))
+}
+
+// TotpSecretEqualFold applies the EqualFold predicate on the "totp_secret" field.
+func TotpSecretEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldTotpSecret, v))
+}
+
+// TotpSecretContainsFold applies the ContainsFold predicate on the "totp_secret" field.
+func TotpSecretContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldTotpSecret, v))
+}
+
 // HasSessions applies the HasEdge predicate on the "sessions" edge.
 func HasSessions() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -1200,6 +1280,29 @@ func HasSessions() predicate.User {
 func HasSessionsWith(preds ...predicate.Sessions) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := newSessionsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasRecoverycodes applies the HasEdge predicate on the "recoverycodes" edge.
+func HasRecoverycodes() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RecoverycodesTable, RecoverycodesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRecoverycodesWith applies the HasEdge predicate on the "recoverycodes" edge with a given conditions (other predicates).
+func HasRecoverycodesWith(preds ...predicate.RecoveryCode) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newRecoverycodesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -30,6 +30,7 @@ import (
 	"github.com/open-uem/ent/printer"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/profileissue"
+	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/release"
 	"github.com/open-uem/ent/revocation"
 	"github.com/open-uem/ent/rustdesk"
@@ -123,6 +124,7 @@ func checkColumn(table, column string) error {
 			printer.Table:               printer.ValidColumn,
 			profile.Table:               profile.ValidColumn,
 			profileissue.Table:          profileissue.ValidColumn,
+			recoverycode.Table:          recoverycode.ValidColumn,
 			release.Table:               release.ValidColumn,
 			revocation.Table:            revocation.ValidColumn,
 			rustdesk.Table:              rustdesk.ValidColumn,

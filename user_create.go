@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/user"
 )
@@ -254,6 +255,20 @@ func (uc *UserCreate) SetNillableHash(s *string) *UserCreate {
 	return uc
 }
 
+// SetTotpSecret sets the "totp_secret" field.
+func (uc *UserCreate) SetTotpSecret(s string) *UserCreate {
+	uc.mutation.SetTotpSecret(s)
+	return uc
+}
+
+// SetNillableTotpSecret sets the "totp_secret" field if the given value is not nil.
+func (uc *UserCreate) SetNillableTotpSecret(s *string) *UserCreate {
+	if s != nil {
+		uc.SetTotpSecret(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -273,6 +288,21 @@ func (uc *UserCreate) AddSessions(s ...*Sessions) *UserCreate {
 		ids[i] = s[i].ID
 	}
 	return uc.AddSessionIDs(ids...)
+}
+
+// AddRecoverycodeIDs adds the "recoverycodes" edge to the RecoveryCode entity by IDs.
+func (uc *UserCreate) AddRecoverycodeIDs(ids ...int) *UserCreate {
+	uc.mutation.AddRecoverycodeIDs(ids...)
+	return uc
+}
+
+// AddRecoverycodes adds the "recoverycodes" edges to the RecoveryCode entity.
+func (uc *UserCreate) AddRecoverycodes(r ...*RecoveryCode) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRecoverycodeIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -353,6 +383,10 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.Hash(); !ok {
 		v := user.DefaultHash
 		uc.mutation.SetHash(v)
+	}
+	if _, ok := uc.mutation.TotpSecret(); !ok {
+		v := user.DefaultTotpSecret
+		uc.mutation.SetTotpSecret(v)
 	}
 }
 
@@ -476,6 +510,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldHash, field.TypeString, value)
 		_node.Hash = value
 	}
+	if value, ok := uc.mutation.TotpSecret(); ok {
+		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
+		_node.TotpSecret = value
+	}
 	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -485,6 +523,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(sessions.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RecoverycodesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RecoverycodesTable,
+			Columns: user.RecoverycodesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -835,6 +889,24 @@ func (u *UserUpsert) UpdateHash() *UserUpsert {
 // ClearHash clears the value of the "hash" field.
 func (u *UserUpsert) ClearHash() *UserUpsert {
 	u.SetNull(user.FieldHash)
+	return u
+}
+
+// SetTotpSecret sets the "totp_secret" field.
+func (u *UserUpsert) SetTotpSecret(v string) *UserUpsert {
+	u.Set(user.FieldTotpSecret, v)
+	return u
+}
+
+// UpdateTotpSecret sets the "totp_secret" field to the value that was provided on create.
+func (u *UserUpsert) UpdateTotpSecret() *UserUpsert {
+	u.SetExcluded(user.FieldTotpSecret)
+	return u
+}
+
+// ClearTotpSecret clears the value of the "totp_secret" field.
+func (u *UserUpsert) ClearTotpSecret() *UserUpsert {
+	u.SetNull(user.FieldTotpSecret)
 	return u
 }
 
@@ -1226,6 +1298,27 @@ func (u *UserUpsertOne) UpdateHash() *UserUpsertOne {
 func (u *UserUpsertOne) ClearHash() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearHash()
+	})
+}
+
+// SetTotpSecret sets the "totp_secret" field.
+func (u *UserUpsertOne) SetTotpSecret(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetTotpSecret(v)
+	})
+}
+
+// UpdateTotpSecret sets the "totp_secret" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateTotpSecret() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateTotpSecret()
+	})
+}
+
+// ClearTotpSecret clears the value of the "totp_secret" field.
+func (u *UserUpsertOne) ClearTotpSecret() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearTotpSecret()
 	})
 }
 
@@ -1784,6 +1877,27 @@ func (u *UserUpsertBulk) UpdateHash() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearHash() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearHash()
+	})
+}
+
+// SetTotpSecret sets the "totp_secret" field.
+func (u *UserUpsertBulk) SetTotpSecret(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetTotpSecret(v)
+	})
+}
+
+// UpdateTotpSecret sets the "totp_secret" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateTotpSecret() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateTotpSecret()
+	})
+}
+
+// ClearTotpSecret clears the value of the "totp_secret" field.
+func (u *UserUpsertBulk) ClearTotpSecret() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearTotpSecret()
 	})
 }
 

@@ -36,12 +36,14 @@ func (User) Fields() []ent.Field {
 		field.String("token_type").Optional().Default(""),
 		field.Int("token_expiry").Optional().Default(0),
 		field.String("hash").Optional().Default(""),
+		field.String("totp_secret").Optional().Default(""),
 	}
 }
 
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("sessions", Sessions.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("recoverycodes", RecoveryCode.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }
 
