@@ -255,6 +255,20 @@ func (uc *UserCreate) SetNillableHash(s *string) *UserCreate {
 	return uc
 }
 
+// SetToken sets the "token" field.
+func (uc *UserCreate) SetToken(s string) *UserCreate {
+	uc.mutation.SetToken(s)
+	return uc
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (uc *UserCreate) SetNillableToken(s *string) *UserCreate {
+	if s != nil {
+		uc.SetToken(*s)
+	}
+	return uc
+}
+
 // SetTotpSecret sets the "totp_secret" field.
 func (uc *UserCreate) SetTotpSecret(s string) *UserCreate {
 	uc.mutation.SetTotpSecret(s)
@@ -384,6 +398,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultHash
 		uc.mutation.SetHash(v)
 	}
+	if _, ok := uc.mutation.Token(); !ok {
+		v := user.DefaultToken
+		uc.mutation.SetToken(v)
+	}
 	if _, ok := uc.mutation.TotpSecret(); !ok {
 		v := user.DefaultTotpSecret
 		uc.mutation.SetTotpSecret(v)
@@ -509,6 +527,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Hash(); ok {
 		_spec.SetField(user.FieldHash, field.TypeString, value)
 		_node.Hash = value
+	}
+	if value, ok := uc.mutation.Token(); ok {
+		_spec.SetField(user.FieldToken, field.TypeString, value)
+		_node.Token = value
 	}
 	if value, ok := uc.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
@@ -889,6 +911,24 @@ func (u *UserUpsert) UpdateHash() *UserUpsert {
 // ClearHash clears the value of the "hash" field.
 func (u *UserUpsert) ClearHash() *UserUpsert {
 	u.SetNull(user.FieldHash)
+	return u
+}
+
+// SetToken sets the "token" field.
+func (u *UserUpsert) SetToken(v string) *UserUpsert {
+	u.Set(user.FieldToken, v)
+	return u
+}
+
+// UpdateToken sets the "token" field to the value that was provided on create.
+func (u *UserUpsert) UpdateToken() *UserUpsert {
+	u.SetExcluded(user.FieldToken)
+	return u
+}
+
+// ClearToken clears the value of the "token" field.
+func (u *UserUpsert) ClearToken() *UserUpsert {
+	u.SetNull(user.FieldToken)
 	return u
 }
 
@@ -1298,6 +1338,27 @@ func (u *UserUpsertOne) UpdateHash() *UserUpsertOne {
 func (u *UserUpsertOne) ClearHash() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearHash()
+	})
+}
+
+// SetToken sets the "token" field.
+func (u *UserUpsertOne) SetToken(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetToken(v)
+	})
+}
+
+// UpdateToken sets the "token" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateToken() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateToken()
+	})
+}
+
+// ClearToken clears the value of the "token" field.
+func (u *UserUpsertOne) ClearToken() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearToken()
 	})
 }
 
@@ -1877,6 +1938,27 @@ func (u *UserUpsertBulk) UpdateHash() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearHash() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearHash()
+	})
+}
+
+// SetToken sets the "token" field.
+func (u *UserUpsertBulk) SetToken(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetToken(v)
+	})
+}
+
+// UpdateToken sets the "token" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateToken() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateToken()
+	})
+}
+
+// ClearToken clears the value of the "token" field.
+func (u *UserUpsertBulk) ClearToken() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearToken()
 	})
 }
 

@@ -352,6 +352,26 @@ func (uu *UserUpdate) ClearHash() *UserUpdate {
 	return uu
 }
 
+// SetToken sets the "token" field.
+func (uu *UserUpdate) SetToken(s string) *UserUpdate {
+	uu.mutation.SetToken(s)
+	return uu
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableToken(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetToken(*s)
+	}
+	return uu
+}
+
+// ClearToken clears the value of the "token" field.
+func (uu *UserUpdate) ClearToken() *UserUpdate {
+	uu.mutation.ClearToken()
+	return uu
+}
+
 // SetTotpSecret sets the "totp_secret" field.
 func (uu *UserUpdate) SetTotpSecret(s string) *UserUpdate {
 	uu.mutation.SetTotpSecret(s)
@@ -595,6 +615,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.HashCleared() {
 		_spec.ClearField(user.FieldHash, field.TypeString)
+	}
+	if value, ok := uu.mutation.Token(); ok {
+		_spec.SetField(user.FieldToken, field.TypeString, value)
+	}
+	if uu.mutation.TokenCleared() {
+		_spec.ClearField(user.FieldToken, field.TypeString)
 	}
 	if value, ok := uu.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
@@ -1035,6 +1061,26 @@ func (uuo *UserUpdateOne) ClearHash() *UserUpdateOne {
 	return uuo
 }
 
+// SetToken sets the "token" field.
+func (uuo *UserUpdateOne) SetToken(s string) *UserUpdateOne {
+	uuo.mutation.SetToken(s)
+	return uuo
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableToken(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetToken(*s)
+	}
+	return uuo
+}
+
+// ClearToken clears the value of the "token" field.
+func (uuo *UserUpdateOne) ClearToken() *UserUpdateOne {
+	uuo.mutation.ClearToken()
+	return uuo
+}
+
 // SetTotpSecret sets the "totp_secret" field.
 func (uuo *UserUpdateOne) SetTotpSecret(s string) *UserUpdateOne {
 	uuo.mutation.SetTotpSecret(s)
@@ -1308,6 +1354,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.HashCleared() {
 		_spec.ClearField(user.FieldHash, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Token(); ok {
+		_spec.SetField(user.FieldToken, field.TypeString, value)
+	}
+	if uuo.mutation.TokenCleared() {
+		_spec.ClearField(user.FieldToken, field.TypeString)
 	}
 	if value, ok := uuo.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)

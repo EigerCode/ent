@@ -740,8 +740,12 @@ func init() {
 	userDescHash := userFields[17].Descriptor()
 	// user.DefaultHash holds the default value on creation for the hash field.
 	user.DefaultHash = userDescHash.Default.(string)
+	// userDescToken is the schema descriptor for token field.
+	userDescToken := userFields[18].Descriptor()
+	// user.DefaultToken holds the default value on creation for the token field.
+	user.DefaultToken = userDescToken.Default.(string)
 	// userDescTotpSecret is the schema descriptor for totp_secret field.
-	userDescTotpSecret := userFields[18].Descriptor()
+	userDescTotpSecret := userFields[19].Descriptor()
 	// user.DefaultTotpSecret holds the default value on creation for the totp_secret field.
 	user.DefaultTotpSecret = userDescTotpSecret.Default.(string)
 	// userDescID is the schema descriptor for id field.

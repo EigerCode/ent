@@ -48,6 +48,8 @@ const (
 	FieldTokenExpiry = "token_expiry"
 	// FieldHash holds the string denoting the hash field in the database.
 	FieldHash = "hash"
+	// FieldToken holds the string denoting the token field in the database.
+	FieldToken = "token"
 	// FieldTotpSecret holds the string denoting the totp_secret field in the database.
 	FieldTotpSecret = "totp_secret"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
@@ -94,6 +96,7 @@ var Columns = []string{
 	FieldTokenType,
 	FieldTokenExpiry,
 	FieldHash,
+	FieldToken,
 	FieldTotpSecret,
 }
 
@@ -138,6 +141,8 @@ var (
 	DefaultTokenExpiry int
 	// DefaultHash holds the default value on creation for the "hash" field.
 	DefaultHash string
+	// DefaultToken holds the default value on creation for the "token" field.
+	DefaultToken string
 	// DefaultTotpSecret holds the default value on creation for the "totp_secret" field.
 	DefaultTotpSecret string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -235,6 +240,11 @@ func ByTokenExpiry(opts ...sql.OrderTermOption) OrderOption {
 // ByHash orders the results by the hash field.
 func ByHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHash, opts...).ToFunc()
+}
+
+// ByToken orders the results by the token field.
+func ByToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldToken, opts...).ToFunc()
 }
 
 // ByTotpSecret orders the results by the totp_secret field.

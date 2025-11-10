@@ -36355,6 +36355,7 @@ type UserMutation struct {
 	token_expiry         *int
 	addtoken_expiry      *int
 	hash                 *string
+	token                *string
 	totp_secret          *string
 	clearedFields        map[string]struct{}
 	sessions             map[string]struct{}
@@ -37287,6 +37288,55 @@ func (m *UserMutation) ResetHash() {
 	delete(m.clearedFields, user.FieldHash)
 }
 
+// SetToken sets the "token" field.
+func (m *UserMutation) SetToken(s string) {
+	m.token = &s
+}
+
+// Token returns the value of the "token" field in the mutation.
+func (m *UserMutation) Token() (r string, exists bool) {
+	v := m.token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToken returns the old "token" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToken: %w", err)
+	}
+	return oldValue.Token, nil
+}
+
+// ClearToken clears the value of the "token" field.
+func (m *UserMutation) ClearToken() {
+	m.token = nil
+	m.clearedFields[user.FieldToken] = struct{}{}
+}
+
+// TokenCleared returns if the "token" field was cleared in this mutation.
+func (m *UserMutation) TokenCleared() bool {
+	_, ok := m.clearedFields[user.FieldToken]
+	return ok
+}
+
+// ResetToken resets all changes to the "token" field.
+func (m *UserMutation) ResetToken() {
+	m.token = nil
+	delete(m.clearedFields, user.FieldToken)
+}
+
 // SetTotpSecret sets the "totp_secret" field.
 func (m *UserMutation) SetTotpSecret(s string) {
 	m.totp_secret = &s
@@ -37478,7 +37528,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -37530,6 +37580,9 @@ func (m *UserMutation) Fields() []string {
 	if m.hash != nil {
 		fields = append(fields, user.FieldHash)
 	}
+	if m.token != nil {
+		fields = append(fields, user.FieldToken)
+	}
 	if m.totp_secret != nil {
 		fields = append(fields, user.FieldTotpSecret)
 	}
@@ -37575,6 +37628,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.TokenExpiry()
 	case user.FieldHash:
 		return m.Hash()
+	case user.FieldToken:
+		return m.Token()
 	case user.FieldTotpSecret:
 		return m.TotpSecret()
 	}
@@ -37620,6 +37675,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTokenExpiry(ctx)
 	case user.FieldHash:
 		return m.OldHash(ctx)
+	case user.FieldToken:
+		return m.OldToken(ctx)
 	case user.FieldTotpSecret:
 		return m.OldTotpSecret(ctx)
 	}
@@ -37750,6 +37807,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetHash(v)
 		return nil
+	case user.FieldToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToken(v)
+		return nil
 	case user.FieldTotpSecret:
 		v, ok := value.(string)
 		if !ok {
@@ -37844,6 +37908,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldHash) {
 		fields = append(fields, user.FieldHash)
 	}
+	if m.FieldCleared(user.FieldToken) {
+		fields = append(fields, user.FieldToken)
+	}
 	if m.FieldCleared(user.FieldTotpSecret) {
 		fields = append(fields, user.FieldTotpSecret)
 	}
@@ -37902,6 +37969,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldHash:
 		m.ClearHash()
+		return nil
+	case user.FieldToken:
+		m.ClearToken()
 		return nil
 	case user.FieldTotpSecret:
 		m.ClearTotpSecret()
@@ -37964,6 +38034,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldHash:
 		m.ResetHash()
+		return nil
+	case user.FieldToken:
+		m.ResetToken()
 		return nil
 	case user.FieldTotpSecret:
 		m.ResetTotpSecret()

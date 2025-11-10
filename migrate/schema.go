@@ -955,6 +955,7 @@ var (
 		{Name: "token_type", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "token_expiry", Type: field.TypeInt, Nullable: true, Default: 0},
 		{Name: "hash", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "token", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "totp_secret", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// UsersTable holds the schema information for the "users" table.
