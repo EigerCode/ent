@@ -143,6 +143,20 @@ func (uc *UserCreate) SetNillableOpenid(b *bool) *UserCreate {
 	return uc
 }
 
+// SetPasswd sets the "passwd" field.
+func (uc *UserCreate) SetPasswd(b bool) *UserCreate {
+	uc.mutation.SetPasswd(b)
+	return uc
+}
+
+// SetNillablePasswd sets the "passwd" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePasswd(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetPasswd(*b)
+	}
+	return uc
+}
+
 // SetCreated sets the "created" field.
 func (uc *UserCreate) SetCreated(t time.Time) *UserCreate {
 	uc.mutation.SetCreated(t)
@@ -255,20 +269,6 @@ func (uc *UserCreate) SetNillableHash(s *string) *UserCreate {
 	return uc
 }
 
-// SetToken sets the "token" field.
-func (uc *UserCreate) SetToken(s string) *UserCreate {
-	uc.mutation.SetToken(s)
-	return uc
-}
-
-// SetNillableToken sets the "token" field if the given value is not nil.
-func (uc *UserCreate) SetNillableToken(s *string) *UserCreate {
-	if s != nil {
-		uc.SetToken(*s)
-	}
-	return uc
-}
-
 // SetTotpSecret sets the "totp_secret" field.
 func (uc *UserCreate) SetTotpSecret(s string) *UserCreate {
 	uc.mutation.SetTotpSecret(s)
@@ -366,6 +366,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultOpenid
 		uc.mutation.SetOpenid(v)
 	}
+	if _, ok := uc.mutation.Passwd(); !ok {
+		v := user.DefaultPasswd
+		uc.mutation.SetPasswd(v)
+	}
 	if _, ok := uc.mutation.Created(); !ok {
 		v := user.DefaultCreated()
 		uc.mutation.SetCreated(v)
@@ -397,10 +401,6 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.Hash(); !ok {
 		v := user.DefaultHash
 		uc.mutation.SetHash(v)
-	}
-	if _, ok := uc.mutation.Token(); !ok {
-		v := user.DefaultToken
-		uc.mutation.SetToken(v)
 	}
 	if _, ok := uc.mutation.TotpSecret(); !ok {
 		v := user.DefaultTotpSecret
@@ -496,6 +496,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldOpenid, field.TypeBool, value)
 		_node.Openid = value
 	}
+	if value, ok := uc.mutation.Passwd(); ok {
+		_spec.SetField(user.FieldPasswd, field.TypeBool, value)
+		_node.Passwd = value
+	}
 	if value, ok := uc.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
 		_node.Created = value
@@ -527,10 +531,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Hash(); ok {
 		_spec.SetField(user.FieldHash, field.TypeString, value)
 		_node.Hash = value
-	}
-	if value, ok := uc.mutation.Token(); ok {
-		_spec.SetField(user.FieldToken, field.TypeString, value)
-		_node.Token = value
 	}
 	if value, ok := uc.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
@@ -764,6 +764,24 @@ func (u *UserUpsert) ClearOpenid() *UserUpsert {
 	return u
 }
 
+// SetPasswd sets the "passwd" field.
+func (u *UserUpsert) SetPasswd(v bool) *UserUpsert {
+	u.Set(user.FieldPasswd, v)
+	return u
+}
+
+// UpdatePasswd sets the "passwd" field to the value that was provided on create.
+func (u *UserUpsert) UpdatePasswd() *UserUpsert {
+	u.SetExcluded(user.FieldPasswd)
+	return u
+}
+
+// ClearPasswd clears the value of the "passwd" field.
+func (u *UserUpsert) ClearPasswd() *UserUpsert {
+	u.SetNull(user.FieldPasswd)
+	return u
+}
+
 // SetCreated sets the "created" field.
 func (u *UserUpsert) SetCreated(v time.Time) *UserUpsert {
 	u.Set(user.FieldCreated, v)
@@ -911,24 +929,6 @@ func (u *UserUpsert) UpdateHash() *UserUpsert {
 // ClearHash clears the value of the "hash" field.
 func (u *UserUpsert) ClearHash() *UserUpsert {
 	u.SetNull(user.FieldHash)
-	return u
-}
-
-// SetToken sets the "token" field.
-func (u *UserUpsert) SetToken(v string) *UserUpsert {
-	u.Set(user.FieldToken, v)
-	return u
-}
-
-// UpdateToken sets the "token" field to the value that was provided on create.
-func (u *UserUpsert) UpdateToken() *UserUpsert {
-	u.SetExcluded(user.FieldToken)
-	return u
-}
-
-// ClearToken clears the value of the "token" field.
-func (u *UserUpsert) ClearToken() *UserUpsert {
-	u.SetNull(user.FieldToken)
 	return u
 }
 
@@ -1166,6 +1166,27 @@ func (u *UserUpsertOne) ClearOpenid() *UserUpsertOne {
 	})
 }
 
+// SetPasswd sets the "passwd" field.
+func (u *UserUpsertOne) SetPasswd(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetPasswd(v)
+	})
+}
+
+// UpdatePasswd sets the "passwd" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdatePasswd() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdatePasswd()
+	})
+}
+
+// ClearPasswd clears the value of the "passwd" field.
+func (u *UserUpsertOne) ClearPasswd() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearPasswd()
+	})
+}
+
 // SetCreated sets the "created" field.
 func (u *UserUpsertOne) SetCreated(v time.Time) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
@@ -1338,27 +1359,6 @@ func (u *UserUpsertOne) UpdateHash() *UserUpsertOne {
 func (u *UserUpsertOne) ClearHash() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearHash()
-	})
-}
-
-// SetToken sets the "token" field.
-func (u *UserUpsertOne) SetToken(v string) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.SetToken(v)
-	})
-}
-
-// UpdateToken sets the "token" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateToken() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateToken()
-	})
-}
-
-// ClearToken clears the value of the "token" field.
-func (u *UserUpsertOne) ClearToken() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearToken()
 	})
 }
 
@@ -1766,6 +1766,27 @@ func (u *UserUpsertBulk) ClearOpenid() *UserUpsertBulk {
 	})
 }
 
+// SetPasswd sets the "passwd" field.
+func (u *UserUpsertBulk) SetPasswd(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetPasswd(v)
+	})
+}
+
+// UpdatePasswd sets the "passwd" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdatePasswd() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdatePasswd()
+	})
+}
+
+// ClearPasswd clears the value of the "passwd" field.
+func (u *UserUpsertBulk) ClearPasswd() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearPasswd()
+	})
+}
+
 // SetCreated sets the "created" field.
 func (u *UserUpsertBulk) SetCreated(v time.Time) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
@@ -1938,27 +1959,6 @@ func (u *UserUpsertBulk) UpdateHash() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearHash() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearHash()
-	})
-}
-
-// SetToken sets the "token" field.
-func (u *UserUpsertBulk) SetToken(v string) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.SetToken(v)
-	})
-}
-
-// UpdateToken sets the "token" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateToken() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateToken()
-	})
-}
-
-// ClearToken clears the value of the "token" field.
-func (u *UserUpsertBulk) ClearToken() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearToken()
 	})
 }
 

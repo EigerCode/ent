@@ -193,6 +193,26 @@ func (uu *UserUpdate) ClearOpenid() *UserUpdate {
 	return uu
 }
 
+// SetPasswd sets the "passwd" field.
+func (uu *UserUpdate) SetPasswd(b bool) *UserUpdate {
+	uu.mutation.SetPasswd(b)
+	return uu
+}
+
+// SetNillablePasswd sets the "passwd" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePasswd(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetPasswd(*b)
+	}
+	return uu
+}
+
+// ClearPasswd clears the value of the "passwd" field.
+func (uu *UserUpdate) ClearPasswd() *UserUpdate {
+	uu.mutation.ClearPasswd()
+	return uu
+}
+
 // SetCreated sets the "created" field.
 func (uu *UserUpdate) SetCreated(t time.Time) *UserUpdate {
 	uu.mutation.SetCreated(t)
@@ -349,26 +369,6 @@ func (uu *UserUpdate) SetNillableHash(s *string) *UserUpdate {
 // ClearHash clears the value of the "hash" field.
 func (uu *UserUpdate) ClearHash() *UserUpdate {
 	uu.mutation.ClearHash()
-	return uu
-}
-
-// SetToken sets the "token" field.
-func (uu *UserUpdate) SetToken(s string) *UserUpdate {
-	uu.mutation.SetToken(s)
-	return uu
-}
-
-// SetNillableToken sets the "token" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableToken(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetToken(*s)
-	}
-	return uu
-}
-
-// ClearToken clears the value of the "token" field.
-func (uu *UserUpdate) ClearToken() *UserUpdate {
-	uu.mutation.ClearToken()
 	return uu
 }
 
@@ -565,6 +565,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.OpenidCleared() {
 		_spec.ClearField(user.FieldOpenid, field.TypeBool)
 	}
+	if value, ok := uu.mutation.Passwd(); ok {
+		_spec.SetField(user.FieldPasswd, field.TypeBool, value)
+	}
+	if uu.mutation.PasswdCleared() {
+		_spec.ClearField(user.FieldPasswd, field.TypeBool)
+	}
 	if value, ok := uu.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
 	}
@@ -615,12 +621,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.HashCleared() {
 		_spec.ClearField(user.FieldHash, field.TypeString)
-	}
-	if value, ok := uu.mutation.Token(); ok {
-		_spec.SetField(user.FieldToken, field.TypeString, value)
-	}
-	if uu.mutation.TokenCleared() {
-		_spec.ClearField(user.FieldToken, field.TypeString)
 	}
 	if value, ok := uu.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
@@ -902,6 +902,26 @@ func (uuo *UserUpdateOne) ClearOpenid() *UserUpdateOne {
 	return uuo
 }
 
+// SetPasswd sets the "passwd" field.
+func (uuo *UserUpdateOne) SetPasswd(b bool) *UserUpdateOne {
+	uuo.mutation.SetPasswd(b)
+	return uuo
+}
+
+// SetNillablePasswd sets the "passwd" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePasswd(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetPasswd(*b)
+	}
+	return uuo
+}
+
+// ClearPasswd clears the value of the "passwd" field.
+func (uuo *UserUpdateOne) ClearPasswd() *UserUpdateOne {
+	uuo.mutation.ClearPasswd()
+	return uuo
+}
+
 // SetCreated sets the "created" field.
 func (uuo *UserUpdateOne) SetCreated(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetCreated(t)
@@ -1058,26 +1078,6 @@ func (uuo *UserUpdateOne) SetNillableHash(s *string) *UserUpdateOne {
 // ClearHash clears the value of the "hash" field.
 func (uuo *UserUpdateOne) ClearHash() *UserUpdateOne {
 	uuo.mutation.ClearHash()
-	return uuo
-}
-
-// SetToken sets the "token" field.
-func (uuo *UserUpdateOne) SetToken(s string) *UserUpdateOne {
-	uuo.mutation.SetToken(s)
-	return uuo
-}
-
-// SetNillableToken sets the "token" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableToken(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetToken(*s)
-	}
-	return uuo
-}
-
-// ClearToken clears the value of the "token" field.
-func (uuo *UserUpdateOne) ClearToken() *UserUpdateOne {
-	uuo.mutation.ClearToken()
 	return uuo
 }
 
@@ -1304,6 +1304,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.OpenidCleared() {
 		_spec.ClearField(user.FieldOpenid, field.TypeBool)
 	}
+	if value, ok := uuo.mutation.Passwd(); ok {
+		_spec.SetField(user.FieldPasswd, field.TypeBool, value)
+	}
+	if uuo.mutation.PasswdCleared() {
+		_spec.ClearField(user.FieldPasswd, field.TypeBool)
+	}
 	if value, ok := uuo.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
 	}
@@ -1354,12 +1360,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.HashCleared() {
 		_spec.ClearField(user.FieldHash, field.TypeString)
-	}
-	if value, ok := uuo.mutation.Token(); ok {
-		_spec.SetField(user.FieldToken, field.TypeString, value)
-	}
-	if uuo.mutation.TokenCleared() {
-		_spec.ClearField(user.FieldToken, field.TypeString)
 	}
 	if value, ok := uuo.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)

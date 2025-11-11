@@ -947,6 +947,7 @@ var (
 		{Name: "cert_clear_password", Type: field.TypeString, Nullable: true},
 		{Name: "expiry", Type: field.TypeTime, Nullable: true},
 		{Name: "openid", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "passwd", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
 		{Name: "access_token", Type: field.TypeString, Nullable: true, Default: ""},
@@ -955,7 +956,6 @@ var (
 		{Name: "token_type", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "token_expiry", Type: field.TypeInt, Nullable: true, Default: 0},
 		{Name: "hash", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "token", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "totp_secret", Type: field.TypeString, Nullable: true, Default: ""},
 	}
 	// UsersTable holds the schema information for the "users" table.

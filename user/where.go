@@ -110,6 +110,11 @@ func Openid(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldOpenid, v))
 }
 
+// Passwd applies equality check predicate on the "passwd" field. It's identical to PasswdEQ.
+func Passwd(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPasswd, v))
+}
+
 // Created applies equality check predicate on the "created" field. It's identical to CreatedEQ.
 func Created(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreated, v))
@@ -148,11 +153,6 @@ func TokenExpiry(v int) predicate.User {
 // Hash applies equality check predicate on the "hash" field. It's identical to HashEQ.
 func Hash(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldHash, v))
-}
-
-// Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
-func Token(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldToken, v))
 }
 
 // TotpSecret applies equality check predicate on the "totp_secret" field. It's identical to TotpSecretEQ.
@@ -668,6 +668,26 @@ func OpenidIsNil() predicate.User {
 // OpenidNotNil applies the NotNil predicate on the "openid" field.
 func OpenidNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldOpenid))
+}
+
+// PasswdEQ applies the EQ predicate on the "passwd" field.
+func PasswdEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPasswd, v))
+}
+
+// PasswdNEQ applies the NEQ predicate on the "passwd" field.
+func PasswdNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldPasswd, v))
+}
+
+// PasswdIsNil applies the IsNil predicate on the "passwd" field.
+func PasswdIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldPasswd))
+}
+
+// PasswdNotNil applies the NotNil predicate on the "passwd" field.
+func PasswdNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldPasswd))
 }
 
 // CreatedEQ applies the EQ predicate on the "created" field.
@@ -1193,81 +1213,6 @@ func HashEqualFold(v string) predicate.User {
 // HashContainsFold applies the ContainsFold predicate on the "hash" field.
 func HashContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldHash, v))
-}
-
-// TokenEQ applies the EQ predicate on the "token" field.
-func TokenEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldToken, v))
-}
-
-// TokenNEQ applies the NEQ predicate on the "token" field.
-func TokenNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldToken, v))
-}
-
-// TokenIn applies the In predicate on the "token" field.
-func TokenIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldToken, vs...))
-}
-
-// TokenNotIn applies the NotIn predicate on the "token" field.
-func TokenNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldToken, vs...))
-}
-
-// TokenGT applies the GT predicate on the "token" field.
-func TokenGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldToken, v))
-}
-
-// TokenGTE applies the GTE predicate on the "token" field.
-func TokenGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldToken, v))
-}
-
-// TokenLT applies the LT predicate on the "token" field.
-func TokenLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldToken, v))
-}
-
-// TokenLTE applies the LTE predicate on the "token" field.
-func TokenLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldToken, v))
-}
-
-// TokenContains applies the Contains predicate on the "token" field.
-func TokenContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldToken, v))
-}
-
-// TokenHasPrefix applies the HasPrefix predicate on the "token" field.
-func TokenHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldToken, v))
-}
-
-// TokenHasSuffix applies the HasSuffix predicate on the "token" field.
-func TokenHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldToken, v))
-}
-
-// TokenIsNil applies the IsNil predicate on the "token" field.
-func TokenIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldToken))
-}
-
-// TokenNotNil applies the NotNil predicate on the "token" field.
-func TokenNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldToken))
-}
-
-// TokenEqualFold applies the EqualFold predicate on the "token" field.
-func TokenEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldToken, v))
-}
-
-// TokenContainsFold applies the ContainsFold predicate on the "token" field.
-func TokenContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldToken, v))
 }
 
 // TotpSecretEQ applies the EQ predicate on the "totp_secret" field.

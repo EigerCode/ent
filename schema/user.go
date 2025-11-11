@@ -28,6 +28,7 @@ func (User) Fields() []ent.Field {
 		field.String("cert_clear_password").Optional(),
 		field.Time("expiry").Optional(),
 		field.Bool("openid").Optional().Default(false),
+		field.Bool("passwd").Optional().Default(false),
 		field.Time("created").Optional().Default(time.Now),
 		field.Time("modified").Optional().Default(time.Now).UpdateDefault(time.Now),
 		field.String("access_token").Optional().Default(""),
@@ -36,7 +37,6 @@ func (User) Fields() []ent.Field {
 		field.String("token_type").Optional().Default(""),
 		field.Int("token_expiry").Optional().Default(0),
 		field.String("hash").Optional().Default(""),
-		field.String("token").Optional().Default(""),
 		field.String("totp_secret").Optional().Default(""),
 	}
 }

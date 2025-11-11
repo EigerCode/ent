@@ -35,6 +35,8 @@ type User struct {
 	Expiry time.Time `json:"expiry,omitempty"`
 	// Openid holds the value of the "openid" field.
 	Openid bool `json:"openid,omitempty"`
+	// Passwd holds the value of the "passwd" field.
+	Passwd bool `json:"passwd,omitempty"`
 	// Created holds the value of the "created" field.
 	Created time.Time `json:"created,omitempty"`
 	// Modified holds the value of the "modified" field.
@@ -51,8 +53,6 @@ type User struct {
 	TokenExpiry int `json:"token_expiry,omitempty"`
 	// Hash holds the value of the "hash" field.
 	Hash string `json:"hash,omitempty"`
-	// Token holds the value of the "token" field.
-	Token string `json:"token,omitempty"`
 	// TotpSecret holds the value of the "totp_secret" field.
 	TotpSecret string `json:"totp_secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -95,11 +95,11 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldEmailVerified, user.FieldOpenid:
+		case user.FieldEmailVerified, user.FieldOpenid, user.FieldPasswd:
 			values[i] = new(sql.NullBool)
 		case user.FieldTokenExpiry:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash, user.FieldToken, user.FieldTotpSecret:
+		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash, user.FieldTotpSecret:
 			values[i] = new(sql.NullString)
 		case user.FieldExpiry, user.FieldCreated, user.FieldModified:
 			values[i] = new(sql.NullTime)
@@ -178,6 +178,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Openid = value.Bool
 			}
+		case user.FieldPasswd:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field passwd", values[i])
+			} else if value.Valid {
+				u.Passwd = value.Bool
+			}
 		case user.FieldCreated:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created", values[i])
@@ -225,12 +231,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field hash", values[i])
 			} else if value.Valid {
 				u.Hash = value.String
-			}
-		case user.FieldToken:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field token", values[i])
-			} else if value.Valid {
-				u.Token = value.String
 			}
 		case user.FieldTotpSecret:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -311,6 +311,9 @@ func (u *User) String() string {
 	builder.WriteString("openid=")
 	builder.WriteString(fmt.Sprintf("%v", u.Openid))
 	builder.WriteString(", ")
+	builder.WriteString("passwd=")
+	builder.WriteString(fmt.Sprintf("%v", u.Passwd))
+	builder.WriteString(", ")
 	builder.WriteString("created=")
 	builder.WriteString(u.Created.Format(time.ANSIC))
 	builder.WriteString(", ")
@@ -334,9 +337,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("hash=")
 	builder.WriteString(u.Hash)
-	builder.WriteString(", ")
-	builder.WriteString("token=")
-	builder.WriteString(u.Token)
 	builder.WriteString(", ")
 	builder.WriteString("totp_secret=")
 	builder.WriteString(u.TotpSecret)

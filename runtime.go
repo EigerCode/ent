@@ -706,44 +706,44 @@ func init() {
 	userDescOpenid := userFields[9].Descriptor()
 	// user.DefaultOpenid holds the default value on creation for the openid field.
 	user.DefaultOpenid = userDescOpenid.Default.(bool)
+	// userDescPasswd is the schema descriptor for passwd field.
+	userDescPasswd := userFields[10].Descriptor()
+	// user.DefaultPasswd holds the default value on creation for the passwd field.
+	user.DefaultPasswd = userDescPasswd.Default.(bool)
 	// userDescCreated is the schema descriptor for created field.
-	userDescCreated := userFields[10].Descriptor()
+	userDescCreated := userFields[11].Descriptor()
 	// user.DefaultCreated holds the default value on creation for the created field.
 	user.DefaultCreated = userDescCreated.Default.(func() time.Time)
 	// userDescModified is the schema descriptor for modified field.
-	userDescModified := userFields[11].Descriptor()
+	userDescModified := userFields[12].Descriptor()
 	// user.DefaultModified holds the default value on creation for the modified field.
 	user.DefaultModified = userDescModified.Default.(func() time.Time)
 	// user.UpdateDefaultModified holds the default value on update for the modified field.
 	user.UpdateDefaultModified = userDescModified.UpdateDefault.(func() time.Time)
 	// userDescAccessToken is the schema descriptor for access_token field.
-	userDescAccessToken := userFields[12].Descriptor()
+	userDescAccessToken := userFields[13].Descriptor()
 	// user.DefaultAccessToken holds the default value on creation for the access_token field.
 	user.DefaultAccessToken = userDescAccessToken.Default.(string)
 	// userDescRefreshToken is the schema descriptor for refresh_token field.
-	userDescRefreshToken := userFields[13].Descriptor()
+	userDescRefreshToken := userFields[14].Descriptor()
 	// user.DefaultRefreshToken holds the default value on creation for the refresh_token field.
 	user.DefaultRefreshToken = userDescRefreshToken.Default.(string)
 	// userDescIDToken is the schema descriptor for id_token field.
-	userDescIDToken := userFields[14].Descriptor()
+	userDescIDToken := userFields[15].Descriptor()
 	// user.DefaultIDToken holds the default value on creation for the id_token field.
 	user.DefaultIDToken = userDescIDToken.Default.(string)
 	// userDescTokenType is the schema descriptor for token_type field.
-	userDescTokenType := userFields[15].Descriptor()
+	userDescTokenType := userFields[16].Descriptor()
 	// user.DefaultTokenType holds the default value on creation for the token_type field.
 	user.DefaultTokenType = userDescTokenType.Default.(string)
 	// userDescTokenExpiry is the schema descriptor for token_expiry field.
-	userDescTokenExpiry := userFields[16].Descriptor()
+	userDescTokenExpiry := userFields[17].Descriptor()
 	// user.DefaultTokenExpiry holds the default value on creation for the token_expiry field.
 	user.DefaultTokenExpiry = userDescTokenExpiry.Default.(int)
 	// userDescHash is the schema descriptor for hash field.
-	userDescHash := userFields[17].Descriptor()
+	userDescHash := userFields[18].Descriptor()
 	// user.DefaultHash holds the default value on creation for the hash field.
 	user.DefaultHash = userDescHash.Default.(string)
-	// userDescToken is the schema descriptor for token field.
-	userDescToken := userFields[18].Descriptor()
-	// user.DefaultToken holds the default value on creation for the token field.
-	user.DefaultToken = userDescToken.Default.(string)
 	// userDescTotpSecret is the schema descriptor for totp_secret field.
 	userDescTotpSecret := userFields[19].Descriptor()
 	// user.DefaultTotpSecret holds the default value on creation for the totp_secret field.
