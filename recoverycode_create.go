@@ -42,19 +42,23 @@ func (rcc *RecoveryCodeCreate) SetNillableUsed(b *bool) *RecoveryCodeCreate {
 	return rcc
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (rcc *RecoveryCodeCreate) AddUserIDs(ids ...string) *RecoveryCodeCreate {
-	rcc.mutation.AddUserIDs(ids...)
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rcc *RecoveryCodeCreate) SetUserID(id string) *RecoveryCodeCreate {
+	rcc.mutation.SetUserID(id)
 	return rcc
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (rcc *RecoveryCodeCreate) AddUser(u ...*User) *RecoveryCodeCreate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (rcc *RecoveryCodeCreate) SetNillableUserID(id *string) *RecoveryCodeCreate {
+	if id != nil {
+		rcc = rcc.SetUserID(*id)
 	}
-	return rcc.AddUserIDs(ids...)
+	return rcc
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (rcc *RecoveryCodeCreate) SetUser(u *User) *RecoveryCodeCreate {
+	return rcc.SetUserID(u.ID)
 }
 
 // Mutation returns the RecoveryCodeMutation object of the builder.
@@ -148,10 +152,10 @@ func (rcc *RecoveryCodeCreate) createSpec() (*RecoveryCode, *sqlgraph.CreateSpec
 	}
 	if nodes := rcc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
+			Columns: []string{recoverycode.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -160,6 +164,7 @@ func (rcc *RecoveryCodeCreate) createSpec() (*RecoveryCode, *sqlgraph.CreateSpec
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.user_recoverycodes = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

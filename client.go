@@ -3645,7 +3645,7 @@ func (c *RecoveryCodeClient) QueryUser(rc *RecoveryCode) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(recoverycode.Table, recoverycode.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, recoverycode.UserTable, recoverycode.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, recoverycode.UserTable, recoverycode.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(rc.driver.Dialect(), step)
 		return fromV, nil
@@ -5907,7 +5907,7 @@ func (c *UserClient) QueryRecoverycodes(u *User) *RecoveryCodeQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(recoverycode.Table, recoverycode.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.RecoverycodesTable, user.RecoverycodesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RecoverycodesTable, user.RecoverycodesColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

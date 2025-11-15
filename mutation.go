@@ -16421,8 +16421,7 @@ type RecoveryCodeMutation struct {
 	code          *string
 	used          *bool
 	clearedFields map[string]struct{}
-	user          map[string]struct{}
-	removeduser   map[string]struct{}
+	user          *string
 	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*RecoveryCode, error)
@@ -16599,14 +16598,9 @@ func (m *RecoveryCodeMutation) ResetUsed() {
 	m.used = nil
 }
 
-// AddUserIDs adds the "user" edge to the User entity by ids.
-func (m *RecoveryCodeMutation) AddUserIDs(ids ...string) {
-	if m.user == nil {
-		m.user = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.user[ids[i]] = struct{}{}
-	}
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *RecoveryCodeMutation) SetUserID(id string) {
+	m.user = &id
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -16619,29 +16613,20 @@ func (m *RecoveryCodeMutation) UserCleared() bool {
 	return m.cleareduser
 }
 
-// RemoveUserIDs removes the "user" edge to the User entity by IDs.
-func (m *RecoveryCodeMutation) RemoveUserIDs(ids ...string) {
-	if m.removeduser == nil {
-		m.removeduser = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.user, ids[i])
-		m.removeduser[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUser returns the removed IDs of the "user" edge to the User entity.
-func (m *RecoveryCodeMutation) RemovedUserIDs() (ids []string) {
-	for id := range m.removeduser {
-		ids = append(ids, id)
+// UserID returns the "user" edge ID in the mutation.
+func (m *RecoveryCodeMutation) UserID() (id string, exists bool) {
+	if m.user != nil {
+		return *m.user, true
 	}
 	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
 func (m *RecoveryCodeMutation) UserIDs() (ids []string) {
-	for id := range m.user {
-		ids = append(ids, id)
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -16650,7 +16635,6 @@ func (m *RecoveryCodeMutation) UserIDs() (ids []string) {
 func (m *RecoveryCodeMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
-	m.removeduser = nil
 }
 
 // Where appends a list predicates to the RecoveryCodeMutation builder.
@@ -16815,11 +16799,9 @@ func (m *RecoveryCodeMutation) AddedEdges() []string {
 func (m *RecoveryCodeMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case recoverycode.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.user))
-		for id := range m.user {
-			ids = append(ids, id)
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -16827,23 +16809,12 @@ func (m *RecoveryCodeMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RecoveryCodeMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removeduser != nil {
-		edges = append(edges, recoverycode.EdgeUser)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *RecoveryCodeMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case recoverycode.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.removeduser))
-		for id := range m.removeduser {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -16870,6 +16841,9 @@ func (m *RecoveryCodeMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *RecoveryCodeMutation) ClearEdge(name string) error {
 	switch name {
+	case recoverycode.EdgeUser:
+		m.ClearUser()
+		return nil
 	}
 	return fmt.Errorf("unknown RecoveryCode unique edge %s", name)
 }

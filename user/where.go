@@ -1368,7 +1368,7 @@ func HasRecoverycodes() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, RecoverycodesTable, RecoverycodesPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, RecoverycodesTable, RecoverycodesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

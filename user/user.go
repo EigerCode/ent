@@ -73,11 +73,13 @@ const (
 	SessionsInverseTable = "sessions"
 	// SessionsColumn is the table column denoting the sessions relation/edge.
 	SessionsColumn = "user_sessions"
-	// RecoverycodesTable is the table that holds the recoverycodes relation/edge. The primary key declared below.
-	RecoverycodesTable = "user_recoverycodes"
+	// RecoverycodesTable is the table that holds the recoverycodes relation/edge.
+	RecoverycodesTable = "recovery_codes"
 	// RecoverycodesInverseTable is the table name for the RecoveryCode entity.
 	// It exists in this package in order to avoid circular dependency with the "recoverycode" package.
 	RecoverycodesInverseTable = "recovery_codes"
+	// RecoverycodesColumn is the table column denoting the recoverycodes relation/edge.
+	RecoverycodesColumn = "user_recoverycodes"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -105,12 +107,6 @@ var Columns = []string{
 	FieldTotpSecret,
 	FieldTotpSecretConfirmed,
 }
-
-var (
-	// RecoverycodesPrimaryKey and RecoverycodesColumn2 are the table columns denoting the
-	// primary key for the recoverycodes relation (M2M).
-	RecoverycodesPrimaryKey = []string{"user_id", "recovery_code_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -310,6 +306,6 @@ func newRecoverycodesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RecoverycodesInverseTable, RecoveryCodeFieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, RecoverycodesTable, RecoverycodesPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, RecoverycodesTable, RecoverycodesColumn),
 	)
 }

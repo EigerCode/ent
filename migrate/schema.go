@@ -485,12 +485,21 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "code", Type: field.TypeString},
 		{Name: "used", Type: field.TypeBool, Default: false},
+		{Name: "user_recoverycodes", Type: field.TypeString, Nullable: true},
 	}
 	// RecoveryCodesTable holds the schema information for the "recovery_codes" table.
 	RecoveryCodesTable = &schema.Table{
 		Name:       "recovery_codes",
 		Columns:    RecoveryCodesColumns,
 		PrimaryKey: []*schema.Column{RecoveryCodesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "recovery_codes_users_recoverycodes",
+				Columns:    []*schema.Column{RecoveryCodesColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
 	}
 	// ReleasesColumns holds the columns for the "releases" table.
 	ReleasesColumns = []*schema.Column{
@@ -1076,31 +1085,6 @@ var (
 			},
 		},
 	}
-	// UserRecoverycodesColumns holds the columns for the "user_recoverycodes" table.
-	UserRecoverycodesColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeString},
-		{Name: "recovery_code_id", Type: field.TypeInt},
-	}
-	// UserRecoverycodesTable holds the schema information for the "user_recoverycodes" table.
-	UserRecoverycodesTable = &schema.Table{
-		Name:       "user_recoverycodes",
-		Columns:    UserRecoverycodesColumns,
-		PrimaryKey: []*schema.Column{UserRecoverycodesColumns[0], UserRecoverycodesColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "user_recoverycodes_user_id",
-				Columns:    []*schema.Column{UserRecoverycodesColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "user_recoverycodes_recovery_code_id",
-				Columns:    []*schema.Column{UserRecoverycodesColumns[1]},
-				RefColumns: []*schema.Column{RecoveryCodesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AgentsTable,
@@ -1141,7 +1125,6 @@ var (
 		ProfileTagsTable,
 		SiteAgentsTable,
 		TenantRustdeskTable,
-		UserRecoverycodesTable,
 	}
 )
 
@@ -1164,6 +1147,7 @@ func init() {
 	ProfilesTable.ForeignKeys[0].RefTable = SitesTable
 	ProfileIssuesTable.ForeignKeys[0].RefTable = ProfilesTable
 	ProfileIssuesTable.ForeignKeys[1].RefTable = AgentsTable
+	RecoveryCodesTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	SettingsTable.ForeignKeys[0].RefTable = TagsTable
 	SettingsTable.ForeignKeys[1].RefTable = TenantsTable
@@ -1184,6 +1168,4 @@ func init() {
 	SiteAgentsTable.ForeignKeys[1].RefTable = AgentsTable
 	TenantRustdeskTable.ForeignKeys[0].RefTable = TenantsTable
 	TenantRustdeskTable.ForeignKeys[1].RefTable = RustdesksTable
-	UserRecoverycodesTable.ForeignKeys[0].RefTable = UsersTable
-	UserRecoverycodesTable.ForeignKeys[1].RefTable = RecoveryCodesTable
 }

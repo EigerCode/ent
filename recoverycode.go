@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/open-uem/ent/recoverycode"
+	"github.com/open-uem/ent/user"
 )
 
 // RecoveryCode is the model entity for the RecoveryCode schema.
@@ -22,24 +23,27 @@ type RecoveryCode struct {
 	Used bool `json:"used,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RecoveryCodeQuery when eager-loading is set.
-	Edges        RecoveryCodeEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges              RecoveryCodeEdges `json:"edges"`
+	user_recoverycodes *string
+	selectValues       sql.SelectValues
 }
 
 // RecoveryCodeEdges holds the relations/edges for other nodes in the graph.
 type RecoveryCodeEdges struct {
 	// User holds the value of the user edge.
-	User []*User `json:"user,omitempty"`
+	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading.
-func (e RecoveryCodeEdges) UserOrErr() ([]*User, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e RecoveryCodeEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
 		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }
@@ -54,6 +58,8 @@ func (*RecoveryCode) scanValues(columns []string) ([]any, error) {
 		case recoverycode.FieldID:
 			values[i] = new(sql.NullInt64)
 		case recoverycode.FieldCode:
+			values[i] = new(sql.NullString)
+		case recoverycode.ForeignKeys[0]: // user_recoverycodes
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -87,6 +93,13 @@ func (rc *RecoveryCode) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field used", values[i])
 			} else if value.Valid {
 				rc.Used = value.Bool
+			}
+		case recoverycode.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_recoverycodes", values[i])
+			} else if value.Valid {
+				rc.user_recoverycodes = new(string)
+				*rc.user_recoverycodes = value.String
 			}
 		default:
 			rc.selectValues.Set(columns[i], values[i])

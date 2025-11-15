@@ -57,19 +57,23 @@ func (rcu *RecoveryCodeUpdate) SetNillableUsed(b *bool) *RecoveryCodeUpdate {
 	return rcu
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (rcu *RecoveryCodeUpdate) AddUserIDs(ids ...string) *RecoveryCodeUpdate {
-	rcu.mutation.AddUserIDs(ids...)
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rcu *RecoveryCodeUpdate) SetUserID(id string) *RecoveryCodeUpdate {
+	rcu.mutation.SetUserID(id)
 	return rcu
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (rcu *RecoveryCodeUpdate) AddUser(u ...*User) *RecoveryCodeUpdate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (rcu *RecoveryCodeUpdate) SetNillableUserID(id *string) *RecoveryCodeUpdate {
+	if id != nil {
+		rcu = rcu.SetUserID(*id)
 	}
-	return rcu.AddUserIDs(ids...)
+	return rcu
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (rcu *RecoveryCodeUpdate) SetUser(u *User) *RecoveryCodeUpdate {
+	return rcu.SetUserID(u.ID)
 }
 
 // Mutation returns the RecoveryCodeMutation object of the builder.
@@ -77,25 +81,10 @@ func (rcu *RecoveryCodeUpdate) Mutation() *RecoveryCodeMutation {
 	return rcu.mutation
 }
 
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (rcu *RecoveryCodeUpdate) ClearUser() *RecoveryCodeUpdate {
 	rcu.mutation.ClearUser()
 	return rcu
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (rcu *RecoveryCodeUpdate) RemoveUserIDs(ids ...string) *RecoveryCodeUpdate {
-	rcu.mutation.RemoveUserIDs(ids...)
-	return rcu
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (rcu *RecoveryCodeUpdate) RemoveUser(u ...*User) *RecoveryCodeUpdate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return rcu.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -161,39 +150,23 @@ func (rcu *RecoveryCodeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if rcu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
+			Columns: []string{recoverycode.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rcu.mutation.RemovedUserIDs(); len(nodes) > 0 && !rcu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := rcu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
+			Columns: []string{recoverycode.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -254,19 +227,23 @@ func (rcuo *RecoveryCodeUpdateOne) SetNillableUsed(b *bool) *RecoveryCodeUpdateO
 	return rcuo
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (rcuo *RecoveryCodeUpdateOne) AddUserIDs(ids ...string) *RecoveryCodeUpdateOne {
-	rcuo.mutation.AddUserIDs(ids...)
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rcuo *RecoveryCodeUpdateOne) SetUserID(id string) *RecoveryCodeUpdateOne {
+	rcuo.mutation.SetUserID(id)
 	return rcuo
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (rcuo *RecoveryCodeUpdateOne) AddUser(u ...*User) *RecoveryCodeUpdateOne {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (rcuo *RecoveryCodeUpdateOne) SetNillableUserID(id *string) *RecoveryCodeUpdateOne {
+	if id != nil {
+		rcuo = rcuo.SetUserID(*id)
 	}
-	return rcuo.AddUserIDs(ids...)
+	return rcuo
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (rcuo *RecoveryCodeUpdateOne) SetUser(u *User) *RecoveryCodeUpdateOne {
+	return rcuo.SetUserID(u.ID)
 }
 
 // Mutation returns the RecoveryCodeMutation object of the builder.
@@ -274,25 +251,10 @@ func (rcuo *RecoveryCodeUpdateOne) Mutation() *RecoveryCodeMutation {
 	return rcuo.mutation
 }
 
-// ClearUser clears all "user" edges to the User entity.
+// ClearUser clears the "user" edge to the User entity.
 func (rcuo *RecoveryCodeUpdateOne) ClearUser() *RecoveryCodeUpdateOne {
 	rcuo.mutation.ClearUser()
 	return rcuo
-}
-
-// RemoveUserIDs removes the "user" edge to User entities by IDs.
-func (rcuo *RecoveryCodeUpdateOne) RemoveUserIDs(ids ...string) *RecoveryCodeUpdateOne {
-	rcuo.mutation.RemoveUserIDs(ids...)
-	return rcuo
-}
-
-// RemoveUser removes "user" edges to User entities.
-func (rcuo *RecoveryCodeUpdateOne) RemoveUser(u ...*User) *RecoveryCodeUpdateOne {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return rcuo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the RecoveryCodeUpdate builder.
@@ -388,39 +350,23 @@ func (rcuo *RecoveryCodeUpdateOne) sqlSave(ctx context.Context) (_node *Recovery
 	}
 	if rcuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
+			Columns: []string{recoverycode.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := rcuo.mutation.RemovedUserIDs(); len(nodes) > 0 && !rcuo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := rcuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   recoverycode.UserTable,
-			Columns: recoverycode.UserPrimaryKey,
+			Columns: []string{recoverycode.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
