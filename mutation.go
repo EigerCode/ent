@@ -36334,40 +36334,41 @@ func (m *UpdateMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *string
-	name                 *string
-	email                *string
-	phone                *string
-	country              *string
-	email_verified       *bool
-	register             *string
-	cert_clear_password  *string
-	expiry               *time.Time
-	openid               *bool
-	passwd               *bool
-	use2fa               *bool
-	created              *time.Time
-	modified             *time.Time
-	access_token         *string
-	refresh_token        *string
-	id_token             *string
-	token_type           *string
-	token_expiry         *int
-	addtoken_expiry      *int
-	hash                 *string
-	totp_secret          *string
-	clearedFields        map[string]struct{}
-	sessions             map[string]struct{}
-	removedsessions      map[string]struct{}
-	clearedsessions      bool
-	recoverycodes        map[int]struct{}
-	removedrecoverycodes map[int]struct{}
-	clearedrecoverycodes bool
-	done                 bool
-	oldValue             func(context.Context) (*User, error)
-	predicates           []predicate.User
+	op                    Op
+	typ                   string
+	id                    *string
+	name                  *string
+	email                 *string
+	phone                 *string
+	country               *string
+	email_verified        *bool
+	register              *string
+	cert_clear_password   *string
+	expiry                *time.Time
+	openid                *bool
+	passwd                *bool
+	use2fa                *bool
+	created               *time.Time
+	modified              *time.Time
+	access_token          *string
+	refresh_token         *string
+	id_token              *string
+	token_type            *string
+	token_expiry          *int
+	addtoken_expiry       *int
+	hash                  *string
+	totp_secret           *string
+	totp_secret_confirmed *bool
+	clearedFields         map[string]struct{}
+	sessions              map[string]struct{}
+	removedsessions       map[string]struct{}
+	clearedsessions       bool
+	recoverycodes         map[int]struct{}
+	removedrecoverycodes  map[int]struct{}
+	clearedrecoverycodes  bool
+	done                  bool
+	oldValue              func(context.Context) (*User, error)
+	predicates            []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -37436,6 +37437,55 @@ func (m *UserMutation) ResetTotpSecret() {
 	delete(m.clearedFields, user.FieldTotpSecret)
 }
 
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (m *UserMutation) SetTotpSecretConfirmed(b bool) {
+	m.totp_secret_confirmed = &b
+}
+
+// TotpSecretConfirmed returns the value of the "totp_secret_confirmed" field in the mutation.
+func (m *UserMutation) TotpSecretConfirmed() (r bool, exists bool) {
+	v := m.totp_secret_confirmed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotpSecretConfirmed returns the old "totp_secret_confirmed" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTotpSecretConfirmed(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotpSecretConfirmed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotpSecretConfirmed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotpSecretConfirmed: %w", err)
+	}
+	return oldValue.TotpSecretConfirmed, nil
+}
+
+// ClearTotpSecretConfirmed clears the value of the "totp_secret_confirmed" field.
+func (m *UserMutation) ClearTotpSecretConfirmed() {
+	m.totp_secret_confirmed = nil
+	m.clearedFields[user.FieldTotpSecretConfirmed] = struct{}{}
+}
+
+// TotpSecretConfirmedCleared returns if the "totp_secret_confirmed" field was cleared in this mutation.
+func (m *UserMutation) TotpSecretConfirmedCleared() bool {
+	_, ok := m.clearedFields[user.FieldTotpSecretConfirmed]
+	return ok
+}
+
+// ResetTotpSecretConfirmed resets all changes to the "totp_secret_confirmed" field.
+func (m *UserMutation) ResetTotpSecretConfirmed() {
+	m.totp_secret_confirmed = nil
+	delete(m.clearedFields, user.FieldTotpSecretConfirmed)
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by ids.
 func (m *UserMutation) AddSessionIDs(ids ...string) {
 	if m.sessions == nil {
@@ -37578,7 +37628,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -37639,6 +37689,9 @@ func (m *UserMutation) Fields() []string {
 	if m.totp_secret != nil {
 		fields = append(fields, user.FieldTotpSecret)
 	}
+	if m.totp_secret_confirmed != nil {
+		fields = append(fields, user.FieldTotpSecretConfirmed)
+	}
 	return fields
 }
 
@@ -37687,6 +37740,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Hash()
 	case user.FieldTotpSecret:
 		return m.TotpSecret()
+	case user.FieldTotpSecretConfirmed:
+		return m.TotpSecretConfirmed()
 	}
 	return nil, false
 }
@@ -37736,6 +37791,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldHash(ctx)
 	case user.FieldTotpSecret:
 		return m.OldTotpSecret(ctx)
+	case user.FieldTotpSecretConfirmed:
+		return m.OldTotpSecretConfirmed(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -37885,6 +37942,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTotpSecret(v)
 		return nil
+	case user.FieldTotpSecretConfirmed:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotpSecretConfirmed(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -37981,6 +38045,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldTotpSecret) {
 		fields = append(fields, user.FieldTotpSecret)
 	}
+	if m.FieldCleared(user.FieldTotpSecretConfirmed) {
+		fields = append(fields, user.FieldTotpSecretConfirmed)
+	}
 	return fields
 }
 
@@ -38045,6 +38112,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldTotpSecret:
 		m.ClearTotpSecret()
+		return nil
+	case user.FieldTotpSecretConfirmed:
+		m.ClearTotpSecretConfirmed()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -38113,6 +38183,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldTotpSecret:
 		m.ResetTotpSecret()
+		return nil
+	case user.FieldTotpSecretConfirmed:
+		m.ResetTotpSecretConfirmed()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

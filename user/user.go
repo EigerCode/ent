@@ -54,6 +54,8 @@ const (
 	FieldHash = "hash"
 	// FieldTotpSecret holds the string denoting the totp_secret field in the database.
 	FieldTotpSecret = "totp_secret"
+	// FieldTotpSecretConfirmed holds the string denoting the totp_secret_confirmed field in the database.
+	FieldTotpSecretConfirmed = "totp_secret_confirmed"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// EdgeRecoverycodes holds the string denoting the recoverycodes edge name in mutations.
@@ -101,6 +103,7 @@ var Columns = []string{
 	FieldTokenExpiry,
 	FieldHash,
 	FieldTotpSecret,
+	FieldTotpSecretConfirmed,
 }
 
 var (
@@ -150,6 +153,8 @@ var (
 	DefaultHash string
 	// DefaultTotpSecret holds the default value on creation for the "totp_secret" field.
 	DefaultTotpSecret string
+	// DefaultTotpSecretConfirmed holds the default value on creation for the "totp_secret_confirmed" field.
+	DefaultTotpSecretConfirmed bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(string) error
 )
@@ -260,6 +265,11 @@ func ByHash(opts ...sql.OrderTermOption) OrderOption {
 // ByTotpSecret orders the results by the totp_secret field.
 func ByTotpSecret(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTotpSecret, opts...).ToFunc()
+}
+
+// ByTotpSecretConfirmed orders the results by the totp_secret_confirmed field.
+func ByTotpSecretConfirmed(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTotpSecretConfirmed, opts...).ToFunc()
 }
 
 // BySessionsCount orders the results by sessions count.

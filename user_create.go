@@ -297,6 +297,20 @@ func (uc *UserCreate) SetNillableTotpSecret(s *string) *UserCreate {
 	return uc
 }
 
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (uc *UserCreate) SetTotpSecretConfirmed(b bool) *UserCreate {
+	uc.mutation.SetTotpSecretConfirmed(b)
+	return uc
+}
+
+// SetNillableTotpSecretConfirmed sets the "totp_secret_confirmed" field if the given value is not nil.
+func (uc *UserCreate) SetNillableTotpSecretConfirmed(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetTotpSecretConfirmed(*b)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -423,6 +437,10 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.TotpSecret(); !ok {
 		v := user.DefaultTotpSecret
 		uc.mutation.SetTotpSecret(v)
+	}
+	if _, ok := uc.mutation.TotpSecretConfirmed(); !ok {
+		v := user.DefaultTotpSecretConfirmed
+		uc.mutation.SetTotpSecretConfirmed(v)
 	}
 }
 
@@ -557,6 +575,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.TotpSecret(); ok {
 		_spec.SetField(user.FieldTotpSecret, field.TypeString, value)
 		_node.TotpSecret = value
+	}
+	if value, ok := uc.mutation.TotpSecretConfirmed(); ok {
+		_spec.SetField(user.FieldTotpSecretConfirmed, field.TypeBool, value)
+		_node.TotpSecretConfirmed = value
 	}
 	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -987,6 +1009,24 @@ func (u *UserUpsert) UpdateTotpSecret() *UserUpsert {
 // ClearTotpSecret clears the value of the "totp_secret" field.
 func (u *UserUpsert) ClearTotpSecret() *UserUpsert {
 	u.SetNull(user.FieldTotpSecret)
+	return u
+}
+
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (u *UserUpsert) SetTotpSecretConfirmed(v bool) *UserUpsert {
+	u.Set(user.FieldTotpSecretConfirmed, v)
+	return u
+}
+
+// UpdateTotpSecretConfirmed sets the "totp_secret_confirmed" field to the value that was provided on create.
+func (u *UserUpsert) UpdateTotpSecretConfirmed() *UserUpsert {
+	u.SetExcluded(user.FieldTotpSecretConfirmed)
+	return u
+}
+
+// ClearTotpSecretConfirmed clears the value of the "totp_secret_confirmed" field.
+func (u *UserUpsert) ClearTotpSecretConfirmed() *UserUpsert {
+	u.SetNull(user.FieldTotpSecretConfirmed)
 	return u
 }
 
@@ -1441,6 +1481,27 @@ func (u *UserUpsertOne) UpdateTotpSecret() *UserUpsertOne {
 func (u *UserUpsertOne) ClearTotpSecret() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTotpSecret()
+	})
+}
+
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (u *UserUpsertOne) SetTotpSecretConfirmed(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetTotpSecretConfirmed(v)
+	})
+}
+
+// UpdateTotpSecretConfirmed sets the "totp_secret_confirmed" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateTotpSecretConfirmed() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateTotpSecretConfirmed()
+	})
+}
+
+// ClearTotpSecretConfirmed clears the value of the "totp_secret_confirmed" field.
+func (u *UserUpsertOne) ClearTotpSecretConfirmed() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearTotpSecretConfirmed()
 	})
 }
 
@@ -2062,6 +2123,27 @@ func (u *UserUpsertBulk) UpdateTotpSecret() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearTotpSecret() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearTotpSecret()
+	})
+}
+
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (u *UserUpsertBulk) SetTotpSecretConfirmed(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetTotpSecretConfirmed(v)
+	})
+}
+
+// UpdateTotpSecretConfirmed sets the "totp_secret_confirmed" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateTotpSecretConfirmed() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateTotpSecretConfirmed()
+	})
+}
+
+// ClearTotpSecretConfirmed clears the value of the "totp_secret_confirmed" field.
+func (u *UserUpsertBulk) ClearTotpSecretConfirmed() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearTotpSecretConfirmed()
 	})
 }
 

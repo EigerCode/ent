@@ -165,6 +165,11 @@ func TotpSecret(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldTotpSecret, v))
 }
 
+// TotpSecretConfirmed applies equality check predicate on the "totp_secret_confirmed" field. It's identical to TotpSecretConfirmedEQ.
+func TotpSecretConfirmed(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldTotpSecretConfirmed, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
@@ -1313,6 +1318,26 @@ func TotpSecretEqualFold(v string) predicate.User {
 // TotpSecretContainsFold applies the ContainsFold predicate on the "totp_secret" field.
 func TotpSecretContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldTotpSecret, v))
+}
+
+// TotpSecretConfirmedEQ applies the EQ predicate on the "totp_secret_confirmed" field.
+func TotpSecretConfirmedEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldTotpSecretConfirmed, v))
+}
+
+// TotpSecretConfirmedNEQ applies the NEQ predicate on the "totp_secret_confirmed" field.
+func TotpSecretConfirmedNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldTotpSecretConfirmed, v))
+}
+
+// TotpSecretConfirmedIsNil applies the IsNil predicate on the "totp_secret_confirmed" field.
+func TotpSecretConfirmedIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldTotpSecretConfirmed))
+}
+
+// TotpSecretConfirmedNotNil applies the NotNil predicate on the "totp_secret_confirmed" field.
+func TotpSecretConfirmedNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldTotpSecretConfirmed))
 }
 
 // HasSessions applies the HasEdge predicate on the "sessions" edge.

@@ -57,6 +57,8 @@ type User struct {
 	Hash string `json:"hash,omitempty"`
 	// TotpSecret holds the value of the "totp_secret" field.
 	TotpSecret string `json:"totp_secret,omitempty"`
+	// TotpSecretConfirmed holds the value of the "totp_secret_confirmed" field.
+	TotpSecretConfirmed bool `json:"totp_secret_confirmed,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -97,7 +99,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldEmailVerified, user.FieldOpenid, user.FieldPasswd, user.FieldUse2fa:
+		case user.FieldEmailVerified, user.FieldOpenid, user.FieldPasswd, user.FieldUse2fa, user.FieldTotpSecretConfirmed:
 			values[i] = new(sql.NullBool)
 		case user.FieldTokenExpiry:
 			values[i] = new(sql.NullInt64)
@@ -246,6 +248,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.TotpSecret = value.String
 			}
+		case user.FieldTotpSecretConfirmed:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field totp_secret_confirmed", values[i])
+			} else if value.Valid {
+				u.TotpSecretConfirmed = value.Bool
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -351,6 +359,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("totp_secret=")
 	builder.WriteString(u.TotpSecret)
+	builder.WriteString(", ")
+	builder.WriteString("totp_secret_confirmed=")
+	builder.WriteString(fmt.Sprintf("%v", u.TotpSecretConfirmed))
 	builder.WriteByte(')')
 	return builder.String()
 }

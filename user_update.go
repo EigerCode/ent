@@ -412,6 +412,26 @@ func (uu *UserUpdate) ClearTotpSecret() *UserUpdate {
 	return uu
 }
 
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (uu *UserUpdate) SetTotpSecretConfirmed(b bool) *UserUpdate {
+	uu.mutation.SetTotpSecretConfirmed(b)
+	return uu
+}
+
+// SetNillableTotpSecretConfirmed sets the "totp_secret_confirmed" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableTotpSecretConfirmed(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetTotpSecretConfirmed(*b)
+	}
+	return uu
+}
+
+// ClearTotpSecretConfirmed clears the value of the "totp_secret_confirmed" field.
+func (uu *UserUpdate) ClearTotpSecretConfirmed() *UserUpdate {
+	uu.mutation.ClearTotpSecretConfirmed()
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -653,6 +673,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.TotpSecretCleared() {
 		_spec.ClearField(user.FieldTotpSecret, field.TypeString)
+	}
+	if value, ok := uu.mutation.TotpSecretConfirmed(); ok {
+		_spec.SetField(user.FieldTotpSecretConfirmed, field.TypeBool, value)
+	}
+	if uu.mutation.TotpSecretConfirmedCleared() {
+		_spec.ClearField(user.FieldTotpSecretConfirmed, field.TypeBool)
 	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1147,6 +1173,26 @@ func (uuo *UserUpdateOne) ClearTotpSecret() *UserUpdateOne {
 	return uuo
 }
 
+// SetTotpSecretConfirmed sets the "totp_secret_confirmed" field.
+func (uuo *UserUpdateOne) SetTotpSecretConfirmed(b bool) *UserUpdateOne {
+	uuo.mutation.SetTotpSecretConfirmed(b)
+	return uuo
+}
+
+// SetNillableTotpSecretConfirmed sets the "totp_secret_confirmed" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTotpSecretConfirmed(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetTotpSecretConfirmed(*b)
+	}
+	return uuo
+}
+
+// ClearTotpSecretConfirmed clears the value of the "totp_secret_confirmed" field.
+func (uuo *UserUpdateOne) ClearTotpSecretConfirmed() *UserUpdateOne {
+	uuo.mutation.ClearTotpSecretConfirmed()
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -1418,6 +1464,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.TotpSecretCleared() {
 		_spec.ClearField(user.FieldTotpSecret, field.TypeString)
+	}
+	if value, ok := uuo.mutation.TotpSecretConfirmed(); ok {
+		_spec.SetField(user.FieldTotpSecretConfirmed, field.TypeBool, value)
+	}
+	if uuo.mutation.TotpSecretConfirmedCleared() {
+		_spec.ClearField(user.FieldTotpSecretConfirmed, field.TypeBool)
 	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

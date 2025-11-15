@@ -752,6 +752,10 @@ func init() {
 	userDescTotpSecret := userFields[20].Descriptor()
 	// user.DefaultTotpSecret holds the default value on creation for the totp_secret field.
 	user.DefaultTotpSecret = userDescTotpSecret.Default.(string)
+	// userDescTotpSecretConfirmed is the schema descriptor for totp_secret_confirmed field.
+	userDescTotpSecretConfirmed := userFields[21].Descriptor()
+	// user.DefaultTotpSecretConfirmed holds the default value on creation for the totp_secret_confirmed field.
+	user.DefaultTotpSecretConfirmed = userDescTotpSecretConfirmed.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.
