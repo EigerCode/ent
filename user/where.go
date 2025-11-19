@@ -170,6 +170,16 @@ func TotpSecretConfirmed(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldTotpSecretConfirmed, v))
 }
 
+// ForgotPasswordCode applies equality check predicate on the "forgot_password_code" field. It's identical to ForgotPasswordCodeEQ.
+func ForgotPasswordCode(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeExpiresAt applies equality check predicate on the "forgot_password_code_expires_at" field. It's identical to ForgotPasswordCodeExpiresAtEQ.
+func ForgotPasswordCodeExpiresAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldForgotPasswordCodeExpiresAt, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
@@ -1338,6 +1348,131 @@ func TotpSecretConfirmedIsNil() predicate.User {
 // TotpSecretConfirmedNotNil applies the NotNil predicate on the "totp_secret_confirmed" field.
 func TotpSecretConfirmedNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldTotpSecretConfirmed))
+}
+
+// ForgotPasswordCodeEQ applies the EQ predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeNEQ applies the NEQ predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeIn applies the In predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldForgotPasswordCode, vs...))
+}
+
+// ForgotPasswordCodeNotIn applies the NotIn predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldForgotPasswordCode, vs...))
+}
+
+// ForgotPasswordCodeGT applies the GT predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeGTE applies the GTE predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeLT applies the LT predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeLTE applies the LTE predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeContains applies the Contains predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeHasPrefix applies the HasPrefix predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeHasSuffix applies the HasSuffix predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeIsNil applies the IsNil predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldForgotPasswordCode))
+}
+
+// ForgotPasswordCodeNotNil applies the NotNil predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldForgotPasswordCode))
+}
+
+// ForgotPasswordCodeEqualFold applies the EqualFold predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeContainsFold applies the ContainsFold predicate on the "forgot_password_code" field.
+func ForgotPasswordCodeContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldForgotPasswordCode, v))
+}
+
+// ForgotPasswordCodeExpiresAtEQ applies the EQ predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldForgotPasswordCodeExpiresAt, v))
+}
+
+// ForgotPasswordCodeExpiresAtNEQ applies the NEQ predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldForgotPasswordCodeExpiresAt, v))
+}
+
+// ForgotPasswordCodeExpiresAtIn applies the In predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldForgotPasswordCodeExpiresAt, vs...))
+}
+
+// ForgotPasswordCodeExpiresAtNotIn applies the NotIn predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldForgotPasswordCodeExpiresAt, vs...))
+}
+
+// ForgotPasswordCodeExpiresAtGT applies the GT predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldForgotPasswordCodeExpiresAt, v))
+}
+
+// ForgotPasswordCodeExpiresAtGTE applies the GTE predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldForgotPasswordCodeExpiresAt, v))
+}
+
+// ForgotPasswordCodeExpiresAtLT applies the LT predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldForgotPasswordCodeExpiresAt, v))
+}
+
+// ForgotPasswordCodeExpiresAtLTE applies the LTE predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldForgotPasswordCodeExpiresAt, v))
+}
+
+// ForgotPasswordCodeExpiresAtIsNil applies the IsNil predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldForgotPasswordCodeExpiresAt))
+}
+
+// ForgotPasswordCodeExpiresAtNotNil applies the NotNil predicate on the "forgot_password_code_expires_at" field.
+func ForgotPasswordCodeExpiresAtNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldForgotPasswordCodeExpiresAt))
 }
 
 // HasSessions applies the HasEdge predicate on the "sessions" edge.

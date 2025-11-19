@@ -59,6 +59,10 @@ type User struct {
 	TotpSecret string `json:"totp_secret,omitempty"`
 	// TotpSecretConfirmed holds the value of the "totp_secret_confirmed" field.
 	TotpSecretConfirmed bool `json:"totp_secret_confirmed,omitempty"`
+	// ForgotPasswordCode holds the value of the "forgot_password_code" field.
+	ForgotPasswordCode string `json:"forgot_password_code,omitempty"`
+	// ForgotPasswordCodeExpiresAt holds the value of the "forgot_password_code_expires_at" field.
+	ForgotPasswordCodeExpiresAt time.Time `json:"forgot_password_code_expires_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -103,9 +107,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldTokenExpiry:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash, user.FieldTotpSecret:
+		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash, user.FieldTotpSecret, user.FieldForgotPasswordCode:
 			values[i] = new(sql.NullString)
-		case user.FieldExpiry, user.FieldCreated, user.FieldModified:
+		case user.FieldExpiry, user.FieldCreated, user.FieldModified, user.FieldForgotPasswordCodeExpiresAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -254,6 +258,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.TotpSecretConfirmed = value.Bool
 			}
+		case user.FieldForgotPasswordCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field forgot_password_code", values[i])
+			} else if value.Valid {
+				u.ForgotPasswordCode = value.String
+			}
+		case user.FieldForgotPasswordCodeExpiresAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field forgot_password_code_expires_at", values[i])
+			} else if value.Valid {
+				u.ForgotPasswordCodeExpiresAt = value.Time
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -362,6 +378,12 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("totp_secret_confirmed=")
 	builder.WriteString(fmt.Sprintf("%v", u.TotpSecretConfirmed))
+	builder.WriteString(", ")
+	builder.WriteString("forgot_password_code=")
+	builder.WriteString(u.ForgotPasswordCode)
+	builder.WriteString(", ")
+	builder.WriteString("forgot_password_code_expires_at=")
+	builder.WriteString(u.ForgotPasswordCodeExpiresAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

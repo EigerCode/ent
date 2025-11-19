@@ -35336,41 +35336,43 @@ func (m *UpdateMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                    Op
-	typ                   string
-	id                    *string
-	name                  *string
-	email                 *string
-	phone                 *string
-	country               *string
-	email_verified        *bool
-	register              *string
-	cert_clear_password   *string
-	expiry                *time.Time
-	openid                *bool
-	passwd                *bool
-	use2fa                *bool
-	created               *time.Time
-	modified              *time.Time
-	access_token          *string
-	refresh_token         *string
-	id_token              *string
-	token_type            *string
-	token_expiry          *int
-	addtoken_expiry       *int
-	hash                  *string
-	totp_secret           *string
-	totp_secret_confirmed *bool
-	clearedFields         map[string]struct{}
-	sessions              map[string]struct{}
-	removedsessions       map[string]struct{}
-	clearedsessions       bool
-	recoverycodes         map[int]struct{}
-	removedrecoverycodes  map[int]struct{}
-	clearedrecoverycodes  bool
-	done                  bool
-	oldValue              func(context.Context) (*User, error)
-	predicates            []predicate.User
+	op                              Op
+	typ                             string
+	id                              *string
+	name                            *string
+	email                           *string
+	phone                           *string
+	country                         *string
+	email_verified                  *bool
+	register                        *string
+	cert_clear_password             *string
+	expiry                          *time.Time
+	openid                          *bool
+	passwd                          *bool
+	use2fa                          *bool
+	created                         *time.Time
+	modified                        *time.Time
+	access_token                    *string
+	refresh_token                   *string
+	id_token                        *string
+	token_type                      *string
+	token_expiry                    *int
+	addtoken_expiry                 *int
+	hash                            *string
+	totp_secret                     *string
+	totp_secret_confirmed           *bool
+	forgot_password_code            *string
+	forgot_password_code_expires_at *time.Time
+	clearedFields                   map[string]struct{}
+	sessions                        map[string]struct{}
+	removedsessions                 map[string]struct{}
+	clearedsessions                 bool
+	recoverycodes                   map[int]struct{}
+	removedrecoverycodes            map[int]struct{}
+	clearedrecoverycodes            bool
+	done                            bool
+	oldValue                        func(context.Context) (*User, error)
+	predicates                      []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -36488,6 +36490,104 @@ func (m *UserMutation) ResetTotpSecretConfirmed() {
 	delete(m.clearedFields, user.FieldTotpSecretConfirmed)
 }
 
+// SetForgotPasswordCode sets the "forgot_password_code" field.
+func (m *UserMutation) SetForgotPasswordCode(s string) {
+	m.forgot_password_code = &s
+}
+
+// ForgotPasswordCode returns the value of the "forgot_password_code" field in the mutation.
+func (m *UserMutation) ForgotPasswordCode() (r string, exists bool) {
+	v := m.forgot_password_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldForgotPasswordCode returns the old "forgot_password_code" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldForgotPasswordCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldForgotPasswordCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldForgotPasswordCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldForgotPasswordCode: %w", err)
+	}
+	return oldValue.ForgotPasswordCode, nil
+}
+
+// ClearForgotPasswordCode clears the value of the "forgot_password_code" field.
+func (m *UserMutation) ClearForgotPasswordCode() {
+	m.forgot_password_code = nil
+	m.clearedFields[user.FieldForgotPasswordCode] = struct{}{}
+}
+
+// ForgotPasswordCodeCleared returns if the "forgot_password_code" field was cleared in this mutation.
+func (m *UserMutation) ForgotPasswordCodeCleared() bool {
+	_, ok := m.clearedFields[user.FieldForgotPasswordCode]
+	return ok
+}
+
+// ResetForgotPasswordCode resets all changes to the "forgot_password_code" field.
+func (m *UserMutation) ResetForgotPasswordCode() {
+	m.forgot_password_code = nil
+	delete(m.clearedFields, user.FieldForgotPasswordCode)
+}
+
+// SetForgotPasswordCodeExpiresAt sets the "forgot_password_code_expires_at" field.
+func (m *UserMutation) SetForgotPasswordCodeExpiresAt(t time.Time) {
+	m.forgot_password_code_expires_at = &t
+}
+
+// ForgotPasswordCodeExpiresAt returns the value of the "forgot_password_code_expires_at" field in the mutation.
+func (m *UserMutation) ForgotPasswordCodeExpiresAt() (r time.Time, exists bool) {
+	v := m.forgot_password_code_expires_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldForgotPasswordCodeExpiresAt returns the old "forgot_password_code_expires_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldForgotPasswordCodeExpiresAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldForgotPasswordCodeExpiresAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldForgotPasswordCodeExpiresAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldForgotPasswordCodeExpiresAt: %w", err)
+	}
+	return oldValue.ForgotPasswordCodeExpiresAt, nil
+}
+
+// ClearForgotPasswordCodeExpiresAt clears the value of the "forgot_password_code_expires_at" field.
+func (m *UserMutation) ClearForgotPasswordCodeExpiresAt() {
+	m.forgot_password_code_expires_at = nil
+	m.clearedFields[user.FieldForgotPasswordCodeExpiresAt] = struct{}{}
+}
+
+// ForgotPasswordCodeExpiresAtCleared returns if the "forgot_password_code_expires_at" field was cleared in this mutation.
+func (m *UserMutation) ForgotPasswordCodeExpiresAtCleared() bool {
+	_, ok := m.clearedFields[user.FieldForgotPasswordCodeExpiresAt]
+	return ok
+}
+
+// ResetForgotPasswordCodeExpiresAt resets all changes to the "forgot_password_code_expires_at" field.
+func (m *UserMutation) ResetForgotPasswordCodeExpiresAt() {
+	m.forgot_password_code_expires_at = nil
+	delete(m.clearedFields, user.FieldForgotPasswordCodeExpiresAt)
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by ids.
 func (m *UserMutation) AddSessionIDs(ids ...string) {
 	if m.sessions == nil {
@@ -36630,7 +36730,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 23)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -36694,6 +36794,12 @@ func (m *UserMutation) Fields() []string {
 	if m.totp_secret_confirmed != nil {
 		fields = append(fields, user.FieldTotpSecretConfirmed)
 	}
+	if m.forgot_password_code != nil {
+		fields = append(fields, user.FieldForgotPasswordCode)
+	}
+	if m.forgot_password_code_expires_at != nil {
+		fields = append(fields, user.FieldForgotPasswordCodeExpiresAt)
+	}
 	return fields
 }
 
@@ -36744,6 +36850,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.TotpSecret()
 	case user.FieldTotpSecretConfirmed:
 		return m.TotpSecretConfirmed()
+	case user.FieldForgotPasswordCode:
+		return m.ForgotPasswordCode()
+	case user.FieldForgotPasswordCodeExpiresAt:
+		return m.ForgotPasswordCodeExpiresAt()
 	}
 	return nil, false
 }
@@ -36795,6 +36905,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTotpSecret(ctx)
 	case user.FieldTotpSecretConfirmed:
 		return m.OldTotpSecretConfirmed(ctx)
+	case user.FieldForgotPasswordCode:
+		return m.OldForgotPasswordCode(ctx)
+	case user.FieldForgotPasswordCodeExpiresAt:
+		return m.OldForgotPasswordCodeExpiresAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -36951,6 +37065,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTotpSecretConfirmed(v)
 		return nil
+	case user.FieldForgotPasswordCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetForgotPasswordCode(v)
+		return nil
+	case user.FieldForgotPasswordCodeExpiresAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetForgotPasswordCodeExpiresAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -37050,6 +37178,12 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldTotpSecretConfirmed) {
 		fields = append(fields, user.FieldTotpSecretConfirmed)
 	}
+	if m.FieldCleared(user.FieldForgotPasswordCode) {
+		fields = append(fields, user.FieldForgotPasswordCode)
+	}
+	if m.FieldCleared(user.FieldForgotPasswordCodeExpiresAt) {
+		fields = append(fields, user.FieldForgotPasswordCodeExpiresAt)
+	}
 	return fields
 }
 
@@ -37117,6 +37251,12 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldTotpSecretConfirmed:
 		m.ClearTotpSecretConfirmed()
+		return nil
+	case user.FieldForgotPasswordCode:
+		m.ClearForgotPasswordCode()
+		return nil
+	case user.FieldForgotPasswordCodeExpiresAt:
+		m.ClearForgotPasswordCodeExpiresAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -37188,6 +37328,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldTotpSecretConfirmed:
 		m.ResetTotpSecretConfirmed()
+		return nil
+	case user.FieldForgotPasswordCode:
+		m.ResetForgotPasswordCode()
+		return nil
+	case user.FieldForgotPasswordCodeExpiresAt:
+		m.ResetForgotPasswordCodeExpiresAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

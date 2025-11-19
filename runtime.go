@@ -684,6 +684,14 @@ func init() {
 	userDescTotpSecretConfirmed := userFields[21].Descriptor()
 	// user.DefaultTotpSecretConfirmed holds the default value on creation for the totp_secret_confirmed field.
 	user.DefaultTotpSecretConfirmed = userDescTotpSecretConfirmed.Default.(bool)
+	// userDescForgotPasswordCode is the schema descriptor for forgot_password_code field.
+	userDescForgotPasswordCode := userFields[22].Descriptor()
+	// user.DefaultForgotPasswordCode holds the default value on creation for the forgot_password_code field.
+	user.DefaultForgotPasswordCode = userDescForgotPasswordCode.Default.(string)
+	// userDescForgotPasswordCodeExpiresAt is the schema descriptor for forgot_password_code_expires_at field.
+	userDescForgotPasswordCodeExpiresAt := userFields[23].Descriptor()
+	// user.DefaultForgotPasswordCodeExpiresAt holds the default value on creation for the forgot_password_code_expires_at field.
+	user.DefaultForgotPasswordCodeExpiresAt = userDescForgotPasswordCodeExpiresAt.Default.(func() time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.

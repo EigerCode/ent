@@ -40,6 +40,8 @@ func (User) Fields() []ent.Field {
 		field.String("hash").Optional().Default(""),
 		field.String("totp_secret").Optional().Default(""),
 		field.Bool("totp_secret_confirmed").Optional().Default(false),
+		field.String("forgot_password_code").Optional().Default(""),
+		field.Time("forgot_password_code_expires_at").Optional().Default(time.Now),
 	}
 }
 

@@ -432,6 +432,46 @@ func (uu *UserUpdate) ClearTotpSecretConfirmed() *UserUpdate {
 	return uu
 }
 
+// SetForgotPasswordCode sets the "forgot_password_code" field.
+func (uu *UserUpdate) SetForgotPasswordCode(s string) *UserUpdate {
+	uu.mutation.SetForgotPasswordCode(s)
+	return uu
+}
+
+// SetNillableForgotPasswordCode sets the "forgot_password_code" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableForgotPasswordCode(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetForgotPasswordCode(*s)
+	}
+	return uu
+}
+
+// ClearForgotPasswordCode clears the value of the "forgot_password_code" field.
+func (uu *UserUpdate) ClearForgotPasswordCode() *UserUpdate {
+	uu.mutation.ClearForgotPasswordCode()
+	return uu
+}
+
+// SetForgotPasswordCodeExpiresAt sets the "forgot_password_code_expires_at" field.
+func (uu *UserUpdate) SetForgotPasswordCodeExpiresAt(t time.Time) *UserUpdate {
+	uu.mutation.SetForgotPasswordCodeExpiresAt(t)
+	return uu
+}
+
+// SetNillableForgotPasswordCodeExpiresAt sets the "forgot_password_code_expires_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableForgotPasswordCodeExpiresAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetForgotPasswordCodeExpiresAt(*t)
+	}
+	return uu
+}
+
+// ClearForgotPasswordCodeExpiresAt clears the value of the "forgot_password_code_expires_at" field.
+func (uu *UserUpdate) ClearForgotPasswordCodeExpiresAt() *UserUpdate {
+	uu.mutation.ClearForgotPasswordCodeExpiresAt()
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -679,6 +719,18 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.TotpSecretConfirmedCleared() {
 		_spec.ClearField(user.FieldTotpSecretConfirmed, field.TypeBool)
+	}
+	if value, ok := uu.mutation.ForgotPasswordCode(); ok {
+		_spec.SetField(user.FieldForgotPasswordCode, field.TypeString, value)
+	}
+	if uu.mutation.ForgotPasswordCodeCleared() {
+		_spec.ClearField(user.FieldForgotPasswordCode, field.TypeString)
+	}
+	if value, ok := uu.mutation.ForgotPasswordCodeExpiresAt(); ok {
+		_spec.SetField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime, value)
+	}
+	if uu.mutation.ForgotPasswordCodeExpiresAtCleared() {
+		_spec.ClearField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime)
 	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1193,6 +1245,46 @@ func (uuo *UserUpdateOne) ClearTotpSecretConfirmed() *UserUpdateOne {
 	return uuo
 }
 
+// SetForgotPasswordCode sets the "forgot_password_code" field.
+func (uuo *UserUpdateOne) SetForgotPasswordCode(s string) *UserUpdateOne {
+	uuo.mutation.SetForgotPasswordCode(s)
+	return uuo
+}
+
+// SetNillableForgotPasswordCode sets the "forgot_password_code" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableForgotPasswordCode(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetForgotPasswordCode(*s)
+	}
+	return uuo
+}
+
+// ClearForgotPasswordCode clears the value of the "forgot_password_code" field.
+func (uuo *UserUpdateOne) ClearForgotPasswordCode() *UserUpdateOne {
+	uuo.mutation.ClearForgotPasswordCode()
+	return uuo
+}
+
+// SetForgotPasswordCodeExpiresAt sets the "forgot_password_code_expires_at" field.
+func (uuo *UserUpdateOne) SetForgotPasswordCodeExpiresAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetForgotPasswordCodeExpiresAt(t)
+	return uuo
+}
+
+// SetNillableForgotPasswordCodeExpiresAt sets the "forgot_password_code_expires_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableForgotPasswordCodeExpiresAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetForgotPasswordCodeExpiresAt(*t)
+	}
+	return uuo
+}
+
+// ClearForgotPasswordCodeExpiresAt clears the value of the "forgot_password_code_expires_at" field.
+func (uuo *UserUpdateOne) ClearForgotPasswordCodeExpiresAt() *UserUpdateOne {
+	uuo.mutation.ClearForgotPasswordCodeExpiresAt()
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -1470,6 +1562,18 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.TotpSecretConfirmedCleared() {
 		_spec.ClearField(user.FieldTotpSecretConfirmed, field.TypeBool)
+	}
+	if value, ok := uuo.mutation.ForgotPasswordCode(); ok {
+		_spec.SetField(user.FieldForgotPasswordCode, field.TypeString, value)
+	}
+	if uuo.mutation.ForgotPasswordCodeCleared() {
+		_spec.ClearField(user.FieldForgotPasswordCode, field.TypeString)
+	}
+	if value, ok := uuo.mutation.ForgotPasswordCodeExpiresAt(); ok {
+		_spec.SetField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime, value)
+	}
+	if uuo.mutation.ForgotPasswordCodeExpiresAtCleared() {
+		_spec.ClearField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime)
 	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

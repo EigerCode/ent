@@ -56,6 +56,10 @@ const (
 	FieldTotpSecret = "totp_secret"
 	// FieldTotpSecretConfirmed holds the string denoting the totp_secret_confirmed field in the database.
 	FieldTotpSecretConfirmed = "totp_secret_confirmed"
+	// FieldForgotPasswordCode holds the string denoting the forgot_password_code field in the database.
+	FieldForgotPasswordCode = "forgot_password_code"
+	// FieldForgotPasswordCodeExpiresAt holds the string denoting the forgot_password_code_expires_at field in the database.
+	FieldForgotPasswordCodeExpiresAt = "forgot_password_code_expires_at"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// EdgeRecoverycodes holds the string denoting the recoverycodes edge name in mutations.
@@ -106,6 +110,8 @@ var Columns = []string{
 	FieldHash,
 	FieldTotpSecret,
 	FieldTotpSecretConfirmed,
+	FieldForgotPasswordCode,
+	FieldForgotPasswordCodeExpiresAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -151,6 +157,10 @@ var (
 	DefaultTotpSecret string
 	// DefaultTotpSecretConfirmed holds the default value on creation for the "totp_secret_confirmed" field.
 	DefaultTotpSecretConfirmed bool
+	// DefaultForgotPasswordCode holds the default value on creation for the "forgot_password_code" field.
+	DefaultForgotPasswordCode string
+	// DefaultForgotPasswordCodeExpiresAt holds the default value on creation for the "forgot_password_code_expires_at" field.
+	DefaultForgotPasswordCodeExpiresAt func() time.Time
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(string) error
 )
@@ -266,6 +276,16 @@ func ByTotpSecret(opts ...sql.OrderTermOption) OrderOption {
 // ByTotpSecretConfirmed orders the results by the totp_secret_confirmed field.
 func ByTotpSecretConfirmed(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTotpSecretConfirmed, opts...).ToFunc()
+}
+
+// ByForgotPasswordCode orders the results by the forgot_password_code field.
+func ByForgotPasswordCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldForgotPasswordCode, opts...).ToFunc()
+}
+
+// ByForgotPasswordCodeExpiresAt orders the results by the forgot_password_code_expires_at field.
+func ByForgotPasswordCodeExpiresAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldForgotPasswordCodeExpiresAt, opts...).ToFunc()
 }
 
 // BySessionsCount orders the results by sessions count.
