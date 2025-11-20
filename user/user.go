@@ -60,6 +60,8 @@ const (
 	FieldForgotPasswordCode = "forgot_password_code"
 	// FieldForgotPasswordCodeExpiresAt holds the string denoting the forgot_password_code_expires_at field in the database.
 	FieldForgotPasswordCodeExpiresAt = "forgot_password_code_expires_at"
+	// FieldNewUserToken holds the string denoting the new_user_token field in the database.
+	FieldNewUserToken = "new_user_token"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// EdgeRecoverycodes holds the string denoting the recoverycodes edge name in mutations.
@@ -112,6 +114,7 @@ var Columns = []string{
 	FieldTotpSecretConfirmed,
 	FieldForgotPasswordCode,
 	FieldForgotPasswordCodeExpiresAt,
+	FieldNewUserToken,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -286,6 +289,11 @@ func ByForgotPasswordCode(opts ...sql.OrderTermOption) OrderOption {
 // ByForgotPasswordCodeExpiresAt orders the results by the forgot_password_code_expires_at field.
 func ByForgotPasswordCodeExpiresAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldForgotPasswordCodeExpiresAt, opts...).ToFunc()
+}
+
+// ByNewUserToken orders the results by the new_user_token field.
+func ByNewUserToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNewUserToken, opts...).ToFunc()
 }
 
 // BySessionsCount orders the results by sessions count.

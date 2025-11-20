@@ -42,6 +42,7 @@ func (User) Fields() []ent.Field {
 		field.Bool("totp_secret_confirmed").Optional().Default(false),
 		field.String("forgot_password_code").Optional().Default(""),
 		field.Time("forgot_password_code_expires_at").Optional().Default(time.Now),
+		field.String("new_user_token").Optional(),
 	}
 }
 

@@ -952,6 +952,7 @@ var (
 		{Name: "totp_secret_confirmed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "forgot_password_code", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "forgot_password_code_expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "new_user_token", Type: field.TypeString, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

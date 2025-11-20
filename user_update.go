@@ -472,6 +472,26 @@ func (uu *UserUpdate) ClearForgotPasswordCodeExpiresAt() *UserUpdate {
 	return uu
 }
 
+// SetNewUserToken sets the "new_user_token" field.
+func (uu *UserUpdate) SetNewUserToken(s string) *UserUpdate {
+	uu.mutation.SetNewUserToken(s)
+	return uu
+}
+
+// SetNillableNewUserToken sets the "new_user_token" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableNewUserToken(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetNewUserToken(*s)
+	}
+	return uu
+}
+
+// ClearNewUserToken clears the value of the "new_user_token" field.
+func (uu *UserUpdate) ClearNewUserToken() *UserUpdate {
+	uu.mutation.ClearNewUserToken()
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -731,6 +751,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.ForgotPasswordCodeExpiresAtCleared() {
 		_spec.ClearField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime)
+	}
+	if value, ok := uu.mutation.NewUserToken(); ok {
+		_spec.SetField(user.FieldNewUserToken, field.TypeString, value)
+	}
+	if uu.mutation.NewUserTokenCleared() {
+		_spec.ClearField(user.FieldNewUserToken, field.TypeString)
 	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1285,6 +1311,26 @@ func (uuo *UserUpdateOne) ClearForgotPasswordCodeExpiresAt() *UserUpdateOne {
 	return uuo
 }
 
+// SetNewUserToken sets the "new_user_token" field.
+func (uuo *UserUpdateOne) SetNewUserToken(s string) *UserUpdateOne {
+	uuo.mutation.SetNewUserToken(s)
+	return uuo
+}
+
+// SetNillableNewUserToken sets the "new_user_token" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableNewUserToken(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetNewUserToken(*s)
+	}
+	return uuo
+}
+
+// ClearNewUserToken clears the value of the "new_user_token" field.
+func (uuo *UserUpdateOne) ClearNewUserToken() *UserUpdateOne {
+	uuo.mutation.ClearNewUserToken()
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -1574,6 +1620,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.ForgotPasswordCodeExpiresAtCleared() {
 		_spec.ClearField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.NewUserToken(); ok {
+		_spec.SetField(user.FieldNewUserToken, field.TypeString, value)
+	}
+	if uuo.mutation.NewUserTokenCleared() {
+		_spec.ClearField(user.FieldNewUserToken, field.TypeString)
 	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

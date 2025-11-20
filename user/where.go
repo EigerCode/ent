@@ -180,6 +180,11 @@ func ForgotPasswordCodeExpiresAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldForgotPasswordCodeExpiresAt, v))
 }
 
+// NewUserToken applies equality check predicate on the "new_user_token" field. It's identical to NewUserTokenEQ.
+func NewUserToken(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldNewUserToken, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
@@ -1473,6 +1478,81 @@ func ForgotPasswordCodeExpiresAtIsNil() predicate.User {
 // ForgotPasswordCodeExpiresAtNotNil applies the NotNil predicate on the "forgot_password_code_expires_at" field.
 func ForgotPasswordCodeExpiresAtNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldForgotPasswordCodeExpiresAt))
+}
+
+// NewUserTokenEQ applies the EQ predicate on the "new_user_token" field.
+func NewUserTokenEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldNewUserToken, v))
+}
+
+// NewUserTokenNEQ applies the NEQ predicate on the "new_user_token" field.
+func NewUserTokenNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldNewUserToken, v))
+}
+
+// NewUserTokenIn applies the In predicate on the "new_user_token" field.
+func NewUserTokenIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldNewUserToken, vs...))
+}
+
+// NewUserTokenNotIn applies the NotIn predicate on the "new_user_token" field.
+func NewUserTokenNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldNewUserToken, vs...))
+}
+
+// NewUserTokenGT applies the GT predicate on the "new_user_token" field.
+func NewUserTokenGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldNewUserToken, v))
+}
+
+// NewUserTokenGTE applies the GTE predicate on the "new_user_token" field.
+func NewUserTokenGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldNewUserToken, v))
+}
+
+// NewUserTokenLT applies the LT predicate on the "new_user_token" field.
+func NewUserTokenLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldNewUserToken, v))
+}
+
+// NewUserTokenLTE applies the LTE predicate on the "new_user_token" field.
+func NewUserTokenLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldNewUserToken, v))
+}
+
+// NewUserTokenContains applies the Contains predicate on the "new_user_token" field.
+func NewUserTokenContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldNewUserToken, v))
+}
+
+// NewUserTokenHasPrefix applies the HasPrefix predicate on the "new_user_token" field.
+func NewUserTokenHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldNewUserToken, v))
+}
+
+// NewUserTokenHasSuffix applies the HasSuffix predicate on the "new_user_token" field.
+func NewUserTokenHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldNewUserToken, v))
+}
+
+// NewUserTokenIsNil applies the IsNil predicate on the "new_user_token" field.
+func NewUserTokenIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldNewUserToken))
+}
+
+// NewUserTokenNotNil applies the NotNil predicate on the "new_user_token" field.
+func NewUserTokenNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldNewUserToken))
+}
+
+// NewUserTokenEqualFold applies the EqualFold predicate on the "new_user_token" field.
+func NewUserTokenEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldNewUserToken, v))
+}
+
+// NewUserTokenContainsFold applies the ContainsFold predicate on the "new_user_token" field.
+func NewUserTokenContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldNewUserToken, v))
 }
 
 // HasSessions applies the HasEdge predicate on the "sessions" edge.

@@ -63,6 +63,8 @@ type User struct {
 	ForgotPasswordCode string `json:"forgot_password_code,omitempty"`
 	// ForgotPasswordCodeExpiresAt holds the value of the "forgot_password_code_expires_at" field.
 	ForgotPasswordCodeExpiresAt time.Time `json:"forgot_password_code_expires_at,omitempty"`
+	// NewUserToken holds the value of the "new_user_token" field.
+	NewUserToken string `json:"new_user_token,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -107,7 +109,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldTokenExpiry:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash, user.FieldTotpSecret, user.FieldForgotPasswordCode:
+		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash, user.FieldTotpSecret, user.FieldForgotPasswordCode, user.FieldNewUserToken:
 			values[i] = new(sql.NullString)
 		case user.FieldExpiry, user.FieldCreated, user.FieldModified, user.FieldForgotPasswordCodeExpiresAt:
 			values[i] = new(sql.NullTime)
@@ -270,6 +272,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.ForgotPasswordCodeExpiresAt = value.Time
 			}
+		case user.FieldNewUserToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field new_user_token", values[i])
+			} else if value.Valid {
+				u.NewUserToken = value.String
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -384,6 +392,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("forgot_password_code_expires_at=")
 	builder.WriteString(u.ForgotPasswordCodeExpiresAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("new_user_token=")
+	builder.WriteString(u.NewUserToken)
 	builder.WriteByte(')')
 	return builder.String()
 }

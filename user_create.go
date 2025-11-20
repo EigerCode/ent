@@ -339,6 +339,20 @@ func (uc *UserCreate) SetNillableForgotPasswordCodeExpiresAt(t *time.Time) *User
 	return uc
 }
 
+// SetNewUserToken sets the "new_user_token" field.
+func (uc *UserCreate) SetNewUserToken(s string) *UserCreate {
+	uc.mutation.SetNewUserToken(s)
+	return uc
+}
+
+// SetNillableNewUserToken sets the "new_user_token" field if the given value is not nil.
+func (uc *UserCreate) SetNillableNewUserToken(s *string) *UserCreate {
+	if s != nil {
+		uc.SetNewUserToken(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -623,6 +637,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.ForgotPasswordCodeExpiresAt(); ok {
 		_spec.SetField(user.FieldForgotPasswordCodeExpiresAt, field.TypeTime, value)
 		_node.ForgotPasswordCodeExpiresAt = value
+	}
+	if value, ok := uc.mutation.NewUserToken(); ok {
+		_spec.SetField(user.FieldNewUserToken, field.TypeString, value)
+		_node.NewUserToken = value
 	}
 	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1107,6 +1125,24 @@ func (u *UserUpsert) UpdateForgotPasswordCodeExpiresAt() *UserUpsert {
 // ClearForgotPasswordCodeExpiresAt clears the value of the "forgot_password_code_expires_at" field.
 func (u *UserUpsert) ClearForgotPasswordCodeExpiresAt() *UserUpsert {
 	u.SetNull(user.FieldForgotPasswordCodeExpiresAt)
+	return u
+}
+
+// SetNewUserToken sets the "new_user_token" field.
+func (u *UserUpsert) SetNewUserToken(v string) *UserUpsert {
+	u.Set(user.FieldNewUserToken, v)
+	return u
+}
+
+// UpdateNewUserToken sets the "new_user_token" field to the value that was provided on create.
+func (u *UserUpsert) UpdateNewUserToken() *UserUpsert {
+	u.SetExcluded(user.FieldNewUserToken)
+	return u
+}
+
+// ClearNewUserToken clears the value of the "new_user_token" field.
+func (u *UserUpsert) ClearNewUserToken() *UserUpsert {
+	u.SetNull(user.FieldNewUserToken)
 	return u
 }
 
@@ -1624,6 +1660,27 @@ func (u *UserUpsertOne) UpdateForgotPasswordCodeExpiresAt() *UserUpsertOne {
 func (u *UserUpsertOne) ClearForgotPasswordCodeExpiresAt() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearForgotPasswordCodeExpiresAt()
+	})
+}
+
+// SetNewUserToken sets the "new_user_token" field.
+func (u *UserUpsertOne) SetNewUserToken(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetNewUserToken(v)
+	})
+}
+
+// UpdateNewUserToken sets the "new_user_token" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateNewUserToken() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateNewUserToken()
+	})
+}
+
+// ClearNewUserToken clears the value of the "new_user_token" field.
+func (u *UserUpsertOne) ClearNewUserToken() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearNewUserToken()
 	})
 }
 
@@ -2308,6 +2365,27 @@ func (u *UserUpsertBulk) UpdateForgotPasswordCodeExpiresAt() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearForgotPasswordCodeExpiresAt() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearForgotPasswordCodeExpiresAt()
+	})
+}
+
+// SetNewUserToken sets the "new_user_token" field.
+func (u *UserUpsertBulk) SetNewUserToken(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetNewUserToken(v)
+	})
+}
+
+// UpdateNewUserToken sets the "new_user_token" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateNewUserToken() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateNewUserToken()
+	})
+}
+
+// ClearNewUserToken clears the value of the "new_user_token" field.
+func (u *UserUpsertBulk) ClearNewUserToken() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearNewUserToken()
 	})
 }
 
