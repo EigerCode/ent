@@ -20,7 +20,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").NotEmpty().Unique().StorageKey("uid"),
 		field.String("name"),
-		field.String("email").Optional(),
+		field.String("email").Unique(),
 		field.String("phone").Optional(),
 		field.String("country").Optional(),
 		field.Bool("email_verified").Default(false),

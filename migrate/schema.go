@@ -930,7 +930,7 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "uid", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "phone", Type: field.TypeString, Nullable: true},
 		{Name: "country", Type: field.TypeString, Nullable: true},
 		{Name: "email_verified", Type: field.TypeBool, Default: false},
