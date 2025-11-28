@@ -40,6 +40,8 @@ type NetworkAdapter struct {
 	DhcpLeaseExpired time.Time `json:"dhcp_lease_expired,omitempty"`
 	// Speed holds the value of the "speed" field.
 	Speed string `json:"speed,omitempty"`
+	// Virtual holds the value of the "virtual" field.
+	Virtual bool `json:"virtual,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the NetworkAdapterQuery when eager-loading is set.
 	Edges                 NetworkAdapterEdges `json:"edges"`
@@ -72,7 +74,7 @@ func (*NetworkAdapter) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case networkadapter.FieldDhcpEnabled:
+		case networkadapter.FieldDhcpEnabled, networkadapter.FieldVirtual:
 			values[i] = new(sql.NullBool)
 		case networkadapter.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -169,6 +171,12 @@ func (na *NetworkAdapter) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				na.Speed = value.String
 			}
+		case networkadapter.FieldVirtual:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field virtual", values[i])
+			} else if value.Valid {
+				na.Virtual = value.Bool
+			}
 		case networkadapter.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field agent_networkadapters", values[i])
@@ -249,6 +257,9 @@ func (na *NetworkAdapter) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("speed=")
 	builder.WriteString(na.Speed)
+	builder.WriteString(", ")
+	builder.WriteString("virtual=")
+	builder.WriteString(fmt.Sprintf("%v", na.Virtual))
 	builder.WriteByte(')')
 	return builder.String()
 }

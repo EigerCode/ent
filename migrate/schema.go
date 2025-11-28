@@ -320,6 +320,7 @@ var (
 		{Name: "dhcp_lease_obtained", Type: field.TypeTime, Nullable: true},
 		{Name: "dhcp_lease_expired", Type: field.TypeTime, Nullable: true},
 		{Name: "speed", Type: field.TypeString},
+		{Name: "virtual", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "agent_networkadapters", Type: field.TypeString},
 	}
 	// NetworkAdaptersTable holds the schema information for the "network_adapters" table.
@@ -330,7 +331,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "network_adapters_agents_networkadapters",
-				Columns:    []*schema.Column{NetworkAdaptersColumns[12]},
+				Columns:    []*schema.Column{NetworkAdaptersColumns[13]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -347,6 +348,7 @@ var (
 		{Name: "arch", Type: field.TypeString, Nullable: true},
 		{Name: "username", Type: field.TypeString},
 		{Name: "last_bootup_time", Type: field.TypeTime, Nullable: true},
+		{Name: "domain", Type: field.TypeString, Nullable: true},
 		{Name: "agent_operatingsystem", Type: field.TypeString, Unique: true},
 	}
 	// OperatingSystemsTable holds the schema information for the "operating_systems" table.
@@ -357,7 +359,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "operating_systems_agents_operatingsystem",
-				Columns:    []*schema.Column{OperatingSystemsColumns[9]},
+				Columns:    []*schema.Column{OperatingSystemsColumns[10]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

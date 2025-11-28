@@ -11365,6 +11365,7 @@ type NetworkAdapterMutation struct {
 	dhcp_lease_obtained *time.Time
 	dhcp_lease_expired  *time.Time
 	speed               *string
+	virtual             *bool
 	clearedFields       map[string]struct{}
 	owner               *string
 	clearedowner        bool
@@ -11958,6 +11959,55 @@ func (m *NetworkAdapterMutation) ResetSpeed() {
 	m.speed = nil
 }
 
+// SetVirtual sets the "virtual" field.
+func (m *NetworkAdapterMutation) SetVirtual(b bool) {
+	m.virtual = &b
+}
+
+// Virtual returns the value of the "virtual" field in the mutation.
+func (m *NetworkAdapterMutation) Virtual() (r bool, exists bool) {
+	v := m.virtual
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVirtual returns the old "virtual" field's value of the NetworkAdapter entity.
+// If the NetworkAdapter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetworkAdapterMutation) OldVirtual(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVirtual is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVirtual requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVirtual: %w", err)
+	}
+	return oldValue.Virtual, nil
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (m *NetworkAdapterMutation) ClearVirtual() {
+	m.virtual = nil
+	m.clearedFields[networkadapter.FieldVirtual] = struct{}{}
+}
+
+// VirtualCleared returns if the "virtual" field was cleared in this mutation.
+func (m *NetworkAdapterMutation) VirtualCleared() bool {
+	_, ok := m.clearedFields[networkadapter.FieldVirtual]
+	return ok
+}
+
+// ResetVirtual resets all changes to the "virtual" field.
+func (m *NetworkAdapterMutation) ResetVirtual() {
+	m.virtual = nil
+	delete(m.clearedFields, networkadapter.FieldVirtual)
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by id.
 func (m *NetworkAdapterMutation) SetOwnerID(id string) {
 	m.owner = &id
@@ -12031,7 +12081,7 @@ func (m *NetworkAdapterMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NetworkAdapterMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.name != nil {
 		fields = append(fields, networkadapter.FieldName)
 	}
@@ -12065,6 +12115,9 @@ func (m *NetworkAdapterMutation) Fields() []string {
 	if m.speed != nil {
 		fields = append(fields, networkadapter.FieldSpeed)
 	}
+	if m.virtual != nil {
+		fields = append(fields, networkadapter.FieldVirtual)
+	}
 	return fields
 }
 
@@ -12095,6 +12148,8 @@ func (m *NetworkAdapterMutation) Field(name string) (ent.Value, bool) {
 		return m.DhcpLeaseExpired()
 	case networkadapter.FieldSpeed:
 		return m.Speed()
+	case networkadapter.FieldVirtual:
+		return m.Virtual()
 	}
 	return nil, false
 }
@@ -12126,6 +12181,8 @@ func (m *NetworkAdapterMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldDhcpLeaseExpired(ctx)
 	case networkadapter.FieldSpeed:
 		return m.OldSpeed(ctx)
+	case networkadapter.FieldVirtual:
+		return m.OldVirtual(ctx)
 	}
 	return nil, fmt.Errorf("unknown NetworkAdapter field %s", name)
 }
@@ -12212,6 +12269,13 @@ func (m *NetworkAdapterMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSpeed(v)
 		return nil
+	case networkadapter.FieldVirtual:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVirtual(v)
+		return nil
 	}
 	return fmt.Errorf("unknown NetworkAdapter field %s", name)
 }
@@ -12263,6 +12327,9 @@ func (m *NetworkAdapterMutation) ClearedFields() []string {
 	if m.FieldCleared(networkadapter.FieldDhcpLeaseExpired) {
 		fields = append(fields, networkadapter.FieldDhcpLeaseExpired)
 	}
+	if m.FieldCleared(networkadapter.FieldVirtual) {
+		fields = append(fields, networkadapter.FieldVirtual)
+	}
 	return fields
 }
 
@@ -12297,6 +12364,9 @@ func (m *NetworkAdapterMutation) ClearField(name string) error {
 		return nil
 	case networkadapter.FieldDhcpLeaseExpired:
 		m.ClearDhcpLeaseExpired()
+		return nil
+	case networkadapter.FieldVirtual:
+		m.ClearVirtual()
 		return nil
 	}
 	return fmt.Errorf("unknown NetworkAdapter nullable field %s", name)
@@ -12338,6 +12408,9 @@ func (m *NetworkAdapterMutation) ResetField(name string) error {
 		return nil
 	case networkadapter.FieldSpeed:
 		m.ResetSpeed()
+		return nil
+	case networkadapter.FieldVirtual:
+		m.ResetVirtual()
 		return nil
 	}
 	return fmt.Errorf("unknown NetworkAdapter field %s", name)
@@ -12431,6 +12504,7 @@ type OperatingSystemMutation struct {
 	arch             *string
 	username         *string
 	last_bootup_time *time.Time
+	domain           *string
 	clearedFields    map[string]struct{}
 	owner            *string
 	clearedowner     bool
@@ -12890,6 +12964,55 @@ func (m *OperatingSystemMutation) ResetLastBootupTime() {
 	delete(m.clearedFields, operatingsystem.FieldLastBootupTime)
 }
 
+// SetDomain sets the "domain" field.
+func (m *OperatingSystemMutation) SetDomain(s string) {
+	m.domain = &s
+}
+
+// Domain returns the value of the "domain" field in the mutation.
+func (m *OperatingSystemMutation) Domain() (r string, exists bool) {
+	v := m.domain
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDomain returns the old "domain" field's value of the OperatingSystem entity.
+// If the OperatingSystem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperatingSystemMutation) OldDomain(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDomain is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDomain requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDomain: %w", err)
+	}
+	return oldValue.Domain, nil
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (m *OperatingSystemMutation) ClearDomain() {
+	m.domain = nil
+	m.clearedFields[operatingsystem.FieldDomain] = struct{}{}
+}
+
+// DomainCleared returns if the "domain" field was cleared in this mutation.
+func (m *OperatingSystemMutation) DomainCleared() bool {
+	_, ok := m.clearedFields[operatingsystem.FieldDomain]
+	return ok
+}
+
+// ResetDomain resets all changes to the "domain" field.
+func (m *OperatingSystemMutation) ResetDomain() {
+	m.domain = nil
+	delete(m.clearedFields, operatingsystem.FieldDomain)
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by id.
 func (m *OperatingSystemMutation) SetOwnerID(id string) {
 	m.owner = &id
@@ -12963,7 +13086,7 @@ func (m *OperatingSystemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OperatingSystemMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m._type != nil {
 		fields = append(fields, operatingsystem.FieldType)
 	}
@@ -12987,6 +13110,9 @@ func (m *OperatingSystemMutation) Fields() []string {
 	}
 	if m.last_bootup_time != nil {
 		fields = append(fields, operatingsystem.FieldLastBootupTime)
+	}
+	if m.domain != nil {
+		fields = append(fields, operatingsystem.FieldDomain)
 	}
 	return fields
 }
@@ -13012,6 +13138,8 @@ func (m *OperatingSystemMutation) Field(name string) (ent.Value, bool) {
 		return m.Username()
 	case operatingsystem.FieldLastBootupTime:
 		return m.LastBootupTime()
+	case operatingsystem.FieldDomain:
+		return m.Domain()
 	}
 	return nil, false
 }
@@ -13037,6 +13165,8 @@ func (m *OperatingSystemMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUsername(ctx)
 	case operatingsystem.FieldLastBootupTime:
 		return m.OldLastBootupTime(ctx)
+	case operatingsystem.FieldDomain:
+		return m.OldDomain(ctx)
 	}
 	return nil, fmt.Errorf("unknown OperatingSystem field %s", name)
 }
@@ -13102,6 +13232,13 @@ func (m *OperatingSystemMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLastBootupTime(v)
 		return nil
+	case operatingsystem.FieldDomain:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDomain(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OperatingSystem field %s", name)
 }
@@ -13147,6 +13284,9 @@ func (m *OperatingSystemMutation) ClearedFields() []string {
 	if m.FieldCleared(operatingsystem.FieldLastBootupTime) {
 		fields = append(fields, operatingsystem.FieldLastBootupTime)
 	}
+	if m.FieldCleared(operatingsystem.FieldDomain) {
+		fields = append(fields, operatingsystem.FieldDomain)
+	}
 	return fields
 }
 
@@ -13175,6 +13315,9 @@ func (m *OperatingSystemMutation) ClearField(name string) error {
 		return nil
 	case operatingsystem.FieldLastBootupTime:
 		m.ClearLastBootupTime()
+		return nil
+	case operatingsystem.FieldDomain:
+		m.ClearDomain()
 		return nil
 	}
 	return fmt.Errorf("unknown OperatingSystem nullable field %s", name)
@@ -13207,6 +13350,9 @@ func (m *OperatingSystemMutation) ResetField(name string) error {
 		return nil
 	case operatingsystem.FieldLastBootupTime:
 		m.ResetLastBootupTime()
+		return nil
+	case operatingsystem.FieldDomain:
+		m.ResetDomain()
 		return nil
 	}
 	return fmt.Errorf("unknown OperatingSystem field %s", name)

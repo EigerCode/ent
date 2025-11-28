@@ -172,6 +172,26 @@ func (osu *OperatingSystemUpdate) ClearLastBootupTime() *OperatingSystemUpdate {
 	return osu
 }
 
+// SetDomain sets the "domain" field.
+func (osu *OperatingSystemUpdate) SetDomain(s string) *OperatingSystemUpdate {
+	osu.mutation.SetDomain(s)
+	return osu
+}
+
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (osu *OperatingSystemUpdate) SetNillableDomain(s *string) *OperatingSystemUpdate {
+	if s != nil {
+		osu.SetDomain(*s)
+	}
+	return osu
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (osu *OperatingSystemUpdate) ClearDomain() *OperatingSystemUpdate {
+	osu.mutation.ClearDomain()
+	return osu
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (osu *OperatingSystemUpdate) SetOwnerID(id string) *OperatingSystemUpdate {
 	osu.mutation.SetOwnerID(id)
@@ -285,6 +305,12 @@ func (osu *OperatingSystemUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if osu.mutation.LastBootupTimeCleared() {
 		_spec.ClearField(operatingsystem.FieldLastBootupTime, field.TypeTime)
+	}
+	if value, ok := osu.mutation.Domain(); ok {
+		_spec.SetField(operatingsystem.FieldDomain, field.TypeString, value)
+	}
+	if osu.mutation.DomainCleared() {
+		_spec.ClearField(operatingsystem.FieldDomain, field.TypeString)
 	}
 	if osu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -479,6 +505,26 @@ func (osuo *OperatingSystemUpdateOne) ClearLastBootupTime() *OperatingSystemUpda
 	return osuo
 }
 
+// SetDomain sets the "domain" field.
+func (osuo *OperatingSystemUpdateOne) SetDomain(s string) *OperatingSystemUpdateOne {
+	osuo.mutation.SetDomain(s)
+	return osuo
+}
+
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (osuo *OperatingSystemUpdateOne) SetNillableDomain(s *string) *OperatingSystemUpdateOne {
+	if s != nil {
+		osuo.SetDomain(*s)
+	}
+	return osuo
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (osuo *OperatingSystemUpdateOne) ClearDomain() *OperatingSystemUpdateOne {
+	osuo.mutation.ClearDomain()
+	return osuo
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (osuo *OperatingSystemUpdateOne) SetOwnerID(id string) *OperatingSystemUpdateOne {
 	osuo.mutation.SetOwnerID(id)
@@ -622,6 +668,12 @@ func (osuo *OperatingSystemUpdateOne) sqlSave(ctx context.Context) (_node *Opera
 	}
 	if osuo.mutation.LastBootupTimeCleared() {
 		_spec.ClearField(operatingsystem.FieldLastBootupTime, field.TypeTime)
+	}
+	if value, ok := osuo.mutation.Domain(); ok {
+		_spec.SetField(operatingsystem.FieldDomain, field.TypeString, value)
+	}
+	if osuo.mutation.DomainCleared() {
+		_spec.ClearField(operatingsystem.FieldDomain, field.TypeString)
 	}
 	if osuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

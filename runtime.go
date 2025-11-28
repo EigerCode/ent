@@ -9,6 +9,7 @@ import (
 	"github.com/open-uem/ent/authentication"
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/logicaldisk"
+	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/profileissue"
@@ -203,6 +204,12 @@ func init() {
 	logicaldiskDescUsage := logicaldiskFields[2].Descriptor()
 	// logicaldisk.DefaultUsage holds the default value on creation for the usage field.
 	logicaldisk.DefaultUsage = logicaldiskDescUsage.Default.(int8)
+	networkadapterFields := schema.NetworkAdapter{}.Fields()
+	_ = networkadapterFields
+	// networkadapterDescVirtual is the schema descriptor for virtual field.
+	networkadapterDescVirtual := networkadapterFields[11].Descriptor()
+	// networkadapter.DefaultVirtual holds the default value on creation for the virtual field.
+	networkadapter.DefaultVirtual = networkadapterDescVirtual.Default.(bool)
 	orgmetadataFields := schema.OrgMetadata{}.Fields()
 	_ = orgmetadataFields
 	// orgmetadataDescName is the schema descriptor for name field.
