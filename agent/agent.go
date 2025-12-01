@@ -115,6 +115,8 @@ const (
 	EdgeSite = "site"
 	// EdgePhysicaldisks holds the string denoting the physicaldisks edge name in mutations.
 	EdgePhysicaldisks = "physicaldisks"
+	// EdgeNetbird holds the string denoting the netbird edge name in mutations.
+	EdgeNetbird = "netbird"
 	// ComputerFieldID holds the string denoting the ID field of the Computer.
 	ComputerFieldID = "id"
 	// OperatingSystemFieldID holds the string denoting the ID field of the OperatingSystem.
@@ -155,6 +157,8 @@ const (
 	SiteFieldID = "id"
 	// PhysicalDiskFieldID holds the string denoting the ID field of the PhysicalDisk.
 	PhysicalDiskFieldID = "id"
+	// NetbirdFieldID holds the string denoting the ID field of the Netbird.
+	NetbirdFieldID = "id"
 	// Table holds the table name of the agent in the database.
 	Table = "agents"
 	// ComputerTable is the table that holds the computer relation/edge.
@@ -293,6 +297,13 @@ const (
 	PhysicaldisksInverseTable = "physical_disks"
 	// PhysicaldisksColumn is the table column denoting the physicaldisks relation/edge.
 	PhysicaldisksColumn = "agent_physicaldisks"
+	// NetbirdTable is the table that holds the netbird relation/edge.
+	NetbirdTable = "netbirds"
+	// NetbirdInverseTable is the table name for the Netbird entity.
+	// It exists in this package in order to avoid circular dependency with the "netbird" package.
+	NetbirdInverseTable = "netbirds"
+	// NetbirdColumn is the table column denoting the netbird relation/edge.
+	NetbirdColumn = "agent_netbird"
 )
 
 // Columns holds all SQL columns for agent fields.
@@ -874,6 +885,13 @@ func ByPhysicaldisks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newPhysicaldisksStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByNetbirdField orders the results by netbird field.
+func ByNetbirdField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNetbirdStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newComputerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1012,5 +1030,12 @@ func newPhysicaldisksStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PhysicaldisksInverseTable, PhysicalDiskFieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PhysicaldisksTable, PhysicaldisksColumn),
+	)
+}
+func newNetbirdStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NetbirdInverseTable, NetbirdFieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, NetbirdTable, NetbirdColumn),
 	)
 }

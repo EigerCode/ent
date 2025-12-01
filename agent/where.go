@@ -2180,6 +2180,29 @@ func HasPhysicaldisksWith(preds ...predicate.PhysicalDisk) predicate.Agent {
 	})
 }
 
+// HasNetbird applies the HasEdge predicate on the "netbird" edge.
+func HasNetbird() predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, NetbirdTable, NetbirdColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNetbirdWith applies the HasEdge predicate on the "netbird" edge with a given conditions (other predicates).
+func HasNetbirdWith(preds ...predicate.Netbird) predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := newNetbirdStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Agent) predicate.Agent {
 	return predicate.Agent(sql.AndPredicates(predicates...))

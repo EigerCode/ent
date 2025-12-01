@@ -306,6 +306,27 @@ var (
 			},
 		},
 	}
+	// NetbirdsColumns holds the columns for the "netbirds" table.
+	NetbirdsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "version", Type: field.TypeString, Default: ""},
+		{Name: "installed", Type: field.TypeBool, Default: false},
+		{Name: "agent_netbird", Type: field.TypeString, Unique: true},
+	}
+	// NetbirdsTable holds the schema information for the "netbirds" table.
+	NetbirdsTable = &schema.Table{
+		Name:       "netbirds",
+		Columns:    NetbirdsColumns,
+		PrimaryKey: []*schema.Column{NetbirdsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "netbirds_agents_netbird",
+				Columns:    []*schema.Column{NetbirdsColumns[3]},
+				RefColumns: []*schema.Column{AgentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// NetworkAdaptersColumns holds the columns for the "network_adapters" table.
 	NetworkAdaptersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1075,6 +1096,7 @@ var (
 		MemorySlotsTable,
 		MetadataTable,
 		MonitorsTable,
+		NetbirdsTable,
 		NetworkAdaptersTable,
 		OperatingSystemsTable,
 		OrgMetadataTable,
@@ -1115,6 +1137,7 @@ func init() {
 	MetadataTable.ForeignKeys[0].RefTable = AgentsTable
 	MetadataTable.ForeignKeys[1].RefTable = OrgMetadataTable
 	MonitorsTable.ForeignKeys[0].RefTable = AgentsTable
+	NetbirdsTable.ForeignKeys[0].RefTable = AgentsTable
 	NetworkAdaptersTable.ForeignKeys[0].RefTable = AgentsTable
 	OperatingSystemsTable.ForeignKeys[0].RefTable = AgentsTable
 	OrgMetadataTable.ForeignKeys[0].RefTable = TenantsTable

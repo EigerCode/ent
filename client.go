@@ -26,6 +26,7 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/orgmetadata"
@@ -77,6 +78,8 @@ type Client struct {
 	Metadata *MetadataClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
+	// Netbird is the client for interacting with the Netbird builders.
+	Netbird *NetbirdClient
 	// NetworkAdapter is the client for interacting with the NetworkAdapter builders.
 	NetworkAdapter *NetworkAdapterClient
 	// OperatingSystem is the client for interacting with the OperatingSystem builders.
@@ -143,6 +146,7 @@ func (c *Client) init() {
 	c.MemorySlot = NewMemorySlotClient(c.config)
 	c.Metadata = NewMetadataClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
+	c.Netbird = NewNetbirdClient(c.config)
 	c.NetworkAdapter = NewNetworkAdapterClient(c.config)
 	c.OperatingSystem = NewOperatingSystemClient(c.config)
 	c.OrgMetadata = NewOrgMetadataClient(c.config)
@@ -268,6 +272,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MemorySlot:            NewMemorySlotClient(cfg),
 		Metadata:              NewMetadataClient(cfg),
 		Monitor:               NewMonitorClient(cfg),
+		Netbird:               NewNetbirdClient(cfg),
 		NetworkAdapter:        NewNetworkAdapterClient(cfg),
 		OperatingSystem:       NewOperatingSystemClient(cfg),
 		OrgMetadata:           NewOrgMetadataClient(cfg),
@@ -320,6 +325,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MemorySlot:            NewMemorySlotClient(cfg),
 		Metadata:              NewMetadataClient(cfg),
 		Monitor:               NewMonitorClient(cfg),
+		Netbird:               NewNetbirdClient(cfg),
 		NetworkAdapter:        NewNetworkAdapterClient(cfg),
 		OperatingSystem:       NewOperatingSystemClient(cfg),
 		OrgMetadata:           NewOrgMetadataClient(cfg),
@@ -372,7 +378,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor,
+		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
 		c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer,
 		c.Profile, c.ProfileIssue, c.Release, c.Revocation, c.Rustdesk, c.Server,
 		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
@@ -387,7 +393,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor,
+		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
 		c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer,
 		c.Profile, c.ProfileIssue, c.Release, c.Revocation, c.Rustdesk, c.Server,
 		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
@@ -422,6 +428,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Metadata.mutate(ctx, m)
 	case *MonitorMutation:
 		return c.Monitor.mutate(ctx, m)
+	case *NetbirdMutation:
+		return c.Netbird.mutate(ctx, m)
 	case *NetworkAdapterMutation:
 		return c.NetworkAdapter.mutate(ctx, m)
 	case *OperatingSystemMutation:
@@ -892,6 +900,22 @@ func (c *AgentClient) QueryPhysicaldisks(a *Agent) *PhysicalDiskQuery {
 			sqlgraph.From(agent.Table, agent.FieldID, id),
 			sqlgraph.To(physicaldisk.Table, physicaldisk.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, agent.PhysicaldisksTable, agent.PhysicaldisksColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNetbird queries the netbird edge of a Agent.
+func (c *AgentClient) QueryNetbird(a *Agent) *NetbirdQuery {
+	query := (&NetbirdClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, id),
+			sqlgraph.To(netbird.Table, netbird.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, agent.NetbirdTable, agent.NetbirdColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -2395,6 +2419,155 @@ func (c *MonitorClient) mutate(ctx context.Context, m *MonitorMutation) (Value, 
 		return (&MonitorDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Monitor mutation op: %q", m.Op())
+	}
+}
+
+// NetbirdClient is a client for the Netbird schema.
+type NetbirdClient struct {
+	config
+}
+
+// NewNetbirdClient returns a client for the Netbird from the given config.
+func NewNetbirdClient(c config) *NetbirdClient {
+	return &NetbirdClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `netbird.Hooks(f(g(h())))`.
+func (c *NetbirdClient) Use(hooks ...Hook) {
+	c.hooks.Netbird = append(c.hooks.Netbird, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `netbird.Intercept(f(g(h())))`.
+func (c *NetbirdClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Netbird = append(c.inters.Netbird, interceptors...)
+}
+
+// Create returns a builder for creating a Netbird entity.
+func (c *NetbirdClient) Create() *NetbirdCreate {
+	mutation := newNetbirdMutation(c.config, OpCreate)
+	return &NetbirdCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Netbird entities.
+func (c *NetbirdClient) CreateBulk(builders ...*NetbirdCreate) *NetbirdCreateBulk {
+	return &NetbirdCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NetbirdClient) MapCreateBulk(slice any, setFunc func(*NetbirdCreate, int)) *NetbirdCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NetbirdCreateBulk{err: fmt.Errorf("calling to NetbirdClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NetbirdCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NetbirdCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Netbird.
+func (c *NetbirdClient) Update() *NetbirdUpdate {
+	mutation := newNetbirdMutation(c.config, OpUpdate)
+	return &NetbirdUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NetbirdClient) UpdateOne(n *Netbird) *NetbirdUpdateOne {
+	mutation := newNetbirdMutation(c.config, OpUpdateOne, withNetbird(n))
+	return &NetbirdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NetbirdClient) UpdateOneID(id int) *NetbirdUpdateOne {
+	mutation := newNetbirdMutation(c.config, OpUpdateOne, withNetbirdID(id))
+	return &NetbirdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Netbird.
+func (c *NetbirdClient) Delete() *NetbirdDelete {
+	mutation := newNetbirdMutation(c.config, OpDelete)
+	return &NetbirdDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NetbirdClient) DeleteOne(n *Netbird) *NetbirdDeleteOne {
+	return c.DeleteOneID(n.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NetbirdClient) DeleteOneID(id int) *NetbirdDeleteOne {
+	builder := c.Delete().Where(netbird.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NetbirdDeleteOne{builder}
+}
+
+// Query returns a query builder for Netbird.
+func (c *NetbirdClient) Query() *NetbirdQuery {
+	return &NetbirdQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNetbird},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Netbird entity by its id.
+func (c *NetbirdClient) Get(ctx context.Context, id int) (*Netbird, error) {
+	return c.Query().Where(netbird.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NetbirdClient) GetX(ctx context.Context, id int) *Netbird {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a Netbird.
+func (c *NetbirdClient) QueryOwner(n *Netbird) *AgentQuery {
+	query := (&AgentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := n.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(netbird.Table, netbird.FieldID, id),
+			sqlgraph.To(agent.Table, agent.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, netbird.OwnerTable, netbird.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(n.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NetbirdClient) Hooks() []Hook {
+	return c.hooks.Netbird
+}
+
+// Interceptors returns the client interceptors.
+func (c *NetbirdClient) Interceptors() []Interceptor {
+	return c.inters.Netbird
+}
+
+func (c *NetbirdClient) mutate(ctx context.Context, m *NetbirdMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NetbirdCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NetbirdUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NetbirdUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NetbirdDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Netbird mutation op: %q", m.Op())
 	}
 }
 
@@ -5920,16 +6093,17 @@ func (c *WingetConfigExclusionClient) mutate(ctx context.Context, m *WingetConfi
 type (
 	hooks struct {
 		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, NetworkAdapter, OperatingSystem,
-		OrgMetadata, PhysicalDisk, Printer, Profile, ProfileIssue, Release, Revocation,
-		Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate, Tag, Task,
-		Tenant, Update, User, WingetConfigExclusion []ent.Hook
+		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetworkAdapter,
+		OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile, ProfileIssue,
+		Release, Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
+		SystemUpdate, Tag, Task, Tenant, Update, User, WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
 		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, NetworkAdapter, OperatingSystem,
-		OrgMetadata, PhysicalDisk, Printer, Profile, ProfileIssue, Release, Revocation,
-		Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate, Tag, Task,
-		Tenant, Update, User, WingetConfigExclusion []ent.Interceptor
+		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetworkAdapter,
+		OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile, ProfileIssue,
+		Release, Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
+		SystemUpdate, Tag, Task, Tenant, Update, User,
+		WingetConfigExclusion []ent.Interceptor
 	}
 )

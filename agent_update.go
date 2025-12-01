@@ -20,6 +20,7 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/physicaldisk"
@@ -939,6 +940,25 @@ func (au *AgentUpdate) AddPhysicaldisks(p ...*PhysicalDisk) *AgentUpdate {
 	return au.AddPhysicaldiskIDs(ids...)
 }
 
+// SetNetbirdID sets the "netbird" edge to the Netbird entity by ID.
+func (au *AgentUpdate) SetNetbirdID(id int) *AgentUpdate {
+	au.mutation.SetNetbirdID(id)
+	return au
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the Netbird entity by ID if the given value is not nil.
+func (au *AgentUpdate) SetNillableNetbirdID(id *int) *AgentUpdate {
+	if id != nil {
+		au = au.SetNetbirdID(*id)
+	}
+	return au
+}
+
+// SetNetbird sets the "netbird" edge to the Netbird entity.
+func (au *AgentUpdate) SetNetbird(n *Netbird) *AgentUpdate {
+	return au.SetNetbirdID(n.ID)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (au *AgentUpdate) Mutation() *AgentMutation {
 	return au.mutation
@@ -1287,6 +1307,12 @@ func (au *AgentUpdate) RemovePhysicaldisks(p ...*PhysicalDisk) *AgentUpdate {
 		ids[i] = p[i].ID
 	}
 	return au.RemovePhysicaldiskIDs(ids...)
+}
+
+// ClearNetbird clears the "netbird" edge to the Netbird entity.
+func (au *AgentUpdate) ClearNetbird() *AgentUpdate {
+	au.mutation.ClearNetbird()
+	return au
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2344,6 +2370,35 @@ func (au *AgentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if au.mutation.NetbirdCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NetbirdTable,
+			Columns: []string{agent.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NetbirdTable,
+			Columns: []string{agent.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(au.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -3256,6 +3311,25 @@ func (auo *AgentUpdateOne) AddPhysicaldisks(p ...*PhysicalDisk) *AgentUpdateOne 
 	return auo.AddPhysicaldiskIDs(ids...)
 }
 
+// SetNetbirdID sets the "netbird" edge to the Netbird entity by ID.
+func (auo *AgentUpdateOne) SetNetbirdID(id int) *AgentUpdateOne {
+	auo.mutation.SetNetbirdID(id)
+	return auo
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the Netbird entity by ID if the given value is not nil.
+func (auo *AgentUpdateOne) SetNillableNetbirdID(id *int) *AgentUpdateOne {
+	if id != nil {
+		auo = auo.SetNetbirdID(*id)
+	}
+	return auo
+}
+
+// SetNetbird sets the "netbird" edge to the Netbird entity.
+func (auo *AgentUpdateOne) SetNetbird(n *Netbird) *AgentUpdateOne {
+	return auo.SetNetbirdID(n.ID)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (auo *AgentUpdateOne) Mutation() *AgentMutation {
 	return auo.mutation
@@ -3604,6 +3678,12 @@ func (auo *AgentUpdateOne) RemovePhysicaldisks(p ...*PhysicalDisk) *AgentUpdateO
 		ids[i] = p[i].ID
 	}
 	return auo.RemovePhysicaldiskIDs(ids...)
+}
+
+// ClearNetbird clears the "netbird" edge to the Netbird entity.
+func (auo *AgentUpdateOne) ClearNetbird() *AgentUpdateOne {
+	auo.mutation.ClearNetbird()
+	return auo
 }
 
 // Where appends a list predicates to the AgentUpdate builder.
@@ -4684,6 +4764,35 @@ func (auo *AgentUpdateOne) sqlSave(ctx context.Context) (_node *Agent, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(physicaldisk.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.NetbirdCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NetbirdTable,
+			Columns: []string{agent.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NetbirdTable,
+			Columns: []string{agent.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -12,6 +12,7 @@ import (
 	"github.com/open-uem/ent/agent"
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/computer"
+	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/release"
 	"github.com/open-uem/ent/systemupdate"
@@ -131,9 +132,11 @@ type AgentEdges struct {
 	Site []*Site `json:"site,omitempty"`
 	// Physicaldisks holds the value of the physicaldisks edge.
 	Physicaldisks []*PhysicalDisk `json:"physicaldisks,omitempty"`
+	// Netbird holds the value of the netbird edge.
+	Netbird *Netbird `json:"netbird,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [20]bool
+	loadedTypes [21]bool
 }
 
 // ComputerOrErr returns the Computer value or an error if the edge
@@ -324,6 +327,17 @@ func (e AgentEdges) PhysicaldisksOrErr() ([]*PhysicalDisk, error) {
 		return e.Physicaldisks, nil
 	}
 	return nil, &NotLoadedError{edge: "physicaldisks"}
+}
+
+// NetbirdOrErr returns the Netbird value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AgentEdges) NetbirdOrErr() (*Netbird, error) {
+	if e.Netbird != nil {
+		return e.Netbird, nil
+	} else if e.loadedTypes[20] {
+		return nil, &NotFoundError{label: netbird.Label}
+	}
+	return nil, &NotLoadedError{edge: "netbird"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -658,6 +672,11 @@ func (a *Agent) QuerySite() *SiteQuery {
 // QueryPhysicaldisks queries the "physicaldisks" edge of the Agent entity.
 func (a *Agent) QueryPhysicaldisks() *PhysicalDiskQuery {
 	return NewAgentClient(a.config).QueryPhysicaldisks(a)
+}
+
+// QueryNetbird queries the "netbird" edge of the Agent entity.
+func (a *Agent) QueryNetbird() *NetbirdQuery {
+	return NewAgentClient(a.config).QueryNetbird(a)
 }
 
 // Update returns a builder for updating this Agent.
