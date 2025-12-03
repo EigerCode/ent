@@ -327,6 +327,18 @@ var (
 			},
 		},
 	}
+	// NetbirdSettingsColumns holds the columns for the "netbird_settings" table.
+	NetbirdSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "management_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "access_token", Type: field.TypeString, Nullable: true, Default: ""},
+	}
+	// NetbirdSettingsTable holds the schema information for the "netbird_settings" table.
+	NetbirdSettingsTable = &schema.Table{
+		Name:       "netbird_settings",
+		Columns:    NetbirdSettingsColumns,
+		PrimaryKey: []*schema.Column{NetbirdSettingsColumns[0]},
+	}
 	// NetworkAdaptersColumns holds the columns for the "network_adapters" table.
 	NetworkAdaptersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -901,12 +913,21 @@ var (
 		{Name: "is_default", Type: field.TypeBool, Nullable: true},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_netbird", Type: field.TypeInt, Nullable: true},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
 	TenantsTable = &schema.Table{
 		Name:       "tenants",
 		Columns:    TenantsColumns,
 		PrimaryKey: []*schema.Column{TenantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tenants_netbird_settings_netbird",
+				Columns:    []*schema.Column{TenantsColumns[5]},
+				RefColumns: []*schema.Column{NetbirdSettingsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
 	}
 	// UpdatesColumns holds the columns for the "updates" table.
 	UpdatesColumns = []*schema.Column{
@@ -1098,6 +1119,7 @@ var (
 		MetadataTable,
 		MonitorsTable,
 		NetbirdsTable,
+		NetbirdSettingsTable,
 		NetworkAdaptersTable,
 		OperatingSystemsTable,
 		OrgMetadataTable,
@@ -1157,6 +1179,7 @@ func init() {
 	TagsTable.ForeignKeys[1].RefTable = TasksTable
 	TagsTable.ForeignKeys[2].RefTable = TenantsTable
 	TasksTable.ForeignKeys[0].RefTable = ProfilesTable
+	TenantsTable.ForeignKeys[0].RefTable = NetbirdSettingsTable
 	UpdatesTable.ForeignKeys[0].RefTable = AgentsTable
 	WingetConfigExclusionsTable.ForeignKeys[0].RefTable = AgentsTable
 	AgentTagsTable.ForeignKeys[0].RefTable = AgentsTable

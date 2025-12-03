@@ -24,6 +24,7 @@ import (
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
 	"github.com/open-uem/ent/netbird"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/orgmetadata"
@@ -118,6 +119,7 @@ func checkColumn(table, column string) error {
 			metadata.Table:              metadata.ValidColumn,
 			monitor.Table:               monitor.ValidColumn,
 			netbird.Table:               netbird.ValidColumn,
+			netbirdsettings.Table:       netbirdsettings.ValidColumn,
 			networkadapter.Table:        networkadapter.ValidColumn,
 			operatingsystem.Table:       operatingsystem.ValidColumn,
 			orgmetadata.Table:           orgmetadata.ValidColumn,

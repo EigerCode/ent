@@ -10,6 +10,7 @@ import (
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/netbird"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/profile"
@@ -215,6 +216,16 @@ func init() {
 	netbirdDescInstalled := netbirdFields[1].Descriptor()
 	// netbird.DefaultInstalled holds the default value on creation for the installed field.
 	netbird.DefaultInstalled = netbirdDescInstalled.Default.(bool)
+	netbirdsettingsFields := schema.NetbirdSettings{}.Fields()
+	_ = netbirdsettingsFields
+	// netbirdsettingsDescManagementURL is the schema descriptor for management_url field.
+	netbirdsettingsDescManagementURL := netbirdsettingsFields[0].Descriptor()
+	// netbirdsettings.DefaultManagementURL holds the default value on creation for the management_url field.
+	netbirdsettings.DefaultManagementURL = netbirdsettingsDescManagementURL.Default.(string)
+	// netbirdsettingsDescAccessToken is the schema descriptor for access_token field.
+	netbirdsettingsDescAccessToken := netbirdsettingsFields[1].Descriptor()
+	// netbirdsettings.DefaultAccessToken holds the default value on creation for the access_token field.
+	netbirdsettings.DefaultAccessToken = netbirdsettingsDescAccessToken.Default.(string)
 	networkadapterFields := schema.NetworkAdapter{}.Fields()
 	_ = networkadapterFields
 	// networkadapterDescVirtual is the schema descriptor for virtual field.

@@ -32,6 +32,8 @@ const (
 	EdgeMetadata = "metadata"
 	// EdgeRustdesk holds the string denoting the rustdesk edge name in mutations.
 	EdgeRustdesk = "rustdesk"
+	// EdgeNetbird holds the string denoting the netbird edge name in mutations.
+	EdgeNetbird = "netbird"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 	// SitesTable is the table that holds the sites relation/edge.
@@ -67,6 +69,13 @@ const (
 	// RustdeskInverseTable is the table name for the Rustdesk entity.
 	// It exists in this package in order to avoid circular dependency with the "rustdesk" package.
 	RustdeskInverseTable = "rustdesks"
+	// NetbirdTable is the table that holds the netbird relation/edge.
+	NetbirdTable = "tenants"
+	// NetbirdInverseTable is the table name for the NetbirdSettings entity.
+	// It exists in this package in order to avoid circular dependency with the "netbirdsettings" package.
+	NetbirdInverseTable = "netbird_settings"
+	// NetbirdColumn is the table column denoting the netbird relation/edge.
+	NetbirdColumn = "tenant_netbird"
 )
 
 // Columns holds all SQL columns for tenant fields.
@@ -76,6 +85,12 @@ var Columns = []string{
 	FieldIsDefault,
 	FieldCreated,
 	FieldModified,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "tenants"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"tenant_netbird",
 }
 
 var (
@@ -88,6 +103,11 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -193,6 +213,13 @@ func ByRustdesk(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newRustdeskStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByNetbirdField orders the results by netbird field.
+func ByNetbirdField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNetbirdStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newSitesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -226,5 +253,12 @@ func newRustdeskStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RustdeskInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, RustdeskTable, RustdeskPrimaryKey...),
+	)
+}
+func newNetbirdStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NetbirdInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, NetbirdTable, NetbirdColumn),
 	)
 }

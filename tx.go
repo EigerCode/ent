@@ -36,6 +36,8 @@ type Tx struct {
 	Monitor *MonitorClient
 	// Netbird is the client for interacting with the Netbird builders.
 	Netbird *NetbirdClient
+	// NetbirdSettings is the client for interacting with the NetbirdSettings builders.
+	NetbirdSettings *NetbirdSettingsClient
 	// NetworkAdapter is the client for interacting with the NetworkAdapter builders.
 	NetworkAdapter *NetworkAdapterClient
 	// OperatingSystem is the client for interacting with the OperatingSystem builders.
@@ -223,6 +225,7 @@ func (tx *Tx) init() {
 	tx.Metadata = NewMetadataClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
 	tx.Netbird = NewNetbirdClient(tx.config)
+	tx.NetbirdSettings = NewNetbirdSettingsClient(tx.config)
 	tx.NetworkAdapter = NewNetworkAdapterClient(tx.config)
 	tx.OperatingSystem = NewOperatingSystemClient(tx.config)
 	tx.OrgMetadata = NewOrgMetadataClient(tx.config)
