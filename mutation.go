@@ -11423,7 +11423,13 @@ type NetbirdMutation struct {
 	profile              *string
 	management_url       *string
 	management_connected *bool
+	signal_url           *string
+	signal_connected     *bool
 	ssh_enabled          *bool
+	peers_total          *int
+	addpeers_total       *int
+	peers_connected      *int
+	addpeers_connected   *int
 	clearedFields        map[string]struct{}
 	owner                *string
 	clearedowner         bool
@@ -11785,6 +11791,91 @@ func (m *NetbirdMutation) ResetManagementConnected() {
 	m.management_connected = nil
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (m *NetbirdMutation) SetSignalURL(s string) {
+	m.signal_url = &s
+}
+
+// SignalURL returns the value of the "signal_url" field in the mutation.
+func (m *NetbirdMutation) SignalURL() (r string, exists bool) {
+	v := m.signal_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignalURL returns the old "signal_url" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldSignalURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSignalURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSignalURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignalURL: %w", err)
+	}
+	return oldValue.SignalURL, nil
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (m *NetbirdMutation) ClearSignalURL() {
+	m.signal_url = nil
+	m.clearedFields[netbird.FieldSignalURL] = struct{}{}
+}
+
+// SignalURLCleared returns if the "signal_url" field was cleared in this mutation.
+func (m *NetbirdMutation) SignalURLCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldSignalURL]
+	return ok
+}
+
+// ResetSignalURL resets all changes to the "signal_url" field.
+func (m *NetbirdMutation) ResetSignalURL() {
+	m.signal_url = nil
+	delete(m.clearedFields, netbird.FieldSignalURL)
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (m *NetbirdMutation) SetSignalConnected(b bool) {
+	m.signal_connected = &b
+}
+
+// SignalConnected returns the value of the "signal_connected" field in the mutation.
+func (m *NetbirdMutation) SignalConnected() (r bool, exists bool) {
+	v := m.signal_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignalConnected returns the old "signal_connected" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldSignalConnected(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSignalConnected is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSignalConnected requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignalConnected: %w", err)
+	}
+	return oldValue.SignalConnected, nil
+}
+
+// ResetSignalConnected resets all changes to the "signal_connected" field.
+func (m *NetbirdMutation) ResetSignalConnected() {
+	m.signal_connected = nil
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (m *NetbirdMutation) SetSSHEnabled(b bool) {
 	m.ssh_enabled = &b
@@ -11819,6 +11910,146 @@ func (m *NetbirdMutation) OldSSHEnabled(ctx context.Context) (v bool, err error)
 // ResetSSHEnabled resets all changes to the "ssh_enabled" field.
 func (m *NetbirdMutation) ResetSSHEnabled() {
 	m.ssh_enabled = nil
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (m *NetbirdMutation) SetPeersTotal(i int) {
+	m.peers_total = &i
+	m.addpeers_total = nil
+}
+
+// PeersTotal returns the value of the "peers_total" field in the mutation.
+func (m *NetbirdMutation) PeersTotal() (r int, exists bool) {
+	v := m.peers_total
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeersTotal returns the old "peers_total" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldPeersTotal(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeersTotal is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeersTotal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeersTotal: %w", err)
+	}
+	return oldValue.PeersTotal, nil
+}
+
+// AddPeersTotal adds i to the "peers_total" field.
+func (m *NetbirdMutation) AddPeersTotal(i int) {
+	if m.addpeers_total != nil {
+		*m.addpeers_total += i
+	} else {
+		m.addpeers_total = &i
+	}
+}
+
+// AddedPeersTotal returns the value that was added to the "peers_total" field in this mutation.
+func (m *NetbirdMutation) AddedPeersTotal() (r int, exists bool) {
+	v := m.addpeers_total
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (m *NetbirdMutation) ClearPeersTotal() {
+	m.peers_total = nil
+	m.addpeers_total = nil
+	m.clearedFields[netbird.FieldPeersTotal] = struct{}{}
+}
+
+// PeersTotalCleared returns if the "peers_total" field was cleared in this mutation.
+func (m *NetbirdMutation) PeersTotalCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldPeersTotal]
+	return ok
+}
+
+// ResetPeersTotal resets all changes to the "peers_total" field.
+func (m *NetbirdMutation) ResetPeersTotal() {
+	m.peers_total = nil
+	m.addpeers_total = nil
+	delete(m.clearedFields, netbird.FieldPeersTotal)
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (m *NetbirdMutation) SetPeersConnected(i int) {
+	m.peers_connected = &i
+	m.addpeers_connected = nil
+}
+
+// PeersConnected returns the value of the "peers_connected" field in the mutation.
+func (m *NetbirdMutation) PeersConnected() (r int, exists bool) {
+	v := m.peers_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeersConnected returns the old "peers_connected" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldPeersConnected(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeersConnected is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeersConnected requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeersConnected: %w", err)
+	}
+	return oldValue.PeersConnected, nil
+}
+
+// AddPeersConnected adds i to the "peers_connected" field.
+func (m *NetbirdMutation) AddPeersConnected(i int) {
+	if m.addpeers_connected != nil {
+		*m.addpeers_connected += i
+	} else {
+		m.addpeers_connected = &i
+	}
+}
+
+// AddedPeersConnected returns the value that was added to the "peers_connected" field in this mutation.
+func (m *NetbirdMutation) AddedPeersConnected() (r int, exists bool) {
+	v := m.addpeers_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (m *NetbirdMutation) ClearPeersConnected() {
+	m.peers_connected = nil
+	m.addpeers_connected = nil
+	m.clearedFields[netbird.FieldPeersConnected] = struct{}{}
+}
+
+// PeersConnectedCleared returns if the "peers_connected" field was cleared in this mutation.
+func (m *NetbirdMutation) PeersConnectedCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldPeersConnected]
+	return ok
+}
+
+// ResetPeersConnected resets all changes to the "peers_connected" field.
+func (m *NetbirdMutation) ResetPeersConnected() {
+	m.peers_connected = nil
+	m.addpeers_connected = nil
+	delete(m.clearedFields, netbird.FieldPeersConnected)
 }
 
 // SetOwnerID sets the "owner" edge to the Agent entity by id.
@@ -11894,7 +12125,7 @@ func (m *NetbirdMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NetbirdMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 11)
 	if m.version != nil {
 		fields = append(fields, netbird.FieldVersion)
 	}
@@ -11913,8 +12144,20 @@ func (m *NetbirdMutation) Fields() []string {
 	if m.management_connected != nil {
 		fields = append(fields, netbird.FieldManagementConnected)
 	}
+	if m.signal_url != nil {
+		fields = append(fields, netbird.FieldSignalURL)
+	}
+	if m.signal_connected != nil {
+		fields = append(fields, netbird.FieldSignalConnected)
+	}
 	if m.ssh_enabled != nil {
 		fields = append(fields, netbird.FieldSSHEnabled)
+	}
+	if m.peers_total != nil {
+		fields = append(fields, netbird.FieldPeersTotal)
+	}
+	if m.peers_connected != nil {
+		fields = append(fields, netbird.FieldPeersConnected)
 	}
 	return fields
 }
@@ -11936,8 +12179,16 @@ func (m *NetbirdMutation) Field(name string) (ent.Value, bool) {
 		return m.ManagementURL()
 	case netbird.FieldManagementConnected:
 		return m.ManagementConnected()
+	case netbird.FieldSignalURL:
+		return m.SignalURL()
+	case netbird.FieldSignalConnected:
+		return m.SignalConnected()
 	case netbird.FieldSSHEnabled:
 		return m.SSHEnabled()
+	case netbird.FieldPeersTotal:
+		return m.PeersTotal()
+	case netbird.FieldPeersConnected:
+		return m.PeersConnected()
 	}
 	return nil, false
 }
@@ -11959,8 +12210,16 @@ func (m *NetbirdMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldManagementURL(ctx)
 	case netbird.FieldManagementConnected:
 		return m.OldManagementConnected(ctx)
+	case netbird.FieldSignalURL:
+		return m.OldSignalURL(ctx)
+	case netbird.FieldSignalConnected:
+		return m.OldSignalConnected(ctx)
 	case netbird.FieldSSHEnabled:
 		return m.OldSSHEnabled(ctx)
+	case netbird.FieldPeersTotal:
+		return m.OldPeersTotal(ctx)
+	case netbird.FieldPeersConnected:
+		return m.OldPeersConnected(ctx)
 	}
 	return nil, fmt.Errorf("unknown Netbird field %s", name)
 }
@@ -12012,12 +12271,40 @@ func (m *NetbirdMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetManagementConnected(v)
 		return nil
+	case netbird.FieldSignalURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignalURL(v)
+		return nil
+	case netbird.FieldSignalConnected:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignalConnected(v)
+		return nil
 	case netbird.FieldSSHEnabled:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSSHEnabled(v)
+		return nil
+	case netbird.FieldPeersTotal:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeersTotal(v)
+		return nil
+	case netbird.FieldPeersConnected:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeersConnected(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Netbird field %s", name)
@@ -12026,13 +12313,26 @@ func (m *NetbirdMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *NetbirdMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addpeers_total != nil {
+		fields = append(fields, netbird.FieldPeersTotal)
+	}
+	if m.addpeers_connected != nil {
+		fields = append(fields, netbird.FieldPeersConnected)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *NetbirdMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case netbird.FieldPeersTotal:
+		return m.AddedPeersTotal()
+	case netbird.FieldPeersConnected:
+		return m.AddedPeersConnected()
+	}
 	return nil, false
 }
 
@@ -12041,6 +12341,20 @@ func (m *NetbirdMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *NetbirdMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case netbird.FieldPeersTotal:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPeersTotal(v)
+		return nil
+	case netbird.FieldPeersConnected:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPeersConnected(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Netbird numeric field %s", name)
 }
@@ -12057,6 +12371,15 @@ func (m *NetbirdMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(netbird.FieldManagementURL) {
 		fields = append(fields, netbird.FieldManagementURL)
+	}
+	if m.FieldCleared(netbird.FieldSignalURL) {
+		fields = append(fields, netbird.FieldSignalURL)
+	}
+	if m.FieldCleared(netbird.FieldPeersTotal) {
+		fields = append(fields, netbird.FieldPeersTotal)
+	}
+	if m.FieldCleared(netbird.FieldPeersConnected) {
+		fields = append(fields, netbird.FieldPeersConnected)
 	}
 	return fields
 }
@@ -12080,6 +12403,15 @@ func (m *NetbirdMutation) ClearField(name string) error {
 		return nil
 	case netbird.FieldManagementURL:
 		m.ClearManagementURL()
+		return nil
+	case netbird.FieldSignalURL:
+		m.ClearSignalURL()
+		return nil
+	case netbird.FieldPeersTotal:
+		m.ClearPeersTotal()
+		return nil
+	case netbird.FieldPeersConnected:
+		m.ClearPeersConnected()
 		return nil
 	}
 	return fmt.Errorf("unknown Netbird nullable field %s", name)
@@ -12107,8 +12439,20 @@ func (m *NetbirdMutation) ResetField(name string) error {
 	case netbird.FieldManagementConnected:
 		m.ResetManagementConnected()
 		return nil
+	case netbird.FieldSignalURL:
+		m.ResetSignalURL()
+		return nil
+	case netbird.FieldSignalConnected:
+		m.ResetSignalConnected()
+		return nil
 	case netbird.FieldSSHEnabled:
 		m.ResetSSHEnabled()
+		return nil
+	case netbird.FieldPeersTotal:
+		m.ResetPeersTotal()
+		return nil
+	case netbird.FieldPeersConnected:
+		m.ResetPeersConnected()
 		return nil
 	}
 	return fmt.Errorf("unknown Netbird field %s", name)

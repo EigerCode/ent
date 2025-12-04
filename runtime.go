@@ -232,10 +232,26 @@ func init() {
 	netbirdDescManagementConnected := netbirdFields[5].Descriptor()
 	// netbird.DefaultManagementConnected holds the default value on creation for the management_connected field.
 	netbird.DefaultManagementConnected = netbirdDescManagementConnected.Default.(bool)
+	// netbirdDescSignalURL is the schema descriptor for signal_url field.
+	netbirdDescSignalURL := netbirdFields[6].Descriptor()
+	// netbird.DefaultSignalURL holds the default value on creation for the signal_url field.
+	netbird.DefaultSignalURL = netbirdDescSignalURL.Default.(string)
+	// netbirdDescSignalConnected is the schema descriptor for signal_connected field.
+	netbirdDescSignalConnected := netbirdFields[7].Descriptor()
+	// netbird.DefaultSignalConnected holds the default value on creation for the signal_connected field.
+	netbird.DefaultSignalConnected = netbirdDescSignalConnected.Default.(bool)
 	// netbirdDescSSHEnabled is the schema descriptor for ssh_enabled field.
-	netbirdDescSSHEnabled := netbirdFields[6].Descriptor()
+	netbirdDescSSHEnabled := netbirdFields[8].Descriptor()
 	// netbird.DefaultSSHEnabled holds the default value on creation for the ssh_enabled field.
 	netbird.DefaultSSHEnabled = netbirdDescSSHEnabled.Default.(bool)
+	// netbirdDescPeersTotal is the schema descriptor for peers_total field.
+	netbirdDescPeersTotal := netbirdFields[9].Descriptor()
+	// netbird.DefaultPeersTotal holds the default value on creation for the peers_total field.
+	netbird.DefaultPeersTotal = netbirdDescPeersTotal.Default.(int)
+	// netbirdDescPeersConnected is the schema descriptor for peers_connected field.
+	netbirdDescPeersConnected := netbirdFields[10].Descriptor()
+	// netbird.DefaultPeersConnected holds the default value on creation for the peers_connected field.
+	netbird.DefaultPeersConnected = netbirdDescPeersConnected.Default.(int)
 	netbirdsettingsFields := schema.NetbirdSettings{}.Fields()
 	_ = netbirdsettingsFields
 	// netbirdsettingsDescManagementURL is the schema descriptor for management_url field.

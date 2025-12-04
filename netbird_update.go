@@ -131,6 +131,40 @@ func (nu *NetbirdUpdate) SetNillableManagementConnected(b *bool) *NetbirdUpdate 
 	return nu
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (nu *NetbirdUpdate) SetSignalURL(s string) *NetbirdUpdate {
+	nu.mutation.SetSignalURL(s)
+	return nu
+}
+
+// SetNillableSignalURL sets the "signal_url" field if the given value is not nil.
+func (nu *NetbirdUpdate) SetNillableSignalURL(s *string) *NetbirdUpdate {
+	if s != nil {
+		nu.SetSignalURL(*s)
+	}
+	return nu
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (nu *NetbirdUpdate) ClearSignalURL() *NetbirdUpdate {
+	nu.mutation.ClearSignalURL()
+	return nu
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (nu *NetbirdUpdate) SetSignalConnected(b bool) *NetbirdUpdate {
+	nu.mutation.SetSignalConnected(b)
+	return nu
+}
+
+// SetNillableSignalConnected sets the "signal_connected" field if the given value is not nil.
+func (nu *NetbirdUpdate) SetNillableSignalConnected(b *bool) *NetbirdUpdate {
+	if b != nil {
+		nu.SetSignalConnected(*b)
+	}
+	return nu
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (nu *NetbirdUpdate) SetSSHEnabled(b bool) *NetbirdUpdate {
 	nu.mutation.SetSSHEnabled(b)
@@ -142,6 +176,60 @@ func (nu *NetbirdUpdate) SetNillableSSHEnabled(b *bool) *NetbirdUpdate {
 	if b != nil {
 		nu.SetSSHEnabled(*b)
 	}
+	return nu
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (nu *NetbirdUpdate) SetPeersTotal(i int) *NetbirdUpdate {
+	nu.mutation.ResetPeersTotal()
+	nu.mutation.SetPeersTotal(i)
+	return nu
+}
+
+// SetNillablePeersTotal sets the "peers_total" field if the given value is not nil.
+func (nu *NetbirdUpdate) SetNillablePeersTotal(i *int) *NetbirdUpdate {
+	if i != nil {
+		nu.SetPeersTotal(*i)
+	}
+	return nu
+}
+
+// AddPeersTotal adds i to the "peers_total" field.
+func (nu *NetbirdUpdate) AddPeersTotal(i int) *NetbirdUpdate {
+	nu.mutation.AddPeersTotal(i)
+	return nu
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (nu *NetbirdUpdate) ClearPeersTotal() *NetbirdUpdate {
+	nu.mutation.ClearPeersTotal()
+	return nu
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (nu *NetbirdUpdate) SetPeersConnected(i int) *NetbirdUpdate {
+	nu.mutation.ResetPeersConnected()
+	nu.mutation.SetPeersConnected(i)
+	return nu
+}
+
+// SetNillablePeersConnected sets the "peers_connected" field if the given value is not nil.
+func (nu *NetbirdUpdate) SetNillablePeersConnected(i *int) *NetbirdUpdate {
+	if i != nil {
+		nu.SetPeersConnected(*i)
+	}
+	return nu
+}
+
+// AddPeersConnected adds i to the "peers_connected" field.
+func (nu *NetbirdUpdate) AddPeersConnected(i int) *NetbirdUpdate {
+	nu.mutation.AddPeersConnected(i)
+	return nu
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (nu *NetbirdUpdate) ClearPeersConnected() *NetbirdUpdate {
+	nu.mutation.ClearPeersConnected()
 	return nu
 }
 
@@ -247,8 +335,35 @@ func (nu *NetbirdUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := nu.mutation.ManagementConnected(); ok {
 		_spec.SetField(netbird.FieldManagementConnected, field.TypeBool, value)
 	}
+	if value, ok := nu.mutation.SignalURL(); ok {
+		_spec.SetField(netbird.FieldSignalURL, field.TypeString, value)
+	}
+	if nu.mutation.SignalURLCleared() {
+		_spec.ClearField(netbird.FieldSignalURL, field.TypeString)
+	}
+	if value, ok := nu.mutation.SignalConnected(); ok {
+		_spec.SetField(netbird.FieldSignalConnected, field.TypeBool, value)
+	}
 	if value, ok := nu.mutation.SSHEnabled(); ok {
 		_spec.SetField(netbird.FieldSSHEnabled, field.TypeBool, value)
+	}
+	if value, ok := nu.mutation.PeersTotal(); ok {
+		_spec.SetField(netbird.FieldPeersTotal, field.TypeInt, value)
+	}
+	if value, ok := nu.mutation.AddedPeersTotal(); ok {
+		_spec.AddField(netbird.FieldPeersTotal, field.TypeInt, value)
+	}
+	if nu.mutation.PeersTotalCleared() {
+		_spec.ClearField(netbird.FieldPeersTotal, field.TypeInt)
+	}
+	if value, ok := nu.mutation.PeersConnected(); ok {
+		_spec.SetField(netbird.FieldPeersConnected, field.TypeInt, value)
+	}
+	if value, ok := nu.mutation.AddedPeersConnected(); ok {
+		_spec.AddField(netbird.FieldPeersConnected, field.TypeInt, value)
+	}
+	if nu.mutation.PeersConnectedCleared() {
+		_spec.ClearField(netbird.FieldPeersConnected, field.TypeInt)
 	}
 	if nu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -403,6 +518,40 @@ func (nuo *NetbirdUpdateOne) SetNillableManagementConnected(b *bool) *NetbirdUpd
 	return nuo
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (nuo *NetbirdUpdateOne) SetSignalURL(s string) *NetbirdUpdateOne {
+	nuo.mutation.SetSignalURL(s)
+	return nuo
+}
+
+// SetNillableSignalURL sets the "signal_url" field if the given value is not nil.
+func (nuo *NetbirdUpdateOne) SetNillableSignalURL(s *string) *NetbirdUpdateOne {
+	if s != nil {
+		nuo.SetSignalURL(*s)
+	}
+	return nuo
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (nuo *NetbirdUpdateOne) ClearSignalURL() *NetbirdUpdateOne {
+	nuo.mutation.ClearSignalURL()
+	return nuo
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (nuo *NetbirdUpdateOne) SetSignalConnected(b bool) *NetbirdUpdateOne {
+	nuo.mutation.SetSignalConnected(b)
+	return nuo
+}
+
+// SetNillableSignalConnected sets the "signal_connected" field if the given value is not nil.
+func (nuo *NetbirdUpdateOne) SetNillableSignalConnected(b *bool) *NetbirdUpdateOne {
+	if b != nil {
+		nuo.SetSignalConnected(*b)
+	}
+	return nuo
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (nuo *NetbirdUpdateOne) SetSSHEnabled(b bool) *NetbirdUpdateOne {
 	nuo.mutation.SetSSHEnabled(b)
@@ -414,6 +563,60 @@ func (nuo *NetbirdUpdateOne) SetNillableSSHEnabled(b *bool) *NetbirdUpdateOne {
 	if b != nil {
 		nuo.SetSSHEnabled(*b)
 	}
+	return nuo
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (nuo *NetbirdUpdateOne) SetPeersTotal(i int) *NetbirdUpdateOne {
+	nuo.mutation.ResetPeersTotal()
+	nuo.mutation.SetPeersTotal(i)
+	return nuo
+}
+
+// SetNillablePeersTotal sets the "peers_total" field if the given value is not nil.
+func (nuo *NetbirdUpdateOne) SetNillablePeersTotal(i *int) *NetbirdUpdateOne {
+	if i != nil {
+		nuo.SetPeersTotal(*i)
+	}
+	return nuo
+}
+
+// AddPeersTotal adds i to the "peers_total" field.
+func (nuo *NetbirdUpdateOne) AddPeersTotal(i int) *NetbirdUpdateOne {
+	nuo.mutation.AddPeersTotal(i)
+	return nuo
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (nuo *NetbirdUpdateOne) ClearPeersTotal() *NetbirdUpdateOne {
+	nuo.mutation.ClearPeersTotal()
+	return nuo
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (nuo *NetbirdUpdateOne) SetPeersConnected(i int) *NetbirdUpdateOne {
+	nuo.mutation.ResetPeersConnected()
+	nuo.mutation.SetPeersConnected(i)
+	return nuo
+}
+
+// SetNillablePeersConnected sets the "peers_connected" field if the given value is not nil.
+func (nuo *NetbirdUpdateOne) SetNillablePeersConnected(i *int) *NetbirdUpdateOne {
+	if i != nil {
+		nuo.SetPeersConnected(*i)
+	}
+	return nuo
+}
+
+// AddPeersConnected adds i to the "peers_connected" field.
+func (nuo *NetbirdUpdateOne) AddPeersConnected(i int) *NetbirdUpdateOne {
+	nuo.mutation.AddPeersConnected(i)
+	return nuo
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (nuo *NetbirdUpdateOne) ClearPeersConnected() *NetbirdUpdateOne {
+	nuo.mutation.ClearPeersConnected()
 	return nuo
 }
 
@@ -549,8 +752,35 @@ func (nuo *NetbirdUpdateOne) sqlSave(ctx context.Context) (_node *Netbird, err e
 	if value, ok := nuo.mutation.ManagementConnected(); ok {
 		_spec.SetField(netbird.FieldManagementConnected, field.TypeBool, value)
 	}
+	if value, ok := nuo.mutation.SignalURL(); ok {
+		_spec.SetField(netbird.FieldSignalURL, field.TypeString, value)
+	}
+	if nuo.mutation.SignalURLCleared() {
+		_spec.ClearField(netbird.FieldSignalURL, field.TypeString)
+	}
+	if value, ok := nuo.mutation.SignalConnected(); ok {
+		_spec.SetField(netbird.FieldSignalConnected, field.TypeBool, value)
+	}
 	if value, ok := nuo.mutation.SSHEnabled(); ok {
 		_spec.SetField(netbird.FieldSSHEnabled, field.TypeBool, value)
+	}
+	if value, ok := nuo.mutation.PeersTotal(); ok {
+		_spec.SetField(netbird.FieldPeersTotal, field.TypeInt, value)
+	}
+	if value, ok := nuo.mutation.AddedPeersTotal(); ok {
+		_spec.AddField(netbird.FieldPeersTotal, field.TypeInt, value)
+	}
+	if nuo.mutation.PeersTotalCleared() {
+		_spec.ClearField(netbird.FieldPeersTotal, field.TypeInt)
+	}
+	if value, ok := nuo.mutation.PeersConnected(); ok {
+		_spec.SetField(netbird.FieldPeersConnected, field.TypeInt, value)
+	}
+	if value, ok := nuo.mutation.AddedPeersConnected(); ok {
+		_spec.AddField(netbird.FieldPeersConnected, field.TypeInt, value)
+	}
+	if nuo.mutation.PeersConnectedCleared() {
+		_spec.ClearField(netbird.FieldPeersConnected, field.TypeInt)
 	}
 	if nuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

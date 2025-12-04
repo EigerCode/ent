@@ -106,6 +106,34 @@ func (nc *NetbirdCreate) SetNillableManagementConnected(b *bool) *NetbirdCreate 
 	return nc
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (nc *NetbirdCreate) SetSignalURL(s string) *NetbirdCreate {
+	nc.mutation.SetSignalURL(s)
+	return nc
+}
+
+// SetNillableSignalURL sets the "signal_url" field if the given value is not nil.
+func (nc *NetbirdCreate) SetNillableSignalURL(s *string) *NetbirdCreate {
+	if s != nil {
+		nc.SetSignalURL(*s)
+	}
+	return nc
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (nc *NetbirdCreate) SetSignalConnected(b bool) *NetbirdCreate {
+	nc.mutation.SetSignalConnected(b)
+	return nc
+}
+
+// SetNillableSignalConnected sets the "signal_connected" field if the given value is not nil.
+func (nc *NetbirdCreate) SetNillableSignalConnected(b *bool) *NetbirdCreate {
+	if b != nil {
+		nc.SetSignalConnected(*b)
+	}
+	return nc
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (nc *NetbirdCreate) SetSSHEnabled(b bool) *NetbirdCreate {
 	nc.mutation.SetSSHEnabled(b)
@@ -116,6 +144,34 @@ func (nc *NetbirdCreate) SetSSHEnabled(b bool) *NetbirdCreate {
 func (nc *NetbirdCreate) SetNillableSSHEnabled(b *bool) *NetbirdCreate {
 	if b != nil {
 		nc.SetSSHEnabled(*b)
+	}
+	return nc
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (nc *NetbirdCreate) SetPeersTotal(i int) *NetbirdCreate {
+	nc.mutation.SetPeersTotal(i)
+	return nc
+}
+
+// SetNillablePeersTotal sets the "peers_total" field if the given value is not nil.
+func (nc *NetbirdCreate) SetNillablePeersTotal(i *int) *NetbirdCreate {
+	if i != nil {
+		nc.SetPeersTotal(*i)
+	}
+	return nc
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (nc *NetbirdCreate) SetPeersConnected(i int) *NetbirdCreate {
+	nc.mutation.SetPeersConnected(i)
+	return nc
+}
+
+// SetNillablePeersConnected sets the "peers_connected" field if the given value is not nil.
+func (nc *NetbirdCreate) SetNillablePeersConnected(i *int) *NetbirdCreate {
+	if i != nil {
+		nc.SetPeersConnected(*i)
 	}
 	return nc
 }
@@ -190,9 +246,25 @@ func (nc *NetbirdCreate) defaults() {
 		v := netbird.DefaultManagementConnected
 		nc.mutation.SetManagementConnected(v)
 	}
+	if _, ok := nc.mutation.SignalURL(); !ok {
+		v := netbird.DefaultSignalURL
+		nc.mutation.SetSignalURL(v)
+	}
+	if _, ok := nc.mutation.SignalConnected(); !ok {
+		v := netbird.DefaultSignalConnected
+		nc.mutation.SetSignalConnected(v)
+	}
 	if _, ok := nc.mutation.SSHEnabled(); !ok {
 		v := netbird.DefaultSSHEnabled
 		nc.mutation.SetSSHEnabled(v)
+	}
+	if _, ok := nc.mutation.PeersTotal(); !ok {
+		v := netbird.DefaultPeersTotal
+		nc.mutation.SetPeersTotal(v)
+	}
+	if _, ok := nc.mutation.PeersConnected(); !ok {
+		v := netbird.DefaultPeersConnected
+		nc.mutation.SetPeersConnected(v)
 	}
 }
 
@@ -206,6 +278,9 @@ func (nc *NetbirdCreate) check() error {
 	}
 	if _, ok := nc.mutation.ManagementConnected(); !ok {
 		return &ValidationError{Name: "management_connected", err: errors.New(`ent: missing required field "Netbird.management_connected"`)}
+	}
+	if _, ok := nc.mutation.SignalConnected(); !ok {
+		return &ValidationError{Name: "signal_connected", err: errors.New(`ent: missing required field "Netbird.signal_connected"`)}
 	}
 	if _, ok := nc.mutation.SSHEnabled(); !ok {
 		return &ValidationError{Name: "ssh_enabled", err: errors.New(`ent: missing required field "Netbird.ssh_enabled"`)}
@@ -264,9 +339,25 @@ func (nc *NetbirdCreate) createSpec() (*Netbird, *sqlgraph.CreateSpec) {
 		_spec.SetField(netbird.FieldManagementConnected, field.TypeBool, value)
 		_node.ManagementConnected = value
 	}
+	if value, ok := nc.mutation.SignalURL(); ok {
+		_spec.SetField(netbird.FieldSignalURL, field.TypeString, value)
+		_node.SignalURL = value
+	}
+	if value, ok := nc.mutation.SignalConnected(); ok {
+		_spec.SetField(netbird.FieldSignalConnected, field.TypeBool, value)
+		_node.SignalConnected = value
+	}
 	if value, ok := nc.mutation.SSHEnabled(); ok {
 		_spec.SetField(netbird.FieldSSHEnabled, field.TypeBool, value)
 		_node.SSHEnabled = value
+	}
+	if value, ok := nc.mutation.PeersTotal(); ok {
+		_spec.SetField(netbird.FieldPeersTotal, field.TypeInt, value)
+		_node.PeersTotal = value
+	}
+	if value, ok := nc.mutation.PeersConnected(); ok {
+		_spec.SetField(netbird.FieldPeersConnected, field.TypeInt, value)
+		_node.PeersConnected = value
 	}
 	if nodes := nc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -427,6 +518,36 @@ func (u *NetbirdUpsert) UpdateManagementConnected() *NetbirdUpsert {
 	return u
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (u *NetbirdUpsert) SetSignalURL(v string) *NetbirdUpsert {
+	u.Set(netbird.FieldSignalURL, v)
+	return u
+}
+
+// UpdateSignalURL sets the "signal_url" field to the value that was provided on create.
+func (u *NetbirdUpsert) UpdateSignalURL() *NetbirdUpsert {
+	u.SetExcluded(netbird.FieldSignalURL)
+	return u
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (u *NetbirdUpsert) ClearSignalURL() *NetbirdUpsert {
+	u.SetNull(netbird.FieldSignalURL)
+	return u
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (u *NetbirdUpsert) SetSignalConnected(v bool) *NetbirdUpsert {
+	u.Set(netbird.FieldSignalConnected, v)
+	return u
+}
+
+// UpdateSignalConnected sets the "signal_connected" field to the value that was provided on create.
+func (u *NetbirdUpsert) UpdateSignalConnected() *NetbirdUpsert {
+	u.SetExcluded(netbird.FieldSignalConnected)
+	return u
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (u *NetbirdUpsert) SetSSHEnabled(v bool) *NetbirdUpsert {
 	u.Set(netbird.FieldSSHEnabled, v)
@@ -436,6 +557,54 @@ func (u *NetbirdUpsert) SetSSHEnabled(v bool) *NetbirdUpsert {
 // UpdateSSHEnabled sets the "ssh_enabled" field to the value that was provided on create.
 func (u *NetbirdUpsert) UpdateSSHEnabled() *NetbirdUpsert {
 	u.SetExcluded(netbird.FieldSSHEnabled)
+	return u
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (u *NetbirdUpsert) SetPeersTotal(v int) *NetbirdUpsert {
+	u.Set(netbird.FieldPeersTotal, v)
+	return u
+}
+
+// UpdatePeersTotal sets the "peers_total" field to the value that was provided on create.
+func (u *NetbirdUpsert) UpdatePeersTotal() *NetbirdUpsert {
+	u.SetExcluded(netbird.FieldPeersTotal)
+	return u
+}
+
+// AddPeersTotal adds v to the "peers_total" field.
+func (u *NetbirdUpsert) AddPeersTotal(v int) *NetbirdUpsert {
+	u.Add(netbird.FieldPeersTotal, v)
+	return u
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (u *NetbirdUpsert) ClearPeersTotal() *NetbirdUpsert {
+	u.SetNull(netbird.FieldPeersTotal)
+	return u
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (u *NetbirdUpsert) SetPeersConnected(v int) *NetbirdUpsert {
+	u.Set(netbird.FieldPeersConnected, v)
+	return u
+}
+
+// UpdatePeersConnected sets the "peers_connected" field to the value that was provided on create.
+func (u *NetbirdUpsert) UpdatePeersConnected() *NetbirdUpsert {
+	u.SetExcluded(netbird.FieldPeersConnected)
+	return u
+}
+
+// AddPeersConnected adds v to the "peers_connected" field.
+func (u *NetbirdUpsert) AddPeersConnected(v int) *NetbirdUpsert {
+	u.Add(netbird.FieldPeersConnected, v)
+	return u
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (u *NetbirdUpsert) ClearPeersConnected() *NetbirdUpsert {
+	u.SetNull(netbird.FieldPeersConnected)
 	return u
 }
 
@@ -584,6 +753,41 @@ func (u *NetbirdUpsertOne) UpdateManagementConnected() *NetbirdUpsertOne {
 	})
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (u *NetbirdUpsertOne) SetSignalURL(v string) *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetSignalURL(v)
+	})
+}
+
+// UpdateSignalURL sets the "signal_url" field to the value that was provided on create.
+func (u *NetbirdUpsertOne) UpdateSignalURL() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdateSignalURL()
+	})
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (u *NetbirdUpsertOne) ClearSignalURL() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.ClearSignalURL()
+	})
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (u *NetbirdUpsertOne) SetSignalConnected(v bool) *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetSignalConnected(v)
+	})
+}
+
+// UpdateSignalConnected sets the "signal_connected" field to the value that was provided on create.
+func (u *NetbirdUpsertOne) UpdateSignalConnected() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdateSignalConnected()
+	})
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (u *NetbirdUpsertOne) SetSSHEnabled(v bool) *NetbirdUpsertOne {
 	return u.Update(func(s *NetbirdUpsert) {
@@ -595,6 +799,62 @@ func (u *NetbirdUpsertOne) SetSSHEnabled(v bool) *NetbirdUpsertOne {
 func (u *NetbirdUpsertOne) UpdateSSHEnabled() *NetbirdUpsertOne {
 	return u.Update(func(s *NetbirdUpsert) {
 		s.UpdateSSHEnabled()
+	})
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (u *NetbirdUpsertOne) SetPeersTotal(v int) *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetPeersTotal(v)
+	})
+}
+
+// AddPeersTotal adds v to the "peers_total" field.
+func (u *NetbirdUpsertOne) AddPeersTotal(v int) *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.AddPeersTotal(v)
+	})
+}
+
+// UpdatePeersTotal sets the "peers_total" field to the value that was provided on create.
+func (u *NetbirdUpsertOne) UpdatePeersTotal() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdatePeersTotal()
+	})
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (u *NetbirdUpsertOne) ClearPeersTotal() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.ClearPeersTotal()
+	})
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (u *NetbirdUpsertOne) SetPeersConnected(v int) *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetPeersConnected(v)
+	})
+}
+
+// AddPeersConnected adds v to the "peers_connected" field.
+func (u *NetbirdUpsertOne) AddPeersConnected(v int) *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.AddPeersConnected(v)
+	})
+}
+
+// UpdatePeersConnected sets the "peers_connected" field to the value that was provided on create.
+func (u *NetbirdUpsertOne) UpdatePeersConnected() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdatePeersConnected()
+	})
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (u *NetbirdUpsertOne) ClearPeersConnected() *NetbirdUpsertOne {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.ClearPeersConnected()
 	})
 }
 
@@ -907,6 +1167,41 @@ func (u *NetbirdUpsertBulk) UpdateManagementConnected() *NetbirdUpsertBulk {
 	})
 }
 
+// SetSignalURL sets the "signal_url" field.
+func (u *NetbirdUpsertBulk) SetSignalURL(v string) *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetSignalURL(v)
+	})
+}
+
+// UpdateSignalURL sets the "signal_url" field to the value that was provided on create.
+func (u *NetbirdUpsertBulk) UpdateSignalURL() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdateSignalURL()
+	})
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (u *NetbirdUpsertBulk) ClearSignalURL() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.ClearSignalURL()
+	})
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (u *NetbirdUpsertBulk) SetSignalConnected(v bool) *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetSignalConnected(v)
+	})
+}
+
+// UpdateSignalConnected sets the "signal_connected" field to the value that was provided on create.
+func (u *NetbirdUpsertBulk) UpdateSignalConnected() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdateSignalConnected()
+	})
+}
+
 // SetSSHEnabled sets the "ssh_enabled" field.
 func (u *NetbirdUpsertBulk) SetSSHEnabled(v bool) *NetbirdUpsertBulk {
 	return u.Update(func(s *NetbirdUpsert) {
@@ -918,6 +1213,62 @@ func (u *NetbirdUpsertBulk) SetSSHEnabled(v bool) *NetbirdUpsertBulk {
 func (u *NetbirdUpsertBulk) UpdateSSHEnabled() *NetbirdUpsertBulk {
 	return u.Update(func(s *NetbirdUpsert) {
 		s.UpdateSSHEnabled()
+	})
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (u *NetbirdUpsertBulk) SetPeersTotal(v int) *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetPeersTotal(v)
+	})
+}
+
+// AddPeersTotal adds v to the "peers_total" field.
+func (u *NetbirdUpsertBulk) AddPeersTotal(v int) *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.AddPeersTotal(v)
+	})
+}
+
+// UpdatePeersTotal sets the "peers_total" field to the value that was provided on create.
+func (u *NetbirdUpsertBulk) UpdatePeersTotal() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdatePeersTotal()
+	})
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (u *NetbirdUpsertBulk) ClearPeersTotal() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.ClearPeersTotal()
+	})
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (u *NetbirdUpsertBulk) SetPeersConnected(v int) *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.SetPeersConnected(v)
+	})
+}
+
+// AddPeersConnected adds v to the "peers_connected" field.
+func (u *NetbirdUpsertBulk) AddPeersConnected(v int) *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.AddPeersConnected(v)
+	})
+}
+
+// UpdatePeersConnected sets the "peers_connected" field to the value that was provided on create.
+func (u *NetbirdUpsertBulk) UpdatePeersConnected() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.UpdatePeersConnected()
+	})
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (u *NetbirdUpsertBulk) ClearPeersConnected() *NetbirdUpsertBulk {
+	return u.Update(func(s *NetbirdUpsert) {
+		s.ClearPeersConnected()
 	})
 }
 

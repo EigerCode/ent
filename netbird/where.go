@@ -83,9 +83,29 @@ func ManagementConnected(v bool) predicate.Netbird {
 	return predicate.Netbird(sql.FieldEQ(FieldManagementConnected, v))
 }
 
+// SignalURL applies equality check predicate on the "signal_url" field. It's identical to SignalURLEQ.
+func SignalURL(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldSignalURL, v))
+}
+
+// SignalConnected applies equality check predicate on the "signal_connected" field. It's identical to SignalConnectedEQ.
+func SignalConnected(v bool) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldSignalConnected, v))
+}
+
 // SSHEnabled applies equality check predicate on the "ssh_enabled" field. It's identical to SSHEnabledEQ.
 func SSHEnabled(v bool) predicate.Netbird {
 	return predicate.Netbird(sql.FieldEQ(FieldSSHEnabled, v))
+}
+
+// PeersTotal applies equality check predicate on the "peers_total" field. It's identical to PeersTotalEQ.
+func PeersTotal(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldPeersTotal, v))
+}
+
+// PeersConnected applies equality check predicate on the "peers_connected" field. It's identical to PeersConnectedEQ.
+func PeersConnected(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldPeersConnected, v))
 }
 
 // VersionEQ applies the EQ predicate on the "version" field.
@@ -398,6 +418,91 @@ func ManagementConnectedNEQ(v bool) predicate.Netbird {
 	return predicate.Netbird(sql.FieldNEQ(FieldManagementConnected, v))
 }
 
+// SignalURLEQ applies the EQ predicate on the "signal_url" field.
+func SignalURLEQ(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldSignalURL, v))
+}
+
+// SignalURLNEQ applies the NEQ predicate on the "signal_url" field.
+func SignalURLNEQ(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNEQ(FieldSignalURL, v))
+}
+
+// SignalURLIn applies the In predicate on the "signal_url" field.
+func SignalURLIn(vs ...string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldIn(FieldSignalURL, vs...))
+}
+
+// SignalURLNotIn applies the NotIn predicate on the "signal_url" field.
+func SignalURLNotIn(vs ...string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNotIn(FieldSignalURL, vs...))
+}
+
+// SignalURLGT applies the GT predicate on the "signal_url" field.
+func SignalURLGT(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldGT(FieldSignalURL, v))
+}
+
+// SignalURLGTE applies the GTE predicate on the "signal_url" field.
+func SignalURLGTE(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldGTE(FieldSignalURL, v))
+}
+
+// SignalURLLT applies the LT predicate on the "signal_url" field.
+func SignalURLLT(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldLT(FieldSignalURL, v))
+}
+
+// SignalURLLTE applies the LTE predicate on the "signal_url" field.
+func SignalURLLTE(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldLTE(FieldSignalURL, v))
+}
+
+// SignalURLContains applies the Contains predicate on the "signal_url" field.
+func SignalURLContains(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldContains(FieldSignalURL, v))
+}
+
+// SignalURLHasPrefix applies the HasPrefix predicate on the "signal_url" field.
+func SignalURLHasPrefix(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldHasPrefix(FieldSignalURL, v))
+}
+
+// SignalURLHasSuffix applies the HasSuffix predicate on the "signal_url" field.
+func SignalURLHasSuffix(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldHasSuffix(FieldSignalURL, v))
+}
+
+// SignalURLIsNil applies the IsNil predicate on the "signal_url" field.
+func SignalURLIsNil() predicate.Netbird {
+	return predicate.Netbird(sql.FieldIsNull(FieldSignalURL))
+}
+
+// SignalURLNotNil applies the NotNil predicate on the "signal_url" field.
+func SignalURLNotNil() predicate.Netbird {
+	return predicate.Netbird(sql.FieldNotNull(FieldSignalURL))
+}
+
+// SignalURLEqualFold applies the EqualFold predicate on the "signal_url" field.
+func SignalURLEqualFold(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEqualFold(FieldSignalURL, v))
+}
+
+// SignalURLContainsFold applies the ContainsFold predicate on the "signal_url" field.
+func SignalURLContainsFold(v string) predicate.Netbird {
+	return predicate.Netbird(sql.FieldContainsFold(FieldSignalURL, v))
+}
+
+// SignalConnectedEQ applies the EQ predicate on the "signal_connected" field.
+func SignalConnectedEQ(v bool) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldSignalConnected, v))
+}
+
+// SignalConnectedNEQ applies the NEQ predicate on the "signal_connected" field.
+func SignalConnectedNEQ(v bool) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNEQ(FieldSignalConnected, v))
+}
+
 // SSHEnabledEQ applies the EQ predicate on the "ssh_enabled" field.
 func SSHEnabledEQ(v bool) predicate.Netbird {
 	return predicate.Netbird(sql.FieldEQ(FieldSSHEnabled, v))
@@ -406,6 +511,106 @@ func SSHEnabledEQ(v bool) predicate.Netbird {
 // SSHEnabledNEQ applies the NEQ predicate on the "ssh_enabled" field.
 func SSHEnabledNEQ(v bool) predicate.Netbird {
 	return predicate.Netbird(sql.FieldNEQ(FieldSSHEnabled, v))
+}
+
+// PeersTotalEQ applies the EQ predicate on the "peers_total" field.
+func PeersTotalEQ(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldPeersTotal, v))
+}
+
+// PeersTotalNEQ applies the NEQ predicate on the "peers_total" field.
+func PeersTotalNEQ(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNEQ(FieldPeersTotal, v))
+}
+
+// PeersTotalIn applies the In predicate on the "peers_total" field.
+func PeersTotalIn(vs ...int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldIn(FieldPeersTotal, vs...))
+}
+
+// PeersTotalNotIn applies the NotIn predicate on the "peers_total" field.
+func PeersTotalNotIn(vs ...int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNotIn(FieldPeersTotal, vs...))
+}
+
+// PeersTotalGT applies the GT predicate on the "peers_total" field.
+func PeersTotalGT(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldGT(FieldPeersTotal, v))
+}
+
+// PeersTotalGTE applies the GTE predicate on the "peers_total" field.
+func PeersTotalGTE(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldGTE(FieldPeersTotal, v))
+}
+
+// PeersTotalLT applies the LT predicate on the "peers_total" field.
+func PeersTotalLT(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldLT(FieldPeersTotal, v))
+}
+
+// PeersTotalLTE applies the LTE predicate on the "peers_total" field.
+func PeersTotalLTE(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldLTE(FieldPeersTotal, v))
+}
+
+// PeersTotalIsNil applies the IsNil predicate on the "peers_total" field.
+func PeersTotalIsNil() predicate.Netbird {
+	return predicate.Netbird(sql.FieldIsNull(FieldPeersTotal))
+}
+
+// PeersTotalNotNil applies the NotNil predicate on the "peers_total" field.
+func PeersTotalNotNil() predicate.Netbird {
+	return predicate.Netbird(sql.FieldNotNull(FieldPeersTotal))
+}
+
+// PeersConnectedEQ applies the EQ predicate on the "peers_connected" field.
+func PeersConnectedEQ(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldEQ(FieldPeersConnected, v))
+}
+
+// PeersConnectedNEQ applies the NEQ predicate on the "peers_connected" field.
+func PeersConnectedNEQ(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNEQ(FieldPeersConnected, v))
+}
+
+// PeersConnectedIn applies the In predicate on the "peers_connected" field.
+func PeersConnectedIn(vs ...int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldIn(FieldPeersConnected, vs...))
+}
+
+// PeersConnectedNotIn applies the NotIn predicate on the "peers_connected" field.
+func PeersConnectedNotIn(vs ...int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldNotIn(FieldPeersConnected, vs...))
+}
+
+// PeersConnectedGT applies the GT predicate on the "peers_connected" field.
+func PeersConnectedGT(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldGT(FieldPeersConnected, v))
+}
+
+// PeersConnectedGTE applies the GTE predicate on the "peers_connected" field.
+func PeersConnectedGTE(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldGTE(FieldPeersConnected, v))
+}
+
+// PeersConnectedLT applies the LT predicate on the "peers_connected" field.
+func PeersConnectedLT(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldLT(FieldPeersConnected, v))
+}
+
+// PeersConnectedLTE applies the LTE predicate on the "peers_connected" field.
+func PeersConnectedLTE(v int) predicate.Netbird {
+	return predicate.Netbird(sql.FieldLTE(FieldPeersConnected, v))
+}
+
+// PeersConnectedIsNil applies the IsNil predicate on the "peers_connected" field.
+func PeersConnectedIsNil() predicate.Netbird {
+	return predicate.Netbird(sql.FieldIsNull(FieldPeersConnected))
+}
+
+// PeersConnectedNotNil applies the NotNil predicate on the "peers_connected" field.
+func PeersConnectedNotNil() predicate.Netbird {
+	return predicate.Netbird(sql.FieldNotNull(FieldPeersConnected))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

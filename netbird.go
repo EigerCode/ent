@@ -29,8 +29,16 @@ type Netbird struct {
 	ManagementURL string `json:"management_url,omitempty"`
 	// ManagementConnected holds the value of the "management_connected" field.
 	ManagementConnected bool `json:"management_connected,omitempty"`
+	// SignalURL holds the value of the "signal_url" field.
+	SignalURL string `json:"signal_url,omitempty"`
+	// SignalConnected holds the value of the "signal_connected" field.
+	SignalConnected bool `json:"signal_connected,omitempty"`
 	// SSHEnabled holds the value of the "ssh_enabled" field.
 	SSHEnabled bool `json:"ssh_enabled,omitempty"`
+	// PeersTotal holds the value of the "peers_total" field.
+	PeersTotal int `json:"peers_total,omitempty"`
+	// PeersConnected holds the value of the "peers_connected" field.
+	PeersConnected int `json:"peers_connected,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the NetbirdQuery when eager-loading is set.
 	Edges         NetbirdEdges `json:"edges"`
@@ -63,11 +71,11 @@ func (*Netbird) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case netbird.FieldInstalled, netbird.FieldManagementConnected, netbird.FieldSSHEnabled:
+		case netbird.FieldInstalled, netbird.FieldManagementConnected, netbird.FieldSignalConnected, netbird.FieldSSHEnabled:
 			values[i] = new(sql.NullBool)
-		case netbird.FieldID:
+		case netbird.FieldID, netbird.FieldPeersTotal, netbird.FieldPeersConnected:
 			values[i] = new(sql.NullInt64)
-		case netbird.FieldVersion, netbird.FieldIP, netbird.FieldProfile, netbird.FieldManagementURL:
+		case netbird.FieldVersion, netbird.FieldIP, netbird.FieldProfile, netbird.FieldManagementURL, netbird.FieldSignalURL:
 			values[i] = new(sql.NullString)
 		case netbird.ForeignKeys[0]: // agent_netbird
 			values[i] = new(sql.NullString)
@@ -128,11 +136,35 @@ func (n *Netbird) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				n.ManagementConnected = value.Bool
 			}
+		case netbird.FieldSignalURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field signal_url", values[i])
+			} else if value.Valid {
+				n.SignalURL = value.String
+			}
+		case netbird.FieldSignalConnected:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field signal_connected", values[i])
+			} else if value.Valid {
+				n.SignalConnected = value.Bool
+			}
 		case netbird.FieldSSHEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field ssh_enabled", values[i])
 			} else if value.Valid {
 				n.SSHEnabled = value.Bool
+			}
+		case netbird.FieldPeersTotal:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field peers_total", values[i])
+			} else if value.Valid {
+				n.PeersTotal = int(value.Int64)
+			}
+		case netbird.FieldPeersConnected:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field peers_connected", values[i])
+			} else if value.Valid {
+				n.PeersConnected = int(value.Int64)
 			}
 		case netbird.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -200,8 +232,20 @@ func (n *Netbird) String() string {
 	builder.WriteString("management_connected=")
 	builder.WriteString(fmt.Sprintf("%v", n.ManagementConnected))
 	builder.WriteString(", ")
+	builder.WriteString("signal_url=")
+	builder.WriteString(n.SignalURL)
+	builder.WriteString(", ")
+	builder.WriteString("signal_connected=")
+	builder.WriteString(fmt.Sprintf("%v", n.SignalConnected))
+	builder.WriteString(", ")
 	builder.WriteString("ssh_enabled=")
 	builder.WriteString(fmt.Sprintf("%v", n.SSHEnabled))
+	builder.WriteString(", ")
+	builder.WriteString("peers_total=")
+	builder.WriteString(fmt.Sprintf("%v", n.PeersTotal))
+	builder.WriteString(", ")
+	builder.WriteString("peers_connected=")
+	builder.WriteString(fmt.Sprintf("%v", n.PeersConnected))
 	builder.WriteByte(')')
 	return builder.String()
 }

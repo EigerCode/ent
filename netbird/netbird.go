@@ -24,8 +24,16 @@ const (
 	FieldManagementURL = "management_url"
 	// FieldManagementConnected holds the string denoting the management_connected field in the database.
 	FieldManagementConnected = "management_connected"
+	// FieldSignalURL holds the string denoting the signal_url field in the database.
+	FieldSignalURL = "signal_url"
+	// FieldSignalConnected holds the string denoting the signal_connected field in the database.
+	FieldSignalConnected = "signal_connected"
 	// FieldSSHEnabled holds the string denoting the ssh_enabled field in the database.
 	FieldSSHEnabled = "ssh_enabled"
+	// FieldPeersTotal holds the string denoting the peers_total field in the database.
+	FieldPeersTotal = "peers_total"
+	// FieldPeersConnected holds the string denoting the peers_connected field in the database.
+	FieldPeersConnected = "peers_connected"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// AgentFieldID holds the string denoting the ID field of the Agent.
@@ -50,7 +58,11 @@ var Columns = []string{
 	FieldProfile,
 	FieldManagementURL,
 	FieldManagementConnected,
+	FieldSignalURL,
+	FieldSignalConnected,
 	FieldSSHEnabled,
+	FieldPeersTotal,
+	FieldPeersConnected,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "netbirds"
@@ -87,8 +99,16 @@ var (
 	DefaultManagementURL string
 	// DefaultManagementConnected holds the default value on creation for the "management_connected" field.
 	DefaultManagementConnected bool
+	// DefaultSignalURL holds the default value on creation for the "signal_url" field.
+	DefaultSignalURL string
+	// DefaultSignalConnected holds the default value on creation for the "signal_connected" field.
+	DefaultSignalConnected bool
 	// DefaultSSHEnabled holds the default value on creation for the "ssh_enabled" field.
 	DefaultSSHEnabled bool
+	// DefaultPeersTotal holds the default value on creation for the "peers_total" field.
+	DefaultPeersTotal int
+	// DefaultPeersConnected holds the default value on creation for the "peers_connected" field.
+	DefaultPeersConnected int
 )
 
 // OrderOption defines the ordering options for the Netbird queries.
@@ -129,9 +149,29 @@ func ByManagementConnected(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldManagementConnected, opts...).ToFunc()
 }
 
+// BySignalURL orders the results by the signal_url field.
+func BySignalURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSignalURL, opts...).ToFunc()
+}
+
+// BySignalConnected orders the results by the signal_connected field.
+func BySignalConnected(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSignalConnected, opts...).ToFunc()
+}
+
 // BySSHEnabled orders the results by the ssh_enabled field.
 func BySSHEnabled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSSHEnabled, opts...).ToFunc()
+}
+
+// ByPeersTotal orders the results by the peers_total field.
+func ByPeersTotal(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPeersTotal, opts...).ToFunc()
+}
+
+// ByPeersConnected orders the results by the peers_connected field.
+func ByPeersConnected(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPeersConnected, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.
