@@ -91,8 +91,6 @@ type Settings struct {
 	DetectRemoteAgents bool `json:"detect_remote_agents,omitempty"`
 	// AutoAdmitAgents holds the value of the "auto_admit_agents" field.
 	AutoAdmitAgents bool `json:"auto_admit_agents,omitempty"`
-	// Netbird holds the value of the "netbird" field.
-	Netbird bool `json:"netbird,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SettingsQuery when eager-loading is set.
 	Edges           SettingsEdges `json:"edges"`
@@ -139,7 +137,7 @@ func (*Settings) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case settings.FieldSMTPTLS, settings.FieldSMTPStarttls, settings.FieldRequestVncPin, settings.FieldUseWinget, settings.FieldUseFlatpak, settings.FieldUseBrew, settings.FieldDisableSftp, settings.FieldDisableRemoteAssistance, settings.FieldDetectRemoteAgents, settings.FieldAutoAdmitAgents, settings.FieldNetbird:
+		case settings.FieldSMTPTLS, settings.FieldSMTPStarttls, settings.FieldRequestVncPin, settings.FieldUseWinget, settings.FieldUseFlatpak, settings.FieldUseBrew, settings.FieldDisableSftp, settings.FieldDisableRemoteAssistance, settings.FieldDetectRemoteAgents, settings.FieldAutoAdmitAgents:
 			values[i] = new(sql.NullBool)
 		case settings.FieldID, settings.FieldSMTPPort, settings.FieldUserCertYearsValid, settings.FieldNatsRequestTimeoutSeconds, settings.FieldRefreshTimeInMinutes, settings.FieldSessionLifetimeInMinutes, settings.FieldAgentReportFrequenceInMinutes, settings.FieldProfilesApplicationFrequenceInMinutes:
 			values[i] = new(sql.NullInt64)
@@ -388,12 +386,6 @@ func (s *Settings) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.AutoAdmitAgents = value.Bool
 			}
-		case settings.FieldNetbird:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field netbird", values[i])
-			} else if value.Valid {
-				s.Netbird = value.Bool
-			}
 		case settings.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field settings_tag", value)
@@ -561,9 +553,6 @@ func (s *Settings) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("auto_admit_agents=")
 	builder.WriteString(fmt.Sprintf("%v", s.AutoAdmitAgents))
-	builder.WriteString(", ")
-	builder.WriteString("netbird=")
-	builder.WriteString(fmt.Sprintf("%v", s.Netbird))
 	builder.WriteByte(')')
 	return builder.String()
 }

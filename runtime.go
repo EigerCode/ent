@@ -450,10 +450,6 @@ func init() {
 	settingsDescAutoAdmitAgents := settingsFields[35].Descriptor()
 	// settings.DefaultAutoAdmitAgents holds the default value on creation for the auto_admit_agents field.
 	settings.DefaultAutoAdmitAgents = settingsDescAutoAdmitAgents.Default.(bool)
-	// settingsDescNetbird is the schema descriptor for netbird field.
-	settingsDescNetbird := settingsFields[36].Descriptor()
-	// settings.DefaultNetbird holds the default value on creation for the netbird field.
-	settings.DefaultNetbird = settingsDescNetbird.Default.(bool)
 	siteFields := schema.Site{}.Fields()
 	_ = siteFields
 	// siteDescCreated is the schema descriptor for created field.

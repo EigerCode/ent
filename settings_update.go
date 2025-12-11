@@ -792,26 +792,6 @@ func (su *SettingsUpdate) ClearAutoAdmitAgents() *SettingsUpdate {
 	return su
 }
 
-// SetNetbird sets the "netbird" field.
-func (su *SettingsUpdate) SetNetbird(b bool) *SettingsUpdate {
-	su.mutation.SetNetbird(b)
-	return su
-}
-
-// SetNillableNetbird sets the "netbird" field if the given value is not nil.
-func (su *SettingsUpdate) SetNillableNetbird(b *bool) *SettingsUpdate {
-	if b != nil {
-		su.SetNetbird(*b)
-	}
-	return su
-}
-
-// ClearNetbird clears the value of the "netbird" field.
-func (su *SettingsUpdate) ClearNetbird() *SettingsUpdate {
-	su.mutation.ClearNetbird()
-	return su
-}
-
 // SetTagID sets the "tag" edge to the Tag entity by ID.
 func (su *SettingsUpdate) SetTagID(id int) *SettingsUpdate {
 	su.mutation.SetTagID(id)
@@ -1154,12 +1134,6 @@ func (su *SettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if su.mutation.AutoAdmitAgentsCleared() {
 		_spec.ClearField(settings.FieldAutoAdmitAgents, field.TypeBool)
-	}
-	if value, ok := su.mutation.Netbird(); ok {
-		_spec.SetField(settings.FieldNetbird, field.TypeBool, value)
-	}
-	if su.mutation.NetbirdCleared() {
-		_spec.ClearField(settings.FieldNetbird, field.TypeBool)
 	}
 	if su.mutation.TagCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2002,26 +1976,6 @@ func (suo *SettingsUpdateOne) ClearAutoAdmitAgents() *SettingsUpdateOne {
 	return suo
 }
 
-// SetNetbird sets the "netbird" field.
-func (suo *SettingsUpdateOne) SetNetbird(b bool) *SettingsUpdateOne {
-	suo.mutation.SetNetbird(b)
-	return suo
-}
-
-// SetNillableNetbird sets the "netbird" field if the given value is not nil.
-func (suo *SettingsUpdateOne) SetNillableNetbird(b *bool) *SettingsUpdateOne {
-	if b != nil {
-		suo.SetNetbird(*b)
-	}
-	return suo
-}
-
-// ClearNetbird clears the value of the "netbird" field.
-func (suo *SettingsUpdateOne) ClearNetbird() *SettingsUpdateOne {
-	suo.mutation.ClearNetbird()
-	return suo
-}
-
 // SetTagID sets the "tag" edge to the Tag entity by ID.
 func (suo *SettingsUpdateOne) SetTagID(id int) *SettingsUpdateOne {
 	suo.mutation.SetTagID(id)
@@ -2394,12 +2348,6 @@ func (suo *SettingsUpdateOne) sqlSave(ctx context.Context) (_node *Settings, err
 	}
 	if suo.mutation.AutoAdmitAgentsCleared() {
 		_spec.ClearField(settings.FieldAutoAdmitAgents, field.TypeBool)
-	}
-	if value, ok := suo.mutation.Netbird(); ok {
-		_spec.SetField(settings.FieldNetbird, field.TypeBool, value)
-	}
-	if suo.mutation.NetbirdCleared() {
-		_spec.ClearField(settings.FieldNetbird, field.TypeBool)
 	}
 	if suo.mutation.TagCleared() {
 		edge := &sqlgraph.EdgeSpec{

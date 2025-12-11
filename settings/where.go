@@ -235,11 +235,6 @@ func AutoAdmitAgents(v bool) predicate.Settings {
 	return predicate.Settings(sql.FieldEQ(FieldAutoAdmitAgents, v))
 }
 
-// Netbird applies equality check predicate on the "netbird" field. It's identical to NetbirdEQ.
-func Netbird(v bool) predicate.Settings {
-	return predicate.Settings(sql.FieldEQ(FieldNetbird, v))
-}
-
 // LanguageEQ applies the EQ predicate on the "language" field.
 func LanguageEQ(v string) predicate.Settings {
 	return predicate.Settings(sql.FieldEQ(FieldLanguage, v))
@@ -2163,26 +2158,6 @@ func AutoAdmitAgentsIsNil() predicate.Settings {
 // AutoAdmitAgentsNotNil applies the NotNil predicate on the "auto_admit_agents" field.
 func AutoAdmitAgentsNotNil() predicate.Settings {
 	return predicate.Settings(sql.FieldNotNull(FieldAutoAdmitAgents))
-}
-
-// NetbirdEQ applies the EQ predicate on the "netbird" field.
-func NetbirdEQ(v bool) predicate.Settings {
-	return predicate.Settings(sql.FieldEQ(FieldNetbird, v))
-}
-
-// NetbirdNEQ applies the NEQ predicate on the "netbird" field.
-func NetbirdNEQ(v bool) predicate.Settings {
-	return predicate.Settings(sql.FieldNEQ(FieldNetbird, v))
-}
-
-// NetbirdIsNil applies the IsNil predicate on the "netbird" field.
-func NetbirdIsNil() predicate.Settings {
-	return predicate.Settings(sql.FieldIsNull(FieldNetbird))
-}
-
-// NetbirdNotNil applies the NotNil predicate on the "netbird" field.
-func NetbirdNotNil() predicate.Settings {
-	return predicate.Settings(sql.FieldNotNull(FieldNetbird))
 }
 
 // HasTag applies the HasEdge predicate on the "tag" edge.

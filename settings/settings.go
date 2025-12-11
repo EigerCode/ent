@@ -86,8 +86,6 @@ const (
 	FieldDetectRemoteAgents = "detect_remote_agents"
 	// FieldAutoAdmitAgents holds the string denoting the auto_admit_agents field in the database.
 	FieldAutoAdmitAgents = "auto_admit_agents"
-	// FieldNetbird holds the string denoting the netbird field in the database.
-	FieldNetbird = "netbird"
 	// EdgeTag holds the string denoting the tag edge name in mutations.
 	EdgeTag = "tag"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
@@ -149,7 +147,6 @@ var Columns = []string{
 	FieldDisableRemoteAssistance,
 	FieldDetectRemoteAgents,
 	FieldAutoAdmitAgents,
-	FieldNetbird,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "settings"
@@ -223,8 +220,6 @@ var (
 	DefaultDetectRemoteAgents bool
 	// DefaultAutoAdmitAgents holds the default value on creation for the "auto_admit_agents" field.
 	DefaultAutoAdmitAgents bool
-	// DefaultNetbird holds the default value on creation for the "netbird" field.
-	DefaultNetbird bool
 )
 
 // OrderOption defines the ordering options for the Settings queries.
@@ -413,11 +408,6 @@ func ByDetectRemoteAgents(opts ...sql.OrderTermOption) OrderOption {
 // ByAutoAdmitAgents orders the results by the auto_admit_agents field.
 func ByAutoAdmitAgents(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAutoAdmitAgents, opts...).ToFunc()
-}
-
-// ByNetbird orders the results by the netbird field.
-func ByNetbird(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNetbird, opts...).ToFunc()
 }
 
 // ByTagField orders the results by tag field.

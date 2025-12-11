@@ -528,20 +528,6 @@ func (sc *SettingsCreate) SetNillableAutoAdmitAgents(b *bool) *SettingsCreate {
 	return sc
 }
 
-// SetNetbird sets the "netbird" field.
-func (sc *SettingsCreate) SetNetbird(b bool) *SettingsCreate {
-	sc.mutation.SetNetbird(b)
-	return sc
-}
-
-// SetNillableNetbird sets the "netbird" field if the given value is not nil.
-func (sc *SettingsCreate) SetNillableNetbird(b *bool) *SettingsCreate {
-	if b != nil {
-		sc.SetNetbird(*b)
-	}
-	return sc
-}
-
 // SetTagID sets the "tag" edge to the Tag entity by ID.
 func (sc *SettingsCreate) SetTagID(id int) *SettingsCreate {
 	sc.mutation.SetTagID(id)
@@ -706,10 +692,6 @@ func (sc *SettingsCreate) defaults() {
 	if _, ok := sc.mutation.AutoAdmitAgents(); !ok {
 		v := settings.DefaultAutoAdmitAgents
 		sc.mutation.SetAutoAdmitAgents(v)
-	}
-	if _, ok := sc.mutation.Netbird(); !ok {
-		v := settings.DefaultNetbird
-		sc.mutation.SetNetbird(v)
 	}
 }
 
@@ -885,10 +867,6 @@ func (sc *SettingsCreate) createSpec() (*Settings, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.AutoAdmitAgents(); ok {
 		_spec.SetField(settings.FieldAutoAdmitAgents, field.TypeBool, value)
 		_node.AutoAdmitAgents = value
-	}
-	if value, ok := sc.mutation.Netbird(); ok {
-		_spec.SetField(settings.FieldNetbird, field.TypeBool, value)
-		_node.Netbird = value
 	}
 	if nodes := sc.mutation.TagIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1663,24 +1641,6 @@ func (u *SettingsUpsert) UpdateAutoAdmitAgents() *SettingsUpsert {
 // ClearAutoAdmitAgents clears the value of the "auto_admit_agents" field.
 func (u *SettingsUpsert) ClearAutoAdmitAgents() *SettingsUpsert {
 	u.SetNull(settings.FieldAutoAdmitAgents)
-	return u
-}
-
-// SetNetbird sets the "netbird" field.
-func (u *SettingsUpsert) SetNetbird(v bool) *SettingsUpsert {
-	u.Set(settings.FieldNetbird, v)
-	return u
-}
-
-// UpdateNetbird sets the "netbird" field to the value that was provided on create.
-func (u *SettingsUpsert) UpdateNetbird() *SettingsUpsert {
-	u.SetExcluded(settings.FieldNetbird)
-	return u
-}
-
-// ClearNetbird clears the value of the "netbird" field.
-func (u *SettingsUpsert) ClearNetbird() *SettingsUpsert {
-	u.SetNull(settings.FieldNetbird)
 	return u
 }
 
@@ -2526,27 +2486,6 @@ func (u *SettingsUpsertOne) UpdateAutoAdmitAgents() *SettingsUpsertOne {
 func (u *SettingsUpsertOne) ClearAutoAdmitAgents() *SettingsUpsertOne {
 	return u.Update(func(s *SettingsUpsert) {
 		s.ClearAutoAdmitAgents()
-	})
-}
-
-// SetNetbird sets the "netbird" field.
-func (u *SettingsUpsertOne) SetNetbird(v bool) *SettingsUpsertOne {
-	return u.Update(func(s *SettingsUpsert) {
-		s.SetNetbird(v)
-	})
-}
-
-// UpdateNetbird sets the "netbird" field to the value that was provided on create.
-func (u *SettingsUpsertOne) UpdateNetbird() *SettingsUpsertOne {
-	return u.Update(func(s *SettingsUpsert) {
-		s.UpdateNetbird()
-	})
-}
-
-// ClearNetbird clears the value of the "netbird" field.
-func (u *SettingsUpsertOne) ClearNetbird() *SettingsUpsertOne {
-	return u.Update(func(s *SettingsUpsert) {
-		s.ClearNetbird()
 	})
 }
 
@@ -3556,27 +3495,6 @@ func (u *SettingsUpsertBulk) UpdateAutoAdmitAgents() *SettingsUpsertBulk {
 func (u *SettingsUpsertBulk) ClearAutoAdmitAgents() *SettingsUpsertBulk {
 	return u.Update(func(s *SettingsUpsert) {
 		s.ClearAutoAdmitAgents()
-	})
-}
-
-// SetNetbird sets the "netbird" field.
-func (u *SettingsUpsertBulk) SetNetbird(v bool) *SettingsUpsertBulk {
-	return u.Update(func(s *SettingsUpsert) {
-		s.SetNetbird(v)
-	})
-}
-
-// UpdateNetbird sets the "netbird" field to the value that was provided on create.
-func (u *SettingsUpsertBulk) UpdateNetbird() *SettingsUpsertBulk {
-	return u.Update(func(s *SettingsUpsert) {
-		s.UpdateNetbird()
-	})
-}
-
-// ClearNetbird clears the value of the "netbird" field.
-func (u *SettingsUpsertBulk) ClearNetbird() *SettingsUpsertBulk {
-	return u.Update(func(s *SettingsUpsert) {
-		s.ClearNetbird()
 	})
 }
 

@@ -22853,7 +22853,6 @@ type SettingsMutation struct {
 	disable_remote_assistance                    *bool
 	detect_remote_agents                         *bool
 	auto_admit_agents                            *bool
-	netbird                                      *bool
 	clearedFields                                map[string]struct{}
 	tag                                          *int
 	clearedtag                                   bool
@@ -24873,55 +24872,6 @@ func (m *SettingsMutation) ResetAutoAdmitAgents() {
 	delete(m.clearedFields, settings.FieldAutoAdmitAgents)
 }
 
-// SetNetbird sets the "netbird" field.
-func (m *SettingsMutation) SetNetbird(b bool) {
-	m.netbird = &b
-}
-
-// Netbird returns the value of the "netbird" field in the mutation.
-func (m *SettingsMutation) Netbird() (r bool, exists bool) {
-	v := m.netbird
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldNetbird returns the old "netbird" field's value of the Settings entity.
-// If the Settings object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SettingsMutation) OldNetbird(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldNetbird is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldNetbird requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldNetbird: %w", err)
-	}
-	return oldValue.Netbird, nil
-}
-
-// ClearNetbird clears the value of the "netbird" field.
-func (m *SettingsMutation) ClearNetbird() {
-	m.netbird = nil
-	m.clearedFields[settings.FieldNetbird] = struct{}{}
-}
-
-// NetbirdCleared returns if the "netbird" field was cleared in this mutation.
-func (m *SettingsMutation) NetbirdCleared() bool {
-	_, ok := m.clearedFields[settings.FieldNetbird]
-	return ok
-}
-
-// ResetNetbird resets all changes to the "netbird" field.
-func (m *SettingsMutation) ResetNetbird() {
-	m.netbird = nil
-	delete(m.clearedFields, settings.FieldNetbird)
-}
-
 // SetTagID sets the "tag" edge to the Tag entity by id.
 func (m *SettingsMutation) SetTagID(id int) {
 	m.tag = &id
@@ -25034,7 +24984,7 @@ func (m *SettingsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SettingsMutation) Fields() []string {
-	fields := make([]string, 0, 37)
+	fields := make([]string, 0, 36)
 	if m.language != nil {
 		fields = append(fields, settings.FieldLanguage)
 	}
@@ -25143,9 +25093,6 @@ func (m *SettingsMutation) Fields() []string {
 	if m.auto_admit_agents != nil {
 		fields = append(fields, settings.FieldAutoAdmitAgents)
 	}
-	if m.netbird != nil {
-		fields = append(fields, settings.FieldNetbird)
-	}
 	return fields
 }
 
@@ -25226,8 +25173,6 @@ func (m *SettingsMutation) Field(name string) (ent.Value, bool) {
 		return m.DetectRemoteAgents()
 	case settings.FieldAutoAdmitAgents:
 		return m.AutoAdmitAgents()
-	case settings.FieldNetbird:
-		return m.Netbird()
 	}
 	return nil, false
 }
@@ -25309,8 +25254,6 @@ func (m *SettingsMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDetectRemoteAgents(ctx)
 	case settings.FieldAutoAdmitAgents:
 		return m.OldAutoAdmitAgents(ctx)
-	case settings.FieldNetbird:
-		return m.OldNetbird(ctx)
 	}
 	return nil, fmt.Errorf("unknown Settings field %s", name)
 }
@@ -25572,13 +25515,6 @@ func (m *SettingsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAutoAdmitAgents(v)
 		return nil
-	case settings.FieldNetbird:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetNetbird(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Settings field %s", name)
 }
@@ -25804,9 +25740,6 @@ func (m *SettingsMutation) ClearedFields() []string {
 	if m.FieldCleared(settings.FieldAutoAdmitAgents) {
 		fields = append(fields, settings.FieldAutoAdmitAgents)
 	}
-	if m.FieldCleared(settings.FieldNetbird) {
-		fields = append(fields, settings.FieldNetbird)
-	}
 	return fields
 }
 
@@ -25929,9 +25862,6 @@ func (m *SettingsMutation) ClearField(name string) error {
 	case settings.FieldAutoAdmitAgents:
 		m.ClearAutoAdmitAgents()
 		return nil
-	case settings.FieldNetbird:
-		m.ClearNetbird()
-		return nil
 	}
 	return fmt.Errorf("unknown Settings nullable field %s", name)
 }
@@ -26047,9 +25977,6 @@ func (m *SettingsMutation) ResetField(name string) error {
 		return nil
 	case settings.FieldAutoAdmitAgents:
 		m.ResetAutoAdmitAgents()
-		return nil
-	case settings.FieldNetbird:
-		m.ResetNetbird()
 		return nil
 	}
 	return fmt.Errorf("unknown Settings field %s", name)
