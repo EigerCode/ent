@@ -467,6 +467,9 @@ const (
 	TypeAptRemove                     Type = "apt_remove"
 	TypeAptUpdateAll                  Type = "apt_update_all"
 	TypeAptUpgradeOs                  Type = "apt_upgrade_os"
+	TypeNetbirdInstall                Type = "netbird_install"
+	TypeNetbirdUninstall              Type = "netbird_uninstall"
+	TypeNetbirdRegister               Type = "netbird_register"
 )
 
 func (_type Type) String() string {
@@ -476,7 +479,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeWingetInstall, TypeWingetUpdate, TypeWingetDelete, TypeAddRegistryKey, TypeUpdateRegistryKeyDefaultValue, TypeAddRegistryKeyValue, TypeRemoveRegistryKey, TypeRemoveRegistryKeyValue, TypeAddLocalUser, TypeRemoveLocalUser, TypeAddUnixLocalUser, TypeModifyUnixLocalUser, TypeRemoveUnixLocalUser, TypeAddMacosLocalUser, TypeRemoveMacosLocalUser, TypeAddLocalGroup, TypeRemoveLocalGroup, TypeAddUnixLocalGroup, TypeRemoveUnixLocalGroup, TypeAddUsersToLocalGroup, TypeRemoveUsersFromLocalGroup, TypeMsiInstall, TypeMsiUninstall, TypePowershellScript, TypeUnixScript, TypeFlatpakInstall, TypeFlatpakUninstall, TypeBrewFormulaInstall, TypeBrewFormulaUpgrade, TypeBrewFormulaUninstall, TypeBrewCaskInstall, TypeBrewCaskUpgrade, TypeBrewCaskUninstall, TypeAptInstall, TypeAptUpdate, TypeAptRemove, TypeAptUpdateAll, TypeAptUpgradeOs:
+	case TypeWingetInstall, TypeWingetUpdate, TypeWingetDelete, TypeAddRegistryKey, TypeUpdateRegistryKeyDefaultValue, TypeAddRegistryKeyValue, TypeRemoveRegistryKey, TypeRemoveRegistryKeyValue, TypeAddLocalUser, TypeRemoveLocalUser, TypeAddUnixLocalUser, TypeModifyUnixLocalUser, TypeRemoveUnixLocalUser, TypeAddMacosLocalUser, TypeRemoveMacosLocalUser, TypeAddLocalGroup, TypeRemoveLocalGroup, TypeAddUnixLocalGroup, TypeRemoveUnixLocalGroup, TypeAddUsersToLocalGroup, TypeRemoveUsersFromLocalGroup, TypeMsiInstall, TypeMsiUninstall, TypePowershellScript, TypeUnixScript, TypeFlatpakInstall, TypeFlatpakUninstall, TypeBrewFormulaInstall, TypeBrewFormulaUpgrade, TypeBrewFormulaUninstall, TypeBrewCaskInstall, TypeBrewCaskUpgrade, TypeBrewCaskUninstall, TypeAptInstall, TypeAptUpdate, TypeAptRemove, TypeAptUpdateAll, TypeAptUpgradeOs, TypeNetbirdInstall, TypeNetbirdUninstall, TypeNetbirdRegister:
 		return nil
 	default:
 		return fmt.Errorf("task: invalid enum value for type field: %q", _type)
