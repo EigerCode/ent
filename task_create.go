@@ -1198,6 +1198,20 @@ func (tc *TaskCreate) SetNillableVersion(i *int) *TaskCreate {
 	return tc
 }
 
+// SetTenant sets the "tenant" field.
+func (tc *TaskCreate) SetTenant(i int) *TaskCreate {
+	tc.mutation.SetTenant(i)
+	return tc
+}
+
+// SetNillableTenant sets the "tenant" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableTenant(i *int) *TaskCreate {
+	if i != nil {
+		tc.SetTenant(*i)
+	}
+	return tc
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tc *TaskCreate) AddTagIDs(ids ...int) *TaskCreate {
 	tc.mutation.AddTagIDs(ids...)
@@ -1890,6 +1904,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Version(); ok {
 		_spec.SetField(task.FieldVersion, field.TypeInt, value)
 		_node.Version = value
+	}
+	if value, ok := tc.mutation.Tenant(); ok {
+		_spec.SetField(task.FieldTenant, field.TypeInt, value)
+		_node.Tenant = value
 	}
 	if nodes := tc.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -3497,6 +3515,30 @@ func (u *TaskUpsert) AddVersion(v int) *TaskUpsert {
 // ClearVersion clears the value of the "version" field.
 func (u *TaskUpsert) ClearVersion() *TaskUpsert {
 	u.SetNull(task.FieldVersion)
+	return u
+}
+
+// SetTenant sets the "tenant" field.
+func (u *TaskUpsert) SetTenant(v int) *TaskUpsert {
+	u.Set(task.FieldTenant, v)
+	return u
+}
+
+// UpdateTenant sets the "tenant" field to the value that was provided on create.
+func (u *TaskUpsert) UpdateTenant() *TaskUpsert {
+	u.SetExcluded(task.FieldTenant)
+	return u
+}
+
+// AddTenant adds v to the "tenant" field.
+func (u *TaskUpsert) AddTenant(v int) *TaskUpsert {
+	u.Add(task.FieldTenant, v)
+	return u
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (u *TaskUpsert) ClearTenant() *TaskUpsert {
+	u.SetNull(task.FieldTenant)
 	return u
 }
 
@@ -5315,6 +5357,34 @@ func (u *TaskUpsertOne) UpdateVersion() *TaskUpsertOne {
 func (u *TaskUpsertOne) ClearVersion() *TaskUpsertOne {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearVersion()
+	})
+}
+
+// SetTenant sets the "tenant" field.
+func (u *TaskUpsertOne) SetTenant(v int) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetTenant(v)
+	})
+}
+
+// AddTenant adds v to the "tenant" field.
+func (u *TaskUpsertOne) AddTenant(v int) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.AddTenant(v)
+	})
+}
+
+// UpdateTenant sets the "tenant" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdateTenant() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateTenant()
+	})
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (u *TaskUpsertOne) ClearTenant() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearTenant()
 	})
 }
 
@@ -7297,6 +7367,34 @@ func (u *TaskUpsertBulk) UpdateVersion() *TaskUpsertBulk {
 func (u *TaskUpsertBulk) ClearVersion() *TaskUpsertBulk {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearVersion()
+	})
+}
+
+// SetTenant sets the "tenant" field.
+func (u *TaskUpsertBulk) SetTenant(v int) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetTenant(v)
+	})
+}
+
+// AddTenant adds v to the "tenant" field.
+func (u *TaskUpsertBulk) AddTenant(v int) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.AddTenant(v)
+	})
+}
+
+// UpdateTenant sets the "tenant" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdateTenant() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateTenant()
+	})
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (u *TaskUpsertBulk) ClearTenant() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearTenant()
 	})
 }
 

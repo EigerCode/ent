@@ -450,6 +450,11 @@ func Version(v int) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldVersion, v))
 }
 
+// Tenant applies equality check predicate on the "tenant" field. It's identical to TenantEQ.
+func Tenant(v int) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTenant, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldName, v))
@@ -4998,6 +5003,56 @@ func VersionIsNil() predicate.Task {
 // VersionNotNil applies the NotNil predicate on the "version" field.
 func VersionNotNil() predicate.Task {
 	return predicate.Task(sql.FieldNotNull(FieldVersion))
+}
+
+// TenantEQ applies the EQ predicate on the "tenant" field.
+func TenantEQ(v int) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTenant, v))
+}
+
+// TenantNEQ applies the NEQ predicate on the "tenant" field.
+func TenantNEQ(v int) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldTenant, v))
+}
+
+// TenantIn applies the In predicate on the "tenant" field.
+func TenantIn(vs ...int) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldTenant, vs...))
+}
+
+// TenantNotIn applies the NotIn predicate on the "tenant" field.
+func TenantNotIn(vs ...int) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldTenant, vs...))
+}
+
+// TenantGT applies the GT predicate on the "tenant" field.
+func TenantGT(v int) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldTenant, v))
+}
+
+// TenantGTE applies the GTE predicate on the "tenant" field.
+func TenantGTE(v int) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldTenant, v))
+}
+
+// TenantLT applies the LT predicate on the "tenant" field.
+func TenantLT(v int) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldTenant, v))
+}
+
+// TenantLTE applies the LTE predicate on the "tenant" field.
+func TenantLTE(v int) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldTenant, v))
+}
+
+// TenantIsNil applies the IsNil predicate on the "tenant" field.
+func TenantIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldTenant))
+}
+
+// TenantNotNil applies the NotNil predicate on the "tenant" field.
+func TenantNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldTenant))
 }
 
 // HasTags applies the HasEdge predicate on the "tags" edge.

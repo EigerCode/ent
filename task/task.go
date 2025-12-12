@@ -184,6 +184,8 @@ const (
 	FieldAptUpgradeType = "apt_upgrade_type"
 	// FieldVersion holds the string denoting the version field in the database.
 	FieldVersion = "version"
+	// FieldTenant holds the string denoting the tenant field in the database.
+	FieldTenant = "tenant"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
@@ -294,6 +296,7 @@ var Columns = []string{
 	FieldAptUpdateCache,
 	FieldAptUpgradeType,
 	FieldVersion,
+	FieldTenant,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
@@ -1050,6 +1053,11 @@ func ByAptUpgradeType(opts ...sql.OrderTermOption) OrderOption {
 // ByVersion orders the results by the version field.
 func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByTenant orders the results by the tenant field.
+func ByTenant(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenant, opts...).ToFunc()
 }
 
 // ByTagsCount orders the results by tags count.

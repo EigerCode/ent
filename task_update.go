@@ -1726,6 +1726,33 @@ func (tu *TaskUpdate) ClearVersion() *TaskUpdate {
 	return tu
 }
 
+// SetTenant sets the "tenant" field.
+func (tu *TaskUpdate) SetTenant(i int) *TaskUpdate {
+	tu.mutation.ResetTenant()
+	tu.mutation.SetTenant(i)
+	return tu
+}
+
+// SetNillableTenant sets the "tenant" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableTenant(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetTenant(*i)
+	}
+	return tu
+}
+
+// AddTenant adds i to the "tenant" field.
+func (tu *TaskUpdate) AddTenant(i int) *TaskUpdate {
+	tu.mutation.AddTenant(i)
+	return tu
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (tu *TaskUpdate) ClearTenant() *TaskUpdate {
+	tu.mutation.ClearTenant()
+	return tu
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tu *TaskUpdate) AddTagIDs(ids ...int) *TaskUpdate {
 	tu.mutation.AddTagIDs(ids...)
@@ -2383,6 +2410,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.VersionCleared() {
 		_spec.ClearField(task.FieldVersion, field.TypeInt)
+	}
+	if value, ok := tu.mutation.Tenant(); ok {
+		_spec.SetField(task.FieldTenant, field.TypeInt, value)
+	}
+	if value, ok := tu.mutation.AddedTenant(); ok {
+		_spec.AddField(task.FieldTenant, field.TypeInt, value)
+	}
+	if tu.mutation.TenantCleared() {
+		_spec.ClearField(task.FieldTenant, field.TypeInt)
 	}
 	if tu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4175,6 +4211,33 @@ func (tuo *TaskUpdateOne) ClearVersion() *TaskUpdateOne {
 	return tuo
 }
 
+// SetTenant sets the "tenant" field.
+func (tuo *TaskUpdateOne) SetTenant(i int) *TaskUpdateOne {
+	tuo.mutation.ResetTenant()
+	tuo.mutation.SetTenant(i)
+	return tuo
+}
+
+// SetNillableTenant sets the "tenant" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableTenant(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetTenant(*i)
+	}
+	return tuo
+}
+
+// AddTenant adds i to the "tenant" field.
+func (tuo *TaskUpdateOne) AddTenant(i int) *TaskUpdateOne {
+	tuo.mutation.AddTenant(i)
+	return tuo
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (tuo *TaskUpdateOne) ClearTenant() *TaskUpdateOne {
+	tuo.mutation.ClearTenant()
+	return tuo
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tuo *TaskUpdateOne) AddTagIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.AddTagIDs(ids...)
@@ -4862,6 +4925,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.VersionCleared() {
 		_spec.ClearField(task.FieldVersion, field.TypeInt)
+	}
+	if value, ok := tuo.mutation.Tenant(); ok {
+		_spec.SetField(task.FieldTenant, field.TypeInt, value)
+	}
+	if value, ok := tuo.mutation.AddedTenant(); ok {
+		_spec.AddField(task.FieldTenant, field.TypeInt, value)
+	}
+	if tuo.mutation.TenantCleared() {
+		_spec.ClearField(task.FieldTenant, field.TypeInt)
 	}
 	if tuo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{

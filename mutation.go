@@ -28952,6 +28952,8 @@ type TaskMutation struct {
 	apt_upgrade_type                           *task.AptUpgradeType
 	version                                    *int
 	addversion                                 *int
+	tenant                                     *int
+	addtenant                                  *int
 	clearedFields                              map[string]struct{}
 	tags                                       map[int]struct{}
 	removedtags                                map[int]struct{}
@@ -33221,6 +33223,76 @@ func (m *TaskMutation) ResetVersion() {
 	delete(m.clearedFields, task.FieldVersion)
 }
 
+// SetTenant sets the "tenant" field.
+func (m *TaskMutation) SetTenant(i int) {
+	m.tenant = &i
+	m.addtenant = nil
+}
+
+// Tenant returns the value of the "tenant" field in the mutation.
+func (m *TaskMutation) Tenant() (r int, exists bool) {
+	v := m.tenant
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenant returns the old "tenant" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldTenant(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenant is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenant requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenant: %w", err)
+	}
+	return oldValue.Tenant, nil
+}
+
+// AddTenant adds i to the "tenant" field.
+func (m *TaskMutation) AddTenant(i int) {
+	if m.addtenant != nil {
+		*m.addtenant += i
+	} else {
+		m.addtenant = &i
+	}
+}
+
+// AddedTenant returns the value that was added to the "tenant" field in this mutation.
+func (m *TaskMutation) AddedTenant() (r int, exists bool) {
+	v := m.addtenant
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (m *TaskMutation) ClearTenant() {
+	m.tenant = nil
+	m.addtenant = nil
+	m.clearedFields[task.FieldTenant] = struct{}{}
+}
+
+// TenantCleared returns if the "tenant" field was cleared in this mutation.
+func (m *TaskMutation) TenantCleared() bool {
+	_, ok := m.clearedFields[task.FieldTenant]
+	return ok
+}
+
+// ResetTenant resets all changes to the "tenant" field.
+func (m *TaskMutation) ResetTenant() {
+	m.tenant = nil
+	m.addtenant = nil
+	delete(m.clearedFields, task.FieldTenant)
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by ids.
 func (m *TaskMutation) AddTagIDs(ids ...int) {
 	if m.tags == nil {
@@ -33348,7 +33420,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 85)
+	fields := make([]string, 0, 86)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -33604,6 +33676,9 @@ func (m *TaskMutation) Fields() []string {
 	if m.version != nil {
 		fields = append(fields, task.FieldVersion)
 	}
+	if m.tenant != nil {
+		fields = append(fields, task.FieldTenant)
+	}
 	return fields
 }
 
@@ -33782,6 +33857,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.AptUpgradeType()
 	case task.FieldVersion:
 		return m.Version()
+	case task.FieldTenant:
+		return m.Tenant()
 	}
 	return nil, false
 }
@@ -33961,6 +34038,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAptUpgradeType(ctx)
 	case task.FieldVersion:
 		return m.OldVersion(ctx)
+	case task.FieldTenant:
+		return m.OldTenant(ctx)
 	}
 	return nil, fmt.Errorf("unknown Task field %s", name)
 }
@@ -34565,6 +34644,13 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetVersion(v)
 		return nil
+	case task.FieldTenant:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenant(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
@@ -34576,6 +34662,9 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.addversion != nil {
 		fields = append(fields, task.FieldVersion)
 	}
+	if m.addtenant != nil {
+		fields = append(fields, task.FieldTenant)
+	}
 	return fields
 }
 
@@ -34586,6 +34675,8 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case task.FieldVersion:
 		return m.AddedVersion()
+	case task.FieldTenant:
+		return m.AddedTenant()
 	}
 	return nil, false
 }
@@ -34601,6 +34692,13 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddVersion(v)
+		return nil
+	case task.FieldTenant:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenant(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
@@ -34858,6 +34956,9 @@ func (m *TaskMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(task.FieldVersion) {
 		fields = append(fields, task.FieldVersion)
+	}
+	if m.FieldCleared(task.FieldTenant) {
+		fields = append(fields, task.FieldTenant)
 	}
 	return fields
 }
@@ -35122,6 +35223,9 @@ func (m *TaskMutation) ClearField(name string) error {
 	case task.FieldVersion:
 		m.ClearVersion()
 		return nil
+	case task.FieldTenant:
+		m.ClearTenant()
+		return nil
 	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
 }
@@ -35384,6 +35488,9 @@ func (m *TaskMutation) ResetField(name string) error {
 		return nil
 	case task.FieldVersion:
 		m.ResetVersion()
+		return nil
+	case task.FieldTenant:
+		m.ResetTenant()
 		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
