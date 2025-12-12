@@ -685,7 +685,7 @@ func init() {
 	// taskDescNetbirdAllowExtraDNSLabels is the schema descriptor for netbird_allow_extra_dns_labels field.
 	taskDescNetbirdAllowExtraDNSLabels := taskFields[87].Descriptor()
 	// task.DefaultNetbirdAllowExtraDNSLabels holds the default value on creation for the netbird_allow_extra_dns_labels field.
-	task.DefaultNetbirdAllowExtraDNSLabels = taskDescNetbirdAllowExtraDNSLabels.Default.(string)
+	task.DefaultNetbirdAllowExtraDNSLabels = taskDescNetbirdAllowExtraDNSLabels.Default.(bool)
 	tenantFields := schema.Tenant{}.Fields()
 	_ = tenantFields
 	// tenantDescCreated is the schema descriptor for created field.

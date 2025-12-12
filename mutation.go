@@ -28955,7 +28955,7 @@ type TaskMutation struct {
 	tenant                                     *int
 	addtenant                                  *int
 	netbird_groups                             *string
-	netbird_allow_extra_dns_labels             *string
+	netbird_allow_extra_dns_labels             *bool
 	clearedFields                              map[string]struct{}
 	tags                                       map[int]struct{}
 	removedtags                                map[int]struct{}
@@ -33345,12 +33345,12 @@ func (m *TaskMutation) ResetNetbirdGroups() {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (m *TaskMutation) SetNetbirdAllowExtraDNSLabels(s string) {
-	m.netbird_allow_extra_dns_labels = &s
+func (m *TaskMutation) SetNetbirdAllowExtraDNSLabels(b bool) {
+	m.netbird_allow_extra_dns_labels = &b
 }
 
 // NetbirdAllowExtraDNSLabels returns the value of the "netbird_allow_extra_dns_labels" field in the mutation.
-func (m *TaskMutation) NetbirdAllowExtraDNSLabels() (r string, exists bool) {
+func (m *TaskMutation) NetbirdAllowExtraDNSLabels() (r bool, exists bool) {
 	v := m.netbird_allow_extra_dns_labels
 	if v == nil {
 		return
@@ -33361,7 +33361,7 @@ func (m *TaskMutation) NetbirdAllowExtraDNSLabels() (r string, exists bool) {
 // OldNetbirdAllowExtraDNSLabels returns the old "netbird_allow_extra_dns_labels" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldNetbirdAllowExtraDNSLabels(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldNetbirdAllowExtraDNSLabels(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldNetbirdAllowExtraDNSLabels is only allowed on UpdateOne operations")
 	}
@@ -34773,7 +34773,7 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		m.SetNetbirdGroups(v)
 		return nil
 	case task.FieldNetbirdAllowExtraDNSLabels:
-		v, ok := value.(string)
+		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -903,7 +903,7 @@ var (
 		{Name: "version", Type: field.TypeInt, Nullable: true, Default: 1},
 		{Name: "tenant", Type: field.TypeInt, Nullable: true},
 		{Name: "netbird_groups", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "netbird_allow_extra_dns_labels", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "netbird_allow_extra_dns_labels", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "profile_tasks", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.

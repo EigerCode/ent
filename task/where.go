@@ -461,7 +461,7 @@ func NetbirdGroups(v string) predicate.Task {
 }
 
 // NetbirdAllowExtraDNSLabels applies equality check predicate on the "netbird_allow_extra_dns_labels" field. It's identical to NetbirdAllowExtraDNSLabelsEQ.
-func NetbirdAllowExtraDNSLabels(v string) predicate.Task {
+func NetbirdAllowExtraDNSLabels(v bool) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldNetbirdAllowExtraDNSLabels, v))
 }
 
@@ -5141,58 +5141,13 @@ func NetbirdGroupsContainsFold(v string) predicate.Task {
 }
 
 // NetbirdAllowExtraDNSLabelsEQ applies the EQ predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsEQ(v string) predicate.Task {
+func NetbirdAllowExtraDNSLabelsEQ(v bool) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldNetbirdAllowExtraDNSLabels, v))
 }
 
 // NetbirdAllowExtraDNSLabelsNEQ applies the NEQ predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsNEQ(v string) predicate.Task {
+func NetbirdAllowExtraDNSLabelsNEQ(v bool) predicate.Task {
 	return predicate.Task(sql.FieldNEQ(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsIn applies the In predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsIn(vs ...string) predicate.Task {
-	return predicate.Task(sql.FieldIn(FieldNetbirdAllowExtraDNSLabels, vs...))
-}
-
-// NetbirdAllowExtraDNSLabelsNotIn applies the NotIn predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsNotIn(vs ...string) predicate.Task {
-	return predicate.Task(sql.FieldNotIn(FieldNetbirdAllowExtraDNSLabels, vs...))
-}
-
-// NetbirdAllowExtraDNSLabelsGT applies the GT predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsGT(v string) predicate.Task {
-	return predicate.Task(sql.FieldGT(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsGTE applies the GTE predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsGTE(v string) predicate.Task {
-	return predicate.Task(sql.FieldGTE(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsLT applies the LT predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsLT(v string) predicate.Task {
-	return predicate.Task(sql.FieldLT(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsLTE applies the LTE predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsLTE(v string) predicate.Task {
-	return predicate.Task(sql.FieldLTE(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsContains applies the Contains predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsContains(v string) predicate.Task {
-	return predicate.Task(sql.FieldContains(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsHasPrefix applies the HasPrefix predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsHasPrefix(v string) predicate.Task {
-	return predicate.Task(sql.FieldHasPrefix(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsHasSuffix applies the HasSuffix predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsHasSuffix(v string) predicate.Task {
-	return predicate.Task(sql.FieldHasSuffix(FieldNetbirdAllowExtraDNSLabels, v))
 }
 
 // NetbirdAllowExtraDNSLabelsIsNil applies the IsNil predicate on the "netbird_allow_extra_dns_labels" field.
@@ -5203,16 +5158,6 @@ func NetbirdAllowExtraDNSLabelsIsNil() predicate.Task {
 // NetbirdAllowExtraDNSLabelsNotNil applies the NotNil predicate on the "netbird_allow_extra_dns_labels" field.
 func NetbirdAllowExtraDNSLabelsNotNil() predicate.Task {
 	return predicate.Task(sql.FieldNotNull(FieldNetbirdAllowExtraDNSLabels))
-}
-
-// NetbirdAllowExtraDNSLabelsEqualFold applies the EqualFold predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsEqualFold(v string) predicate.Task {
-	return predicate.Task(sql.FieldEqualFold(FieldNetbirdAllowExtraDNSLabels, v))
-}
-
-// NetbirdAllowExtraDNSLabelsContainsFold applies the ContainsFold predicate on the "netbird_allow_extra_dns_labels" field.
-func NetbirdAllowExtraDNSLabelsContainsFold(v string) predicate.Task {
-	return predicate.Task(sql.FieldContainsFold(FieldNetbirdAllowExtraDNSLabels, v))
 }
 
 // HasTags applies the HasEdge predicate on the "tags" edge.

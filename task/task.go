@@ -434,7 +434,7 @@ var (
 	// DefaultNetbirdGroups holds the default value on creation for the "netbird_groups" field.
 	DefaultNetbirdGroups string
 	// DefaultNetbirdAllowExtraDNSLabels holds the default value on creation for the "netbird_allow_extra_dns_labels" field.
-	DefaultNetbirdAllowExtraDNSLabels string
+	DefaultNetbirdAllowExtraDNSLabels bool
 )
 
 // Type defines the type for the "type" enum field.

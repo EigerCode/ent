@@ -1774,15 +1774,15 @@ func (tu *TaskUpdate) ClearNetbirdGroups() *TaskUpdate {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (tu *TaskUpdate) SetNetbirdAllowExtraDNSLabels(s string) *TaskUpdate {
-	tu.mutation.SetNetbirdAllowExtraDNSLabels(s)
+func (tu *TaskUpdate) SetNetbirdAllowExtraDNSLabels(b bool) *TaskUpdate {
+	tu.mutation.SetNetbirdAllowExtraDNSLabels(b)
 	return tu
 }
 
 // SetNillableNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableNetbirdAllowExtraDNSLabels(s *string) *TaskUpdate {
-	if s != nil {
-		tu.SetNetbirdAllowExtraDNSLabels(*s)
+func (tu *TaskUpdate) SetNillableNetbirdAllowExtraDNSLabels(b *bool) *TaskUpdate {
+	if b != nil {
+		tu.SetNetbirdAllowExtraDNSLabels(*b)
 	}
 	return tu
 }
@@ -2467,10 +2467,10 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(task.FieldNetbirdGroups, field.TypeString)
 	}
 	if value, ok := tu.mutation.NetbirdAllowExtraDNSLabels(); ok {
-		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeString, value)
+		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool, value)
 	}
 	if tu.mutation.NetbirdAllowExtraDNSLabelsCleared() {
-		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeString)
+		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool)
 	}
 	if tu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4311,15 +4311,15 @@ func (tuo *TaskUpdateOne) ClearNetbirdGroups() *TaskUpdateOne {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (tuo *TaskUpdateOne) SetNetbirdAllowExtraDNSLabels(s string) *TaskUpdateOne {
-	tuo.mutation.SetNetbirdAllowExtraDNSLabels(s)
+func (tuo *TaskUpdateOne) SetNetbirdAllowExtraDNSLabels(b bool) *TaskUpdateOne {
+	tuo.mutation.SetNetbirdAllowExtraDNSLabels(b)
 	return tuo
 }
 
 // SetNillableNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableNetbirdAllowExtraDNSLabels(s *string) *TaskUpdateOne {
-	if s != nil {
-		tuo.SetNetbirdAllowExtraDNSLabels(*s)
+func (tuo *TaskUpdateOne) SetNillableNetbirdAllowExtraDNSLabels(b *bool) *TaskUpdateOne {
+	if b != nil {
+		tuo.SetNetbirdAllowExtraDNSLabels(*b)
 	}
 	return tuo
 }
@@ -5034,10 +5034,10 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		_spec.ClearField(task.FieldNetbirdGroups, field.TypeString)
 	}
 	if value, ok := tuo.mutation.NetbirdAllowExtraDNSLabels(); ok {
-		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeString, value)
+		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool, value)
 	}
 	if tuo.mutation.NetbirdAllowExtraDNSLabelsCleared() {
-		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeString)
+		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool)
 	}
 	if tuo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{

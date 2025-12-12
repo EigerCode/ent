@@ -143,7 +143,7 @@ func (Task) Fields() []ent.Field {
 		field.Int("version").Optional().Default(1),
 		field.Int("tenant").Optional(),
 		field.String("netbird_groups").Optional().Default(""),
-		field.String("netbird_allow_extra_dns_labels").Optional().Default(""),
+		field.Bool("netbird_allow_extra_dns_labels").Optional().Default(false),
 	}
 }
 

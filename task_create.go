@@ -1227,15 +1227,15 @@ func (tc *TaskCreate) SetNillableNetbirdGroups(s *string) *TaskCreate {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (tc *TaskCreate) SetNetbirdAllowExtraDNSLabels(s string) *TaskCreate {
-	tc.mutation.SetNetbirdAllowExtraDNSLabels(s)
+func (tc *TaskCreate) SetNetbirdAllowExtraDNSLabels(b bool) *TaskCreate {
+	tc.mutation.SetNetbirdAllowExtraDNSLabels(b)
 	return tc
 }
 
 // SetNillableNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableNetbirdAllowExtraDNSLabels(s *string) *TaskCreate {
-	if s != nil {
-		tc.SetNetbirdAllowExtraDNSLabels(*s)
+func (tc *TaskCreate) SetNillableNetbirdAllowExtraDNSLabels(b *bool) *TaskCreate {
+	if b != nil {
+		tc.SetNetbirdAllowExtraDNSLabels(*b)
 	}
 	return tc
 }
@@ -1950,7 +1950,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_node.NetbirdGroups = value
 	}
 	if value, ok := tc.mutation.NetbirdAllowExtraDNSLabels(); ok {
-		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeString, value)
+		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool, value)
 		_node.NetbirdAllowExtraDNSLabels = value
 	}
 	if nodes := tc.mutation.TagsIDs(); len(nodes) > 0 {
@@ -3605,7 +3605,7 @@ func (u *TaskUpsert) ClearNetbirdGroups() *TaskUpsert {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (u *TaskUpsert) SetNetbirdAllowExtraDNSLabels(v string) *TaskUpsert {
+func (u *TaskUpsert) SetNetbirdAllowExtraDNSLabels(v bool) *TaskUpsert {
 	u.Set(task.FieldNetbirdAllowExtraDNSLabels, v)
 	return u
 }
@@ -5490,7 +5490,7 @@ func (u *TaskUpsertOne) ClearNetbirdGroups() *TaskUpsertOne {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (u *TaskUpsertOne) SetNetbirdAllowExtraDNSLabels(v string) *TaskUpsertOne {
+func (u *TaskUpsertOne) SetNetbirdAllowExtraDNSLabels(v bool) *TaskUpsertOne {
 	return u.Update(func(s *TaskUpsert) {
 		s.SetNetbirdAllowExtraDNSLabels(v)
 	})
@@ -7542,7 +7542,7 @@ func (u *TaskUpsertBulk) ClearNetbirdGroups() *TaskUpsertBulk {
 }
 
 // SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
-func (u *TaskUpsertBulk) SetNetbirdAllowExtraDNSLabels(v string) *TaskUpsertBulk {
+func (u *TaskUpsertBulk) SetNetbirdAllowExtraDNSLabels(v bool) *TaskUpsertBulk {
 	return u.Update(func(s *TaskUpsert) {
 		s.SetNetbirdAllowExtraDNSLabels(v)
 	})

@@ -193,7 +193,7 @@ type Task struct {
 	// NetbirdGroups holds the value of the "netbird_groups" field.
 	NetbirdGroups string `json:"netbird_groups,omitempty"`
 	// NetbirdAllowExtraDNSLabels holds the value of the "netbird_allow_extra_dns_labels" field.
-	NetbirdAllowExtraDNSLabels string `json:"netbird_allow_extra_dns_labels,omitempty"`
+	NetbirdAllowExtraDNSLabels bool `json:"netbird_allow_extra_dns_labels,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
 	Edges         TaskEdges `json:"edges"`
@@ -237,11 +237,11 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldPackageLatest, task.FieldRegistryHex, task.FieldRegistryForce, task.FieldLocalUserDisable, task.FieldLocalUserPasswordChangeNotAllowed, task.FieldLocalUserPasswordChangeRequired, task.FieldLocalUserPasswordNeverExpires, task.FieldLocalUserAppend, task.FieldLocalUserCreateHome, task.FieldLocalUserForce, task.FieldLocalUserGenerateSSHKey, task.FieldLocalUserMoveHome, task.FieldLocalUserNonunique, task.FieldLocalUserPasswordLock, task.FieldLocalUserSystem, task.FieldLocalGroupSystem, task.FieldLocalGroupForce, task.FieldBrewUpdate, task.FieldBrewUpgradeAll, task.FieldBrewGreedy, task.FieldAptAllowDowngrade, task.FieldAptFailOnAutoremove, task.FieldAptForce, task.FieldAptInstallRecommends, task.FieldAptOnlyUpgrade, task.FieldAptPurge, task.FieldAptUpdateCache:
+		case task.FieldPackageLatest, task.FieldRegistryHex, task.FieldRegistryForce, task.FieldLocalUserDisable, task.FieldLocalUserPasswordChangeNotAllowed, task.FieldLocalUserPasswordChangeRequired, task.FieldLocalUserPasswordNeverExpires, task.FieldLocalUserAppend, task.FieldLocalUserCreateHome, task.FieldLocalUserForce, task.FieldLocalUserGenerateSSHKey, task.FieldLocalUserMoveHome, task.FieldLocalUserNonunique, task.FieldLocalUserPasswordLock, task.FieldLocalUserSystem, task.FieldLocalGroupSystem, task.FieldLocalGroupForce, task.FieldBrewUpdate, task.FieldBrewUpgradeAll, task.FieldBrewGreedy, task.FieldAptAllowDowngrade, task.FieldAptFailOnAutoremove, task.FieldAptForce, task.FieldAptInstallRecommends, task.FieldAptOnlyUpgrade, task.FieldAptPurge, task.FieldAptUpdateCache, task.FieldNetbirdAllowExtraDNSLabels:
 			values[i] = new(sql.NullBool)
 		case task.FieldID, task.FieldVersion, task.FieldTenant:
 			values[i] = new(sql.NullInt64)
-		case task.FieldName, task.FieldType, task.FieldPackageID, task.FieldPackageName, task.FieldRegistryKey, task.FieldRegistryKeyValueName, task.FieldRegistryKeyValueType, task.FieldRegistryKeyValueData, task.FieldLocalUserUsername, task.FieldLocalUserDescription, task.FieldLocalUserFullname, task.FieldLocalUserPassword, task.FieldLocalUserExpires, task.FieldLocalUserGroup, task.FieldLocalUserGroups, task.FieldLocalUserHome, task.FieldLocalUserPasswordExpireAccountDisable, task.FieldLocalUserPasswordExpireMax, task.FieldLocalUserPasswordExpireMin, task.FieldLocalUserPasswordExpireWarn, task.FieldLocalUserSeuser, task.FieldLocalUserShell, task.FieldLocalUserSkeleton, task.FieldLocalUserID, task.FieldLocalUserIDMax, task.FieldLocalUserIDMin, task.FieldLocalUserSSHKeyBits, task.FieldLocalUserSSHKeyComment, task.FieldLocalUserSSHKeyFile, task.FieldLocalUserSSHKeyPassphrase, task.FieldLocalUserSSHKeyType, task.FieldLocalUserUmask, task.FieldLocalGroupID, task.FieldLocalGroupName, task.FieldLocalGroupDescription, task.FieldLocalGroupMembers, task.FieldLocalGroupMembersToInclude, task.FieldLocalGroupMembersToExclude, task.FieldMsiProductid, task.FieldMsiPath, task.FieldMsiArguments, task.FieldMsiFileHash, task.FieldMsiFileHashAlg, task.FieldMsiLogPath, task.FieldScript, task.FieldScriptExecutable, task.FieldScriptCreates, task.FieldScriptRun, task.FieldAgentType, task.FieldBrewUpgradeOptions, task.FieldBrewInstallOptions, task.FieldPackageVersion, task.FieldAptDeb, task.FieldAptDpkgOptions, task.FieldAptName, task.FieldAptUpgradeType, task.FieldNetbirdGroups, task.FieldNetbirdAllowExtraDNSLabels:
+		case task.FieldName, task.FieldType, task.FieldPackageID, task.FieldPackageName, task.FieldRegistryKey, task.FieldRegistryKeyValueName, task.FieldRegistryKeyValueType, task.FieldRegistryKeyValueData, task.FieldLocalUserUsername, task.FieldLocalUserDescription, task.FieldLocalUserFullname, task.FieldLocalUserPassword, task.FieldLocalUserExpires, task.FieldLocalUserGroup, task.FieldLocalUserGroups, task.FieldLocalUserHome, task.FieldLocalUserPasswordExpireAccountDisable, task.FieldLocalUserPasswordExpireMax, task.FieldLocalUserPasswordExpireMin, task.FieldLocalUserPasswordExpireWarn, task.FieldLocalUserSeuser, task.FieldLocalUserShell, task.FieldLocalUserSkeleton, task.FieldLocalUserID, task.FieldLocalUserIDMax, task.FieldLocalUserIDMin, task.FieldLocalUserSSHKeyBits, task.FieldLocalUserSSHKeyComment, task.FieldLocalUserSSHKeyFile, task.FieldLocalUserSSHKeyPassphrase, task.FieldLocalUserSSHKeyType, task.FieldLocalUserUmask, task.FieldLocalGroupID, task.FieldLocalGroupName, task.FieldLocalGroupDescription, task.FieldLocalGroupMembers, task.FieldLocalGroupMembersToInclude, task.FieldLocalGroupMembersToExclude, task.FieldMsiProductid, task.FieldMsiPath, task.FieldMsiArguments, task.FieldMsiFileHash, task.FieldMsiFileHashAlg, task.FieldMsiLogPath, task.FieldScript, task.FieldScriptExecutable, task.FieldScriptCreates, task.FieldScriptRun, task.FieldAgentType, task.FieldBrewUpgradeOptions, task.FieldBrewInstallOptions, task.FieldPackageVersion, task.FieldAptDeb, task.FieldAptDpkgOptions, task.FieldAptName, task.FieldAptUpgradeType, task.FieldNetbirdGroups:
 			values[i] = new(sql.NullString)
 		case task.FieldWhen:
 			values[i] = new(sql.NullTime)
@@ -791,10 +791,10 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				t.NetbirdGroups = value.String
 			}
 		case task.FieldNetbirdAllowExtraDNSLabels:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field netbird_allow_extra_dns_labels", values[i])
 			} else if value.Valid {
-				t.NetbirdAllowExtraDNSLabels = value.String
+				t.NetbirdAllowExtraDNSLabels = value.Bool
 			}
 		case task.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -1111,7 +1111,7 @@ func (t *Task) String() string {
 	builder.WriteString(t.NetbirdGroups)
 	builder.WriteString(", ")
 	builder.WriteString("netbird_allow_extra_dns_labels=")
-	builder.WriteString(t.NetbirdAllowExtraDNSLabels)
+	builder.WriteString(fmt.Sprintf("%v", t.NetbirdAllowExtraDNSLabels))
 	builder.WriteByte(')')
 	return builder.String()
 }
