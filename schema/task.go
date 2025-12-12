@@ -121,7 +121,7 @@ func (Task) Fields() []ent.Field {
 		field.String("script_executable").Optional().Default(""),
 		field.String("script_creates").Optional().Default(""),
 		field.Enum("script_run").Values("once", "always").Optional(),
-		field.Enum("agent_type").Values("windows", "linux", "macos").Optional().Default("windows"),
+		field.Enum("agent_type").Values("windows", "linux", "macos", "any").Optional().Default("windows"),
 		field.Time("when").Optional(),
 		field.Bool("brew_update").Optional(),
 		field.Bool("brew_upgrade_all").Optional(),

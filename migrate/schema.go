@@ -881,7 +881,7 @@ var (
 		{Name: "script_executable", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "script_creates", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "script_run", Type: field.TypeEnum, Nullable: true, Enums: []string{"once", "always"}},
-		{Name: "agent_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"windows", "linux", "macos"}, Default: "windows"},
+		{Name: "agent_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"windows", "linux", "macos", "any"}, Default: "windows"},
 		{Name: "when", Type: field.TypeTime, Nullable: true},
 		{Name: "brew_update", Type: field.TypeBool, Nullable: true},
 		{Name: "brew_upgrade_all", Type: field.TypeBool, Nullable: true},
