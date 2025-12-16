@@ -21,6 +21,7 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/physicaldisk"
@@ -773,6 +774,25 @@ func (ac *AgentCreate) AddPhysicaldisks(p ...*PhysicalDisk) *AgentCreate {
 	return ac.AddPhysicaldiskIDs(ids...)
 }
 
+// SetNetbirdID sets the "netbird" edge to the Netbird entity by ID.
+func (ac *AgentCreate) SetNetbirdID(id int) *AgentCreate {
+	ac.mutation.SetNetbirdID(id)
+	return ac
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the Netbird entity by ID if the given value is not nil.
+func (ac *AgentCreate) SetNillableNetbirdID(id *int) *AgentCreate {
+	if id != nil {
+		ac = ac.SetNetbirdID(*id)
+	}
+	return ac
+}
+
+// SetNetbird sets the "netbird" edge to the Netbird entity.
+func (ac *AgentCreate) SetNetbird(n *Netbird) *AgentCreate {
+	return ac.SetNetbirdID(n.ID)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (ac *AgentCreate) Mutation() *AgentMutation {
 	return ac.mutation
@@ -1418,6 +1438,22 @@ func (ac *AgentCreate) createSpec() (*Agent, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(physicaldisk.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NetbirdTable,
+			Columns: []string{agent.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

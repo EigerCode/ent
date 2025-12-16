@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/predicate"
 	"github.com/open-uem/ent/rustdesk"
@@ -185,6 +186,25 @@ func (tu *TenantUpdate) AddRustdesk(r ...*Rustdesk) *TenantUpdate {
 	return tu.AddRustdeskIDs(ids...)
 }
 
+// SetNetbirdID sets the "netbird" edge to the NetbirdSettings entity by ID.
+func (tu *TenantUpdate) SetNetbirdID(id int) *TenantUpdate {
+	tu.mutation.SetNetbirdID(id)
+	return tu
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the NetbirdSettings entity by ID if the given value is not nil.
+func (tu *TenantUpdate) SetNillableNetbirdID(id *int) *TenantUpdate {
+	if id != nil {
+		tu = tu.SetNetbirdID(*id)
+	}
+	return tu
+}
+
+// SetNetbird sets the "netbird" edge to the NetbirdSettings entity.
+func (tu *TenantUpdate) SetNetbird(n *NetbirdSettings) *TenantUpdate {
+	return tu.SetNetbirdID(n.ID)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tu *TenantUpdate) Mutation() *TenantMutation {
 	return tu.mutation
@@ -278,6 +298,12 @@ func (tu *TenantUpdate) RemoveRustdesk(r ...*Rustdesk) *TenantUpdate {
 		ids[i] = r[i].ID
 	}
 	return tu.RemoveRustdeskIDs(ids...)
+}
+
+// ClearNetbird clears the "netbird" edge to the NetbirdSettings entity.
+func (tu *TenantUpdate) ClearNetbird() *TenantUpdate {
+	tu.mutation.ClearNetbird()
+	return tu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -564,6 +590,35 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tu.mutation.NetbirdCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NetbirdTable,
+			Columns: []string{tenant.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NetbirdTable,
+			Columns: []string{tenant.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(tu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -737,6 +792,25 @@ func (tuo *TenantUpdateOne) AddRustdesk(r ...*Rustdesk) *TenantUpdateOne {
 	return tuo.AddRustdeskIDs(ids...)
 }
 
+// SetNetbirdID sets the "netbird" edge to the NetbirdSettings entity by ID.
+func (tuo *TenantUpdateOne) SetNetbirdID(id int) *TenantUpdateOne {
+	tuo.mutation.SetNetbirdID(id)
+	return tuo
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the NetbirdSettings entity by ID if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableNetbirdID(id *int) *TenantUpdateOne {
+	if id != nil {
+		tuo = tuo.SetNetbirdID(*id)
+	}
+	return tuo
+}
+
+// SetNetbird sets the "netbird" edge to the NetbirdSettings entity.
+func (tuo *TenantUpdateOne) SetNetbird(n *NetbirdSettings) *TenantUpdateOne {
+	return tuo.SetNetbirdID(n.ID)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tuo *TenantUpdateOne) Mutation() *TenantMutation {
 	return tuo.mutation
@@ -830,6 +904,12 @@ func (tuo *TenantUpdateOne) RemoveRustdesk(r ...*Rustdesk) *TenantUpdateOne {
 		ids[i] = r[i].ID
 	}
 	return tuo.RemoveRustdeskIDs(ids...)
+}
+
+// ClearNetbird clears the "netbird" edge to the NetbirdSettings entity.
+func (tuo *TenantUpdateOne) ClearNetbird() *TenantUpdateOne {
+	tuo.mutation.ClearNetbird()
+	return tuo
 }
 
 // Where appends a list predicates to the TenantUpdate builder.
@@ -1139,6 +1219,35 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(rustdesk.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.NetbirdCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NetbirdTable,
+			Columns: []string{tenant.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NetbirdTable,
+			Columns: []string{tenant.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

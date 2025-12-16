@@ -54,6 +54,9 @@ func (Task) Fields() []ent.Field {
 			"apt_remove",
 			"apt_update_all",
 			"apt_upgrade_os",
+			"netbird_install",
+			"netbird_uninstall",
+			"netbird_register",
 		),
 		field.String("package_id").Optional().Default(""),
 		field.String("package_name").Optional().Default(""),
@@ -118,7 +121,7 @@ func (Task) Fields() []ent.Field {
 		field.String("script_executable").Optional().Default(""),
 		field.String("script_creates").Optional().Default(""),
 		field.Enum("script_run").Values("once", "always").Optional(),
-		field.Enum("agent_type").Values("windows", "linux", "macos").Optional().Default("windows"),
+		field.Enum("agent_type").Values("windows", "linux", "macos", "any").Optional().Default("windows"),
 		field.Time("when").Optional(),
 		field.Bool("brew_update").Optional(),
 		field.Bool("brew_upgrade_all").Optional(),
@@ -138,6 +141,9 @@ func (Task) Fields() []ent.Field {
 		field.Bool("apt_update_cache").Optional().Default(false),
 		field.Enum("apt_upgrade_type").Values("dist", "full", "no", "safe", "yes").Optional().Default("no"),
 		field.Int("version").Optional().Default(1),
+		field.Int("tenant").Optional(),
+		field.String("netbird_groups").Optional().Default(""),
+		field.Bool("netbird_allow_extra_dns_labels").Optional().Default(false),
 	}
 }
 

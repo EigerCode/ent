@@ -184,6 +184,12 @@ const (
 	FieldAptUpgradeType = "apt_upgrade_type"
 	// FieldVersion holds the string denoting the version field in the database.
 	FieldVersion = "version"
+	// FieldTenant holds the string denoting the tenant field in the database.
+	FieldTenant = "tenant"
+	// FieldNetbirdGroups holds the string denoting the netbird_groups field in the database.
+	FieldNetbirdGroups = "netbird_groups"
+	// FieldNetbirdAllowExtraDNSLabels holds the string denoting the netbird_allow_extra_dns_labels field in the database.
+	FieldNetbirdAllowExtraDNSLabels = "netbird_allow_extra_dns_labels"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
@@ -294,6 +300,9 @@ var Columns = []string{
 	FieldAptUpdateCache,
 	FieldAptUpgradeType,
 	FieldVersion,
+	FieldTenant,
+	FieldNetbirdGroups,
+	FieldNetbirdAllowExtraDNSLabels,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
@@ -422,6 +431,10 @@ var (
 	DefaultAptUpdateCache bool
 	// DefaultVersion holds the default value on creation for the "version" field.
 	DefaultVersion int
+	// DefaultNetbirdGroups holds the default value on creation for the "netbird_groups" field.
+	DefaultNetbirdGroups string
+	// DefaultNetbirdAllowExtraDNSLabels holds the default value on creation for the "netbird_allow_extra_dns_labels" field.
+	DefaultNetbirdAllowExtraDNSLabels bool
 )
 
 // Type defines the type for the "type" enum field.
@@ -467,6 +480,9 @@ const (
 	TypeAptRemove                     Type = "apt_remove"
 	TypeAptUpdateAll                  Type = "apt_update_all"
 	TypeAptUpgradeOs                  Type = "apt_upgrade_os"
+	TypeNetbirdInstall                Type = "netbird_install"
+	TypeNetbirdUninstall              Type = "netbird_uninstall"
+	TypeNetbirdRegister               Type = "netbird_register"
 )
 
 func (_type Type) String() string {
@@ -476,7 +492,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeWingetInstall, TypeWingetUpdate, TypeWingetDelete, TypeAddRegistryKey, TypeUpdateRegistryKeyDefaultValue, TypeAddRegistryKeyValue, TypeRemoveRegistryKey, TypeRemoveRegistryKeyValue, TypeAddLocalUser, TypeRemoveLocalUser, TypeAddUnixLocalUser, TypeModifyUnixLocalUser, TypeRemoveUnixLocalUser, TypeAddMacosLocalUser, TypeRemoveMacosLocalUser, TypeAddLocalGroup, TypeRemoveLocalGroup, TypeAddUnixLocalGroup, TypeRemoveUnixLocalGroup, TypeAddUsersToLocalGroup, TypeRemoveUsersFromLocalGroup, TypeMsiInstall, TypeMsiUninstall, TypePowershellScript, TypeUnixScript, TypeFlatpakInstall, TypeFlatpakUninstall, TypeBrewFormulaInstall, TypeBrewFormulaUpgrade, TypeBrewFormulaUninstall, TypeBrewCaskInstall, TypeBrewCaskUpgrade, TypeBrewCaskUninstall, TypeAptInstall, TypeAptUpdate, TypeAptRemove, TypeAptUpdateAll, TypeAptUpgradeOs:
+	case TypeWingetInstall, TypeWingetUpdate, TypeWingetDelete, TypeAddRegistryKey, TypeUpdateRegistryKeyDefaultValue, TypeAddRegistryKeyValue, TypeRemoveRegistryKey, TypeRemoveRegistryKeyValue, TypeAddLocalUser, TypeRemoveLocalUser, TypeAddUnixLocalUser, TypeModifyUnixLocalUser, TypeRemoveUnixLocalUser, TypeAddMacosLocalUser, TypeRemoveMacosLocalUser, TypeAddLocalGroup, TypeRemoveLocalGroup, TypeAddUnixLocalGroup, TypeRemoveUnixLocalGroup, TypeAddUsersToLocalGroup, TypeRemoveUsersFromLocalGroup, TypeMsiInstall, TypeMsiUninstall, TypePowershellScript, TypeUnixScript, TypeFlatpakInstall, TypeFlatpakUninstall, TypeBrewFormulaInstall, TypeBrewFormulaUpgrade, TypeBrewFormulaUninstall, TypeBrewCaskInstall, TypeBrewCaskUpgrade, TypeBrewCaskUninstall, TypeAptInstall, TypeAptUpdate, TypeAptRemove, TypeAptUpdateAll, TypeAptUpgradeOs, TypeNetbirdInstall, TypeNetbirdUninstall, TypeNetbirdRegister:
 		return nil
 	default:
 		return fmt.Errorf("task: invalid enum value for type field: %q", _type)
@@ -571,6 +587,7 @@ const (
 	AgentTypeWindows AgentType = "windows"
 	AgentTypeLinux   AgentType = "linux"
 	AgentTypeMacos   AgentType = "macos"
+	AgentTypeAny     AgentType = "any"
 )
 
 func (at AgentType) String() string {
@@ -580,7 +597,7 @@ func (at AgentType) String() string {
 // AgentTypeValidator is a validator for the "agent_type" field enum values. It is called by the builders before save.
 func AgentTypeValidator(at AgentType) error {
 	switch at {
-	case AgentTypeWindows, AgentTypeLinux, AgentTypeMacos:
+	case AgentTypeWindows, AgentTypeLinux, AgentTypeMacos, AgentTypeAny:
 		return nil
 	default:
 		return fmt.Errorf("task: invalid enum value for agent_type field: %q", at)
@@ -1047,6 +1064,21 @@ func ByAptUpgradeType(opts ...sql.OrderTermOption) OrderOption {
 // ByVersion orders the results by the version field.
 func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByTenant orders the results by the tenant field.
+func ByTenant(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenant, opts...).ToFunc()
+}
+
+// ByNetbirdGroups orders the results by the netbird_groups field.
+func ByNetbirdGroups(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNetbirdGroups, opts...).ToFunc()
+}
+
+// ByNetbirdAllowExtraDNSLabels orders the results by the netbird_allow_extra_dns_labels field.
+func ByNetbirdAllowExtraDNSLabels(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNetbirdAllowExtraDNSLabels, opts...).ToFunc()
 }
 
 // ByTagsCount orders the results by tags count.

@@ -39,6 +39,12 @@ type Metadata func(*sql.Selector)
 // Monitor is the predicate function for monitor builders.
 type Monitor func(*sql.Selector)
 
+// Netbird is the predicate function for netbird builders.
+type Netbird func(*sql.Selector)
+
+// NetbirdSettings is the predicate function for netbirdsettings builders.
+type NetbirdSettings func(*sql.Selector)
+
 // NetworkAdapter is the predicate function for networkadapter builders.
 type NetworkAdapter func(*sql.Selector)
 

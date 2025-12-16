@@ -9,6 +9,8 @@ import (
 	"github.com/open-uem/ent/authentication"
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/logicaldisk"
+	"github.com/open-uem/ent/netbird"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/profile"
@@ -204,6 +206,74 @@ func init() {
 	logicaldiskDescUsage := logicaldiskFields[2].Descriptor()
 	// logicaldisk.DefaultUsage holds the default value on creation for the usage field.
 	logicaldisk.DefaultUsage = logicaldiskDescUsage.Default.(int8)
+	netbirdFields := schema.Netbird{}.Fields()
+	_ = netbirdFields
+	// netbirdDescVersion is the schema descriptor for version field.
+	netbirdDescVersion := netbirdFields[0].Descriptor()
+	// netbird.DefaultVersion holds the default value on creation for the version field.
+	netbird.DefaultVersion = netbirdDescVersion.Default.(string)
+	// netbirdDescInstalled is the schema descriptor for installed field.
+	netbirdDescInstalled := netbirdFields[1].Descriptor()
+	// netbird.DefaultInstalled holds the default value on creation for the installed field.
+	netbird.DefaultInstalled = netbirdDescInstalled.Default.(bool)
+	// netbirdDescServiceStatus is the schema descriptor for service_status field.
+	netbirdDescServiceStatus := netbirdFields[2].Descriptor()
+	// netbird.DefaultServiceStatus holds the default value on creation for the service_status field.
+	netbird.DefaultServiceStatus = netbirdDescServiceStatus.Default.(string)
+	// netbirdDescIP is the schema descriptor for ip field.
+	netbirdDescIP := netbirdFields[3].Descriptor()
+	// netbird.DefaultIP holds the default value on creation for the ip field.
+	netbird.DefaultIP = netbirdDescIP.Default.(string)
+	// netbirdDescProfile is the schema descriptor for profile field.
+	netbirdDescProfile := netbirdFields[4].Descriptor()
+	// netbird.DefaultProfile holds the default value on creation for the profile field.
+	netbird.DefaultProfile = netbirdDescProfile.Default.(string)
+	// netbirdDescManagementURL is the schema descriptor for management_url field.
+	netbirdDescManagementURL := netbirdFields[5].Descriptor()
+	// netbird.DefaultManagementURL holds the default value on creation for the management_url field.
+	netbird.DefaultManagementURL = netbirdDescManagementURL.Default.(string)
+	// netbirdDescManagementConnected is the schema descriptor for management_connected field.
+	netbirdDescManagementConnected := netbirdFields[6].Descriptor()
+	// netbird.DefaultManagementConnected holds the default value on creation for the management_connected field.
+	netbird.DefaultManagementConnected = netbirdDescManagementConnected.Default.(bool)
+	// netbirdDescSignalURL is the schema descriptor for signal_url field.
+	netbirdDescSignalURL := netbirdFields[7].Descriptor()
+	// netbird.DefaultSignalURL holds the default value on creation for the signal_url field.
+	netbird.DefaultSignalURL = netbirdDescSignalURL.Default.(string)
+	// netbirdDescSignalConnected is the schema descriptor for signal_connected field.
+	netbirdDescSignalConnected := netbirdFields[8].Descriptor()
+	// netbird.DefaultSignalConnected holds the default value on creation for the signal_connected field.
+	netbird.DefaultSignalConnected = netbirdDescSignalConnected.Default.(bool)
+	// netbirdDescSSHEnabled is the schema descriptor for ssh_enabled field.
+	netbirdDescSSHEnabled := netbirdFields[9].Descriptor()
+	// netbird.DefaultSSHEnabled holds the default value on creation for the ssh_enabled field.
+	netbird.DefaultSSHEnabled = netbirdDescSSHEnabled.Default.(bool)
+	// netbirdDescPeersTotal is the schema descriptor for peers_total field.
+	netbirdDescPeersTotal := netbirdFields[10].Descriptor()
+	// netbird.DefaultPeersTotal holds the default value on creation for the peers_total field.
+	netbird.DefaultPeersTotal = netbirdDescPeersTotal.Default.(int)
+	// netbirdDescPeersConnected is the schema descriptor for peers_connected field.
+	netbirdDescPeersConnected := netbirdFields[11].Descriptor()
+	// netbird.DefaultPeersConnected holds the default value on creation for the peers_connected field.
+	netbird.DefaultPeersConnected = netbirdDescPeersConnected.Default.(int)
+	// netbirdDescProfilesAvailable is the schema descriptor for profiles_available field.
+	netbirdDescProfilesAvailable := netbirdFields[12].Descriptor()
+	// netbird.DefaultProfilesAvailable holds the default value on creation for the profiles_available field.
+	netbird.DefaultProfilesAvailable = netbirdDescProfilesAvailable.Default.(string)
+	// netbirdDescDNSServer is the schema descriptor for dns_server field.
+	netbirdDescDNSServer := netbirdFields[13].Descriptor()
+	// netbird.DefaultDNSServer holds the default value on creation for the dns_server field.
+	netbird.DefaultDNSServer = netbirdDescDNSServer.Default.(string)
+	netbirdsettingsFields := schema.NetbirdSettings{}.Fields()
+	_ = netbirdsettingsFields
+	// netbirdsettingsDescManagementURL is the schema descriptor for management_url field.
+	netbirdsettingsDescManagementURL := netbirdsettingsFields[0].Descriptor()
+	// netbirdsettings.DefaultManagementURL holds the default value on creation for the management_url field.
+	netbirdsettings.DefaultManagementURL = netbirdsettingsDescManagementURL.Default.(string)
+	// netbirdsettingsDescAccessToken is the schema descriptor for access_token field.
+	netbirdsettingsDescAccessToken := netbirdsettingsFields[1].Descriptor()
+	// netbirdsettings.DefaultAccessToken holds the default value on creation for the access_token field.
+	netbirdsettings.DefaultAccessToken = netbirdsettingsDescAccessToken.Default.(string)
 	networkadapterFields := schema.NetworkAdapter{}.Fields()
 	_ = networkadapterFields
 	// networkadapterDescVirtual is the schema descriptor for virtual field.
@@ -608,6 +678,14 @@ func init() {
 	taskDescVersion := taskFields[84].Descriptor()
 	// task.DefaultVersion holds the default value on creation for the version field.
 	task.DefaultVersion = taskDescVersion.Default.(int)
+	// taskDescNetbirdGroups is the schema descriptor for netbird_groups field.
+	taskDescNetbirdGroups := taskFields[86].Descriptor()
+	// task.DefaultNetbirdGroups holds the default value on creation for the netbird_groups field.
+	task.DefaultNetbirdGroups = taskDescNetbirdGroups.Default.(string)
+	// taskDescNetbirdAllowExtraDNSLabels is the schema descriptor for netbird_allow_extra_dns_labels field.
+	taskDescNetbirdAllowExtraDNSLabels := taskFields[87].Descriptor()
+	// task.DefaultNetbirdAllowExtraDNSLabels holds the default value on creation for the netbird_allow_extra_dns_labels field.
+	task.DefaultNetbirdAllowExtraDNSLabels = taskDescNetbirdAllowExtraDNSLabels.Default.(bool)
 	tenantFields := schema.Tenant{}.Fields()
 	_ = tenantFields
 	// tenantDescCreated is the schema descriptor for created field.
