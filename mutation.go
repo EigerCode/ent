@@ -20273,23 +20273,26 @@ func (m *RevocationMutation) ResetEdge(name string) error {
 // RustdeskMutation represents an operation that mutates the Rustdesk nodes in the graph.
 type RustdeskMutation struct {
 	config
-	op                       Op
-	typ                      string
-	id                       *int
-	custom_rendezvous_server *string
-	relay_server             *string
-	api_server               *string
-	key                      *string
-	use_permanent_password   *bool
-	whitelist                *string
-	direct_ip_access         *bool
-	clearedFields            map[string]struct{}
-	tenant                   map[int]struct{}
-	removedtenant            map[int]struct{}
-	clearedtenant            bool
-	done                     bool
-	oldValue                 func(context.Context) (*Rustdesk, error)
-	predicates               []predicate.Rustdesk
+	op                           Op
+	typ                          string
+	id                           *int
+	custom_rendezvous_server     *string
+	relay_server                 *string
+	api_server                   *string
+	key                          *string
+	use_permanent_password       *bool
+	whitelist                    *string
+	direct_ip_access             *bool
+	verification_method          *rustdesk.VerificationMethod
+	temporary_password_length    *int
+	addtemporary_password_length *int
+	clearedFields                map[string]struct{}
+	tenant                       map[int]struct{}
+	removedtenant                map[int]struct{}
+	clearedtenant                bool
+	done                         bool
+	oldValue                     func(context.Context) (*Rustdesk, error)
+	predicates                   []predicate.Rustdesk
 }
 
 var _ ent.Mutation = (*RustdeskMutation)(nil)
@@ -20733,6 +20736,125 @@ func (m *RustdeskMutation) ResetDirectIPAccess() {
 	delete(m.clearedFields, rustdesk.FieldDirectIPAccess)
 }
 
+// SetVerificationMethod sets the "verification_method" field.
+func (m *RustdeskMutation) SetVerificationMethod(rm rustdesk.VerificationMethod) {
+	m.verification_method = &rm
+}
+
+// VerificationMethod returns the value of the "verification_method" field in the mutation.
+func (m *RustdeskMutation) VerificationMethod() (r rustdesk.VerificationMethod, exists bool) {
+	v := m.verification_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerificationMethod returns the old "verification_method" field's value of the Rustdesk entity.
+// If the Rustdesk object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RustdeskMutation) OldVerificationMethod(ctx context.Context) (v rustdesk.VerificationMethod, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerificationMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerificationMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerificationMethod: %w", err)
+	}
+	return oldValue.VerificationMethod, nil
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (m *RustdeskMutation) ClearVerificationMethod() {
+	m.verification_method = nil
+	m.clearedFields[rustdesk.FieldVerificationMethod] = struct{}{}
+}
+
+// VerificationMethodCleared returns if the "verification_method" field was cleared in this mutation.
+func (m *RustdeskMutation) VerificationMethodCleared() bool {
+	_, ok := m.clearedFields[rustdesk.FieldVerificationMethod]
+	return ok
+}
+
+// ResetVerificationMethod resets all changes to the "verification_method" field.
+func (m *RustdeskMutation) ResetVerificationMethod() {
+	m.verification_method = nil
+	delete(m.clearedFields, rustdesk.FieldVerificationMethod)
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (m *RustdeskMutation) SetTemporaryPasswordLength(i int) {
+	m.temporary_password_length = &i
+	m.addtemporary_password_length = nil
+}
+
+// TemporaryPasswordLength returns the value of the "temporary_password_length" field in the mutation.
+func (m *RustdeskMutation) TemporaryPasswordLength() (r int, exists bool) {
+	v := m.temporary_password_length
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTemporaryPasswordLength returns the old "temporary_password_length" field's value of the Rustdesk entity.
+// If the Rustdesk object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RustdeskMutation) OldTemporaryPasswordLength(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTemporaryPasswordLength is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTemporaryPasswordLength requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTemporaryPasswordLength: %w", err)
+	}
+	return oldValue.TemporaryPasswordLength, nil
+}
+
+// AddTemporaryPasswordLength adds i to the "temporary_password_length" field.
+func (m *RustdeskMutation) AddTemporaryPasswordLength(i int) {
+	if m.addtemporary_password_length != nil {
+		*m.addtemporary_password_length += i
+	} else {
+		m.addtemporary_password_length = &i
+	}
+}
+
+// AddedTemporaryPasswordLength returns the value that was added to the "temporary_password_length" field in this mutation.
+func (m *RustdeskMutation) AddedTemporaryPasswordLength() (r int, exists bool) {
+	v := m.addtemporary_password_length
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (m *RustdeskMutation) ClearTemporaryPasswordLength() {
+	m.temporary_password_length = nil
+	m.addtemporary_password_length = nil
+	m.clearedFields[rustdesk.FieldTemporaryPasswordLength] = struct{}{}
+}
+
+// TemporaryPasswordLengthCleared returns if the "temporary_password_length" field was cleared in this mutation.
+func (m *RustdeskMutation) TemporaryPasswordLengthCleared() bool {
+	_, ok := m.clearedFields[rustdesk.FieldTemporaryPasswordLength]
+	return ok
+}
+
+// ResetTemporaryPasswordLength resets all changes to the "temporary_password_length" field.
+func (m *RustdeskMutation) ResetTemporaryPasswordLength() {
+	m.temporary_password_length = nil
+	m.addtemporary_password_length = nil
+	delete(m.clearedFields, rustdesk.FieldTemporaryPasswordLength)
+}
+
 // AddTenantIDs adds the "tenant" edge to the Tenant entity by ids.
 func (m *RustdeskMutation) AddTenantIDs(ids ...int) {
 	if m.tenant == nil {
@@ -20821,7 +20943,7 @@ func (m *RustdeskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RustdeskMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.custom_rendezvous_server != nil {
 		fields = append(fields, rustdesk.FieldCustomRendezvousServer)
 	}
@@ -20842,6 +20964,12 @@ func (m *RustdeskMutation) Fields() []string {
 	}
 	if m.direct_ip_access != nil {
 		fields = append(fields, rustdesk.FieldDirectIPAccess)
+	}
+	if m.verification_method != nil {
+		fields = append(fields, rustdesk.FieldVerificationMethod)
+	}
+	if m.temporary_password_length != nil {
+		fields = append(fields, rustdesk.FieldTemporaryPasswordLength)
 	}
 	return fields
 }
@@ -20865,6 +20993,10 @@ func (m *RustdeskMutation) Field(name string) (ent.Value, bool) {
 		return m.Whitelist()
 	case rustdesk.FieldDirectIPAccess:
 		return m.DirectIPAccess()
+	case rustdesk.FieldVerificationMethod:
+		return m.VerificationMethod()
+	case rustdesk.FieldTemporaryPasswordLength:
+		return m.TemporaryPasswordLength()
 	}
 	return nil, false
 }
@@ -20888,6 +21020,10 @@ func (m *RustdeskMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldWhitelist(ctx)
 	case rustdesk.FieldDirectIPAccess:
 		return m.OldDirectIPAccess(ctx)
+	case rustdesk.FieldVerificationMethod:
+		return m.OldVerificationMethod(ctx)
+	case rustdesk.FieldTemporaryPasswordLength:
+		return m.OldTemporaryPasswordLength(ctx)
 	}
 	return nil, fmt.Errorf("unknown Rustdesk field %s", name)
 }
@@ -20946,6 +21082,20 @@ func (m *RustdeskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDirectIPAccess(v)
 		return nil
+	case rustdesk.FieldVerificationMethod:
+		v, ok := value.(rustdesk.VerificationMethod)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerificationMethod(v)
+		return nil
+	case rustdesk.FieldTemporaryPasswordLength:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTemporaryPasswordLength(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk field %s", name)
 }
@@ -20953,13 +21103,21 @@ func (m *RustdeskMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *RustdeskMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addtemporary_password_length != nil {
+		fields = append(fields, rustdesk.FieldTemporaryPasswordLength)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *RustdeskMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case rustdesk.FieldTemporaryPasswordLength:
+		return m.AddedTemporaryPasswordLength()
+	}
 	return nil, false
 }
 
@@ -20968,6 +21126,13 @@ func (m *RustdeskMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *RustdeskMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case rustdesk.FieldTemporaryPasswordLength:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTemporaryPasswordLength(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk numeric field %s", name)
 }
@@ -20996,6 +21161,12 @@ func (m *RustdeskMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(rustdesk.FieldDirectIPAccess) {
 		fields = append(fields, rustdesk.FieldDirectIPAccess)
+	}
+	if m.FieldCleared(rustdesk.FieldVerificationMethod) {
+		fields = append(fields, rustdesk.FieldVerificationMethod)
+	}
+	if m.FieldCleared(rustdesk.FieldTemporaryPasswordLength) {
+		fields = append(fields, rustdesk.FieldTemporaryPasswordLength)
 	}
 	return fields
 }
@@ -21032,6 +21203,12 @@ func (m *RustdeskMutation) ClearField(name string) error {
 	case rustdesk.FieldDirectIPAccess:
 		m.ClearDirectIPAccess()
 		return nil
+	case rustdesk.FieldVerificationMethod:
+		m.ClearVerificationMethod()
+		return nil
+	case rustdesk.FieldTemporaryPasswordLength:
+		m.ClearTemporaryPasswordLength()
+		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk nullable field %s", name)
 }
@@ -21060,6 +21237,12 @@ func (m *RustdeskMutation) ResetField(name string) error {
 		return nil
 	case rustdesk.FieldDirectIPAccess:
 		m.ResetDirectIPAccess()
+		return nil
+	case rustdesk.FieldVerificationMethod:
+		m.ResetVerificationMethod()
+		return nil
+	case rustdesk.FieldTemporaryPasswordLength:
+		m.ResetTemporaryPasswordLength()
 		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk field %s", name)

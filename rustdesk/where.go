@@ -88,6 +88,11 @@ func DirectIPAccess(v bool) predicate.Rustdesk {
 	return predicate.Rustdesk(sql.FieldEQ(FieldDirectIPAccess, v))
 }
 
+// TemporaryPasswordLength applies equality check predicate on the "temporary_password_length" field. It's identical to TemporaryPasswordLengthEQ.
+func TemporaryPasswordLength(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldEQ(FieldTemporaryPasswordLength, v))
+}
+
 // CustomRendezvousServerEQ applies the EQ predicate on the "custom_rendezvous_server" field.
 func CustomRendezvousServerEQ(v string) predicate.Rustdesk {
 	return predicate.Rustdesk(sql.FieldEQ(FieldCustomRendezvousServer, v))
@@ -501,6 +506,86 @@ func DirectIPAccessIsNil() predicate.Rustdesk {
 // DirectIPAccessNotNil applies the NotNil predicate on the "direct_ip_access" field.
 func DirectIPAccessNotNil() predicate.Rustdesk {
 	return predicate.Rustdesk(sql.FieldNotNull(FieldDirectIPAccess))
+}
+
+// VerificationMethodEQ applies the EQ predicate on the "verification_method" field.
+func VerificationMethodEQ(v VerificationMethod) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldEQ(FieldVerificationMethod, v))
+}
+
+// VerificationMethodNEQ applies the NEQ predicate on the "verification_method" field.
+func VerificationMethodNEQ(v VerificationMethod) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldNEQ(FieldVerificationMethod, v))
+}
+
+// VerificationMethodIn applies the In predicate on the "verification_method" field.
+func VerificationMethodIn(vs ...VerificationMethod) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldIn(FieldVerificationMethod, vs...))
+}
+
+// VerificationMethodNotIn applies the NotIn predicate on the "verification_method" field.
+func VerificationMethodNotIn(vs ...VerificationMethod) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldNotIn(FieldVerificationMethod, vs...))
+}
+
+// VerificationMethodIsNil applies the IsNil predicate on the "verification_method" field.
+func VerificationMethodIsNil() predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldIsNull(FieldVerificationMethod))
+}
+
+// VerificationMethodNotNil applies the NotNil predicate on the "verification_method" field.
+func VerificationMethodNotNil() predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldNotNull(FieldVerificationMethod))
+}
+
+// TemporaryPasswordLengthEQ applies the EQ predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthEQ(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldEQ(FieldTemporaryPasswordLength, v))
+}
+
+// TemporaryPasswordLengthNEQ applies the NEQ predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthNEQ(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldNEQ(FieldTemporaryPasswordLength, v))
+}
+
+// TemporaryPasswordLengthIn applies the In predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthIn(vs ...int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldIn(FieldTemporaryPasswordLength, vs...))
+}
+
+// TemporaryPasswordLengthNotIn applies the NotIn predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthNotIn(vs ...int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldNotIn(FieldTemporaryPasswordLength, vs...))
+}
+
+// TemporaryPasswordLengthGT applies the GT predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthGT(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldGT(FieldTemporaryPasswordLength, v))
+}
+
+// TemporaryPasswordLengthGTE applies the GTE predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthGTE(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldGTE(FieldTemporaryPasswordLength, v))
+}
+
+// TemporaryPasswordLengthLT applies the LT predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthLT(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldLT(FieldTemporaryPasswordLength, v))
+}
+
+// TemporaryPasswordLengthLTE applies the LTE predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthLTE(v int) predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldLTE(FieldTemporaryPasswordLength, v))
+}
+
+// TemporaryPasswordLengthIsNil applies the IsNil predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthIsNil() predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldIsNull(FieldTemporaryPasswordLength))
+}
+
+// TemporaryPasswordLengthNotNil applies the NotNil predicate on the "temporary_password_length" field.
+func TemporaryPasswordLengthNotNil() predicate.Rustdesk {
+	return predicate.Rustdesk(sql.FieldNotNull(FieldTemporaryPasswordLength))
 }
 
 // HasTenant applies the HasEdge predicate on the "tenant" edge.

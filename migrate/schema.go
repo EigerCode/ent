@@ -580,6 +580,8 @@ var (
 		{Name: "use_permanent_password", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "whitelist", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "direct_ip_access", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "verification_method", Type: field.TypeEnum, Nullable: true, Enums: []string{"use-temporary-password", "use-permanent-password", "use-both-passwords"}, Default: "use-both-passwords"},
+		{Name: "temporary_password_length", Type: field.TypeInt, Nullable: true, Default: 6},
 	}
 	// RustdesksTable holds the schema information for the "rustdesks" table.
 	RustdesksTable = &schema.Table{

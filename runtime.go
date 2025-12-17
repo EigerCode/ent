@@ -344,6 +344,10 @@ func init() {
 	rustdeskDescDirectIPAccess := rustdeskFields[6].Descriptor()
 	// rustdesk.DefaultDirectIPAccess holds the default value on creation for the direct_ip_access field.
 	rustdesk.DefaultDirectIPAccess = rustdeskDescDirectIPAccess.Default.(bool)
+	// rustdeskDescTemporaryPasswordLength is the schema descriptor for temporary_password_length field.
+	rustdeskDescTemporaryPasswordLength := rustdeskFields[8].Descriptor()
+	// rustdesk.DefaultTemporaryPasswordLength holds the default value on creation for the temporary_password_length field.
+	rustdesk.DefaultTemporaryPasswordLength = rustdeskDescTemporaryPasswordLength.Default.(int)
 	sessionsFields := schema.Sessions{}.Fields()
 	_ = sessionsFields
 	// sessionsDescData is the schema descriptor for data field.

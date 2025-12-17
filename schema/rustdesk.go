@@ -21,6 +21,8 @@ func (Rustdesk) Fields() []ent.Field {
 		field.Bool("use_permanent_password").Optional().Default(false),
 		field.String("whitelist").Optional().Default(""),
 		field.Bool("direct_ip_access").Optional().Default(false),
+		field.Enum("verification_method").Values("use-temporary-password", "use-permanent-password", "use-both-passwords").Optional().Default("use-both-passwords"),
+		field.Int("temporary_password_length").Optional().Default(6),
 	}
 }
 
