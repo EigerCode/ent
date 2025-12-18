@@ -49,6 +49,8 @@ type User struct {
 	TokenType string `json:"token_type,omitempty"`
 	// TokenExpiry holds the value of the "token_expiry" field.
 	TokenExpiry int `json:"token_expiry,omitempty"`
+	// Hash holds the value of the "hash" field.
+	Hash string `json:"hash,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -82,7 +84,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case user.FieldTokenExpiry:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType:
+		case user.FieldID, user.FieldName, user.FieldEmail, user.FieldPhone, user.FieldCountry, user.FieldRegister, user.FieldCertClearPassword, user.FieldAccessToken, user.FieldRefreshToken, user.FieldIDToken, user.FieldTokenType, user.FieldHash:
 			values[i] = new(sql.NullString)
 		case user.FieldExpiry, user.FieldCreated, user.FieldModified:
 			values[i] = new(sql.NullTime)
@@ -203,6 +205,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.TokenExpiry = int(value.Int64)
 			}
+		case user.FieldHash:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field hash", values[i])
+			} else if value.Valid {
+				u.Hash = value.String
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -291,6 +299,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("token_expiry=")
 	builder.WriteString(fmt.Sprintf("%v", u.TokenExpiry))
+	builder.WriteString(", ")
+	builder.WriteString("hash=")
+	builder.WriteString(u.Hash)
 	builder.WriteByte(')')
 	return builder.String()
 }

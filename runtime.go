@@ -746,6 +746,10 @@ func init() {
 	userDescTokenExpiry := userFields[16].Descriptor()
 	// user.DefaultTokenExpiry holds the default value on creation for the token_expiry field.
 	user.DefaultTokenExpiry = userDescTokenExpiry.Default.(int)
+	// userDescHash is the schema descriptor for hash field.
+	userDescHash := userFields[17].Descriptor()
+	// user.DefaultHash holds the default value on creation for the hash field.
+	user.DefaultHash = userDescHash.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.

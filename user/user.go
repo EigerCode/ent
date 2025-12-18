@@ -46,6 +46,8 @@ const (
 	FieldTokenType = "token_type"
 	// FieldTokenExpiry holds the string denoting the token_expiry field in the database.
 	FieldTokenExpiry = "token_expiry"
+	// FieldHash holds the string denoting the hash field in the database.
+	FieldHash = "hash"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// SessionsFieldID holds the string denoting the ID field of the Sessions.
@@ -80,6 +82,7 @@ var Columns = []string{
 	FieldIDToken,
 	FieldTokenType,
 	FieldTokenExpiry,
+	FieldHash,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,6 +118,8 @@ var (
 	DefaultTokenType string
 	// DefaultTokenExpiry holds the default value on creation for the "token_expiry" field.
 	DefaultTokenExpiry int
+	// DefaultHash holds the default value on creation for the "hash" field.
+	DefaultHash string
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(string) error
 )
@@ -205,6 +210,11 @@ func ByTokenType(opts ...sql.OrderTermOption) OrderOption {
 // ByTokenExpiry orders the results by the token_expiry field.
 func ByTokenExpiry(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTokenExpiry, opts...).ToFunc()
+}
+
+// ByHash orders the results by the hash field.
+func ByHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHash, opts...).ToFunc()
 }
 
 // BySessionsCount orders the results by sessions count.

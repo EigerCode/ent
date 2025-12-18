@@ -37500,6 +37500,7 @@ type UserMutation struct {
 	token_type          *string
 	token_expiry        *int
 	addtoken_expiry     *int
+	hash                *string
 	clearedFields       map[string]struct{}
 	sessions            map[string]struct{}
 	removedsessions     map[string]struct{}
@@ -38379,6 +38380,55 @@ func (m *UserMutation) ResetTokenExpiry() {
 	delete(m.clearedFields, user.FieldTokenExpiry)
 }
 
+// SetHash sets the "hash" field.
+func (m *UserMutation) SetHash(s string) {
+	m.hash = &s
+}
+
+// Hash returns the value of the "hash" field in the mutation.
+func (m *UserMutation) Hash() (r string, exists bool) {
+	v := m.hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHash returns the old "hash" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHash: %w", err)
+	}
+	return oldValue.Hash, nil
+}
+
+// ClearHash clears the value of the "hash" field.
+func (m *UserMutation) ClearHash() {
+	m.hash = nil
+	m.clearedFields[user.FieldHash] = struct{}{}
+}
+
+// HashCleared returns if the "hash" field was cleared in this mutation.
+func (m *UserMutation) HashCleared() bool {
+	_, ok := m.clearedFields[user.FieldHash]
+	return ok
+}
+
+// ResetHash resets all changes to the "hash" field.
+func (m *UserMutation) ResetHash() {
+	m.hash = nil
+	delete(m.clearedFields, user.FieldHash)
+}
+
 // AddSessionIDs adds the "sessions" edge to the Sessions entity by ids.
 func (m *UserMutation) AddSessionIDs(ids ...string) {
 	if m.sessions == nil {
@@ -38467,7 +38517,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -38516,6 +38566,9 @@ func (m *UserMutation) Fields() []string {
 	if m.token_expiry != nil {
 		fields = append(fields, user.FieldTokenExpiry)
 	}
+	if m.hash != nil {
+		fields = append(fields, user.FieldHash)
+	}
 	return fields
 }
 
@@ -38556,6 +38609,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.TokenType()
 	case user.FieldTokenExpiry:
 		return m.TokenExpiry()
+	case user.FieldHash:
+		return m.Hash()
 	}
 	return nil, false
 }
@@ -38597,6 +38652,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTokenType(ctx)
 	case user.FieldTokenExpiry:
 		return m.OldTokenExpiry(ctx)
+	case user.FieldHash:
+		return m.OldHash(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -38718,6 +38775,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTokenExpiry(v)
 		return nil
+	case user.FieldHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHash(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -38802,6 +38866,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldTokenExpiry) {
 		fields = append(fields, user.FieldTokenExpiry)
 	}
+	if m.FieldCleared(user.FieldHash) {
+		fields = append(fields, user.FieldHash)
+	}
 	return fields
 }
 
@@ -38854,6 +38921,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldTokenExpiry:
 		m.ClearTokenExpiry()
+		return nil
+	case user.FieldHash:
+		m.ClearHash()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -38910,6 +38980,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldTokenExpiry:
 		m.ResetTokenExpiry()
+		return nil
+	case user.FieldHash:
+		m.ResetHash()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
