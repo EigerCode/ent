@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/settings"
 	"github.com/open-uem/ent/tenant"
 )
@@ -28,8 +29,9 @@ type Tenant struct {
 	Modified time.Time `json:"modified,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TenantQuery when eager-loading is set.
-	Edges        TenantEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges          TenantEdges `json:"edges"`
+	tenant_netbird *int
+	selectValues   sql.SelectValues
 }
 
 // TenantEdges holds the relations/edges for other nodes in the graph.
@@ -44,9 +46,11 @@ type TenantEdges struct {
 	Metadata []*OrgMetadata `json:"metadata,omitempty"`
 	// Rustdesk holds the value of the rustdesk edge.
 	Rustdesk []*Rustdesk `json:"rustdesk,omitempty"`
+	// Netbird holds the value of the netbird edge.
+	Netbird *NetbirdSettings `json:"netbird,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // SitesOrErr returns the Sites value or an error if the edge
@@ -96,6 +100,17 @@ func (e TenantEdges) RustdeskOrErr() ([]*Rustdesk, error) {
 	return nil, &NotLoadedError{edge: "rustdesk"}
 }
 
+// NetbirdOrErr returns the Netbird value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TenantEdges) NetbirdOrErr() (*NetbirdSettings, error) {
+	if e.Netbird != nil {
+		return e.Netbird, nil
+	} else if e.loadedTypes[5] {
+		return nil, &NotFoundError{label: netbirdsettings.Label}
+	}
+	return nil, &NotLoadedError{edge: "netbird"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Tenant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -109,6 +124,8 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case tenant.FieldCreated, tenant.FieldModified:
 			values[i] = new(sql.NullTime)
+		case tenant.ForeignKeys[0]: // tenant_netbird
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -154,6 +171,13 @@ func (t *Tenant) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Modified = value.Time
 			}
+		case tenant.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field tenant_netbird", value)
+			} else if value.Valid {
+				t.tenant_netbird = new(int)
+				*t.tenant_netbird = int(value.Int64)
+			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -190,6 +214,11 @@ func (t *Tenant) QueryMetadata() *OrgMetadataQuery {
 // QueryRustdesk queries the "rustdesk" edge of the Tenant entity.
 func (t *Tenant) QueryRustdesk() *RustdeskQuery {
 	return NewTenantClient(t.config).QueryRustdesk(t)
+}
+
+// QueryNetbird queries the "netbird" edge of the Tenant entity.
+func (t *Tenant) QueryNetbird() *NetbirdSettingsQuery {
+	return NewTenantClient(t.config).QueryNetbird(t)
 }
 
 // Update returns a builder for updating this Tenant.

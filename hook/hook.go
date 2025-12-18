@@ -141,6 +141,30 @@ func (f MonitorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorMutation", m)
 }
 
+// The NetbirdFunc type is an adapter to allow the use of ordinary
+// function as Netbird mutator.
+type NetbirdFunc func(context.Context, *ent.NetbirdMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NetbirdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NetbirdMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NetbirdMutation", m)
+}
+
+// The NetbirdSettingsFunc type is an adapter to allow the use of ordinary
+// function as NetbirdSettings mutator.
+type NetbirdSettingsFunc func(context.Context, *ent.NetbirdSettingsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NetbirdSettingsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NetbirdSettingsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NetbirdSettingsMutation", m)
+}
+
 // The NetworkAdapterFunc type is an adapter to allow the use of ordinary
 // function as NetworkAdapter mutator.
 type NetworkAdapterFunc func(context.Context, *ent.NetworkAdapterMutation) (ent.Value, error)

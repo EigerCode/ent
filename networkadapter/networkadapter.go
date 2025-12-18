@@ -34,6 +34,8 @@ const (
 	FieldDhcpLeaseExpired = "dhcp_lease_expired"
 	// FieldSpeed holds the string denoting the speed field in the database.
 	FieldSpeed = "speed"
+	// FieldVirtual holds the string denoting the virtual field in the database.
+	FieldVirtual = "virtual"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// AgentFieldID holds the string denoting the ID field of the Agent.
@@ -63,6 +65,7 @@ var Columns = []string{
 	FieldDhcpLeaseObtained,
 	FieldDhcpLeaseExpired,
 	FieldSpeed,
+	FieldVirtual,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "network_adapters"
@@ -85,6 +88,11 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultVirtual holds the default value on creation for the "virtual" field.
+	DefaultVirtual bool
+)
 
 // OrderOption defines the ordering options for the NetworkAdapter queries.
 type OrderOption func(*sql.Selector)
@@ -147,6 +155,11 @@ func ByDhcpLeaseExpired(opts ...sql.OrderTermOption) OrderOption {
 // BySpeed orders the results by the speed field.
 func BySpeed(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSpeed, opts...).ToFunc()
+}
+
+// ByVirtual orders the results by the virtual field.
+func ByVirtual(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVirtual, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

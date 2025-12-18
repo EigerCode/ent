@@ -30,6 +30,10 @@ type Rustdesk struct {
 	Whitelist string `json:"whitelist,omitempty"`
 	// DirectIPAccess holds the value of the "direct_ip_access" field.
 	DirectIPAccess bool `json:"direct_ip_access,omitempty"`
+	// VerificationMethod holds the value of the "verification_method" field.
+	VerificationMethod rustdesk.VerificationMethod `json:"verification_method,omitempty"`
+	// TemporaryPasswordLength holds the value of the "temporary_password_length" field.
+	TemporaryPasswordLength int `json:"temporary_password_length,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RustdeskQuery when eager-loading is set.
 	Edges        RustdeskEdges `json:"edges"`
@@ -61,9 +65,9 @@ func (*Rustdesk) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case rustdesk.FieldUsePermanentPassword, rustdesk.FieldDirectIPAccess:
 			values[i] = new(sql.NullBool)
-		case rustdesk.FieldID:
+		case rustdesk.FieldID, rustdesk.FieldTemporaryPasswordLength:
 			values[i] = new(sql.NullInt64)
-		case rustdesk.FieldCustomRendezvousServer, rustdesk.FieldRelayServer, rustdesk.FieldAPIServer, rustdesk.FieldKey, rustdesk.FieldWhitelist:
+		case rustdesk.FieldCustomRendezvousServer, rustdesk.FieldRelayServer, rustdesk.FieldAPIServer, rustdesk.FieldKey, rustdesk.FieldWhitelist, rustdesk.FieldVerificationMethod:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -128,6 +132,18 @@ func (r *Rustdesk) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				r.DirectIPAccess = value.Bool
 			}
+		case rustdesk.FieldVerificationMethod:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field verification_method", values[i])
+			} else if value.Valid {
+				r.VerificationMethod = rustdesk.VerificationMethod(value.String)
+			}
+		case rustdesk.FieldTemporaryPasswordLength:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field temporary_password_length", values[i])
+			} else if value.Valid {
+				r.TemporaryPasswordLength = int(value.Int64)
+			}
 		default:
 			r.selectValues.Set(columns[i], values[i])
 		}
@@ -189,6 +205,12 @@ func (r *Rustdesk) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("direct_ip_access=")
 	builder.WriteString(fmt.Sprintf("%v", r.DirectIPAccess))
+	builder.WriteString(", ")
+	builder.WriteString("verification_method=")
+	builder.WriteString(fmt.Sprintf("%v", r.VerificationMethod))
+	builder.WriteString(", ")
+	builder.WriteString("temporary_password_length=")
+	builder.WriteString(fmt.Sprintf("%v", r.TemporaryPasswordLength))
 	builder.WriteByte(')')
 	return builder.String()
 }

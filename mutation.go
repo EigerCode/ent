@@ -22,6 +22,8 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/netbird"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/orgmetadata"
@@ -68,6 +70,8 @@ const (
 	TypeMemorySlot            = "MemorySlot"
 	TypeMetadata              = "Metadata"
 	TypeMonitor               = "Monitor"
+	TypeNetbird               = "Netbird"
+	TypeNetbirdSettings       = "NetbirdSettings"
 	TypeNetworkAdapter        = "NetworkAdapter"
 	TypeOperatingSystem       = "OperatingSystem"
 	TypeOrgMetadata           = "OrgMetadata"
@@ -128,6 +132,7 @@ type AgentMutation struct {
 	has_rustdesk               *bool
 	is_wayland                 *bool
 	is_flatpak_rustdesk        *bool
+	wan                        *string
 	clearedFields              map[string]struct{}
 	computer                   *int
 	clearedcomputer            bool
@@ -184,6 +189,8 @@ type AgentMutation struct {
 	physicaldisks              map[int]struct{}
 	removedphysicaldisks       map[int]struct{}
 	clearedphysicaldisks       bool
+	netbird                    *int
+	clearednetbird             bool
 	done                       bool
 	oldValue                   func(context.Context) (*Agent, error)
 	predicates                 []predicate.Agent
@@ -1662,6 +1669,42 @@ func (m *AgentMutation) ResetIsFlatpakRustdesk() {
 	delete(m.clearedFields, agent.FieldIsFlatpakRustdesk)
 }
 
+// SetWan sets the "wan" field.
+func (m *AgentMutation) SetWan(s string) {
+	m.wan = &s
+}
+
+// Wan returns the value of the "wan" field in the mutation.
+func (m *AgentMutation) Wan() (r string, exists bool) {
+	v := m.wan
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWan returns the old "wan" field's value of the Agent entity.
+// If the Agent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgentMutation) OldWan(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWan is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWan requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWan: %w", err)
+	}
+	return oldValue.Wan, nil
+}
+
+// ResetWan resets all changes to the "wan" field.
+func (m *AgentMutation) ResetWan() {
+	m.wan = nil
+}
+
 // SetComputerID sets the "computer" edge to the Computer entity by id.
 func (m *AgentMutation) SetComputerID(id int) {
 	m.computer = &id
@@ -2667,6 +2710,45 @@ func (m *AgentMutation) ResetPhysicaldisks() {
 	m.removedphysicaldisks = nil
 }
 
+// SetNetbirdID sets the "netbird" edge to the Netbird entity by id.
+func (m *AgentMutation) SetNetbirdID(id int) {
+	m.netbird = &id
+}
+
+// ClearNetbird clears the "netbird" edge to the Netbird entity.
+func (m *AgentMutation) ClearNetbird() {
+	m.clearednetbird = true
+}
+
+// NetbirdCleared reports if the "netbird" edge to the Netbird entity was cleared.
+func (m *AgentMutation) NetbirdCleared() bool {
+	return m.clearednetbird
+}
+
+// NetbirdID returns the "netbird" edge ID in the mutation.
+func (m *AgentMutation) NetbirdID() (id int, exists bool) {
+	if m.netbird != nil {
+		return *m.netbird, true
+	}
+	return
+}
+
+// NetbirdIDs returns the "netbird" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// NetbirdID instead. It exists only for internal usage by the builders.
+func (m *AgentMutation) NetbirdIDs() (ids []int) {
+	if id := m.netbird; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetNetbird resets all changes to the "netbird" edge.
+func (m *AgentMutation) ResetNetbird() {
+	m.netbird = nil
+	m.clearednetbird = false
+}
+
 // Where appends a list predicates to the AgentMutation builder.
 func (m *AgentMutation) Where(ps ...predicate.Agent) {
 	m.predicates = append(m.predicates, ps...)
@@ -2701,7 +2783,7 @@ func (m *AgentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AgentMutation) Fields() []string {
-	fields := make([]string, 0, 29)
+	fields := make([]string, 0, 30)
 	if m.os != nil {
 		fields = append(fields, agent.FieldOs)
 	}
@@ -2789,6 +2871,9 @@ func (m *AgentMutation) Fields() []string {
 	if m.is_flatpak_rustdesk != nil {
 		fields = append(fields, agent.FieldIsFlatpakRustdesk)
 	}
+	if m.wan != nil {
+		fields = append(fields, agent.FieldWan)
+	}
 	return fields
 }
 
@@ -2855,6 +2940,8 @@ func (m *AgentMutation) Field(name string) (ent.Value, bool) {
 		return m.IsWayland()
 	case agent.FieldIsFlatpakRustdesk:
 		return m.IsFlatpakRustdesk()
+	case agent.FieldWan:
+		return m.Wan()
 	}
 	return nil, false
 }
@@ -2922,6 +3009,8 @@ func (m *AgentMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldIsWayland(ctx)
 	case agent.FieldIsFlatpakRustdesk:
 		return m.OldIsFlatpakRustdesk(ctx)
+	case agent.FieldWan:
+		return m.OldWan(ctx)
 	}
 	return nil, fmt.Errorf("unknown Agent field %s", name)
 }
@@ -3133,6 +3222,13 @@ func (m *AgentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsFlatpakRustdesk(v)
+		return nil
+	case agent.FieldWan:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWan(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Agent field %s", name)
@@ -3423,13 +3519,16 @@ func (m *AgentMutation) ResetField(name string) error {
 	case agent.FieldIsFlatpakRustdesk:
 		m.ResetIsFlatpakRustdesk()
 		return nil
+	case agent.FieldWan:
+		m.ResetWan()
+		return nil
 	}
 	return fmt.Errorf("unknown Agent field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AgentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 20)
+	edges := make([]string, 0, 21)
 	if m.computer != nil {
 		edges = append(edges, agent.EdgeComputer)
 	}
@@ -3489,6 +3588,9 @@ func (m *AgentMutation) AddedEdges() []string {
 	}
 	if m.physicaldisks != nil {
 		edges = append(edges, agent.EdgePhysicaldisks)
+	}
+	if m.netbird != nil {
+		edges = append(edges, agent.EdgeNetbird)
 	}
 	return edges
 }
@@ -3607,13 +3709,17 @@ func (m *AgentMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case agent.EdgeNetbird:
+		if id := m.netbird; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AgentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 20)
+	edges := make([]string, 0, 21)
 	if m.removedlogicaldisks != nil {
 		edges = append(edges, agent.EdgeLogicaldisks)
 	}
@@ -3762,7 +3868,7 @@ func (m *AgentMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AgentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 20)
+	edges := make([]string, 0, 21)
 	if m.clearedcomputer {
 		edges = append(edges, agent.EdgeComputer)
 	}
@@ -3823,6 +3929,9 @@ func (m *AgentMutation) ClearedEdges() []string {
 	if m.clearedphysicaldisks {
 		edges = append(edges, agent.EdgePhysicaldisks)
 	}
+	if m.clearednetbird {
+		edges = append(edges, agent.EdgeNetbird)
+	}
 	return edges
 }
 
@@ -3870,6 +3979,8 @@ func (m *AgentMutation) EdgeCleared(name string) bool {
 		return m.clearedsite
 	case agent.EdgePhysicaldisks:
 		return m.clearedphysicaldisks
+	case agent.EdgeNetbird:
+		return m.clearednetbird
 	}
 	return false
 }
@@ -3892,6 +4003,9 @@ func (m *AgentMutation) ClearEdge(name string) error {
 		return nil
 	case agent.EdgeRelease:
 		m.ClearRelease()
+		return nil
+	case agent.EdgeNetbird:
+		m.ClearNetbird()
 		return nil
 	}
 	return fmt.Errorf("unknown Agent unique edge %s", name)
@@ -3960,6 +4074,9 @@ func (m *AgentMutation) ResetEdge(name string) error {
 		return nil
 	case agent.EdgePhysicaldisks:
 		m.ResetPhysicaldisks()
+		return nil
+	case agent.EdgeNetbird:
+		m.ResetNetbird()
 		return nil
 	}
 	return fmt.Errorf("unknown Agent edge %s", name)
@@ -11369,6 +11486,1841 @@ func (m *MonitorMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Monitor edge %s", name)
 }
 
+// NetbirdMutation represents an operation that mutates the Netbird nodes in the graph.
+type NetbirdMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	version              *string
+	installed            *bool
+	service_status       *string
+	ip                   *string
+	profile              *string
+	management_url       *string
+	management_connected *bool
+	signal_url           *string
+	signal_connected     *bool
+	ssh_enabled          *bool
+	peers_total          *int
+	addpeers_total       *int
+	peers_connected      *int
+	addpeers_connected   *int
+	profiles_available   *string
+	dns_server           *string
+	clearedFields        map[string]struct{}
+	owner                *string
+	clearedowner         bool
+	done                 bool
+	oldValue             func(context.Context) (*Netbird, error)
+	predicates           []predicate.Netbird
+}
+
+var _ ent.Mutation = (*NetbirdMutation)(nil)
+
+// netbirdOption allows management of the mutation configuration using functional options.
+type netbirdOption func(*NetbirdMutation)
+
+// newNetbirdMutation creates new mutation for the Netbird entity.
+func newNetbirdMutation(c config, op Op, opts ...netbirdOption) *NetbirdMutation {
+	m := &NetbirdMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNetbird,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNetbirdID sets the ID field of the mutation.
+func withNetbirdID(id int) netbirdOption {
+	return func(m *NetbirdMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Netbird
+		)
+		m.oldValue = func(ctx context.Context) (*Netbird, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Netbird.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNetbird sets the old Netbird of the mutation.
+func withNetbird(node *Netbird) netbirdOption {
+	return func(m *NetbirdMutation) {
+		m.oldValue = func(context.Context) (*Netbird, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NetbirdMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NetbirdMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NetbirdMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NetbirdMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Netbird.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetVersion sets the "version" field.
+func (m *NetbirdMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *NetbirdMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *NetbirdMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetInstalled sets the "installed" field.
+func (m *NetbirdMutation) SetInstalled(b bool) {
+	m.installed = &b
+}
+
+// Installed returns the value of the "installed" field in the mutation.
+func (m *NetbirdMutation) Installed() (r bool, exists bool) {
+	v := m.installed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInstalled returns the old "installed" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldInstalled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInstalled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInstalled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInstalled: %w", err)
+	}
+	return oldValue.Installed, nil
+}
+
+// ResetInstalled resets all changes to the "installed" field.
+func (m *NetbirdMutation) ResetInstalled() {
+	m.installed = nil
+}
+
+// SetServiceStatus sets the "service_status" field.
+func (m *NetbirdMutation) SetServiceStatus(s string) {
+	m.service_status = &s
+}
+
+// ServiceStatus returns the value of the "service_status" field in the mutation.
+func (m *NetbirdMutation) ServiceStatus() (r string, exists bool) {
+	v := m.service_status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServiceStatus returns the old "service_status" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldServiceStatus(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldServiceStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldServiceStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServiceStatus: %w", err)
+	}
+	return oldValue.ServiceStatus, nil
+}
+
+// ResetServiceStatus resets all changes to the "service_status" field.
+func (m *NetbirdMutation) ResetServiceStatus() {
+	m.service_status = nil
+}
+
+// SetIP sets the "ip" field.
+func (m *NetbirdMutation) SetIP(s string) {
+	m.ip = &s
+}
+
+// IP returns the value of the "ip" field in the mutation.
+func (m *NetbirdMutation) IP() (r string, exists bool) {
+	v := m.ip
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIP returns the old "ip" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldIP(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIP is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIP requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIP: %w", err)
+	}
+	return oldValue.IP, nil
+}
+
+// ClearIP clears the value of the "ip" field.
+func (m *NetbirdMutation) ClearIP() {
+	m.ip = nil
+	m.clearedFields[netbird.FieldIP] = struct{}{}
+}
+
+// IPCleared returns if the "ip" field was cleared in this mutation.
+func (m *NetbirdMutation) IPCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldIP]
+	return ok
+}
+
+// ResetIP resets all changes to the "ip" field.
+func (m *NetbirdMutation) ResetIP() {
+	m.ip = nil
+	delete(m.clearedFields, netbird.FieldIP)
+}
+
+// SetProfile sets the "profile" field.
+func (m *NetbirdMutation) SetProfile(s string) {
+	m.profile = &s
+}
+
+// Profile returns the value of the "profile" field in the mutation.
+func (m *NetbirdMutation) Profile() (r string, exists bool) {
+	v := m.profile
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProfile returns the old "profile" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldProfile(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProfile is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProfile requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProfile: %w", err)
+	}
+	return oldValue.Profile, nil
+}
+
+// ClearProfile clears the value of the "profile" field.
+func (m *NetbirdMutation) ClearProfile() {
+	m.profile = nil
+	m.clearedFields[netbird.FieldProfile] = struct{}{}
+}
+
+// ProfileCleared returns if the "profile" field was cleared in this mutation.
+func (m *NetbirdMutation) ProfileCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldProfile]
+	return ok
+}
+
+// ResetProfile resets all changes to the "profile" field.
+func (m *NetbirdMutation) ResetProfile() {
+	m.profile = nil
+	delete(m.clearedFields, netbird.FieldProfile)
+}
+
+// SetManagementURL sets the "management_url" field.
+func (m *NetbirdMutation) SetManagementURL(s string) {
+	m.management_url = &s
+}
+
+// ManagementURL returns the value of the "management_url" field in the mutation.
+func (m *NetbirdMutation) ManagementURL() (r string, exists bool) {
+	v := m.management_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldManagementURL returns the old "management_url" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldManagementURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldManagementURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldManagementURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldManagementURL: %w", err)
+	}
+	return oldValue.ManagementURL, nil
+}
+
+// ClearManagementURL clears the value of the "management_url" field.
+func (m *NetbirdMutation) ClearManagementURL() {
+	m.management_url = nil
+	m.clearedFields[netbird.FieldManagementURL] = struct{}{}
+}
+
+// ManagementURLCleared returns if the "management_url" field was cleared in this mutation.
+func (m *NetbirdMutation) ManagementURLCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldManagementURL]
+	return ok
+}
+
+// ResetManagementURL resets all changes to the "management_url" field.
+func (m *NetbirdMutation) ResetManagementURL() {
+	m.management_url = nil
+	delete(m.clearedFields, netbird.FieldManagementURL)
+}
+
+// SetManagementConnected sets the "management_connected" field.
+func (m *NetbirdMutation) SetManagementConnected(b bool) {
+	m.management_connected = &b
+}
+
+// ManagementConnected returns the value of the "management_connected" field in the mutation.
+func (m *NetbirdMutation) ManagementConnected() (r bool, exists bool) {
+	v := m.management_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldManagementConnected returns the old "management_connected" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldManagementConnected(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldManagementConnected is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldManagementConnected requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldManagementConnected: %w", err)
+	}
+	return oldValue.ManagementConnected, nil
+}
+
+// ResetManagementConnected resets all changes to the "management_connected" field.
+func (m *NetbirdMutation) ResetManagementConnected() {
+	m.management_connected = nil
+}
+
+// SetSignalURL sets the "signal_url" field.
+func (m *NetbirdMutation) SetSignalURL(s string) {
+	m.signal_url = &s
+}
+
+// SignalURL returns the value of the "signal_url" field in the mutation.
+func (m *NetbirdMutation) SignalURL() (r string, exists bool) {
+	v := m.signal_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignalURL returns the old "signal_url" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldSignalURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSignalURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSignalURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignalURL: %w", err)
+	}
+	return oldValue.SignalURL, nil
+}
+
+// ClearSignalURL clears the value of the "signal_url" field.
+func (m *NetbirdMutation) ClearSignalURL() {
+	m.signal_url = nil
+	m.clearedFields[netbird.FieldSignalURL] = struct{}{}
+}
+
+// SignalURLCleared returns if the "signal_url" field was cleared in this mutation.
+func (m *NetbirdMutation) SignalURLCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldSignalURL]
+	return ok
+}
+
+// ResetSignalURL resets all changes to the "signal_url" field.
+func (m *NetbirdMutation) ResetSignalURL() {
+	m.signal_url = nil
+	delete(m.clearedFields, netbird.FieldSignalURL)
+}
+
+// SetSignalConnected sets the "signal_connected" field.
+func (m *NetbirdMutation) SetSignalConnected(b bool) {
+	m.signal_connected = &b
+}
+
+// SignalConnected returns the value of the "signal_connected" field in the mutation.
+func (m *NetbirdMutation) SignalConnected() (r bool, exists bool) {
+	v := m.signal_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSignalConnected returns the old "signal_connected" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldSignalConnected(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSignalConnected is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSignalConnected requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSignalConnected: %w", err)
+	}
+	return oldValue.SignalConnected, nil
+}
+
+// ResetSignalConnected resets all changes to the "signal_connected" field.
+func (m *NetbirdMutation) ResetSignalConnected() {
+	m.signal_connected = nil
+}
+
+// SetSSHEnabled sets the "ssh_enabled" field.
+func (m *NetbirdMutation) SetSSHEnabled(b bool) {
+	m.ssh_enabled = &b
+}
+
+// SSHEnabled returns the value of the "ssh_enabled" field in the mutation.
+func (m *NetbirdMutation) SSHEnabled() (r bool, exists bool) {
+	v := m.ssh_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSSHEnabled returns the old "ssh_enabled" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldSSHEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSSHEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSSHEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSSHEnabled: %w", err)
+	}
+	return oldValue.SSHEnabled, nil
+}
+
+// ResetSSHEnabled resets all changes to the "ssh_enabled" field.
+func (m *NetbirdMutation) ResetSSHEnabled() {
+	m.ssh_enabled = nil
+}
+
+// SetPeersTotal sets the "peers_total" field.
+func (m *NetbirdMutation) SetPeersTotal(i int) {
+	m.peers_total = &i
+	m.addpeers_total = nil
+}
+
+// PeersTotal returns the value of the "peers_total" field in the mutation.
+func (m *NetbirdMutation) PeersTotal() (r int, exists bool) {
+	v := m.peers_total
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeersTotal returns the old "peers_total" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldPeersTotal(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeersTotal is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeersTotal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeersTotal: %w", err)
+	}
+	return oldValue.PeersTotal, nil
+}
+
+// AddPeersTotal adds i to the "peers_total" field.
+func (m *NetbirdMutation) AddPeersTotal(i int) {
+	if m.addpeers_total != nil {
+		*m.addpeers_total += i
+	} else {
+		m.addpeers_total = &i
+	}
+}
+
+// AddedPeersTotal returns the value that was added to the "peers_total" field in this mutation.
+func (m *NetbirdMutation) AddedPeersTotal() (r int, exists bool) {
+	v := m.addpeers_total
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPeersTotal clears the value of the "peers_total" field.
+func (m *NetbirdMutation) ClearPeersTotal() {
+	m.peers_total = nil
+	m.addpeers_total = nil
+	m.clearedFields[netbird.FieldPeersTotal] = struct{}{}
+}
+
+// PeersTotalCleared returns if the "peers_total" field was cleared in this mutation.
+func (m *NetbirdMutation) PeersTotalCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldPeersTotal]
+	return ok
+}
+
+// ResetPeersTotal resets all changes to the "peers_total" field.
+func (m *NetbirdMutation) ResetPeersTotal() {
+	m.peers_total = nil
+	m.addpeers_total = nil
+	delete(m.clearedFields, netbird.FieldPeersTotal)
+}
+
+// SetPeersConnected sets the "peers_connected" field.
+func (m *NetbirdMutation) SetPeersConnected(i int) {
+	m.peers_connected = &i
+	m.addpeers_connected = nil
+}
+
+// PeersConnected returns the value of the "peers_connected" field in the mutation.
+func (m *NetbirdMutation) PeersConnected() (r int, exists bool) {
+	v := m.peers_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPeersConnected returns the old "peers_connected" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldPeersConnected(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPeersConnected is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPeersConnected requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPeersConnected: %w", err)
+	}
+	return oldValue.PeersConnected, nil
+}
+
+// AddPeersConnected adds i to the "peers_connected" field.
+func (m *NetbirdMutation) AddPeersConnected(i int) {
+	if m.addpeers_connected != nil {
+		*m.addpeers_connected += i
+	} else {
+		m.addpeers_connected = &i
+	}
+}
+
+// AddedPeersConnected returns the value that was added to the "peers_connected" field in this mutation.
+func (m *NetbirdMutation) AddedPeersConnected() (r int, exists bool) {
+	v := m.addpeers_connected
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPeersConnected clears the value of the "peers_connected" field.
+func (m *NetbirdMutation) ClearPeersConnected() {
+	m.peers_connected = nil
+	m.addpeers_connected = nil
+	m.clearedFields[netbird.FieldPeersConnected] = struct{}{}
+}
+
+// PeersConnectedCleared returns if the "peers_connected" field was cleared in this mutation.
+func (m *NetbirdMutation) PeersConnectedCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldPeersConnected]
+	return ok
+}
+
+// ResetPeersConnected resets all changes to the "peers_connected" field.
+func (m *NetbirdMutation) ResetPeersConnected() {
+	m.peers_connected = nil
+	m.addpeers_connected = nil
+	delete(m.clearedFields, netbird.FieldPeersConnected)
+}
+
+// SetProfilesAvailable sets the "profiles_available" field.
+func (m *NetbirdMutation) SetProfilesAvailable(s string) {
+	m.profiles_available = &s
+}
+
+// ProfilesAvailable returns the value of the "profiles_available" field in the mutation.
+func (m *NetbirdMutation) ProfilesAvailable() (r string, exists bool) {
+	v := m.profiles_available
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProfilesAvailable returns the old "profiles_available" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldProfilesAvailable(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProfilesAvailable is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProfilesAvailable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProfilesAvailable: %w", err)
+	}
+	return oldValue.ProfilesAvailable, nil
+}
+
+// ClearProfilesAvailable clears the value of the "profiles_available" field.
+func (m *NetbirdMutation) ClearProfilesAvailable() {
+	m.profiles_available = nil
+	m.clearedFields[netbird.FieldProfilesAvailable] = struct{}{}
+}
+
+// ProfilesAvailableCleared returns if the "profiles_available" field was cleared in this mutation.
+func (m *NetbirdMutation) ProfilesAvailableCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldProfilesAvailable]
+	return ok
+}
+
+// ResetProfilesAvailable resets all changes to the "profiles_available" field.
+func (m *NetbirdMutation) ResetProfilesAvailable() {
+	m.profiles_available = nil
+	delete(m.clearedFields, netbird.FieldProfilesAvailable)
+}
+
+// SetDNSServer sets the "dns_server" field.
+func (m *NetbirdMutation) SetDNSServer(s string) {
+	m.dns_server = &s
+}
+
+// DNSServer returns the value of the "dns_server" field in the mutation.
+func (m *NetbirdMutation) DNSServer() (r string, exists bool) {
+	v := m.dns_server
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDNSServer returns the old "dns_server" field's value of the Netbird entity.
+// If the Netbird object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdMutation) OldDNSServer(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDNSServer is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDNSServer requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDNSServer: %w", err)
+	}
+	return oldValue.DNSServer, nil
+}
+
+// ClearDNSServer clears the value of the "dns_server" field.
+func (m *NetbirdMutation) ClearDNSServer() {
+	m.dns_server = nil
+	m.clearedFields[netbird.FieldDNSServer] = struct{}{}
+}
+
+// DNSServerCleared returns if the "dns_server" field was cleared in this mutation.
+func (m *NetbirdMutation) DNSServerCleared() bool {
+	_, ok := m.clearedFields[netbird.FieldDNSServer]
+	return ok
+}
+
+// ResetDNSServer resets all changes to the "dns_server" field.
+func (m *NetbirdMutation) ResetDNSServer() {
+	m.dns_server = nil
+	delete(m.clearedFields, netbird.FieldDNSServer)
+}
+
+// SetOwnerID sets the "owner" edge to the Agent entity by id.
+func (m *NetbirdMutation) SetOwnerID(id string) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the Agent entity.
+func (m *NetbirdMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the Agent entity was cleared.
+func (m *NetbirdMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *NetbirdMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *NetbirdMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *NetbirdMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// Where appends a list predicates to the NetbirdMutation builder.
+func (m *NetbirdMutation) Where(ps ...predicate.Netbird) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NetbirdMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NetbirdMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Netbird, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NetbirdMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NetbirdMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Netbird).
+func (m *NetbirdMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NetbirdMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.version != nil {
+		fields = append(fields, netbird.FieldVersion)
+	}
+	if m.installed != nil {
+		fields = append(fields, netbird.FieldInstalled)
+	}
+	if m.service_status != nil {
+		fields = append(fields, netbird.FieldServiceStatus)
+	}
+	if m.ip != nil {
+		fields = append(fields, netbird.FieldIP)
+	}
+	if m.profile != nil {
+		fields = append(fields, netbird.FieldProfile)
+	}
+	if m.management_url != nil {
+		fields = append(fields, netbird.FieldManagementURL)
+	}
+	if m.management_connected != nil {
+		fields = append(fields, netbird.FieldManagementConnected)
+	}
+	if m.signal_url != nil {
+		fields = append(fields, netbird.FieldSignalURL)
+	}
+	if m.signal_connected != nil {
+		fields = append(fields, netbird.FieldSignalConnected)
+	}
+	if m.ssh_enabled != nil {
+		fields = append(fields, netbird.FieldSSHEnabled)
+	}
+	if m.peers_total != nil {
+		fields = append(fields, netbird.FieldPeersTotal)
+	}
+	if m.peers_connected != nil {
+		fields = append(fields, netbird.FieldPeersConnected)
+	}
+	if m.profiles_available != nil {
+		fields = append(fields, netbird.FieldProfilesAvailable)
+	}
+	if m.dns_server != nil {
+		fields = append(fields, netbird.FieldDNSServer)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NetbirdMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case netbird.FieldVersion:
+		return m.Version()
+	case netbird.FieldInstalled:
+		return m.Installed()
+	case netbird.FieldServiceStatus:
+		return m.ServiceStatus()
+	case netbird.FieldIP:
+		return m.IP()
+	case netbird.FieldProfile:
+		return m.Profile()
+	case netbird.FieldManagementURL:
+		return m.ManagementURL()
+	case netbird.FieldManagementConnected:
+		return m.ManagementConnected()
+	case netbird.FieldSignalURL:
+		return m.SignalURL()
+	case netbird.FieldSignalConnected:
+		return m.SignalConnected()
+	case netbird.FieldSSHEnabled:
+		return m.SSHEnabled()
+	case netbird.FieldPeersTotal:
+		return m.PeersTotal()
+	case netbird.FieldPeersConnected:
+		return m.PeersConnected()
+	case netbird.FieldProfilesAvailable:
+		return m.ProfilesAvailable()
+	case netbird.FieldDNSServer:
+		return m.DNSServer()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NetbirdMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case netbird.FieldVersion:
+		return m.OldVersion(ctx)
+	case netbird.FieldInstalled:
+		return m.OldInstalled(ctx)
+	case netbird.FieldServiceStatus:
+		return m.OldServiceStatus(ctx)
+	case netbird.FieldIP:
+		return m.OldIP(ctx)
+	case netbird.FieldProfile:
+		return m.OldProfile(ctx)
+	case netbird.FieldManagementURL:
+		return m.OldManagementURL(ctx)
+	case netbird.FieldManagementConnected:
+		return m.OldManagementConnected(ctx)
+	case netbird.FieldSignalURL:
+		return m.OldSignalURL(ctx)
+	case netbird.FieldSignalConnected:
+		return m.OldSignalConnected(ctx)
+	case netbird.FieldSSHEnabled:
+		return m.OldSSHEnabled(ctx)
+	case netbird.FieldPeersTotal:
+		return m.OldPeersTotal(ctx)
+	case netbird.FieldPeersConnected:
+		return m.OldPeersConnected(ctx)
+	case netbird.FieldProfilesAvailable:
+		return m.OldProfilesAvailable(ctx)
+	case netbird.FieldDNSServer:
+		return m.OldDNSServer(ctx)
+	}
+	return nil, fmt.Errorf("unknown Netbird field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NetbirdMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case netbird.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case netbird.FieldInstalled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInstalled(v)
+		return nil
+	case netbird.FieldServiceStatus:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetServiceStatus(v)
+		return nil
+	case netbird.FieldIP:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIP(v)
+		return nil
+	case netbird.FieldProfile:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProfile(v)
+		return nil
+	case netbird.FieldManagementURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetManagementURL(v)
+		return nil
+	case netbird.FieldManagementConnected:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetManagementConnected(v)
+		return nil
+	case netbird.FieldSignalURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignalURL(v)
+		return nil
+	case netbird.FieldSignalConnected:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSignalConnected(v)
+		return nil
+	case netbird.FieldSSHEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSSHEnabled(v)
+		return nil
+	case netbird.FieldPeersTotal:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeersTotal(v)
+		return nil
+	case netbird.FieldPeersConnected:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPeersConnected(v)
+		return nil
+	case netbird.FieldProfilesAvailable:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProfilesAvailable(v)
+		return nil
+	case netbird.FieldDNSServer:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDNSServer(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Netbird field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NetbirdMutation) AddedFields() []string {
+	var fields []string
+	if m.addpeers_total != nil {
+		fields = append(fields, netbird.FieldPeersTotal)
+	}
+	if m.addpeers_connected != nil {
+		fields = append(fields, netbird.FieldPeersConnected)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NetbirdMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case netbird.FieldPeersTotal:
+		return m.AddedPeersTotal()
+	case netbird.FieldPeersConnected:
+		return m.AddedPeersConnected()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NetbirdMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case netbird.FieldPeersTotal:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPeersTotal(v)
+		return nil
+	case netbird.FieldPeersConnected:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPeersConnected(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Netbird numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NetbirdMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(netbird.FieldIP) {
+		fields = append(fields, netbird.FieldIP)
+	}
+	if m.FieldCleared(netbird.FieldProfile) {
+		fields = append(fields, netbird.FieldProfile)
+	}
+	if m.FieldCleared(netbird.FieldManagementURL) {
+		fields = append(fields, netbird.FieldManagementURL)
+	}
+	if m.FieldCleared(netbird.FieldSignalURL) {
+		fields = append(fields, netbird.FieldSignalURL)
+	}
+	if m.FieldCleared(netbird.FieldPeersTotal) {
+		fields = append(fields, netbird.FieldPeersTotal)
+	}
+	if m.FieldCleared(netbird.FieldPeersConnected) {
+		fields = append(fields, netbird.FieldPeersConnected)
+	}
+	if m.FieldCleared(netbird.FieldProfilesAvailable) {
+		fields = append(fields, netbird.FieldProfilesAvailable)
+	}
+	if m.FieldCleared(netbird.FieldDNSServer) {
+		fields = append(fields, netbird.FieldDNSServer)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NetbirdMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NetbirdMutation) ClearField(name string) error {
+	switch name {
+	case netbird.FieldIP:
+		m.ClearIP()
+		return nil
+	case netbird.FieldProfile:
+		m.ClearProfile()
+		return nil
+	case netbird.FieldManagementURL:
+		m.ClearManagementURL()
+		return nil
+	case netbird.FieldSignalURL:
+		m.ClearSignalURL()
+		return nil
+	case netbird.FieldPeersTotal:
+		m.ClearPeersTotal()
+		return nil
+	case netbird.FieldPeersConnected:
+		m.ClearPeersConnected()
+		return nil
+	case netbird.FieldProfilesAvailable:
+		m.ClearProfilesAvailable()
+		return nil
+	case netbird.FieldDNSServer:
+		m.ClearDNSServer()
+		return nil
+	}
+	return fmt.Errorf("unknown Netbird nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NetbirdMutation) ResetField(name string) error {
+	switch name {
+	case netbird.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case netbird.FieldInstalled:
+		m.ResetInstalled()
+		return nil
+	case netbird.FieldServiceStatus:
+		m.ResetServiceStatus()
+		return nil
+	case netbird.FieldIP:
+		m.ResetIP()
+		return nil
+	case netbird.FieldProfile:
+		m.ResetProfile()
+		return nil
+	case netbird.FieldManagementURL:
+		m.ResetManagementURL()
+		return nil
+	case netbird.FieldManagementConnected:
+		m.ResetManagementConnected()
+		return nil
+	case netbird.FieldSignalURL:
+		m.ResetSignalURL()
+		return nil
+	case netbird.FieldSignalConnected:
+		m.ResetSignalConnected()
+		return nil
+	case netbird.FieldSSHEnabled:
+		m.ResetSSHEnabled()
+		return nil
+	case netbird.FieldPeersTotal:
+		m.ResetPeersTotal()
+		return nil
+	case netbird.FieldPeersConnected:
+		m.ResetPeersConnected()
+		return nil
+	case netbird.FieldProfilesAvailable:
+		m.ResetProfilesAvailable()
+		return nil
+	case netbird.FieldDNSServer:
+		m.ResetDNSServer()
+		return nil
+	}
+	return fmt.Errorf("unknown Netbird field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NetbirdMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.owner != nil {
+		edges = append(edges, netbird.EdgeOwner)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NetbirdMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case netbird.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NetbirdMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NetbirdMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NetbirdMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedowner {
+		edges = append(edges, netbird.EdgeOwner)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NetbirdMutation) EdgeCleared(name string) bool {
+	switch name {
+	case netbird.EdgeOwner:
+		return m.clearedowner
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NetbirdMutation) ClearEdge(name string) error {
+	switch name {
+	case netbird.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown Netbird unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NetbirdMutation) ResetEdge(name string) error {
+	switch name {
+	case netbird.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown Netbird edge %s", name)
+}
+
+// NetbirdSettingsMutation represents an operation that mutates the NetbirdSettings nodes in the graph.
+type NetbirdSettingsMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *int
+	management_url *string
+	access_token   *string
+	clearedFields  map[string]struct{}
+	tenant         map[int]struct{}
+	removedtenant  map[int]struct{}
+	clearedtenant  bool
+	done           bool
+	oldValue       func(context.Context) (*NetbirdSettings, error)
+	predicates     []predicate.NetbirdSettings
+}
+
+var _ ent.Mutation = (*NetbirdSettingsMutation)(nil)
+
+// netbirdsettingsOption allows management of the mutation configuration using functional options.
+type netbirdsettingsOption func(*NetbirdSettingsMutation)
+
+// newNetbirdSettingsMutation creates new mutation for the NetbirdSettings entity.
+func newNetbirdSettingsMutation(c config, op Op, opts ...netbirdsettingsOption) *NetbirdSettingsMutation {
+	m := &NetbirdSettingsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNetbirdSettings,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNetbirdSettingsID sets the ID field of the mutation.
+func withNetbirdSettingsID(id int) netbirdsettingsOption {
+	return func(m *NetbirdSettingsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NetbirdSettings
+		)
+		m.oldValue = func(ctx context.Context) (*NetbirdSettings, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NetbirdSettings.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNetbirdSettings sets the old NetbirdSettings of the mutation.
+func withNetbirdSettings(node *NetbirdSettings) netbirdsettingsOption {
+	return func(m *NetbirdSettingsMutation) {
+		m.oldValue = func(context.Context) (*NetbirdSettings, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NetbirdSettingsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NetbirdSettingsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NetbirdSettingsMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NetbirdSettingsMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NetbirdSettings.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetManagementURL sets the "management_url" field.
+func (m *NetbirdSettingsMutation) SetManagementURL(s string) {
+	m.management_url = &s
+}
+
+// ManagementURL returns the value of the "management_url" field in the mutation.
+func (m *NetbirdSettingsMutation) ManagementURL() (r string, exists bool) {
+	v := m.management_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldManagementURL returns the old "management_url" field's value of the NetbirdSettings entity.
+// If the NetbirdSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdSettingsMutation) OldManagementURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldManagementURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldManagementURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldManagementURL: %w", err)
+	}
+	return oldValue.ManagementURL, nil
+}
+
+// ClearManagementURL clears the value of the "management_url" field.
+func (m *NetbirdSettingsMutation) ClearManagementURL() {
+	m.management_url = nil
+	m.clearedFields[netbirdsettings.FieldManagementURL] = struct{}{}
+}
+
+// ManagementURLCleared returns if the "management_url" field was cleared in this mutation.
+func (m *NetbirdSettingsMutation) ManagementURLCleared() bool {
+	_, ok := m.clearedFields[netbirdsettings.FieldManagementURL]
+	return ok
+}
+
+// ResetManagementURL resets all changes to the "management_url" field.
+func (m *NetbirdSettingsMutation) ResetManagementURL() {
+	m.management_url = nil
+	delete(m.clearedFields, netbirdsettings.FieldManagementURL)
+}
+
+// SetAccessToken sets the "access_token" field.
+func (m *NetbirdSettingsMutation) SetAccessToken(s string) {
+	m.access_token = &s
+}
+
+// AccessToken returns the value of the "access_token" field in the mutation.
+func (m *NetbirdSettingsMutation) AccessToken() (r string, exists bool) {
+	v := m.access_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccessToken returns the old "access_token" field's value of the NetbirdSettings entity.
+// If the NetbirdSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetbirdSettingsMutation) OldAccessToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccessToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccessToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccessToken: %w", err)
+	}
+	return oldValue.AccessToken, nil
+}
+
+// ClearAccessToken clears the value of the "access_token" field.
+func (m *NetbirdSettingsMutation) ClearAccessToken() {
+	m.access_token = nil
+	m.clearedFields[netbirdsettings.FieldAccessToken] = struct{}{}
+}
+
+// AccessTokenCleared returns if the "access_token" field was cleared in this mutation.
+func (m *NetbirdSettingsMutation) AccessTokenCleared() bool {
+	_, ok := m.clearedFields[netbirdsettings.FieldAccessToken]
+	return ok
+}
+
+// ResetAccessToken resets all changes to the "access_token" field.
+func (m *NetbirdSettingsMutation) ResetAccessToken() {
+	m.access_token = nil
+	delete(m.clearedFields, netbirdsettings.FieldAccessToken)
+}
+
+// AddTenantIDs adds the "tenant" edge to the Tenant entity by ids.
+func (m *NetbirdSettingsMutation) AddTenantIDs(ids ...int) {
+	if m.tenant == nil {
+		m.tenant = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.tenant[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (m *NetbirdSettingsMutation) ClearTenant() {
+	m.clearedtenant = true
+}
+
+// TenantCleared reports if the "tenant" edge to the Tenant entity was cleared.
+func (m *NetbirdSettingsMutation) TenantCleared() bool {
+	return m.clearedtenant
+}
+
+// RemoveTenantIDs removes the "tenant" edge to the Tenant entity by IDs.
+func (m *NetbirdSettingsMutation) RemoveTenantIDs(ids ...int) {
+	if m.removedtenant == nil {
+		m.removedtenant = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.tenant, ids[i])
+		m.removedtenant[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTenant returns the removed IDs of the "tenant" edge to the Tenant entity.
+func (m *NetbirdSettingsMutation) RemovedTenantIDs() (ids []int) {
+	for id := range m.removedtenant {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TenantIDs returns the "tenant" edge IDs in the mutation.
+func (m *NetbirdSettingsMutation) TenantIDs() (ids []int) {
+	for id := range m.tenant {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTenant resets all changes to the "tenant" edge.
+func (m *NetbirdSettingsMutation) ResetTenant() {
+	m.tenant = nil
+	m.clearedtenant = false
+	m.removedtenant = nil
+}
+
+// Where appends a list predicates to the NetbirdSettingsMutation builder.
+func (m *NetbirdSettingsMutation) Where(ps ...predicate.NetbirdSettings) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NetbirdSettingsMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NetbirdSettingsMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NetbirdSettings, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NetbirdSettingsMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NetbirdSettingsMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NetbirdSettings).
+func (m *NetbirdSettingsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NetbirdSettingsMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.management_url != nil {
+		fields = append(fields, netbirdsettings.FieldManagementURL)
+	}
+	if m.access_token != nil {
+		fields = append(fields, netbirdsettings.FieldAccessToken)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NetbirdSettingsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case netbirdsettings.FieldManagementURL:
+		return m.ManagementURL()
+	case netbirdsettings.FieldAccessToken:
+		return m.AccessToken()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NetbirdSettingsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case netbirdsettings.FieldManagementURL:
+		return m.OldManagementURL(ctx)
+	case netbirdsettings.FieldAccessToken:
+		return m.OldAccessToken(ctx)
+	}
+	return nil, fmt.Errorf("unknown NetbirdSettings field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NetbirdSettingsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case netbirdsettings.FieldManagementURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetManagementURL(v)
+		return nil
+	case netbirdsettings.FieldAccessToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccessToken(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NetbirdSettings field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NetbirdSettingsMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NetbirdSettingsMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NetbirdSettingsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown NetbirdSettings numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NetbirdSettingsMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(netbirdsettings.FieldManagementURL) {
+		fields = append(fields, netbirdsettings.FieldManagementURL)
+	}
+	if m.FieldCleared(netbirdsettings.FieldAccessToken) {
+		fields = append(fields, netbirdsettings.FieldAccessToken)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NetbirdSettingsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NetbirdSettingsMutation) ClearField(name string) error {
+	switch name {
+	case netbirdsettings.FieldManagementURL:
+		m.ClearManagementURL()
+		return nil
+	case netbirdsettings.FieldAccessToken:
+		m.ClearAccessToken()
+		return nil
+	}
+	return fmt.Errorf("unknown NetbirdSettings nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NetbirdSettingsMutation) ResetField(name string) error {
+	switch name {
+	case netbirdsettings.FieldManagementURL:
+		m.ResetManagementURL()
+		return nil
+	case netbirdsettings.FieldAccessToken:
+		m.ResetAccessToken()
+		return nil
+	}
+	return fmt.Errorf("unknown NetbirdSettings field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NetbirdSettingsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.tenant != nil {
+		edges = append(edges, netbirdsettings.EdgeTenant)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NetbirdSettingsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case netbirdsettings.EdgeTenant:
+		ids := make([]ent.Value, 0, len(m.tenant))
+		for id := range m.tenant {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NetbirdSettingsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedtenant != nil {
+		edges = append(edges, netbirdsettings.EdgeTenant)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NetbirdSettingsMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case netbirdsettings.EdgeTenant:
+		ids := make([]ent.Value, 0, len(m.removedtenant))
+		for id := range m.removedtenant {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NetbirdSettingsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedtenant {
+		edges = append(edges, netbirdsettings.EdgeTenant)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NetbirdSettingsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case netbirdsettings.EdgeTenant:
+		return m.clearedtenant
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NetbirdSettingsMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown NetbirdSettings unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NetbirdSettingsMutation) ResetEdge(name string) error {
+	switch name {
+	case netbirdsettings.EdgeTenant:
+		m.ResetTenant()
+		return nil
+	}
+	return fmt.Errorf("unknown NetbirdSettings edge %s", name)
+}
+
 // NetworkAdapterMutation represents an operation that mutates the NetworkAdapter nodes in the graph.
 type NetworkAdapterMutation struct {
 	config
@@ -11386,6 +13338,7 @@ type NetworkAdapterMutation struct {
 	dhcp_lease_obtained *time.Time
 	dhcp_lease_expired  *time.Time
 	speed               *string
+	virtual             *bool
 	clearedFields       map[string]struct{}
 	owner               *string
 	clearedowner        bool
@@ -11979,6 +13932,55 @@ func (m *NetworkAdapterMutation) ResetSpeed() {
 	m.speed = nil
 }
 
+// SetVirtual sets the "virtual" field.
+func (m *NetworkAdapterMutation) SetVirtual(b bool) {
+	m.virtual = &b
+}
+
+// Virtual returns the value of the "virtual" field in the mutation.
+func (m *NetworkAdapterMutation) Virtual() (r bool, exists bool) {
+	v := m.virtual
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVirtual returns the old "virtual" field's value of the NetworkAdapter entity.
+// If the NetworkAdapter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NetworkAdapterMutation) OldVirtual(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVirtual is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVirtual requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVirtual: %w", err)
+	}
+	return oldValue.Virtual, nil
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (m *NetworkAdapterMutation) ClearVirtual() {
+	m.virtual = nil
+	m.clearedFields[networkadapter.FieldVirtual] = struct{}{}
+}
+
+// VirtualCleared returns if the "virtual" field was cleared in this mutation.
+func (m *NetworkAdapterMutation) VirtualCleared() bool {
+	_, ok := m.clearedFields[networkadapter.FieldVirtual]
+	return ok
+}
+
+// ResetVirtual resets all changes to the "virtual" field.
+func (m *NetworkAdapterMutation) ResetVirtual() {
+	m.virtual = nil
+	delete(m.clearedFields, networkadapter.FieldVirtual)
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by id.
 func (m *NetworkAdapterMutation) SetOwnerID(id string) {
 	m.owner = &id
@@ -12052,7 +14054,7 @@ func (m *NetworkAdapterMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NetworkAdapterMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.name != nil {
 		fields = append(fields, networkadapter.FieldName)
 	}
@@ -12086,6 +14088,9 @@ func (m *NetworkAdapterMutation) Fields() []string {
 	if m.speed != nil {
 		fields = append(fields, networkadapter.FieldSpeed)
 	}
+	if m.virtual != nil {
+		fields = append(fields, networkadapter.FieldVirtual)
+	}
 	return fields
 }
 
@@ -12116,6 +14121,8 @@ func (m *NetworkAdapterMutation) Field(name string) (ent.Value, bool) {
 		return m.DhcpLeaseExpired()
 	case networkadapter.FieldSpeed:
 		return m.Speed()
+	case networkadapter.FieldVirtual:
+		return m.Virtual()
 	}
 	return nil, false
 }
@@ -12147,6 +14154,8 @@ func (m *NetworkAdapterMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldDhcpLeaseExpired(ctx)
 	case networkadapter.FieldSpeed:
 		return m.OldSpeed(ctx)
+	case networkadapter.FieldVirtual:
+		return m.OldVirtual(ctx)
 	}
 	return nil, fmt.Errorf("unknown NetworkAdapter field %s", name)
 }
@@ -12233,6 +14242,13 @@ func (m *NetworkAdapterMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSpeed(v)
 		return nil
+	case networkadapter.FieldVirtual:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVirtual(v)
+		return nil
 	}
 	return fmt.Errorf("unknown NetworkAdapter field %s", name)
 }
@@ -12284,6 +14300,9 @@ func (m *NetworkAdapterMutation) ClearedFields() []string {
 	if m.FieldCleared(networkadapter.FieldDhcpLeaseExpired) {
 		fields = append(fields, networkadapter.FieldDhcpLeaseExpired)
 	}
+	if m.FieldCleared(networkadapter.FieldVirtual) {
+		fields = append(fields, networkadapter.FieldVirtual)
+	}
 	return fields
 }
 
@@ -12318,6 +14337,9 @@ func (m *NetworkAdapterMutation) ClearField(name string) error {
 		return nil
 	case networkadapter.FieldDhcpLeaseExpired:
 		m.ClearDhcpLeaseExpired()
+		return nil
+	case networkadapter.FieldVirtual:
+		m.ClearVirtual()
 		return nil
 	}
 	return fmt.Errorf("unknown NetworkAdapter nullable field %s", name)
@@ -12359,6 +14381,9 @@ func (m *NetworkAdapterMutation) ResetField(name string) error {
 		return nil
 	case networkadapter.FieldSpeed:
 		m.ResetSpeed()
+		return nil
+	case networkadapter.FieldVirtual:
+		m.ResetVirtual()
 		return nil
 	}
 	return fmt.Errorf("unknown NetworkAdapter field %s", name)
@@ -12452,6 +14477,7 @@ type OperatingSystemMutation struct {
 	arch             *string
 	username         *string
 	last_bootup_time *time.Time
+	domain           *string
 	clearedFields    map[string]struct{}
 	owner            *string
 	clearedowner     bool
@@ -12911,6 +14937,55 @@ func (m *OperatingSystemMutation) ResetLastBootupTime() {
 	delete(m.clearedFields, operatingsystem.FieldLastBootupTime)
 }
 
+// SetDomain sets the "domain" field.
+func (m *OperatingSystemMutation) SetDomain(s string) {
+	m.domain = &s
+}
+
+// Domain returns the value of the "domain" field in the mutation.
+func (m *OperatingSystemMutation) Domain() (r string, exists bool) {
+	v := m.domain
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDomain returns the old "domain" field's value of the OperatingSystem entity.
+// If the OperatingSystem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OperatingSystemMutation) OldDomain(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDomain is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDomain requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDomain: %w", err)
+	}
+	return oldValue.Domain, nil
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (m *OperatingSystemMutation) ClearDomain() {
+	m.domain = nil
+	m.clearedFields[operatingsystem.FieldDomain] = struct{}{}
+}
+
+// DomainCleared returns if the "domain" field was cleared in this mutation.
+func (m *OperatingSystemMutation) DomainCleared() bool {
+	_, ok := m.clearedFields[operatingsystem.FieldDomain]
+	return ok
+}
+
+// ResetDomain resets all changes to the "domain" field.
+func (m *OperatingSystemMutation) ResetDomain() {
+	m.domain = nil
+	delete(m.clearedFields, operatingsystem.FieldDomain)
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by id.
 func (m *OperatingSystemMutation) SetOwnerID(id string) {
 	m.owner = &id
@@ -12984,7 +15059,7 @@ func (m *OperatingSystemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OperatingSystemMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m._type != nil {
 		fields = append(fields, operatingsystem.FieldType)
 	}
@@ -13008,6 +15083,9 @@ func (m *OperatingSystemMutation) Fields() []string {
 	}
 	if m.last_bootup_time != nil {
 		fields = append(fields, operatingsystem.FieldLastBootupTime)
+	}
+	if m.domain != nil {
+		fields = append(fields, operatingsystem.FieldDomain)
 	}
 	return fields
 }
@@ -13033,6 +15111,8 @@ func (m *OperatingSystemMutation) Field(name string) (ent.Value, bool) {
 		return m.Username()
 	case operatingsystem.FieldLastBootupTime:
 		return m.LastBootupTime()
+	case operatingsystem.FieldDomain:
+		return m.Domain()
 	}
 	return nil, false
 }
@@ -13058,6 +15138,8 @@ func (m *OperatingSystemMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUsername(ctx)
 	case operatingsystem.FieldLastBootupTime:
 		return m.OldLastBootupTime(ctx)
+	case operatingsystem.FieldDomain:
+		return m.OldDomain(ctx)
 	}
 	return nil, fmt.Errorf("unknown OperatingSystem field %s", name)
 }
@@ -13123,6 +15205,13 @@ func (m *OperatingSystemMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLastBootupTime(v)
 		return nil
+	case operatingsystem.FieldDomain:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDomain(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OperatingSystem field %s", name)
 }
@@ -13168,6 +15257,9 @@ func (m *OperatingSystemMutation) ClearedFields() []string {
 	if m.FieldCleared(operatingsystem.FieldLastBootupTime) {
 		fields = append(fields, operatingsystem.FieldLastBootupTime)
 	}
+	if m.FieldCleared(operatingsystem.FieldDomain) {
+		fields = append(fields, operatingsystem.FieldDomain)
+	}
 	return fields
 }
 
@@ -13196,6 +15288,9 @@ func (m *OperatingSystemMutation) ClearField(name string) error {
 		return nil
 	case operatingsystem.FieldLastBootupTime:
 		m.ClearLastBootupTime()
+		return nil
+	case operatingsystem.FieldDomain:
+		m.ClearDomain()
 		return nil
 	}
 	return fmt.Errorf("unknown OperatingSystem nullable field %s", name)
@@ -13228,6 +15323,9 @@ func (m *OperatingSystemMutation) ResetField(name string) error {
 		return nil
 	case operatingsystem.FieldLastBootupTime:
 		m.ResetLastBootupTime()
+		return nil
+	case operatingsystem.FieldDomain:
+		m.ResetDomain()
 		return nil
 	}
 	return fmt.Errorf("unknown OperatingSystem field %s", name)
@@ -18697,23 +20795,26 @@ func (m *RevocationMutation) ResetEdge(name string) error {
 // RustdeskMutation represents an operation that mutates the Rustdesk nodes in the graph.
 type RustdeskMutation struct {
 	config
-	op                       Op
-	typ                      string
-	id                       *int
-	custom_rendezvous_server *string
-	relay_server             *string
-	api_server               *string
-	key                      *string
-	use_permanent_password   *bool
-	whitelist                *string
-	direct_ip_access         *bool
-	clearedFields            map[string]struct{}
-	tenant                   map[int]struct{}
-	removedtenant            map[int]struct{}
-	clearedtenant            bool
-	done                     bool
-	oldValue                 func(context.Context) (*Rustdesk, error)
-	predicates               []predicate.Rustdesk
+	op                           Op
+	typ                          string
+	id                           *int
+	custom_rendezvous_server     *string
+	relay_server                 *string
+	api_server                   *string
+	key                          *string
+	use_permanent_password       *bool
+	whitelist                    *string
+	direct_ip_access             *bool
+	verification_method          *rustdesk.VerificationMethod
+	temporary_password_length    *int
+	addtemporary_password_length *int
+	clearedFields                map[string]struct{}
+	tenant                       map[int]struct{}
+	removedtenant                map[int]struct{}
+	clearedtenant                bool
+	done                         bool
+	oldValue                     func(context.Context) (*Rustdesk, error)
+	predicates                   []predicate.Rustdesk
 }
 
 var _ ent.Mutation = (*RustdeskMutation)(nil)
@@ -19157,6 +21258,125 @@ func (m *RustdeskMutation) ResetDirectIPAccess() {
 	delete(m.clearedFields, rustdesk.FieldDirectIPAccess)
 }
 
+// SetVerificationMethod sets the "verification_method" field.
+func (m *RustdeskMutation) SetVerificationMethod(rm rustdesk.VerificationMethod) {
+	m.verification_method = &rm
+}
+
+// VerificationMethod returns the value of the "verification_method" field in the mutation.
+func (m *RustdeskMutation) VerificationMethod() (r rustdesk.VerificationMethod, exists bool) {
+	v := m.verification_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerificationMethod returns the old "verification_method" field's value of the Rustdesk entity.
+// If the Rustdesk object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RustdeskMutation) OldVerificationMethod(ctx context.Context) (v rustdesk.VerificationMethod, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerificationMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerificationMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerificationMethod: %w", err)
+	}
+	return oldValue.VerificationMethod, nil
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (m *RustdeskMutation) ClearVerificationMethod() {
+	m.verification_method = nil
+	m.clearedFields[rustdesk.FieldVerificationMethod] = struct{}{}
+}
+
+// VerificationMethodCleared returns if the "verification_method" field was cleared in this mutation.
+func (m *RustdeskMutation) VerificationMethodCleared() bool {
+	_, ok := m.clearedFields[rustdesk.FieldVerificationMethod]
+	return ok
+}
+
+// ResetVerificationMethod resets all changes to the "verification_method" field.
+func (m *RustdeskMutation) ResetVerificationMethod() {
+	m.verification_method = nil
+	delete(m.clearedFields, rustdesk.FieldVerificationMethod)
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (m *RustdeskMutation) SetTemporaryPasswordLength(i int) {
+	m.temporary_password_length = &i
+	m.addtemporary_password_length = nil
+}
+
+// TemporaryPasswordLength returns the value of the "temporary_password_length" field in the mutation.
+func (m *RustdeskMutation) TemporaryPasswordLength() (r int, exists bool) {
+	v := m.temporary_password_length
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTemporaryPasswordLength returns the old "temporary_password_length" field's value of the Rustdesk entity.
+// If the Rustdesk object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RustdeskMutation) OldTemporaryPasswordLength(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTemporaryPasswordLength is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTemporaryPasswordLength requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTemporaryPasswordLength: %w", err)
+	}
+	return oldValue.TemporaryPasswordLength, nil
+}
+
+// AddTemporaryPasswordLength adds i to the "temporary_password_length" field.
+func (m *RustdeskMutation) AddTemporaryPasswordLength(i int) {
+	if m.addtemporary_password_length != nil {
+		*m.addtemporary_password_length += i
+	} else {
+		m.addtemporary_password_length = &i
+	}
+}
+
+// AddedTemporaryPasswordLength returns the value that was added to the "temporary_password_length" field in this mutation.
+func (m *RustdeskMutation) AddedTemporaryPasswordLength() (r int, exists bool) {
+	v := m.addtemporary_password_length
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (m *RustdeskMutation) ClearTemporaryPasswordLength() {
+	m.temporary_password_length = nil
+	m.addtemporary_password_length = nil
+	m.clearedFields[rustdesk.FieldTemporaryPasswordLength] = struct{}{}
+}
+
+// TemporaryPasswordLengthCleared returns if the "temporary_password_length" field was cleared in this mutation.
+func (m *RustdeskMutation) TemporaryPasswordLengthCleared() bool {
+	_, ok := m.clearedFields[rustdesk.FieldTemporaryPasswordLength]
+	return ok
+}
+
+// ResetTemporaryPasswordLength resets all changes to the "temporary_password_length" field.
+func (m *RustdeskMutation) ResetTemporaryPasswordLength() {
+	m.temporary_password_length = nil
+	m.addtemporary_password_length = nil
+	delete(m.clearedFields, rustdesk.FieldTemporaryPasswordLength)
+}
+
 // AddTenantIDs adds the "tenant" edge to the Tenant entity by ids.
 func (m *RustdeskMutation) AddTenantIDs(ids ...int) {
 	if m.tenant == nil {
@@ -19245,7 +21465,7 @@ func (m *RustdeskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RustdeskMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.custom_rendezvous_server != nil {
 		fields = append(fields, rustdesk.FieldCustomRendezvousServer)
 	}
@@ -19266,6 +21486,12 @@ func (m *RustdeskMutation) Fields() []string {
 	}
 	if m.direct_ip_access != nil {
 		fields = append(fields, rustdesk.FieldDirectIPAccess)
+	}
+	if m.verification_method != nil {
+		fields = append(fields, rustdesk.FieldVerificationMethod)
+	}
+	if m.temporary_password_length != nil {
+		fields = append(fields, rustdesk.FieldTemporaryPasswordLength)
 	}
 	return fields
 }
@@ -19289,6 +21515,10 @@ func (m *RustdeskMutation) Field(name string) (ent.Value, bool) {
 		return m.Whitelist()
 	case rustdesk.FieldDirectIPAccess:
 		return m.DirectIPAccess()
+	case rustdesk.FieldVerificationMethod:
+		return m.VerificationMethod()
+	case rustdesk.FieldTemporaryPasswordLength:
+		return m.TemporaryPasswordLength()
 	}
 	return nil, false
 }
@@ -19312,6 +21542,10 @@ func (m *RustdeskMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldWhitelist(ctx)
 	case rustdesk.FieldDirectIPAccess:
 		return m.OldDirectIPAccess(ctx)
+	case rustdesk.FieldVerificationMethod:
+		return m.OldVerificationMethod(ctx)
+	case rustdesk.FieldTemporaryPasswordLength:
+		return m.OldTemporaryPasswordLength(ctx)
 	}
 	return nil, fmt.Errorf("unknown Rustdesk field %s", name)
 }
@@ -19370,6 +21604,20 @@ func (m *RustdeskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDirectIPAccess(v)
 		return nil
+	case rustdesk.FieldVerificationMethod:
+		v, ok := value.(rustdesk.VerificationMethod)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerificationMethod(v)
+		return nil
+	case rustdesk.FieldTemporaryPasswordLength:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTemporaryPasswordLength(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk field %s", name)
 }
@@ -19377,13 +21625,21 @@ func (m *RustdeskMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *RustdeskMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addtemporary_password_length != nil {
+		fields = append(fields, rustdesk.FieldTemporaryPasswordLength)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *RustdeskMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case rustdesk.FieldTemporaryPasswordLength:
+		return m.AddedTemporaryPasswordLength()
+	}
 	return nil, false
 }
 
@@ -19392,6 +21648,13 @@ func (m *RustdeskMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *RustdeskMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case rustdesk.FieldTemporaryPasswordLength:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTemporaryPasswordLength(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk numeric field %s", name)
 }
@@ -19420,6 +21683,12 @@ func (m *RustdeskMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(rustdesk.FieldDirectIPAccess) {
 		fields = append(fields, rustdesk.FieldDirectIPAccess)
+	}
+	if m.FieldCleared(rustdesk.FieldVerificationMethod) {
+		fields = append(fields, rustdesk.FieldVerificationMethod)
+	}
+	if m.FieldCleared(rustdesk.FieldTemporaryPasswordLength) {
+		fields = append(fields, rustdesk.FieldTemporaryPasswordLength)
 	}
 	return fields
 }
@@ -19456,6 +21725,12 @@ func (m *RustdeskMutation) ClearField(name string) error {
 	case rustdesk.FieldDirectIPAccess:
 		m.ClearDirectIPAccess()
 		return nil
+	case rustdesk.FieldVerificationMethod:
+		m.ClearVerificationMethod()
+		return nil
+	case rustdesk.FieldTemporaryPasswordLength:
+		m.ClearTemporaryPasswordLength()
+		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk nullable field %s", name)
 }
@@ -19484,6 +21759,12 @@ func (m *RustdeskMutation) ResetField(name string) error {
 		return nil
 	case rustdesk.FieldDirectIPAccess:
 		m.ResetDirectIPAccess()
+		return nil
+	case rustdesk.FieldVerificationMethod:
+		m.ResetVerificationMethod()
+		return nil
+	case rustdesk.FieldTemporaryPasswordLength:
+		m.ResetTemporaryPasswordLength()
 		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk field %s", name)
@@ -27376,6 +29657,10 @@ type TaskMutation struct {
 	apt_upgrade_type                           *task.AptUpgradeType
 	version                                    *int
 	addversion                                 *int
+	tenant                                     *int
+	addtenant                                  *int
+	netbird_groups                             *string
+	netbird_allow_extra_dns_labels             *bool
 	clearedFields                              map[string]struct{}
 	tags                                       map[int]struct{}
 	removedtags                                map[int]struct{}
@@ -31645,6 +33930,174 @@ func (m *TaskMutation) ResetVersion() {
 	delete(m.clearedFields, task.FieldVersion)
 }
 
+// SetTenant sets the "tenant" field.
+func (m *TaskMutation) SetTenant(i int) {
+	m.tenant = &i
+	m.addtenant = nil
+}
+
+// Tenant returns the value of the "tenant" field in the mutation.
+func (m *TaskMutation) Tenant() (r int, exists bool) {
+	v := m.tenant
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenant returns the old "tenant" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldTenant(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenant is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenant requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenant: %w", err)
+	}
+	return oldValue.Tenant, nil
+}
+
+// AddTenant adds i to the "tenant" field.
+func (m *TaskMutation) AddTenant(i int) {
+	if m.addtenant != nil {
+		*m.addtenant += i
+	} else {
+		m.addtenant = &i
+	}
+}
+
+// AddedTenant returns the value that was added to the "tenant" field in this mutation.
+func (m *TaskMutation) AddedTenant() (r int, exists bool) {
+	v := m.addtenant
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (m *TaskMutation) ClearTenant() {
+	m.tenant = nil
+	m.addtenant = nil
+	m.clearedFields[task.FieldTenant] = struct{}{}
+}
+
+// TenantCleared returns if the "tenant" field was cleared in this mutation.
+func (m *TaskMutation) TenantCleared() bool {
+	_, ok := m.clearedFields[task.FieldTenant]
+	return ok
+}
+
+// ResetTenant resets all changes to the "tenant" field.
+func (m *TaskMutation) ResetTenant() {
+	m.tenant = nil
+	m.addtenant = nil
+	delete(m.clearedFields, task.FieldTenant)
+}
+
+// SetNetbirdGroups sets the "netbird_groups" field.
+func (m *TaskMutation) SetNetbirdGroups(s string) {
+	m.netbird_groups = &s
+}
+
+// NetbirdGroups returns the value of the "netbird_groups" field in the mutation.
+func (m *TaskMutation) NetbirdGroups() (r string, exists bool) {
+	v := m.netbird_groups
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNetbirdGroups returns the old "netbird_groups" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldNetbirdGroups(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNetbirdGroups is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNetbirdGroups requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNetbirdGroups: %w", err)
+	}
+	return oldValue.NetbirdGroups, nil
+}
+
+// ClearNetbirdGroups clears the value of the "netbird_groups" field.
+func (m *TaskMutation) ClearNetbirdGroups() {
+	m.netbird_groups = nil
+	m.clearedFields[task.FieldNetbirdGroups] = struct{}{}
+}
+
+// NetbirdGroupsCleared returns if the "netbird_groups" field was cleared in this mutation.
+func (m *TaskMutation) NetbirdGroupsCleared() bool {
+	_, ok := m.clearedFields[task.FieldNetbirdGroups]
+	return ok
+}
+
+// ResetNetbirdGroups resets all changes to the "netbird_groups" field.
+func (m *TaskMutation) ResetNetbirdGroups() {
+	m.netbird_groups = nil
+	delete(m.clearedFields, task.FieldNetbirdGroups)
+}
+
+// SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
+func (m *TaskMutation) SetNetbirdAllowExtraDNSLabels(b bool) {
+	m.netbird_allow_extra_dns_labels = &b
+}
+
+// NetbirdAllowExtraDNSLabels returns the value of the "netbird_allow_extra_dns_labels" field in the mutation.
+func (m *TaskMutation) NetbirdAllowExtraDNSLabels() (r bool, exists bool) {
+	v := m.netbird_allow_extra_dns_labels
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNetbirdAllowExtraDNSLabels returns the old "netbird_allow_extra_dns_labels" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldNetbirdAllowExtraDNSLabels(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNetbirdAllowExtraDNSLabels is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNetbirdAllowExtraDNSLabels requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNetbirdAllowExtraDNSLabels: %w", err)
+	}
+	return oldValue.NetbirdAllowExtraDNSLabels, nil
+}
+
+// ClearNetbirdAllowExtraDNSLabels clears the value of the "netbird_allow_extra_dns_labels" field.
+func (m *TaskMutation) ClearNetbirdAllowExtraDNSLabels() {
+	m.netbird_allow_extra_dns_labels = nil
+	m.clearedFields[task.FieldNetbirdAllowExtraDNSLabels] = struct{}{}
+}
+
+// NetbirdAllowExtraDNSLabelsCleared returns if the "netbird_allow_extra_dns_labels" field was cleared in this mutation.
+func (m *TaskMutation) NetbirdAllowExtraDNSLabelsCleared() bool {
+	_, ok := m.clearedFields[task.FieldNetbirdAllowExtraDNSLabels]
+	return ok
+}
+
+// ResetNetbirdAllowExtraDNSLabels resets all changes to the "netbird_allow_extra_dns_labels" field.
+func (m *TaskMutation) ResetNetbirdAllowExtraDNSLabels() {
+	m.netbird_allow_extra_dns_labels = nil
+	delete(m.clearedFields, task.FieldNetbirdAllowExtraDNSLabels)
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by ids.
 func (m *TaskMutation) AddTagIDs(ids ...int) {
 	if m.tags == nil {
@@ -31772,7 +34225,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 85)
+	fields := make([]string, 0, 88)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -32028,6 +34481,15 @@ func (m *TaskMutation) Fields() []string {
 	if m.version != nil {
 		fields = append(fields, task.FieldVersion)
 	}
+	if m.tenant != nil {
+		fields = append(fields, task.FieldTenant)
+	}
+	if m.netbird_groups != nil {
+		fields = append(fields, task.FieldNetbirdGroups)
+	}
+	if m.netbird_allow_extra_dns_labels != nil {
+		fields = append(fields, task.FieldNetbirdAllowExtraDNSLabels)
+	}
 	return fields
 }
 
@@ -32206,6 +34668,12 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.AptUpgradeType()
 	case task.FieldVersion:
 		return m.Version()
+	case task.FieldTenant:
+		return m.Tenant()
+	case task.FieldNetbirdGroups:
+		return m.NetbirdGroups()
+	case task.FieldNetbirdAllowExtraDNSLabels:
+		return m.NetbirdAllowExtraDNSLabels()
 	}
 	return nil, false
 }
@@ -32385,6 +34853,12 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAptUpgradeType(ctx)
 	case task.FieldVersion:
 		return m.OldVersion(ctx)
+	case task.FieldTenant:
+		return m.OldTenant(ctx)
+	case task.FieldNetbirdGroups:
+		return m.OldNetbirdGroups(ctx)
+	case task.FieldNetbirdAllowExtraDNSLabels:
+		return m.OldNetbirdAllowExtraDNSLabels(ctx)
 	}
 	return nil, fmt.Errorf("unknown Task field %s", name)
 }
@@ -32989,6 +35463,27 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetVersion(v)
 		return nil
+	case task.FieldTenant:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenant(v)
+		return nil
+	case task.FieldNetbirdGroups:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNetbirdGroups(v)
+		return nil
+	case task.FieldNetbirdAllowExtraDNSLabels:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNetbirdAllowExtraDNSLabels(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
@@ -33000,6 +35495,9 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.addversion != nil {
 		fields = append(fields, task.FieldVersion)
 	}
+	if m.addtenant != nil {
+		fields = append(fields, task.FieldTenant)
+	}
 	return fields
 }
 
@@ -33010,6 +35508,8 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case task.FieldVersion:
 		return m.AddedVersion()
+	case task.FieldTenant:
+		return m.AddedTenant()
 	}
 	return nil, false
 }
@@ -33025,6 +35525,13 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddVersion(v)
+		return nil
+	case task.FieldTenant:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenant(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
@@ -33282,6 +35789,15 @@ func (m *TaskMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(task.FieldVersion) {
 		fields = append(fields, task.FieldVersion)
+	}
+	if m.FieldCleared(task.FieldTenant) {
+		fields = append(fields, task.FieldTenant)
+	}
+	if m.FieldCleared(task.FieldNetbirdGroups) {
+		fields = append(fields, task.FieldNetbirdGroups)
+	}
+	if m.FieldCleared(task.FieldNetbirdAllowExtraDNSLabels) {
+		fields = append(fields, task.FieldNetbirdAllowExtraDNSLabels)
 	}
 	return fields
 }
@@ -33546,6 +36062,15 @@ func (m *TaskMutation) ClearField(name string) error {
 	case task.FieldVersion:
 		m.ClearVersion()
 		return nil
+	case task.FieldTenant:
+		m.ClearTenant()
+		return nil
+	case task.FieldNetbirdGroups:
+		m.ClearNetbirdGroups()
+		return nil
+	case task.FieldNetbirdAllowExtraDNSLabels:
+		m.ClearNetbirdAllowExtraDNSLabels()
+		return nil
 	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
 }
@@ -33809,6 +36334,15 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldVersion:
 		m.ResetVersion()
 		return nil
+	case task.FieldTenant:
+		m.ResetTenant()
+		return nil
+	case task.FieldNetbirdGroups:
+		m.ResetNetbirdGroups()
+		return nil
+	case task.FieldNetbirdAllowExtraDNSLabels:
+		m.ResetNetbirdAllowExtraDNSLabels()
+		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
@@ -33940,6 +36474,8 @@ type TenantMutation struct {
 	rustdesk        map[int]struct{}
 	removedrustdesk map[int]struct{}
 	clearedrustdesk bool
+	netbird         *int
+	clearednetbird  bool
 	done            bool
 	oldValue        func(context.Context) (*Tenant, error)
 	predicates      []predicate.Tenant
@@ -34494,6 +37030,45 @@ func (m *TenantMutation) ResetRustdesk() {
 	m.removedrustdesk = nil
 }
 
+// SetNetbirdID sets the "netbird" edge to the NetbirdSettings entity by id.
+func (m *TenantMutation) SetNetbirdID(id int) {
+	m.netbird = &id
+}
+
+// ClearNetbird clears the "netbird" edge to the NetbirdSettings entity.
+func (m *TenantMutation) ClearNetbird() {
+	m.clearednetbird = true
+}
+
+// NetbirdCleared reports if the "netbird" edge to the NetbirdSettings entity was cleared.
+func (m *TenantMutation) NetbirdCleared() bool {
+	return m.clearednetbird
+}
+
+// NetbirdID returns the "netbird" edge ID in the mutation.
+func (m *TenantMutation) NetbirdID() (id int, exists bool) {
+	if m.netbird != nil {
+		return *m.netbird, true
+	}
+	return
+}
+
+// NetbirdIDs returns the "netbird" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// NetbirdID instead. It exists only for internal usage by the builders.
+func (m *TenantMutation) NetbirdIDs() (ids []int) {
+	if id := m.netbird; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetNetbird resets all changes to the "netbird" edge.
+func (m *TenantMutation) ResetNetbird() {
+	m.netbird = nil
+	m.clearednetbird = false
+}
+
 // Where appends a list predicates to the TenantMutation builder.
 func (m *TenantMutation) Where(ps ...predicate.Tenant) {
 	m.predicates = append(m.predicates, ps...)
@@ -34705,7 +37280,7 @@ func (m *TenantMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TenantMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.sites != nil {
 		edges = append(edges, tenant.EdgeSites)
 	}
@@ -34720,6 +37295,9 @@ func (m *TenantMutation) AddedEdges() []string {
 	}
 	if m.rustdesk != nil {
 		edges = append(edges, tenant.EdgeRustdesk)
+	}
+	if m.netbird != nil {
+		edges = append(edges, tenant.EdgeNetbird)
 	}
 	return edges
 }
@@ -34756,13 +37334,17 @@ func (m *TenantMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case tenant.EdgeNetbird:
+		if id := m.netbird; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TenantMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedsites != nil {
 		edges = append(edges, tenant.EdgeSites)
 	}
@@ -34812,7 +37394,7 @@ func (m *TenantMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TenantMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedsites {
 		edges = append(edges, tenant.EdgeSites)
 	}
@@ -34827,6 +37409,9 @@ func (m *TenantMutation) ClearedEdges() []string {
 	}
 	if m.clearedrustdesk {
 		edges = append(edges, tenant.EdgeRustdesk)
+	}
+	if m.clearednetbird {
+		edges = append(edges, tenant.EdgeNetbird)
 	}
 	return edges
 }
@@ -34845,6 +37430,8 @@ func (m *TenantMutation) EdgeCleared(name string) bool {
 		return m.clearedmetadata
 	case tenant.EdgeRustdesk:
 		return m.clearedrustdesk
+	case tenant.EdgeNetbird:
+		return m.clearednetbird
 	}
 	return false
 }
@@ -34855,6 +37442,9 @@ func (m *TenantMutation) ClearEdge(name string) error {
 	switch name {
 	case tenant.EdgeSettings:
 		m.ClearSettings()
+		return nil
+	case tenant.EdgeNetbird:
+		m.ClearNetbird()
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant unique edge %s", name)
@@ -34878,6 +37468,9 @@ func (m *TenantMutation) ResetEdge(name string) error {
 		return nil
 	case tenant.EdgeRustdesk:
 		m.ResetRustdesk()
+		return nil
+	case tenant.EdgeNetbird:
+		m.ResetNetbird()
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant edge %s", name)

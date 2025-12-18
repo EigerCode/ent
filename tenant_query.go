@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/predicate"
 	"github.com/open-uem/ent/rustdesk"
@@ -33,6 +34,8 @@ type TenantQuery struct {
 	withTags     *TagQuery
 	withMetadata *OrgMetadataQuery
 	withRustdesk *RustdeskQuery
+	withNetbird  *NetbirdSettingsQuery
+	withFKs      bool
 	modifiers    []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -173,6 +176,28 @@ func (tq *TenantQuery) QueryRustdesk() *RustdeskQuery {
 			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
 			sqlgraph.To(rustdesk.Table, rustdesk.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, tenant.RustdeskTable, tenant.RustdeskPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryNetbird chains the current query on the "netbird" edge.
+func (tq *TenantQuery) QueryNetbird() *NetbirdSettingsQuery {
+	query := (&NetbirdSettingsClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(netbirdsettings.Table, netbirdsettings.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, tenant.NetbirdTable, tenant.NetbirdColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -377,6 +402,7 @@ func (tq *TenantQuery) Clone() *TenantQuery {
 		withTags:     tq.withTags.Clone(),
 		withMetadata: tq.withMetadata.Clone(),
 		withRustdesk: tq.withRustdesk.Clone(),
+		withNetbird:  tq.withNetbird.Clone(),
 		// clone intermediate query.
 		sql:       tq.sql.Clone(),
 		path:      tq.path,
@@ -436,6 +462,17 @@ func (tq *TenantQuery) WithRustdesk(opts ...func(*RustdeskQuery)) *TenantQuery {
 		opt(query)
 	}
 	tq.withRustdesk = query
+	return tq
+}
+
+// WithNetbird tells the query-builder to eager-load the nodes that are connected to
+// the "netbird" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TenantQuery) WithNetbird(opts ...func(*NetbirdSettingsQuery)) *TenantQuery {
+	query := (&NetbirdSettingsClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withNetbird = query
 	return tq
 }
 
@@ -516,15 +553,23 @@ func (tq *TenantQuery) prepareQuery(ctx context.Context) error {
 func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenant, error) {
 	var (
 		nodes       = []*Tenant{}
+		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			tq.withSites != nil,
 			tq.withSettings != nil,
 			tq.withTags != nil,
 			tq.withMetadata != nil,
 			tq.withRustdesk != nil,
+			tq.withNetbird != nil,
 		}
 	)
+	if tq.withNetbird != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, tenant.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Tenant).scanValues(nil, columns)
 	}
@@ -577,6 +622,12 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 		if err := tq.loadRustdesk(ctx, query, nodes,
 			func(n *Tenant) { n.Edges.Rustdesk = []*Rustdesk{} },
 			func(n *Tenant, e *Rustdesk) { n.Edges.Rustdesk = append(n.Edges.Rustdesk, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withNetbird; query != nil {
+		if err := tq.loadNetbird(ctx, query, nodes, nil,
+			func(n *Tenant, e *NetbirdSettings) { n.Edges.Netbird = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -761,6 +812,38 @@ func (tq *TenantQuery) loadRustdesk(ctx context.Context, query *RustdeskQuery, n
 		}
 		for kn := range nodes {
 			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (tq *TenantQuery) loadNetbird(ctx context.Context, query *NetbirdSettingsQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *NetbirdSettings)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Tenant)
+	for i := range nodes {
+		if nodes[i].tenant_netbird == nil {
+			continue
+		}
+		fk := *nodes[i].tenant_netbird
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(netbirdsettings.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "tenant_netbird" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil

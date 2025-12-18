@@ -120,6 +120,34 @@ func (rc *RustdeskCreate) SetNillableDirectIPAccess(b *bool) *RustdeskCreate {
 	return rc
 }
 
+// SetVerificationMethod sets the "verification_method" field.
+func (rc *RustdeskCreate) SetVerificationMethod(rm rustdesk.VerificationMethod) *RustdeskCreate {
+	rc.mutation.SetVerificationMethod(rm)
+	return rc
+}
+
+// SetNillableVerificationMethod sets the "verification_method" field if the given value is not nil.
+func (rc *RustdeskCreate) SetNillableVerificationMethod(rm *rustdesk.VerificationMethod) *RustdeskCreate {
+	if rm != nil {
+		rc.SetVerificationMethod(*rm)
+	}
+	return rc
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (rc *RustdeskCreate) SetTemporaryPasswordLength(i int) *RustdeskCreate {
+	rc.mutation.SetTemporaryPasswordLength(i)
+	return rc
+}
+
+// SetNillableTemporaryPasswordLength sets the "temporary_password_length" field if the given value is not nil.
+func (rc *RustdeskCreate) SetNillableTemporaryPasswordLength(i *int) *RustdeskCreate {
+	if i != nil {
+		rc.SetTemporaryPasswordLength(*i)
+	}
+	return rc
+}
+
 // AddTenantIDs adds the "tenant" edge to the Tenant entity by IDs.
 func (rc *RustdeskCreate) AddTenantIDs(ids ...int) *RustdeskCreate {
 	rc.mutation.AddTenantIDs(ids...)
@@ -198,10 +226,23 @@ func (rc *RustdeskCreate) defaults() {
 		v := rustdesk.DefaultDirectIPAccess
 		rc.mutation.SetDirectIPAccess(v)
 	}
+	if _, ok := rc.mutation.VerificationMethod(); !ok {
+		v := rustdesk.DefaultVerificationMethod
+		rc.mutation.SetVerificationMethod(v)
+	}
+	if _, ok := rc.mutation.TemporaryPasswordLength(); !ok {
+		v := rustdesk.DefaultTemporaryPasswordLength
+		rc.mutation.SetTemporaryPasswordLength(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (rc *RustdeskCreate) check() error {
+	if v, ok := rc.mutation.VerificationMethod(); ok {
+		if err := rustdesk.VerificationMethodValidator(v); err != nil {
+			return &ValidationError{Name: "verification_method", err: fmt.Errorf(`ent: validator failed for field "Rustdesk.verification_method": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -256,6 +297,14 @@ func (rc *RustdeskCreate) createSpec() (*Rustdesk, *sqlgraph.CreateSpec) {
 	if value, ok := rc.mutation.DirectIPAccess(); ok {
 		_spec.SetField(rustdesk.FieldDirectIPAccess, field.TypeBool, value)
 		_node.DirectIPAccess = value
+	}
+	if value, ok := rc.mutation.VerificationMethod(); ok {
+		_spec.SetField(rustdesk.FieldVerificationMethod, field.TypeEnum, value)
+		_node.VerificationMethod = value
+	}
+	if value, ok := rc.mutation.TemporaryPasswordLength(); ok {
+		_spec.SetField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt, value)
+		_node.TemporaryPasswordLength = value
 	}
 	if nodes := rc.mutation.TenantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -451,6 +500,48 @@ func (u *RustdeskUpsert) ClearDirectIPAccess() *RustdeskUpsert {
 	return u
 }
 
+// SetVerificationMethod sets the "verification_method" field.
+func (u *RustdeskUpsert) SetVerificationMethod(v rustdesk.VerificationMethod) *RustdeskUpsert {
+	u.Set(rustdesk.FieldVerificationMethod, v)
+	return u
+}
+
+// UpdateVerificationMethod sets the "verification_method" field to the value that was provided on create.
+func (u *RustdeskUpsert) UpdateVerificationMethod() *RustdeskUpsert {
+	u.SetExcluded(rustdesk.FieldVerificationMethod)
+	return u
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (u *RustdeskUpsert) ClearVerificationMethod() *RustdeskUpsert {
+	u.SetNull(rustdesk.FieldVerificationMethod)
+	return u
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (u *RustdeskUpsert) SetTemporaryPasswordLength(v int) *RustdeskUpsert {
+	u.Set(rustdesk.FieldTemporaryPasswordLength, v)
+	return u
+}
+
+// UpdateTemporaryPasswordLength sets the "temporary_password_length" field to the value that was provided on create.
+func (u *RustdeskUpsert) UpdateTemporaryPasswordLength() *RustdeskUpsert {
+	u.SetExcluded(rustdesk.FieldTemporaryPasswordLength)
+	return u
+}
+
+// AddTemporaryPasswordLength adds v to the "temporary_password_length" field.
+func (u *RustdeskUpsert) AddTemporaryPasswordLength(v int) *RustdeskUpsert {
+	u.Add(rustdesk.FieldTemporaryPasswordLength, v)
+	return u
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (u *RustdeskUpsert) ClearTemporaryPasswordLength() *RustdeskUpsert {
+	u.SetNull(rustdesk.FieldTemporaryPasswordLength)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -635,6 +726,55 @@ func (u *RustdeskUpsertOne) UpdateDirectIPAccess() *RustdeskUpsertOne {
 func (u *RustdeskUpsertOne) ClearDirectIPAccess() *RustdeskUpsertOne {
 	return u.Update(func(s *RustdeskUpsert) {
 		s.ClearDirectIPAccess()
+	})
+}
+
+// SetVerificationMethod sets the "verification_method" field.
+func (u *RustdeskUpsertOne) SetVerificationMethod(v rustdesk.VerificationMethod) *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.SetVerificationMethod(v)
+	})
+}
+
+// UpdateVerificationMethod sets the "verification_method" field to the value that was provided on create.
+func (u *RustdeskUpsertOne) UpdateVerificationMethod() *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.UpdateVerificationMethod()
+	})
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (u *RustdeskUpsertOne) ClearVerificationMethod() *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.ClearVerificationMethod()
+	})
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (u *RustdeskUpsertOne) SetTemporaryPasswordLength(v int) *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.SetTemporaryPasswordLength(v)
+	})
+}
+
+// AddTemporaryPasswordLength adds v to the "temporary_password_length" field.
+func (u *RustdeskUpsertOne) AddTemporaryPasswordLength(v int) *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.AddTemporaryPasswordLength(v)
+	})
+}
+
+// UpdateTemporaryPasswordLength sets the "temporary_password_length" field to the value that was provided on create.
+func (u *RustdeskUpsertOne) UpdateTemporaryPasswordLength() *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.UpdateTemporaryPasswordLength()
+	})
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (u *RustdeskUpsertOne) ClearTemporaryPasswordLength() *RustdeskUpsertOne {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.ClearTemporaryPasswordLength()
 	})
 }
 
@@ -986,6 +1126,55 @@ func (u *RustdeskUpsertBulk) UpdateDirectIPAccess() *RustdeskUpsertBulk {
 func (u *RustdeskUpsertBulk) ClearDirectIPAccess() *RustdeskUpsertBulk {
 	return u.Update(func(s *RustdeskUpsert) {
 		s.ClearDirectIPAccess()
+	})
+}
+
+// SetVerificationMethod sets the "verification_method" field.
+func (u *RustdeskUpsertBulk) SetVerificationMethod(v rustdesk.VerificationMethod) *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.SetVerificationMethod(v)
+	})
+}
+
+// UpdateVerificationMethod sets the "verification_method" field to the value that was provided on create.
+func (u *RustdeskUpsertBulk) UpdateVerificationMethod() *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.UpdateVerificationMethod()
+	})
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (u *RustdeskUpsertBulk) ClearVerificationMethod() *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.ClearVerificationMethod()
+	})
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (u *RustdeskUpsertBulk) SetTemporaryPasswordLength(v int) *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.SetTemporaryPasswordLength(v)
+	})
+}
+
+// AddTemporaryPasswordLength adds v to the "temporary_password_length" field.
+func (u *RustdeskUpsertBulk) AddTemporaryPasswordLength(v int) *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.AddTemporaryPasswordLength(v)
+	})
+}
+
+// UpdateTemporaryPasswordLength sets the "temporary_password_length" field to the value that was provided on create.
+func (u *RustdeskUpsertBulk) UpdateTemporaryPasswordLength() *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.UpdateTemporaryPasswordLength()
+	})
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (u *RustdeskUpsertBulk) ClearTemporaryPasswordLength() *RustdeskUpsertBulk {
+	return u.Update(func(s *RustdeskUpsert) {
+		s.ClearTemporaryPasswordLength()
 	})
 }
 

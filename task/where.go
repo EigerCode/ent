@@ -450,6 +450,21 @@ func Version(v int) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldVersion, v))
 }
 
+// Tenant applies equality check predicate on the "tenant" field. It's identical to TenantEQ.
+func Tenant(v int) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTenant, v))
+}
+
+// NetbirdGroups applies equality check predicate on the "netbird_groups" field. It's identical to NetbirdGroupsEQ.
+func NetbirdGroups(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldNetbirdGroups, v))
+}
+
+// NetbirdAllowExtraDNSLabels applies equality check predicate on the "netbird_allow_extra_dns_labels" field. It's identical to NetbirdAllowExtraDNSLabelsEQ.
+func NetbirdAllowExtraDNSLabels(v bool) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldNetbirdAllowExtraDNSLabels, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldName, v))
@@ -4998,6 +5013,151 @@ func VersionIsNil() predicate.Task {
 // VersionNotNil applies the NotNil predicate on the "version" field.
 func VersionNotNil() predicate.Task {
 	return predicate.Task(sql.FieldNotNull(FieldVersion))
+}
+
+// TenantEQ applies the EQ predicate on the "tenant" field.
+func TenantEQ(v int) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTenant, v))
+}
+
+// TenantNEQ applies the NEQ predicate on the "tenant" field.
+func TenantNEQ(v int) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldTenant, v))
+}
+
+// TenantIn applies the In predicate on the "tenant" field.
+func TenantIn(vs ...int) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldTenant, vs...))
+}
+
+// TenantNotIn applies the NotIn predicate on the "tenant" field.
+func TenantNotIn(vs ...int) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldTenant, vs...))
+}
+
+// TenantGT applies the GT predicate on the "tenant" field.
+func TenantGT(v int) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldTenant, v))
+}
+
+// TenantGTE applies the GTE predicate on the "tenant" field.
+func TenantGTE(v int) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldTenant, v))
+}
+
+// TenantLT applies the LT predicate on the "tenant" field.
+func TenantLT(v int) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldTenant, v))
+}
+
+// TenantLTE applies the LTE predicate on the "tenant" field.
+func TenantLTE(v int) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldTenant, v))
+}
+
+// TenantIsNil applies the IsNil predicate on the "tenant" field.
+func TenantIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldTenant))
+}
+
+// TenantNotNil applies the NotNil predicate on the "tenant" field.
+func TenantNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldTenant))
+}
+
+// NetbirdGroupsEQ applies the EQ predicate on the "netbird_groups" field.
+func NetbirdGroupsEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsNEQ applies the NEQ predicate on the "netbird_groups" field.
+func NetbirdGroupsNEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsIn applies the In predicate on the "netbird_groups" field.
+func NetbirdGroupsIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldNetbirdGroups, vs...))
+}
+
+// NetbirdGroupsNotIn applies the NotIn predicate on the "netbird_groups" field.
+func NetbirdGroupsNotIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldNetbirdGroups, vs...))
+}
+
+// NetbirdGroupsGT applies the GT predicate on the "netbird_groups" field.
+func NetbirdGroupsGT(v string) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsGTE applies the GTE predicate on the "netbird_groups" field.
+func NetbirdGroupsGTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsLT applies the LT predicate on the "netbird_groups" field.
+func NetbirdGroupsLT(v string) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsLTE applies the LTE predicate on the "netbird_groups" field.
+func NetbirdGroupsLTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsContains applies the Contains predicate on the "netbird_groups" field.
+func NetbirdGroupsContains(v string) predicate.Task {
+	return predicate.Task(sql.FieldContains(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsHasPrefix applies the HasPrefix predicate on the "netbird_groups" field.
+func NetbirdGroupsHasPrefix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasPrefix(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsHasSuffix applies the HasSuffix predicate on the "netbird_groups" field.
+func NetbirdGroupsHasSuffix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasSuffix(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsIsNil applies the IsNil predicate on the "netbird_groups" field.
+func NetbirdGroupsIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldNetbirdGroups))
+}
+
+// NetbirdGroupsNotNil applies the NotNil predicate on the "netbird_groups" field.
+func NetbirdGroupsNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldNetbirdGroups))
+}
+
+// NetbirdGroupsEqualFold applies the EqualFold predicate on the "netbird_groups" field.
+func NetbirdGroupsEqualFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldEqualFold(FieldNetbirdGroups, v))
+}
+
+// NetbirdGroupsContainsFold applies the ContainsFold predicate on the "netbird_groups" field.
+func NetbirdGroupsContainsFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldContainsFold(FieldNetbirdGroups, v))
+}
+
+// NetbirdAllowExtraDNSLabelsEQ applies the EQ predicate on the "netbird_allow_extra_dns_labels" field.
+func NetbirdAllowExtraDNSLabelsEQ(v bool) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldNetbirdAllowExtraDNSLabels, v))
+}
+
+// NetbirdAllowExtraDNSLabelsNEQ applies the NEQ predicate on the "netbird_allow_extra_dns_labels" field.
+func NetbirdAllowExtraDNSLabelsNEQ(v bool) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldNetbirdAllowExtraDNSLabels, v))
+}
+
+// NetbirdAllowExtraDNSLabelsIsNil applies the IsNil predicate on the "netbird_allow_extra_dns_labels" field.
+func NetbirdAllowExtraDNSLabelsIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldNetbirdAllowExtraDNSLabels))
+}
+
+// NetbirdAllowExtraDNSLabelsNotNil applies the NotNil predicate on the "netbird_allow_extra_dns_labels" field.
+func NetbirdAllowExtraDNSLabelsNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldNetbirdAllowExtraDNSLabels))
 }
 
 // HasTags applies the HasEdge predicate on the "tags" edge.

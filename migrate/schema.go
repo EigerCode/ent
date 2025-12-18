@@ -40,6 +40,7 @@ var (
 		{Name: "has_rustdesk", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_wayland", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_flatpak_rustdesk", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "wan", Type: field.TypeString, Default: ""},
 		{Name: "release_agents", Type: field.TypeInt, Nullable: true},
 	}
 	// AgentsTable holds the schema information for the "agents" table.
@@ -50,7 +51,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "agents_releases_agents",
-				Columns:    []*schema.Column{AgentsColumns[30]},
+				Columns:    []*schema.Column{AgentsColumns[31]},
 				RefColumns: []*schema.Column{ReleasesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -306,6 +307,51 @@ var (
 			},
 		},
 	}
+	// NetbirdsColumns holds the columns for the "netbirds" table.
+	NetbirdsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "version", Type: field.TypeString, Default: ""},
+		{Name: "installed", Type: field.TypeBool, Default: false},
+		{Name: "service_status", Type: field.TypeString, Default: ""},
+		{Name: "ip", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "profile", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "management_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "management_connected", Type: field.TypeBool, Default: false},
+		{Name: "signal_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "signal_connected", Type: field.TypeBool, Default: false},
+		{Name: "ssh_enabled", Type: field.TypeBool, Default: false},
+		{Name: "peers_total", Type: field.TypeInt, Nullable: true, Default: 0},
+		{Name: "peers_connected", Type: field.TypeInt, Nullable: true, Default: 0},
+		{Name: "profiles_available", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "dns_server", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "agent_netbird", Type: field.TypeString, Unique: true},
+	}
+	// NetbirdsTable holds the schema information for the "netbirds" table.
+	NetbirdsTable = &schema.Table{
+		Name:       "netbirds",
+		Columns:    NetbirdsColumns,
+		PrimaryKey: []*schema.Column{NetbirdsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "netbirds_agents_netbird",
+				Columns:    []*schema.Column{NetbirdsColumns[15]},
+				RefColumns: []*schema.Column{AgentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// NetbirdSettingsColumns holds the columns for the "netbird_settings" table.
+	NetbirdSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "management_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "access_token", Type: field.TypeString, Nullable: true, Default: ""},
+	}
+	// NetbirdSettingsTable holds the schema information for the "netbird_settings" table.
+	NetbirdSettingsTable = &schema.Table{
+		Name:       "netbird_settings",
+		Columns:    NetbirdSettingsColumns,
+		PrimaryKey: []*schema.Column{NetbirdSettingsColumns[0]},
+	}
 	// NetworkAdaptersColumns holds the columns for the "network_adapters" table.
 	NetworkAdaptersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -320,6 +366,7 @@ var (
 		{Name: "dhcp_lease_obtained", Type: field.TypeTime, Nullable: true},
 		{Name: "dhcp_lease_expired", Type: field.TypeTime, Nullable: true},
 		{Name: "speed", Type: field.TypeString},
+		{Name: "virtual", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "agent_networkadapters", Type: field.TypeString},
 	}
 	// NetworkAdaptersTable holds the schema information for the "network_adapters" table.
@@ -330,7 +377,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "network_adapters_agents_networkadapters",
-				Columns:    []*schema.Column{NetworkAdaptersColumns[12]},
+				Columns:    []*schema.Column{NetworkAdaptersColumns[13]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -347,6 +394,7 @@ var (
 		{Name: "arch", Type: field.TypeString, Nullable: true},
 		{Name: "username", Type: field.TypeString},
 		{Name: "last_bootup_time", Type: field.TypeTime, Nullable: true},
+		{Name: "domain", Type: field.TypeString, Nullable: true},
 		{Name: "agent_operatingsystem", Type: field.TypeString, Unique: true},
 	}
 	// OperatingSystemsTable holds the schema information for the "operating_systems" table.
@@ -357,7 +405,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "operating_systems_agents_operatingsystem",
-				Columns:    []*schema.Column{OperatingSystemsColumns[9]},
+				Columns:    []*schema.Column{OperatingSystemsColumns[10]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -471,7 +519,7 @@ var (
 				Symbol:     "profile_issues_profiles_issues",
 				Columns:    []*schema.Column{ProfileIssuesColumns[3]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "profile_issues_agents_agents",
@@ -554,6 +602,8 @@ var (
 		{Name: "use_permanent_password", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "whitelist", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "direct_ip_access", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "verification_method", Type: field.TypeEnum, Nullable: true, Enums: []string{"use-temporary-password", "use-permanent-password", "use-both-passwords"}, Default: "use-both-passwords"},
+		{Name: "temporary_password_length", Type: field.TypeInt, Nullable: true, Default: 6},
 	}
 	// RustdesksTable holds the schema information for the "rustdesks" table.
 	RustdesksTable = &schema.Table{
@@ -791,7 +841,7 @@ var (
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"winget_install", "winget_update", "winget_delete", "add_registry_key", "update_registry_key_default_value", "add_registry_key_value", "remove_registry_key", "remove_registry_key_value", "add_local_user", "remove_local_user", "add_unix_local_user", "modify_unix_local_user", "remove_unix_local_user", "add_macos_local_user", "remove_macos_local_user", "add_local_group", "remove_local_group", "add_unix_local_group", "remove_unix_local_group", "add_users_to_local_group", "remove_users_from_local_group", "msi_install", "msi_uninstall", "powershell_script", "unix_script", "flatpak_install", "flatpak_uninstall", "brew_formula_install", "brew_formula_upgrade", "brew_formula_uninstall", "brew_cask_install", "brew_cask_upgrade", "brew_cask_uninstall", "apt_install", "apt_update", "apt_remove", "apt_update_all", "apt_upgrade_os"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"winget_install", "winget_update", "winget_delete", "add_registry_key", "update_registry_key_default_value", "add_registry_key_value", "remove_registry_key", "remove_registry_key_value", "add_local_user", "remove_local_user", "add_unix_local_user", "modify_unix_local_user", "remove_unix_local_user", "add_macos_local_user", "remove_macos_local_user", "add_local_group", "remove_local_group", "add_unix_local_group", "remove_unix_local_group", "add_users_to_local_group", "remove_users_from_local_group", "msi_install", "msi_uninstall", "powershell_script", "unix_script", "flatpak_install", "flatpak_uninstall", "brew_formula_install", "brew_formula_upgrade", "brew_formula_uninstall", "brew_cask_install", "brew_cask_upgrade", "brew_cask_uninstall", "apt_install", "apt_update", "apt_remove", "apt_update_all", "apt_upgrade_os", "netbird_install", "netbird_uninstall", "netbird_register"}},
 		{Name: "package_id", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "package_name", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "package_latest", Type: field.TypeBool, Nullable: true, Default: false},
@@ -855,7 +905,7 @@ var (
 		{Name: "script_executable", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "script_creates", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "script_run", Type: field.TypeEnum, Nullable: true, Enums: []string{"once", "always"}},
-		{Name: "agent_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"windows", "linux", "macos"}, Default: "windows"},
+		{Name: "agent_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"windows", "linux", "macos", "any"}, Default: "windows"},
 		{Name: "when", Type: field.TypeTime, Nullable: true},
 		{Name: "brew_update", Type: field.TypeBool, Nullable: true},
 		{Name: "brew_upgrade_all", Type: field.TypeBool, Nullable: true},
@@ -875,6 +925,9 @@ var (
 		{Name: "apt_update_cache", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "apt_upgrade_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"dist", "full", "no", "safe", "yes"}, Default: "no"},
 		{Name: "version", Type: field.TypeInt, Nullable: true, Default: 1},
+		{Name: "tenant", Type: field.TypeInt, Nullable: true},
+		{Name: "netbird_groups", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "netbird_allow_extra_dns_labels", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "profile_tasks", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
@@ -885,9 +938,9 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_profiles_tasks",
-				Columns:    []*schema.Column{TasksColumns[86]},
+				Columns:    []*schema.Column{TasksColumns[89]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -898,12 +951,21 @@ var (
 		{Name: "is_default", Type: field.TypeBool, Nullable: true},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_netbird", Type: field.TypeInt, Nullable: true},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
 	TenantsTable = &schema.Table{
 		Name:       "tenants",
 		Columns:    TenantsColumns,
 		PrimaryKey: []*schema.Column{TenantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tenants_netbird_settings_netbird",
+				Columns:    []*schema.Column{TenantsColumns[5]},
+				RefColumns: []*schema.Column{NetbirdSettingsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
 	}
 	// UpdatesColumns holds the columns for the "updates" table.
 	UpdatesColumns = []*schema.Column{
@@ -1102,6 +1164,8 @@ var (
 		MemorySlotsTable,
 		MetadataTable,
 		MonitorsTable,
+		NetbirdsTable,
+		NetbirdSettingsTable,
 		NetworkAdaptersTable,
 		OperatingSystemsTable,
 		OrgMetadataTable,
@@ -1143,6 +1207,7 @@ func init() {
 	MetadataTable.ForeignKeys[0].RefTable = AgentsTable
 	MetadataTable.ForeignKeys[1].RefTable = OrgMetadataTable
 	MonitorsTable.ForeignKeys[0].RefTable = AgentsTable
+	NetbirdsTable.ForeignKeys[0].RefTable = AgentsTable
 	NetworkAdaptersTable.ForeignKeys[0].RefTable = AgentsTable
 	OperatingSystemsTable.ForeignKeys[0].RefTable = AgentsTable
 	OrgMetadataTable.ForeignKeys[0].RefTable = TenantsTable
@@ -1162,6 +1227,7 @@ func init() {
 	TagsTable.ForeignKeys[1].RefTable = TasksTable
 	TagsTable.ForeignKeys[2].RefTable = TenantsTable
 	TasksTable.ForeignKeys[0].RefTable = ProfilesTable
+	TenantsTable.ForeignKeys[0].RefTable = NetbirdSettingsTable
 	UpdatesTable.ForeignKeys[0].RefTable = AgentsTable
 	WingetConfigExclusionsTable.ForeignKeys[0].RefTable = AgentsTable
 	AgentTagsTable.ForeignKeys[0].RefTable = AgentsTable

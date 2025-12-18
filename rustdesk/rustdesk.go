@@ -3,6 +3,8 @@
 package rustdesk
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -26,6 +28,10 @@ const (
 	FieldWhitelist = "whitelist"
 	// FieldDirectIPAccess holds the string denoting the direct_ip_access field in the database.
 	FieldDirectIPAccess = "direct_ip_access"
+	// FieldVerificationMethod holds the string denoting the verification_method field in the database.
+	FieldVerificationMethod = "verification_method"
+	// FieldTemporaryPasswordLength holds the string denoting the temporary_password_length field in the database.
+	FieldTemporaryPasswordLength = "temporary_password_length"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
 	EdgeTenant = "tenant"
 	// Table holds the table name of the rustdesk in the database.
@@ -47,6 +53,8 @@ var Columns = []string{
 	FieldUsePermanentPassword,
 	FieldWhitelist,
 	FieldDirectIPAccess,
+	FieldVerificationMethod,
+	FieldTemporaryPasswordLength,
 }
 
 var (
@@ -80,7 +88,36 @@ var (
 	DefaultWhitelist string
 	// DefaultDirectIPAccess holds the default value on creation for the "direct_ip_access" field.
 	DefaultDirectIPAccess bool
+	// DefaultTemporaryPasswordLength holds the default value on creation for the "temporary_password_length" field.
+	DefaultTemporaryPasswordLength int
 )
+
+// VerificationMethod defines the type for the "verification_method" enum field.
+type VerificationMethod string
+
+// VerificationMethodUseBothPasswords is the default value of the VerificationMethod enum.
+const DefaultVerificationMethod = VerificationMethodUseBothPasswords
+
+// VerificationMethod values.
+const (
+	VerificationMethodUseTemporaryPassword VerificationMethod = "use-temporary-password"
+	VerificationMethodUsePermanentPassword VerificationMethod = "use-permanent-password"
+	VerificationMethodUseBothPasswords     VerificationMethod = "use-both-passwords"
+)
+
+func (vm VerificationMethod) String() string {
+	return string(vm)
+}
+
+// VerificationMethodValidator is a validator for the "verification_method" field enum values. It is called by the builders before save.
+func VerificationMethodValidator(vm VerificationMethod) error {
+	switch vm {
+	case VerificationMethodUseTemporaryPassword, VerificationMethodUsePermanentPassword, VerificationMethodUseBothPasswords:
+		return nil
+	default:
+		return fmt.Errorf("rustdesk: invalid enum value for verification_method field: %q", vm)
+	}
+}
 
 // OrderOption defines the ordering options for the Rustdesk queries.
 type OrderOption func(*sql.Selector)
@@ -123,6 +160,16 @@ func ByWhitelist(opts ...sql.OrderTermOption) OrderOption {
 // ByDirectIPAccess orders the results by the direct_ip_access field.
 func ByDirectIPAccess(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDirectIPAccess, opts...).ToFunc()
+}
+
+// ByVerificationMethod orders the results by the verification_method field.
+func ByVerificationMethod(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVerificationMethod, opts...).ToFunc()
+}
+
+// ByTemporaryPasswordLength orders the results by the temporary_password_length field.
+func ByTemporaryPasswordLength(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTemporaryPasswordLength, opts...).ToFunc()
 }
 
 // ByTenantCount orders the results by tenant count.

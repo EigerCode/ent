@@ -22,6 +22,7 @@ func (OperatingSystem) Fields() []ent.Field {
 		field.String("arch").Optional(),
 		field.String("username"),
 		field.Time("last_bootup_time").Optional(),
+		field.String("domain").Optional(),
 	}
 }
 
