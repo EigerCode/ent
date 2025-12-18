@@ -1726,6 +1726,73 @@ func (tu *TaskUpdate) ClearVersion() *TaskUpdate {
 	return tu
 }
 
+// SetTenant sets the "tenant" field.
+func (tu *TaskUpdate) SetTenant(i int) *TaskUpdate {
+	tu.mutation.ResetTenant()
+	tu.mutation.SetTenant(i)
+	return tu
+}
+
+// SetNillableTenant sets the "tenant" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableTenant(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetTenant(*i)
+	}
+	return tu
+}
+
+// AddTenant adds i to the "tenant" field.
+func (tu *TaskUpdate) AddTenant(i int) *TaskUpdate {
+	tu.mutation.AddTenant(i)
+	return tu
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (tu *TaskUpdate) ClearTenant() *TaskUpdate {
+	tu.mutation.ClearTenant()
+	return tu
+}
+
+// SetNetbirdGroups sets the "netbird_groups" field.
+func (tu *TaskUpdate) SetNetbirdGroups(s string) *TaskUpdate {
+	tu.mutation.SetNetbirdGroups(s)
+	return tu
+}
+
+// SetNillableNetbirdGroups sets the "netbird_groups" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableNetbirdGroups(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetNetbirdGroups(*s)
+	}
+	return tu
+}
+
+// ClearNetbirdGroups clears the value of the "netbird_groups" field.
+func (tu *TaskUpdate) ClearNetbirdGroups() *TaskUpdate {
+	tu.mutation.ClearNetbirdGroups()
+	return tu
+}
+
+// SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
+func (tu *TaskUpdate) SetNetbirdAllowExtraDNSLabels(b bool) *TaskUpdate {
+	tu.mutation.SetNetbirdAllowExtraDNSLabels(b)
+	return tu
+}
+
+// SetNillableNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableNetbirdAllowExtraDNSLabels(b *bool) *TaskUpdate {
+	if b != nil {
+		tu.SetNetbirdAllowExtraDNSLabels(*b)
+	}
+	return tu
+}
+
+// ClearNetbirdAllowExtraDNSLabels clears the value of the "netbird_allow_extra_dns_labels" field.
+func (tu *TaskUpdate) ClearNetbirdAllowExtraDNSLabels() *TaskUpdate {
+	tu.mutation.ClearNetbirdAllowExtraDNSLabels()
+	return tu
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tu *TaskUpdate) AddTagIDs(ids ...int) *TaskUpdate {
 	tu.mutation.AddTagIDs(ids...)
@@ -2383,6 +2450,27 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.VersionCleared() {
 		_spec.ClearField(task.FieldVersion, field.TypeInt)
+	}
+	if value, ok := tu.mutation.Tenant(); ok {
+		_spec.SetField(task.FieldTenant, field.TypeInt, value)
+	}
+	if value, ok := tu.mutation.AddedTenant(); ok {
+		_spec.AddField(task.FieldTenant, field.TypeInt, value)
+	}
+	if tu.mutation.TenantCleared() {
+		_spec.ClearField(task.FieldTenant, field.TypeInt)
+	}
+	if value, ok := tu.mutation.NetbirdGroups(); ok {
+		_spec.SetField(task.FieldNetbirdGroups, field.TypeString, value)
+	}
+	if tu.mutation.NetbirdGroupsCleared() {
+		_spec.ClearField(task.FieldNetbirdGroups, field.TypeString)
+	}
+	if value, ok := tu.mutation.NetbirdAllowExtraDNSLabels(); ok {
+		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool, value)
+	}
+	if tu.mutation.NetbirdAllowExtraDNSLabelsCleared() {
+		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool)
 	}
 	if tu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4175,6 +4263,73 @@ func (tuo *TaskUpdateOne) ClearVersion() *TaskUpdateOne {
 	return tuo
 }
 
+// SetTenant sets the "tenant" field.
+func (tuo *TaskUpdateOne) SetTenant(i int) *TaskUpdateOne {
+	tuo.mutation.ResetTenant()
+	tuo.mutation.SetTenant(i)
+	return tuo
+}
+
+// SetNillableTenant sets the "tenant" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableTenant(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetTenant(*i)
+	}
+	return tuo
+}
+
+// AddTenant adds i to the "tenant" field.
+func (tuo *TaskUpdateOne) AddTenant(i int) *TaskUpdateOne {
+	tuo.mutation.AddTenant(i)
+	return tuo
+}
+
+// ClearTenant clears the value of the "tenant" field.
+func (tuo *TaskUpdateOne) ClearTenant() *TaskUpdateOne {
+	tuo.mutation.ClearTenant()
+	return tuo
+}
+
+// SetNetbirdGroups sets the "netbird_groups" field.
+func (tuo *TaskUpdateOne) SetNetbirdGroups(s string) *TaskUpdateOne {
+	tuo.mutation.SetNetbirdGroups(s)
+	return tuo
+}
+
+// SetNillableNetbirdGroups sets the "netbird_groups" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableNetbirdGroups(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetNetbirdGroups(*s)
+	}
+	return tuo
+}
+
+// ClearNetbirdGroups clears the value of the "netbird_groups" field.
+func (tuo *TaskUpdateOne) ClearNetbirdGroups() *TaskUpdateOne {
+	tuo.mutation.ClearNetbirdGroups()
+	return tuo
+}
+
+// SetNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field.
+func (tuo *TaskUpdateOne) SetNetbirdAllowExtraDNSLabels(b bool) *TaskUpdateOne {
+	tuo.mutation.SetNetbirdAllowExtraDNSLabels(b)
+	return tuo
+}
+
+// SetNillableNetbirdAllowExtraDNSLabels sets the "netbird_allow_extra_dns_labels" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableNetbirdAllowExtraDNSLabels(b *bool) *TaskUpdateOne {
+	if b != nil {
+		tuo.SetNetbirdAllowExtraDNSLabels(*b)
+	}
+	return tuo
+}
+
+// ClearNetbirdAllowExtraDNSLabels clears the value of the "netbird_allow_extra_dns_labels" field.
+func (tuo *TaskUpdateOne) ClearNetbirdAllowExtraDNSLabels() *TaskUpdateOne {
+	tuo.mutation.ClearNetbirdAllowExtraDNSLabels()
+	return tuo
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tuo *TaskUpdateOne) AddTagIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.AddTagIDs(ids...)
@@ -4862,6 +5017,27 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.VersionCleared() {
 		_spec.ClearField(task.FieldVersion, field.TypeInt)
+	}
+	if value, ok := tuo.mutation.Tenant(); ok {
+		_spec.SetField(task.FieldTenant, field.TypeInt, value)
+	}
+	if value, ok := tuo.mutation.AddedTenant(); ok {
+		_spec.AddField(task.FieldTenant, field.TypeInt, value)
+	}
+	if tuo.mutation.TenantCleared() {
+		_spec.ClearField(task.FieldTenant, field.TypeInt)
+	}
+	if value, ok := tuo.mutation.NetbirdGroups(); ok {
+		_spec.SetField(task.FieldNetbirdGroups, field.TypeString, value)
+	}
+	if tuo.mutation.NetbirdGroupsCleared() {
+		_spec.ClearField(task.FieldNetbirdGroups, field.TypeString)
+	}
+	if value, ok := tuo.mutation.NetbirdAllowExtraDNSLabels(); ok {
+		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool, value)
+	}
+	if tuo.mutation.NetbirdAllowExtraDNSLabelsCleared() {
+		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool)
 	}
 	if tuo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{

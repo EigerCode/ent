@@ -95,6 +95,11 @@ func LastBootupTime(v time.Time) predicate.OperatingSystem {
 	return predicate.OperatingSystem(sql.FieldEQ(FieldLastBootupTime, v))
 }
 
+// Domain applies equality check predicate on the "domain" field. It's identical to DomainEQ.
+func Domain(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldEQ(FieldDomain, v))
+}
+
 // TypeEQ applies the EQ predicate on the "type" field.
 func TypeEQ(v string) predicate.OperatingSystem {
 	return predicate.OperatingSystem(sql.FieldEQ(FieldType, v))
@@ -613,6 +618,81 @@ func LastBootupTimeIsNil() predicate.OperatingSystem {
 // LastBootupTimeNotNil applies the NotNil predicate on the "last_bootup_time" field.
 func LastBootupTimeNotNil() predicate.OperatingSystem {
 	return predicate.OperatingSystem(sql.FieldNotNull(FieldLastBootupTime))
+}
+
+// DomainEQ applies the EQ predicate on the "domain" field.
+func DomainEQ(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldEQ(FieldDomain, v))
+}
+
+// DomainNEQ applies the NEQ predicate on the "domain" field.
+func DomainNEQ(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldNEQ(FieldDomain, v))
+}
+
+// DomainIn applies the In predicate on the "domain" field.
+func DomainIn(vs ...string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldIn(FieldDomain, vs...))
+}
+
+// DomainNotIn applies the NotIn predicate on the "domain" field.
+func DomainNotIn(vs ...string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldNotIn(FieldDomain, vs...))
+}
+
+// DomainGT applies the GT predicate on the "domain" field.
+func DomainGT(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldGT(FieldDomain, v))
+}
+
+// DomainGTE applies the GTE predicate on the "domain" field.
+func DomainGTE(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldGTE(FieldDomain, v))
+}
+
+// DomainLT applies the LT predicate on the "domain" field.
+func DomainLT(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldLT(FieldDomain, v))
+}
+
+// DomainLTE applies the LTE predicate on the "domain" field.
+func DomainLTE(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldLTE(FieldDomain, v))
+}
+
+// DomainContains applies the Contains predicate on the "domain" field.
+func DomainContains(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldContains(FieldDomain, v))
+}
+
+// DomainHasPrefix applies the HasPrefix predicate on the "domain" field.
+func DomainHasPrefix(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldHasPrefix(FieldDomain, v))
+}
+
+// DomainHasSuffix applies the HasSuffix predicate on the "domain" field.
+func DomainHasSuffix(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldHasSuffix(FieldDomain, v))
+}
+
+// DomainIsNil applies the IsNil predicate on the "domain" field.
+func DomainIsNil() predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldIsNull(FieldDomain))
+}
+
+// DomainNotNil applies the NotNil predicate on the "domain" field.
+func DomainNotNil() predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldNotNull(FieldDomain))
+}
+
+// DomainEqualFold applies the EqualFold predicate on the "domain" field.
+func DomainEqualFold(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldEqualFold(FieldDomain, v))
+}
+
+// DomainContainsFold applies the ContainsFold predicate on the "domain" field.
+func DomainContainsFold(v string) predicate.OperatingSystem {
+	return predicate.OperatingSystem(sql.FieldContainsFold(FieldDomain, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

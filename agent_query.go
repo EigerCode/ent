@@ -21,6 +21,7 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/physicaldisk"
@@ -63,6 +64,7 @@ type AgentQuery struct {
 	withProfileissue        *ProfileIssueQuery
 	withSite                *SiteQuery
 	withPhysicaldisks       *PhysicalDiskQuery
+	withNetbird             *NetbirdQuery
 	withFKs                 bool
 	modifiers               []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -541,6 +543,28 @@ func (aq *AgentQuery) QueryPhysicaldisks() *PhysicalDiskQuery {
 	return query
 }
 
+// QueryNetbird chains the current query on the "netbird" edge.
+func (aq *AgentQuery) QueryNetbird() *NetbirdQuery {
+	query := (&NetbirdClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, selector),
+			sqlgraph.To(netbird.Table, netbird.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, agent.NetbirdTable, agent.NetbirdColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Agent entity from the query.
 // Returns a *NotFoundError when no Agent was found.
 func (aq *AgentQuery) First(ctx context.Context) (*Agent, error) {
@@ -753,6 +777,7 @@ func (aq *AgentQuery) Clone() *AgentQuery {
 		withProfileissue:        aq.withProfileissue.Clone(),
 		withSite:                aq.withSite.Clone(),
 		withPhysicaldisks:       aq.withPhysicaldisks.Clone(),
+		withNetbird:             aq.withNetbird.Clone(),
 		// clone intermediate query.
 		sql:       aq.sql.Clone(),
 		path:      aq.path,
@@ -980,6 +1005,17 @@ func (aq *AgentQuery) WithPhysicaldisks(opts ...func(*PhysicalDiskQuery)) *Agent
 	return aq
 }
 
+// WithNetbird tells the query-builder to eager-load the nodes that are connected to
+// the "netbird" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AgentQuery) WithNetbird(opts ...func(*NetbirdQuery)) *AgentQuery {
+	query := (&NetbirdClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withNetbird = query
+	return aq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1059,7 +1095,7 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 		nodes       = []*Agent{}
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
-		loadedTypes = [20]bool{
+		loadedTypes = [21]bool{
 			aq.withComputer != nil,
 			aq.withOperatingsystem != nil,
 			aq.withSystemupdate != nil,
@@ -1080,6 +1116,7 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 			aq.withProfileissue != nil,
 			aq.withSite != nil,
 			aq.withPhysicaldisks != nil,
+			aq.withNetbird != nil,
 		}
 	)
 	if aq.withRelease != nil {
@@ -1243,6 +1280,12 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 		if err := aq.loadPhysicaldisks(ctx, query, nodes,
 			func(n *Agent) { n.Edges.Physicaldisks = []*PhysicalDisk{} },
 			func(n *Agent, e *PhysicalDisk) { n.Edges.Physicaldisks = append(n.Edges.Physicaldisks, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withNetbird; query != nil {
+		if err := aq.loadNetbird(ctx, query, nodes, nil,
+			func(n *Agent, e *Netbird) { n.Edges.Netbird = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -1913,6 +1956,34 @@ func (aq *AgentQuery) loadPhysicaldisks(ctx context.Context, query *PhysicalDisk
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "agent_physicaldisks" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (aq *AgentQuery) loadNetbird(ctx context.Context, query *NetbirdQuery, nodes []*Agent, init func(*Agent), assign func(*Agent, *Netbird)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Agent)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.Netbird(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(agent.NetbirdColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.agent_netbird
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "agent_netbird" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "agent_netbird" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -25,6 +25,7 @@ func (NetworkAdapter) Fields() []ent.Field {
 		field.Time("dhcp_lease_obtained").Optional(),
 		field.Time("dhcp_lease_expired").Optional(),
 		field.String("speed"),
+		field.Bool("virtual").Optional().Default(false),
 	}
 }
 

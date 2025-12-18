@@ -21,6 +21,7 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/physicaldisk"
@@ -433,6 +434,20 @@ func (ac *AgentCreate) SetNillableIsFlatpakRustdesk(b *bool) *AgentCreate {
 	return ac
 }
 
+// SetWan sets the "wan" field.
+func (ac *AgentCreate) SetWan(s string) *AgentCreate {
+	ac.mutation.SetWan(s)
+	return ac
+}
+
+// SetNillableWan sets the "wan" field if the given value is not nil.
+func (ac *AgentCreate) SetNillableWan(s *string) *AgentCreate {
+	if s != nil {
+		ac.SetWan(*s)
+	}
+	return ac
+}
+
 // SetID sets the "id" field.
 func (ac *AgentCreate) SetID(s string) *AgentCreate {
 	ac.mutation.SetID(s)
@@ -759,6 +774,25 @@ func (ac *AgentCreate) AddPhysicaldisks(p ...*PhysicalDisk) *AgentCreate {
 	return ac.AddPhysicaldiskIDs(ids...)
 }
 
+// SetNetbirdID sets the "netbird" edge to the Netbird entity by ID.
+func (ac *AgentCreate) SetNetbirdID(id int) *AgentCreate {
+	ac.mutation.SetNetbirdID(id)
+	return ac
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the Netbird entity by ID if the given value is not nil.
+func (ac *AgentCreate) SetNillableNetbirdID(id *int) *AgentCreate {
+	if id != nil {
+		ac = ac.SetNetbirdID(*id)
+	}
+	return ac
+}
+
+// SetNetbird sets the "netbird" edge to the Netbird entity.
+func (ac *AgentCreate) SetNetbird(n *Netbird) *AgentCreate {
+	return ac.SetNetbirdID(n.ID)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (ac *AgentCreate) Mutation() *AgentMutation {
 	return ac.mutation
@@ -886,6 +920,10 @@ func (ac *AgentCreate) defaults() {
 		v := agent.DefaultIsFlatpakRustdesk
 		ac.mutation.SetIsFlatpakRustdesk(v)
 	}
+	if _, ok := ac.mutation.Wan(); !ok {
+		v := agent.DefaultWan
+		ac.mutation.SetWan(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -921,6 +959,9 @@ func (ac *AgentCreate) check() error {
 		if err := agent.EndpointTypeValidator(v); err != nil {
 			return &ValidationError{Name: "endpoint_type", err: fmt.Errorf(`ent: validator failed for field "Agent.endpoint_type": %w`, err)}
 		}
+	}
+	if _, ok := ac.mutation.Wan(); !ok {
+		return &ValidationError{Name: "wan", err: errors.New(`ent: missing required field "Agent.wan"`)}
 	}
 	if v, ok := ac.mutation.ID(); ok {
 		if err := agent.IDValidator(v); err != nil {
@@ -1078,6 +1119,10 @@ func (ac *AgentCreate) createSpec() (*Agent, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.IsFlatpakRustdesk(); ok {
 		_spec.SetField(agent.FieldIsFlatpakRustdesk, field.TypeBool, value)
 		_node.IsFlatpakRustdesk = value
+	}
+	if value, ok := ac.mutation.Wan(); ok {
+		_spec.SetField(agent.FieldWan, field.TypeString, value)
+		_node.Wan = value
 	}
 	if nodes := ac.mutation.ComputerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1393,6 +1438,22 @@ func (ac *AgentCreate) createSpec() (*Agent, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(physicaldisk.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NetbirdTable,
+			Columns: []string{agent.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1947,6 +2008,18 @@ func (u *AgentUpsert) UpdateIsFlatpakRustdesk() *AgentUpsert {
 // ClearIsFlatpakRustdesk clears the value of the "is_flatpak_rustdesk" field.
 func (u *AgentUpsert) ClearIsFlatpakRustdesk() *AgentUpsert {
 	u.SetNull(agent.FieldIsFlatpakRustdesk)
+	return u
+}
+
+// SetWan sets the "wan" field.
+func (u *AgentUpsert) SetWan(v string) *AgentUpsert {
+	u.Set(agent.FieldWan, v)
+	return u
+}
+
+// UpdateWan sets the "wan" field to the value that was provided on create.
+func (u *AgentUpsert) UpdateWan() *AgentUpsert {
+	u.SetExcluded(agent.FieldWan)
 	return u
 }
 
@@ -2576,6 +2649,20 @@ func (u *AgentUpsertOne) UpdateIsFlatpakRustdesk() *AgentUpsertOne {
 func (u *AgentUpsertOne) ClearIsFlatpakRustdesk() *AgentUpsertOne {
 	return u.Update(func(s *AgentUpsert) {
 		s.ClearIsFlatpakRustdesk()
+	})
+}
+
+// SetWan sets the "wan" field.
+func (u *AgentUpsertOne) SetWan(v string) *AgentUpsertOne {
+	return u.Update(func(s *AgentUpsert) {
+		s.SetWan(v)
+	})
+}
+
+// UpdateWan sets the "wan" field to the value that was provided on create.
+func (u *AgentUpsertOne) UpdateWan() *AgentUpsertOne {
+	return u.Update(func(s *AgentUpsert) {
+		s.UpdateWan()
 	})
 }
 
@@ -3372,6 +3459,20 @@ func (u *AgentUpsertBulk) UpdateIsFlatpakRustdesk() *AgentUpsertBulk {
 func (u *AgentUpsertBulk) ClearIsFlatpakRustdesk() *AgentUpsertBulk {
 	return u.Update(func(s *AgentUpsert) {
 		s.ClearIsFlatpakRustdesk()
+	})
+}
+
+// SetWan sets the "wan" field.
+func (u *AgentUpsertBulk) SetWan(v string) *AgentUpsertBulk {
+	return u.Update(func(s *AgentUpsert) {
+		s.SetWan(v)
+	})
+}
+
+// UpdateWan sets the "wan" field to the value that was provided on create.
+func (u *AgentUpsertBulk) UpdateWan() *AgentUpsertBulk {
+	return u.Update(func(s *AgentUpsert) {
+		s.UpdateWan()
 	})
 }
 

@@ -110,6 +110,11 @@ func Speed(v string) predicate.NetworkAdapter {
 	return predicate.NetworkAdapter(sql.FieldEQ(FieldSpeed, v))
 }
 
+// Virtual applies equality check predicate on the "virtual" field. It's identical to VirtualEQ.
+func Virtual(v bool) predicate.NetworkAdapter {
+	return predicate.NetworkAdapter(sql.FieldEQ(FieldVirtual, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.NetworkAdapter {
 	return predicate.NetworkAdapter(sql.FieldEQ(FieldName, v))
@@ -788,6 +793,26 @@ func SpeedEqualFold(v string) predicate.NetworkAdapter {
 // SpeedContainsFold applies the ContainsFold predicate on the "speed" field.
 func SpeedContainsFold(v string) predicate.NetworkAdapter {
 	return predicate.NetworkAdapter(sql.FieldContainsFold(FieldSpeed, v))
+}
+
+// VirtualEQ applies the EQ predicate on the "virtual" field.
+func VirtualEQ(v bool) predicate.NetworkAdapter {
+	return predicate.NetworkAdapter(sql.FieldEQ(FieldVirtual, v))
+}
+
+// VirtualNEQ applies the NEQ predicate on the "virtual" field.
+func VirtualNEQ(v bool) predicate.NetworkAdapter {
+	return predicate.NetworkAdapter(sql.FieldNEQ(FieldVirtual, v))
+}
+
+// VirtualIsNil applies the IsNil predicate on the "virtual" field.
+func VirtualIsNil() predicate.NetworkAdapter {
+	return predicate.NetworkAdapter(sql.FieldIsNull(FieldVirtual))
+}
+
+// VirtualNotNil applies the NotNil predicate on the "virtual" field.
+func VirtualNotNil() predicate.NetworkAdapter {
+	return predicate.NetworkAdapter(sql.FieldNotNull(FieldVirtual))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

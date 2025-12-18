@@ -34,6 +34,8 @@ type OperatingSystem struct {
 	Username string `json:"username,omitempty"`
 	// LastBootupTime holds the value of the "last_bootup_time" field.
 	LastBootupTime time.Time `json:"last_bootup_time,omitempty"`
+	// Domain holds the value of the "domain" field.
+	Domain string `json:"domain,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OperatingSystemQuery when eager-loading is set.
 	Edges                 OperatingSystemEdges `json:"edges"`
@@ -68,7 +70,7 @@ func (*OperatingSystem) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case operatingsystem.FieldID:
 			values[i] = new(sql.NullInt64)
-		case operatingsystem.FieldType, operatingsystem.FieldVersion, operatingsystem.FieldDescription, operatingsystem.FieldEdition, operatingsystem.FieldArch, operatingsystem.FieldUsername:
+		case operatingsystem.FieldType, operatingsystem.FieldVersion, operatingsystem.FieldDescription, operatingsystem.FieldEdition, operatingsystem.FieldArch, operatingsystem.FieldUsername, operatingsystem.FieldDomain:
 			values[i] = new(sql.NullString)
 		case operatingsystem.FieldInstallDate, operatingsystem.FieldLastBootupTime:
 			values[i] = new(sql.NullTime)
@@ -143,6 +145,12 @@ func (os *OperatingSystem) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				os.LastBootupTime = value.Time
 			}
+		case operatingsystem.FieldDomain:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field domain", values[i])
+			} else if value.Valid {
+				os.Domain = value.String
+			}
 		case operatingsystem.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field agent_operatingsystem", values[i])
@@ -214,6 +222,9 @@ func (os *OperatingSystem) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("last_bootup_time=")
 	builder.WriteString(os.LastBootupTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("domain=")
+	builder.WriteString(os.Domain)
 	builder.WriteByte(')')
 	return builder.String()
 }

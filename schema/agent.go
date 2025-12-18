@@ -48,6 +48,7 @@ func (Agent) Fields() []ent.Field {
 		field.Bool("has_rustdesk").Optional().Default(false),
 		field.Bool("is_wayland").Optional().Default(false),
 		field.Bool("is_flatpak_rustdesk").Optional().Default(false),
+		field.String("wan").Default(""),
 	}
 }
 
@@ -74,6 +75,7 @@ func (Agent) Edges() []ent.Edge {
 		edge.From("profileissue", ProfileIssue.Type).Ref("agents"),
 		edge.From("site", Site.Type).Ref("agents"),
 		edge.To("physicaldisks", PhysicalDisk.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("netbird", Netbird.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }
 

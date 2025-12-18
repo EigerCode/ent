@@ -226,6 +226,26 @@ func (nau *NetworkAdapterUpdate) SetNillableSpeed(s *string) *NetworkAdapterUpda
 	return nau
 }
 
+// SetVirtual sets the "virtual" field.
+func (nau *NetworkAdapterUpdate) SetVirtual(b bool) *NetworkAdapterUpdate {
+	nau.mutation.SetVirtual(b)
+	return nau
+}
+
+// SetNillableVirtual sets the "virtual" field if the given value is not nil.
+func (nau *NetworkAdapterUpdate) SetNillableVirtual(b *bool) *NetworkAdapterUpdate {
+	if b != nil {
+		nau.SetVirtual(*b)
+	}
+	return nau
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (nau *NetworkAdapterUpdate) ClearVirtual() *NetworkAdapterUpdate {
+	nau.mutation.ClearVirtual()
+	return nau
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (nau *NetworkAdapterUpdate) SetOwnerID(id string) *NetworkAdapterUpdate {
 	nau.mutation.SetOwnerID(id)
@@ -354,6 +374,12 @@ func (nau *NetworkAdapterUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if value, ok := nau.mutation.Speed(); ok {
 		_spec.SetField(networkadapter.FieldSpeed, field.TypeString, value)
+	}
+	if value, ok := nau.mutation.Virtual(); ok {
+		_spec.SetField(networkadapter.FieldVirtual, field.TypeBool, value)
+	}
+	if nau.mutation.VirtualCleared() {
+		_spec.ClearField(networkadapter.FieldVirtual, field.TypeBool)
 	}
 	if nau.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -602,6 +628,26 @@ func (nauo *NetworkAdapterUpdateOne) SetNillableSpeed(s *string) *NetworkAdapter
 	return nauo
 }
 
+// SetVirtual sets the "virtual" field.
+func (nauo *NetworkAdapterUpdateOne) SetVirtual(b bool) *NetworkAdapterUpdateOne {
+	nauo.mutation.SetVirtual(b)
+	return nauo
+}
+
+// SetNillableVirtual sets the "virtual" field if the given value is not nil.
+func (nauo *NetworkAdapterUpdateOne) SetNillableVirtual(b *bool) *NetworkAdapterUpdateOne {
+	if b != nil {
+		nauo.SetVirtual(*b)
+	}
+	return nauo
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (nauo *NetworkAdapterUpdateOne) ClearVirtual() *NetworkAdapterUpdateOne {
+	nauo.mutation.ClearVirtual()
+	return nauo
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (nauo *NetworkAdapterUpdateOne) SetOwnerID(id string) *NetworkAdapterUpdateOne {
 	nauo.mutation.SetOwnerID(id)
@@ -760,6 +806,12 @@ func (nauo *NetworkAdapterUpdateOne) sqlSave(ctx context.Context) (_node *Networ
 	}
 	if value, ok := nauo.mutation.Speed(); ok {
 		_spec.SetField(networkadapter.FieldSpeed, field.TypeString, value)
+	}
+	if value, ok := nauo.mutation.Virtual(); ok {
+		_spec.SetField(networkadapter.FieldVirtual, field.TypeBool, value)
+	}
+	if nauo.mutation.VirtualCleared() {
+		_spec.ClearField(networkadapter.FieldVirtual, field.TypeBool)
 	}
 	if nauo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/rustdesk"
 	"github.com/open-uem/ent/settings"
@@ -160,6 +161,25 @@ func (tc *TenantCreate) AddRustdesk(r ...*Rustdesk) *TenantCreate {
 		ids[i] = r[i].ID
 	}
 	return tc.AddRustdeskIDs(ids...)
+}
+
+// SetNetbirdID sets the "netbird" edge to the NetbirdSettings entity by ID.
+func (tc *TenantCreate) SetNetbirdID(id int) *TenantCreate {
+	tc.mutation.SetNetbirdID(id)
+	return tc
+}
+
+// SetNillableNetbirdID sets the "netbird" edge to the NetbirdSettings entity by ID if the given value is not nil.
+func (tc *TenantCreate) SetNillableNetbirdID(id *int) *TenantCreate {
+	if id != nil {
+		tc = tc.SetNetbirdID(*id)
+	}
+	return tc
+}
+
+// SetNetbird sets the "netbird" edge to the NetbirdSettings entity.
+func (tc *TenantCreate) SetNetbird(n *NetbirdSettings) *TenantCreate {
+	return tc.SetNetbirdID(n.ID)
 }
 
 // Mutation returns the TenantMutation object of the builder.
@@ -330,6 +350,23 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.NetbirdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NetbirdTable,
+			Columns: []string{tenant.NetbirdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.tenant_netbird = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

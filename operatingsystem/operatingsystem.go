@@ -28,6 +28,8 @@ const (
 	FieldUsername = "username"
 	// FieldLastBootupTime holds the string denoting the last_bootup_time field in the database.
 	FieldLastBootupTime = "last_bootup_time"
+	// FieldDomain holds the string denoting the domain field in the database.
+	FieldDomain = "domain"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// AgentFieldID holds the string denoting the ID field of the Agent.
@@ -54,6 +56,7 @@ var Columns = []string{
 	FieldArch,
 	FieldUsername,
 	FieldLastBootupTime,
+	FieldDomain,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "operating_systems"
@@ -123,6 +126,11 @@ func ByUsername(opts ...sql.OrderTermOption) OrderOption {
 // ByLastBootupTime orders the results by the last_bootup_time field.
 func ByLastBootupTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastBootupTime, opts...).ToFunc()
+}
+
+// ByDomain orders the results by the domain field.
+func ByDomain(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDomain, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

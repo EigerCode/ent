@@ -111,6 +111,20 @@ func (osc *OperatingSystemCreate) SetNillableLastBootupTime(t *time.Time) *Opera
 	return osc
 }
 
+// SetDomain sets the "domain" field.
+func (osc *OperatingSystemCreate) SetDomain(s string) *OperatingSystemCreate {
+	osc.mutation.SetDomain(s)
+	return osc
+}
+
+// SetNillableDomain sets the "domain" field if the given value is not nil.
+func (osc *OperatingSystemCreate) SetNillableDomain(s *string) *OperatingSystemCreate {
+	if s != nil {
+		osc.SetDomain(*s)
+	}
+	return osc
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (osc *OperatingSystemCreate) SetOwnerID(id string) *OperatingSystemCreate {
 	osc.mutation.SetOwnerID(id)
@@ -226,6 +240,10 @@ func (osc *OperatingSystemCreate) createSpec() (*OperatingSystem, *sqlgraph.Crea
 	if value, ok := osc.mutation.LastBootupTime(); ok {
 		_spec.SetField(operatingsystem.FieldLastBootupTime, field.TypeTime, value)
 		_node.LastBootupTime = value
+	}
+	if value, ok := osc.mutation.Domain(); ok {
+		_spec.SetField(operatingsystem.FieldDomain, field.TypeString, value)
+		_node.Domain = value
 	}
 	if nodes := osc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -422,6 +440,24 @@ func (u *OperatingSystemUpsert) ClearLastBootupTime() *OperatingSystemUpsert {
 	return u
 }
 
+// SetDomain sets the "domain" field.
+func (u *OperatingSystemUpsert) SetDomain(v string) *OperatingSystemUpsert {
+	u.Set(operatingsystem.FieldDomain, v)
+	return u
+}
+
+// UpdateDomain sets the "domain" field to the value that was provided on create.
+func (u *OperatingSystemUpsert) UpdateDomain() *OperatingSystemUpsert {
+	u.SetExcluded(operatingsystem.FieldDomain)
+	return u
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (u *OperatingSystemUpsert) ClearDomain() *OperatingSystemUpsert {
+	u.SetNull(operatingsystem.FieldDomain)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -606,6 +642,27 @@ func (u *OperatingSystemUpsertOne) UpdateLastBootupTime() *OperatingSystemUpsert
 func (u *OperatingSystemUpsertOne) ClearLastBootupTime() *OperatingSystemUpsertOne {
 	return u.Update(func(s *OperatingSystemUpsert) {
 		s.ClearLastBootupTime()
+	})
+}
+
+// SetDomain sets the "domain" field.
+func (u *OperatingSystemUpsertOne) SetDomain(v string) *OperatingSystemUpsertOne {
+	return u.Update(func(s *OperatingSystemUpsert) {
+		s.SetDomain(v)
+	})
+}
+
+// UpdateDomain sets the "domain" field to the value that was provided on create.
+func (u *OperatingSystemUpsertOne) UpdateDomain() *OperatingSystemUpsertOne {
+	return u.Update(func(s *OperatingSystemUpsert) {
+		s.UpdateDomain()
+	})
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (u *OperatingSystemUpsertOne) ClearDomain() *OperatingSystemUpsertOne {
+	return u.Update(func(s *OperatingSystemUpsert) {
+		s.ClearDomain()
 	})
 }
 
@@ -956,6 +1013,27 @@ func (u *OperatingSystemUpsertBulk) UpdateLastBootupTime() *OperatingSystemUpser
 func (u *OperatingSystemUpsertBulk) ClearLastBootupTime() *OperatingSystemUpsertBulk {
 	return u.Update(func(s *OperatingSystemUpsert) {
 		s.ClearLastBootupTime()
+	})
+}
+
+// SetDomain sets the "domain" field.
+func (u *OperatingSystemUpsertBulk) SetDomain(v string) *OperatingSystemUpsertBulk {
+	return u.Update(func(s *OperatingSystemUpsert) {
+		s.SetDomain(v)
+	})
+}
+
+// UpdateDomain sets the "domain" field to the value that was provided on create.
+func (u *OperatingSystemUpsertBulk) UpdateDomain() *OperatingSystemUpsertBulk {
+	return u.Update(func(s *OperatingSystemUpsert) {
+		s.UpdateDomain()
+	})
+}
+
+// ClearDomain clears the value of the "domain" field.
+func (u *OperatingSystemUpsertBulk) ClearDomain() *OperatingSystemUpsertBulk {
+	return u.Update(func(s *OperatingSystemUpsert) {
+		s.ClearDomain()
 	})
 }
 

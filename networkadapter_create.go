@@ -145,6 +145,20 @@ func (nac *NetworkAdapterCreate) SetSpeed(s string) *NetworkAdapterCreate {
 	return nac
 }
 
+// SetVirtual sets the "virtual" field.
+func (nac *NetworkAdapterCreate) SetVirtual(b bool) *NetworkAdapterCreate {
+	nac.mutation.SetVirtual(b)
+	return nac
+}
+
+// SetNillableVirtual sets the "virtual" field if the given value is not nil.
+func (nac *NetworkAdapterCreate) SetNillableVirtual(b *bool) *NetworkAdapterCreate {
+	if b != nil {
+		nac.SetVirtual(*b)
+	}
+	return nac
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (nac *NetworkAdapterCreate) SetOwnerID(id string) *NetworkAdapterCreate {
 	nac.mutation.SetOwnerID(id)
@@ -163,6 +177,7 @@ func (nac *NetworkAdapterCreate) Mutation() *NetworkAdapterMutation {
 
 // Save creates the NetworkAdapter in the database.
 func (nac *NetworkAdapterCreate) Save(ctx context.Context) (*NetworkAdapter, error) {
+	nac.defaults()
 	return withHooks(ctx, nac.sqlSave, nac.mutation, nac.hooks)
 }
 
@@ -185,6 +200,14 @@ func (nac *NetworkAdapterCreate) Exec(ctx context.Context) error {
 func (nac *NetworkAdapterCreate) ExecX(ctx context.Context) {
 	if err := nac.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (nac *NetworkAdapterCreate) defaults() {
+	if _, ok := nac.mutation.Virtual(); !ok {
+		v := networkadapter.DefaultVirtual
+		nac.mutation.SetVirtual(v)
 	}
 }
 
@@ -275,6 +298,10 @@ func (nac *NetworkAdapterCreate) createSpec() (*NetworkAdapter, *sqlgraph.Create
 	if value, ok := nac.mutation.Speed(); ok {
 		_spec.SetField(networkadapter.FieldSpeed, field.TypeString, value)
 		_node.Speed = value
+	}
+	if value, ok := nac.mutation.Virtual(); ok {
+		_spec.SetField(networkadapter.FieldVirtual, field.TypeBool, value)
+		_node.Virtual = value
 	}
 	if nodes := nac.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -516,6 +543,24 @@ func (u *NetworkAdapterUpsert) SetSpeed(v string) *NetworkAdapterUpsert {
 // UpdateSpeed sets the "speed" field to the value that was provided on create.
 func (u *NetworkAdapterUpsert) UpdateSpeed() *NetworkAdapterUpsert {
 	u.SetExcluded(networkadapter.FieldSpeed)
+	return u
+}
+
+// SetVirtual sets the "virtual" field.
+func (u *NetworkAdapterUpsert) SetVirtual(v bool) *NetworkAdapterUpsert {
+	u.Set(networkadapter.FieldVirtual, v)
+	return u
+}
+
+// UpdateVirtual sets the "virtual" field to the value that was provided on create.
+func (u *NetworkAdapterUpsert) UpdateVirtual() *NetworkAdapterUpsert {
+	u.SetExcluded(networkadapter.FieldVirtual)
+	return u
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (u *NetworkAdapterUpsert) ClearVirtual() *NetworkAdapterUpsert {
+	u.SetNull(networkadapter.FieldVirtual)
 	return u
 }
 
@@ -762,6 +807,27 @@ func (u *NetworkAdapterUpsertOne) UpdateSpeed() *NetworkAdapterUpsertOne {
 	})
 }
 
+// SetVirtual sets the "virtual" field.
+func (u *NetworkAdapterUpsertOne) SetVirtual(v bool) *NetworkAdapterUpsertOne {
+	return u.Update(func(s *NetworkAdapterUpsert) {
+		s.SetVirtual(v)
+	})
+}
+
+// UpdateVirtual sets the "virtual" field to the value that was provided on create.
+func (u *NetworkAdapterUpsertOne) UpdateVirtual() *NetworkAdapterUpsertOne {
+	return u.Update(func(s *NetworkAdapterUpsert) {
+		s.UpdateVirtual()
+	})
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (u *NetworkAdapterUpsertOne) ClearVirtual() *NetworkAdapterUpsertOne {
+	return u.Update(func(s *NetworkAdapterUpsert) {
+		s.ClearVirtual()
+	})
+}
+
 // Exec executes the query.
 func (u *NetworkAdapterUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -814,6 +880,7 @@ func (nacb *NetworkAdapterCreateBulk) Save(ctx context.Context) ([]*NetworkAdapt
 	for i := range nacb.builders {
 		func(i int, root context.Context) {
 			builder := nacb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*NetworkAdapterMutation)
 				if !ok {
@@ -1165,6 +1232,27 @@ func (u *NetworkAdapterUpsertBulk) SetSpeed(v string) *NetworkAdapterUpsertBulk 
 func (u *NetworkAdapterUpsertBulk) UpdateSpeed() *NetworkAdapterUpsertBulk {
 	return u.Update(func(s *NetworkAdapterUpsert) {
 		s.UpdateSpeed()
+	})
+}
+
+// SetVirtual sets the "virtual" field.
+func (u *NetworkAdapterUpsertBulk) SetVirtual(v bool) *NetworkAdapterUpsertBulk {
+	return u.Update(func(s *NetworkAdapterUpsert) {
+		s.SetVirtual(v)
+	})
+}
+
+// UpdateVirtual sets the "virtual" field to the value that was provided on create.
+func (u *NetworkAdapterUpsertBulk) UpdateVirtual() *NetworkAdapterUpsertBulk {
+	return u.Update(func(s *NetworkAdapterUpsert) {
+		s.UpdateVirtual()
+	})
+}
+
+// ClearVirtual clears the value of the "virtual" field.
+func (u *NetworkAdapterUpsertBulk) ClearVirtual() *NetworkAdapterUpsertBulk {
+	return u.Update(func(s *NetworkAdapterUpsert) {
+		s.ClearVirtual()
 	})
 }
 

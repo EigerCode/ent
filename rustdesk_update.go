@@ -169,6 +169,53 @@ func (ru *RustdeskUpdate) ClearDirectIPAccess() *RustdeskUpdate {
 	return ru
 }
 
+// SetVerificationMethod sets the "verification_method" field.
+func (ru *RustdeskUpdate) SetVerificationMethod(rm rustdesk.VerificationMethod) *RustdeskUpdate {
+	ru.mutation.SetVerificationMethod(rm)
+	return ru
+}
+
+// SetNillableVerificationMethod sets the "verification_method" field if the given value is not nil.
+func (ru *RustdeskUpdate) SetNillableVerificationMethod(rm *rustdesk.VerificationMethod) *RustdeskUpdate {
+	if rm != nil {
+		ru.SetVerificationMethod(*rm)
+	}
+	return ru
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (ru *RustdeskUpdate) ClearVerificationMethod() *RustdeskUpdate {
+	ru.mutation.ClearVerificationMethod()
+	return ru
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (ru *RustdeskUpdate) SetTemporaryPasswordLength(i int) *RustdeskUpdate {
+	ru.mutation.ResetTemporaryPasswordLength()
+	ru.mutation.SetTemporaryPasswordLength(i)
+	return ru
+}
+
+// SetNillableTemporaryPasswordLength sets the "temporary_password_length" field if the given value is not nil.
+func (ru *RustdeskUpdate) SetNillableTemporaryPasswordLength(i *int) *RustdeskUpdate {
+	if i != nil {
+		ru.SetTemporaryPasswordLength(*i)
+	}
+	return ru
+}
+
+// AddTemporaryPasswordLength adds i to the "temporary_password_length" field.
+func (ru *RustdeskUpdate) AddTemporaryPasswordLength(i int) *RustdeskUpdate {
+	ru.mutation.AddTemporaryPasswordLength(i)
+	return ru
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (ru *RustdeskUpdate) ClearTemporaryPasswordLength() *RustdeskUpdate {
+	ru.mutation.ClearTemporaryPasswordLength()
+	return ru
+}
+
 // AddTenantIDs adds the "tenant" edge to the Tenant entity by IDs.
 func (ru *RustdeskUpdate) AddTenantIDs(ids ...int) *RustdeskUpdate {
 	ru.mutation.AddTenantIDs(ids...)
@@ -237,6 +284,16 @@ func (ru *RustdeskUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ru *RustdeskUpdate) check() error {
+	if v, ok := ru.mutation.VerificationMethod(); ok {
+		if err := rustdesk.VerificationMethodValidator(v); err != nil {
+			return &ValidationError{Name: "verification_method", err: fmt.Errorf(`ent: validator failed for field "Rustdesk.verification_method": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (ru *RustdeskUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RustdeskUpdate {
 	ru.modifiers = append(ru.modifiers, modifiers...)
@@ -244,6 +301,9 @@ func (ru *RustdeskUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Rustd
 }
 
 func (ru *RustdeskUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := ru.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(rustdesk.Table, rustdesk.Columns, sqlgraph.NewFieldSpec(rustdesk.FieldID, field.TypeInt))
 	if ps := ru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -293,6 +353,21 @@ func (ru *RustdeskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ru.mutation.DirectIPAccessCleared() {
 		_spec.ClearField(rustdesk.FieldDirectIPAccess, field.TypeBool)
+	}
+	if value, ok := ru.mutation.VerificationMethod(); ok {
+		_spec.SetField(rustdesk.FieldVerificationMethod, field.TypeEnum, value)
+	}
+	if ru.mutation.VerificationMethodCleared() {
+		_spec.ClearField(rustdesk.FieldVerificationMethod, field.TypeEnum)
+	}
+	if value, ok := ru.mutation.TemporaryPasswordLength(); ok {
+		_spec.SetField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt, value)
+	}
+	if value, ok := ru.mutation.AddedTemporaryPasswordLength(); ok {
+		_spec.AddField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt, value)
+	}
+	if ru.mutation.TemporaryPasswordLengthCleared() {
+		_spec.ClearField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt)
 	}
 	if ru.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -501,6 +576,53 @@ func (ruo *RustdeskUpdateOne) ClearDirectIPAccess() *RustdeskUpdateOne {
 	return ruo
 }
 
+// SetVerificationMethod sets the "verification_method" field.
+func (ruo *RustdeskUpdateOne) SetVerificationMethod(rm rustdesk.VerificationMethod) *RustdeskUpdateOne {
+	ruo.mutation.SetVerificationMethod(rm)
+	return ruo
+}
+
+// SetNillableVerificationMethod sets the "verification_method" field if the given value is not nil.
+func (ruo *RustdeskUpdateOne) SetNillableVerificationMethod(rm *rustdesk.VerificationMethod) *RustdeskUpdateOne {
+	if rm != nil {
+		ruo.SetVerificationMethod(*rm)
+	}
+	return ruo
+}
+
+// ClearVerificationMethod clears the value of the "verification_method" field.
+func (ruo *RustdeskUpdateOne) ClearVerificationMethod() *RustdeskUpdateOne {
+	ruo.mutation.ClearVerificationMethod()
+	return ruo
+}
+
+// SetTemporaryPasswordLength sets the "temporary_password_length" field.
+func (ruo *RustdeskUpdateOne) SetTemporaryPasswordLength(i int) *RustdeskUpdateOne {
+	ruo.mutation.ResetTemporaryPasswordLength()
+	ruo.mutation.SetTemporaryPasswordLength(i)
+	return ruo
+}
+
+// SetNillableTemporaryPasswordLength sets the "temporary_password_length" field if the given value is not nil.
+func (ruo *RustdeskUpdateOne) SetNillableTemporaryPasswordLength(i *int) *RustdeskUpdateOne {
+	if i != nil {
+		ruo.SetTemporaryPasswordLength(*i)
+	}
+	return ruo
+}
+
+// AddTemporaryPasswordLength adds i to the "temporary_password_length" field.
+func (ruo *RustdeskUpdateOne) AddTemporaryPasswordLength(i int) *RustdeskUpdateOne {
+	ruo.mutation.AddTemporaryPasswordLength(i)
+	return ruo
+}
+
+// ClearTemporaryPasswordLength clears the value of the "temporary_password_length" field.
+func (ruo *RustdeskUpdateOne) ClearTemporaryPasswordLength() *RustdeskUpdateOne {
+	ruo.mutation.ClearTemporaryPasswordLength()
+	return ruo
+}
+
 // AddTenantIDs adds the "tenant" edge to the Tenant entity by IDs.
 func (ruo *RustdeskUpdateOne) AddTenantIDs(ids ...int) *RustdeskUpdateOne {
 	ruo.mutation.AddTenantIDs(ids...)
@@ -582,6 +704,16 @@ func (ruo *RustdeskUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (ruo *RustdeskUpdateOne) check() error {
+	if v, ok := ruo.mutation.VerificationMethod(); ok {
+		if err := rustdesk.VerificationMethodValidator(v); err != nil {
+			return &ValidationError{Name: "verification_method", err: fmt.Errorf(`ent: validator failed for field "Rustdesk.verification_method": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (ruo *RustdeskUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *RustdeskUpdateOne {
 	ruo.modifiers = append(ruo.modifiers, modifiers...)
@@ -589,6 +721,9 @@ func (ruo *RustdeskUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *R
 }
 
 func (ruo *RustdeskUpdateOne) sqlSave(ctx context.Context) (_node *Rustdesk, err error) {
+	if err := ruo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(rustdesk.Table, rustdesk.Columns, sqlgraph.NewFieldSpec(rustdesk.FieldID, field.TypeInt))
 	id, ok := ruo.mutation.ID()
 	if !ok {
@@ -655,6 +790,21 @@ func (ruo *RustdeskUpdateOne) sqlSave(ctx context.Context) (_node *Rustdesk, err
 	}
 	if ruo.mutation.DirectIPAccessCleared() {
 		_spec.ClearField(rustdesk.FieldDirectIPAccess, field.TypeBool)
+	}
+	if value, ok := ruo.mutation.VerificationMethod(); ok {
+		_spec.SetField(rustdesk.FieldVerificationMethod, field.TypeEnum, value)
+	}
+	if ruo.mutation.VerificationMethodCleared() {
+		_spec.ClearField(rustdesk.FieldVerificationMethod, field.TypeEnum)
+	}
+	if value, ok := ruo.mutation.TemporaryPasswordLength(); ok {
+		_spec.SetField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt, value)
+	}
+	if value, ok := ruo.mutation.AddedTemporaryPasswordLength(); ok {
+		_spec.AddField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt, value)
+	}
+	if ruo.mutation.TemporaryPasswordLengthCleared() {
+		_spec.ClearField(rustdesk.FieldTemporaryPasswordLength, field.TypeInt)
 	}
 	if ruo.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{
