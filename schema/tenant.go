@@ -19,6 +19,7 @@ func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("description").Optional(),
 		field.Bool("is_default").Optional(),
+		field.String("zitadel_org_id").Optional().Unique().Comment("ZITADEL organization ID for OIDC tenant mapping"),
 		field.Time("created").Optional().Default(time.Now),
 		field.Time("modified").Optional().Default(time.Now).UpdateDefault(time.Now),
 	}
