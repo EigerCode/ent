@@ -33,5 +33,6 @@ func (Tenant) Edges() []ent.Edge {
 		edge.To("metadata", OrgMetadata.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("rustdesk", Rustdesk.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("netbird", NetbirdSettings.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("users", User.Type).Annotations(entsql.Annotation{OnDelete: entsql.SetNull}),
 	}
 }

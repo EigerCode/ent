@@ -50,6 +50,7 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("sessions", Sessions.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("recoverycodes", RecoveryCode.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.From("tenant", Tenant.Type).Ref("users").Unique(),
 	}
 }
 
