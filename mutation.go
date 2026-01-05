@@ -23558,6 +23558,8 @@ type SettingsMutation struct {
 	disable_remote_assistance                    *bool
 	detect_remote_agents                         *bool
 	auto_admit_agents                            *bool
+	default_items_per_page                       *int
+	adddefault_items_per_page                    *int
 	clearedFields                                map[string]struct{}
 	tag                                          *int
 	clearedtag                                   bool
@@ -25577,6 +25579,76 @@ func (m *SettingsMutation) ResetAutoAdmitAgents() {
 	delete(m.clearedFields, settings.FieldAutoAdmitAgents)
 }
 
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (m *SettingsMutation) SetDefaultItemsPerPage(i int) {
+	m.default_items_per_page = &i
+	m.adddefault_items_per_page = nil
+}
+
+// DefaultItemsPerPage returns the value of the "default_items_per_page" field in the mutation.
+func (m *SettingsMutation) DefaultItemsPerPage() (r int, exists bool) {
+	v := m.default_items_per_page
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultItemsPerPage returns the old "default_items_per_page" field's value of the Settings entity.
+// If the Settings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SettingsMutation) OldDefaultItemsPerPage(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultItemsPerPage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultItemsPerPage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultItemsPerPage: %w", err)
+	}
+	return oldValue.DefaultItemsPerPage, nil
+}
+
+// AddDefaultItemsPerPage adds i to the "default_items_per_page" field.
+func (m *SettingsMutation) AddDefaultItemsPerPage(i int) {
+	if m.adddefault_items_per_page != nil {
+		*m.adddefault_items_per_page += i
+	} else {
+		m.adddefault_items_per_page = &i
+	}
+}
+
+// AddedDefaultItemsPerPage returns the value that was added to the "default_items_per_page" field in this mutation.
+func (m *SettingsMutation) AddedDefaultItemsPerPage() (r int, exists bool) {
+	v := m.adddefault_items_per_page
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDefaultItemsPerPage clears the value of the "default_items_per_page" field.
+func (m *SettingsMutation) ClearDefaultItemsPerPage() {
+	m.default_items_per_page = nil
+	m.adddefault_items_per_page = nil
+	m.clearedFields[settings.FieldDefaultItemsPerPage] = struct{}{}
+}
+
+// DefaultItemsPerPageCleared returns if the "default_items_per_page" field was cleared in this mutation.
+func (m *SettingsMutation) DefaultItemsPerPageCleared() bool {
+	_, ok := m.clearedFields[settings.FieldDefaultItemsPerPage]
+	return ok
+}
+
+// ResetDefaultItemsPerPage resets all changes to the "default_items_per_page" field.
+func (m *SettingsMutation) ResetDefaultItemsPerPage() {
+	m.default_items_per_page = nil
+	m.adddefault_items_per_page = nil
+	delete(m.clearedFields, settings.FieldDefaultItemsPerPage)
+}
+
 // SetTagID sets the "tag" edge to the Tag entity by id.
 func (m *SettingsMutation) SetTagID(id int) {
 	m.tag = &id
@@ -25689,7 +25761,7 @@ func (m *SettingsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SettingsMutation) Fields() []string {
-	fields := make([]string, 0, 36)
+	fields := make([]string, 0, 37)
 	if m.language != nil {
 		fields = append(fields, settings.FieldLanguage)
 	}
@@ -25798,6 +25870,9 @@ func (m *SettingsMutation) Fields() []string {
 	if m.auto_admit_agents != nil {
 		fields = append(fields, settings.FieldAutoAdmitAgents)
 	}
+	if m.default_items_per_page != nil {
+		fields = append(fields, settings.FieldDefaultItemsPerPage)
+	}
 	return fields
 }
 
@@ -25878,6 +25953,8 @@ func (m *SettingsMutation) Field(name string) (ent.Value, bool) {
 		return m.DetectRemoteAgents()
 	case settings.FieldAutoAdmitAgents:
 		return m.AutoAdmitAgents()
+	case settings.FieldDefaultItemsPerPage:
+		return m.DefaultItemsPerPage()
 	}
 	return nil, false
 }
@@ -25959,6 +26036,8 @@ func (m *SettingsMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDetectRemoteAgents(ctx)
 	case settings.FieldAutoAdmitAgents:
 		return m.OldAutoAdmitAgents(ctx)
+	case settings.FieldDefaultItemsPerPage:
+		return m.OldDefaultItemsPerPage(ctx)
 	}
 	return nil, fmt.Errorf("unknown Settings field %s", name)
 }
@@ -26220,6 +26299,13 @@ func (m *SettingsMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAutoAdmitAgents(v)
 		return nil
+	case settings.FieldDefaultItemsPerPage:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultItemsPerPage(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Settings field %s", name)
 }
@@ -26249,6 +26335,9 @@ func (m *SettingsMutation) AddedFields() []string {
 	if m.addprofiles_application_frequence_in_minutes != nil {
 		fields = append(fields, settings.FieldProfilesApplicationFrequenceInMinutes)
 	}
+	if m.adddefault_items_per_page != nil {
+		fields = append(fields, settings.FieldDefaultItemsPerPage)
+	}
 	return fields
 }
 
@@ -26271,6 +26360,8 @@ func (m *SettingsMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedAgentReportFrequenceInMinutes()
 	case settings.FieldProfilesApplicationFrequenceInMinutes:
 		return m.AddedProfilesApplicationFrequenceInMinutes()
+	case settings.FieldDefaultItemsPerPage:
+		return m.AddedDefaultItemsPerPage()
 	}
 	return nil, false
 }
@@ -26328,6 +26419,13 @@ func (m *SettingsMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddProfilesApplicationFrequenceInMinutes(v)
+		return nil
+	case settings.FieldDefaultItemsPerPage:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDefaultItemsPerPage(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Settings numeric field %s", name)
@@ -26444,6 +26542,9 @@ func (m *SettingsMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(settings.FieldAutoAdmitAgents) {
 		fields = append(fields, settings.FieldAutoAdmitAgents)
+	}
+	if m.FieldCleared(settings.FieldDefaultItemsPerPage) {
+		fields = append(fields, settings.FieldDefaultItemsPerPage)
 	}
 	return fields
 }
@@ -26567,6 +26668,9 @@ func (m *SettingsMutation) ClearField(name string) error {
 	case settings.FieldAutoAdmitAgents:
 		m.ClearAutoAdmitAgents()
 		return nil
+	case settings.FieldDefaultItemsPerPage:
+		m.ClearDefaultItemsPerPage()
+		return nil
 	}
 	return fmt.Errorf("unknown Settings nullable field %s", name)
 }
@@ -26682,6 +26786,9 @@ func (m *SettingsMutation) ResetField(name string) error {
 		return nil
 	case settings.FieldAutoAdmitAgents:
 		m.ResetAutoAdmitAgents()
+		return nil
+	case settings.FieldDefaultItemsPerPage:
+		m.ResetDefaultItemsPerPage()
 		return nil
 	}
 	return fmt.Errorf("unknown Settings field %s", name)

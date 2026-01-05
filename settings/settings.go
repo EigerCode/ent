@@ -86,6 +86,8 @@ const (
 	FieldDetectRemoteAgents = "detect_remote_agents"
 	// FieldAutoAdmitAgents holds the string denoting the auto_admit_agents field in the database.
 	FieldAutoAdmitAgents = "auto_admit_agents"
+	// FieldDefaultItemsPerPage holds the string denoting the default_items_per_page field in the database.
+	FieldDefaultItemsPerPage = "default_items_per_page"
 	// EdgeTag holds the string denoting the tag edge name in mutations.
 	EdgeTag = "tag"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
@@ -147,6 +149,7 @@ var Columns = []string{
 	FieldDisableRemoteAssistance,
 	FieldDetectRemoteAgents,
 	FieldAutoAdmitAgents,
+	FieldDefaultItemsPerPage,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "settings"
@@ -220,6 +223,8 @@ var (
 	DefaultDetectRemoteAgents bool
 	// DefaultAutoAdmitAgents holds the default value on creation for the "auto_admit_agents" field.
 	DefaultAutoAdmitAgents bool
+	// DefaultDefaultItemsPerPage holds the default value on creation for the "default_items_per_page" field.
+	DefaultDefaultItemsPerPage int
 )
 
 // OrderOption defines the ordering options for the Settings queries.
@@ -408,6 +413,11 @@ func ByDetectRemoteAgents(opts ...sql.OrderTermOption) OrderOption {
 // ByAutoAdmitAgents orders the results by the auto_admit_agents field.
 func ByAutoAdmitAgents(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAutoAdmitAgents, opts...).ToFunc()
+}
+
+// ByDefaultItemsPerPage orders the results by the default_items_per_page field.
+func ByDefaultItemsPerPage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDefaultItemsPerPage, opts...).ToFunc()
 }
 
 // ByTagField orders the results by tag field.

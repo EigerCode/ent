@@ -469,6 +469,10 @@ func init() {
 	settingsDescAutoAdmitAgents := settingsFields[35].Descriptor()
 	// settings.DefaultAutoAdmitAgents holds the default value on creation for the auto_admit_agents field.
 	settings.DefaultAutoAdmitAgents = settingsDescAutoAdmitAgents.Default.(bool)
+	// settingsDescDefaultItemsPerPage is the schema descriptor for default_items_per_page field.
+	settingsDescDefaultItemsPerPage := settingsFields[36].Descriptor()
+	// settings.DefaultDefaultItemsPerPage holds the default value on creation for the default_items_per_page field.
+	settings.DefaultDefaultItemsPerPage = settingsDescDefaultItemsPerPage.Default.(int)
 	siteFields := schema.Site{}.Fields()
 	_ = siteFields
 	// siteDescCreated is the schema descriptor for created field.

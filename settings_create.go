@@ -528,6 +528,20 @@ func (sc *SettingsCreate) SetNillableAutoAdmitAgents(b *bool) *SettingsCreate {
 	return sc
 }
 
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (sc *SettingsCreate) SetDefaultItemsPerPage(i int) *SettingsCreate {
+	sc.mutation.SetDefaultItemsPerPage(i)
+	return sc
+}
+
+// SetNillableDefaultItemsPerPage sets the "default_items_per_page" field if the given value is not nil.
+func (sc *SettingsCreate) SetNillableDefaultItemsPerPage(i *int) *SettingsCreate {
+	if i != nil {
+		sc.SetDefaultItemsPerPage(*i)
+	}
+	return sc
+}
+
 // SetTagID sets the "tag" edge to the Tag entity by ID.
 func (sc *SettingsCreate) SetTagID(id int) *SettingsCreate {
 	sc.mutation.SetTagID(id)
@@ -692,6 +706,10 @@ func (sc *SettingsCreate) defaults() {
 	if _, ok := sc.mutation.AutoAdmitAgents(); !ok {
 		v := settings.DefaultAutoAdmitAgents
 		sc.mutation.SetAutoAdmitAgents(v)
+	}
+	if _, ok := sc.mutation.DefaultItemsPerPage(); !ok {
+		v := settings.DefaultDefaultItemsPerPage
+		sc.mutation.SetDefaultItemsPerPage(v)
 	}
 }
 
@@ -867,6 +885,10 @@ func (sc *SettingsCreate) createSpec() (*Settings, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.AutoAdmitAgents(); ok {
 		_spec.SetField(settings.FieldAutoAdmitAgents, field.TypeBool, value)
 		_node.AutoAdmitAgents = value
+	}
+	if value, ok := sc.mutation.DefaultItemsPerPage(); ok {
+		_spec.SetField(settings.FieldDefaultItemsPerPage, field.TypeInt, value)
+		_node.DefaultItemsPerPage = value
 	}
 	if nodes := sc.mutation.TagIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -1641,6 +1663,30 @@ func (u *SettingsUpsert) UpdateAutoAdmitAgents() *SettingsUpsert {
 // ClearAutoAdmitAgents clears the value of the "auto_admit_agents" field.
 func (u *SettingsUpsert) ClearAutoAdmitAgents() *SettingsUpsert {
 	u.SetNull(settings.FieldAutoAdmitAgents)
+	return u
+}
+
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (u *SettingsUpsert) SetDefaultItemsPerPage(v int) *SettingsUpsert {
+	u.Set(settings.FieldDefaultItemsPerPage, v)
+	return u
+}
+
+// UpdateDefaultItemsPerPage sets the "default_items_per_page" field to the value that was provided on create.
+func (u *SettingsUpsert) UpdateDefaultItemsPerPage() *SettingsUpsert {
+	u.SetExcluded(settings.FieldDefaultItemsPerPage)
+	return u
+}
+
+// AddDefaultItemsPerPage adds v to the "default_items_per_page" field.
+func (u *SettingsUpsert) AddDefaultItemsPerPage(v int) *SettingsUpsert {
+	u.Add(settings.FieldDefaultItemsPerPage, v)
+	return u
+}
+
+// ClearDefaultItemsPerPage clears the value of the "default_items_per_page" field.
+func (u *SettingsUpsert) ClearDefaultItemsPerPage() *SettingsUpsert {
+	u.SetNull(settings.FieldDefaultItemsPerPage)
 	return u
 }
 
@@ -2486,6 +2532,34 @@ func (u *SettingsUpsertOne) UpdateAutoAdmitAgents() *SettingsUpsertOne {
 func (u *SettingsUpsertOne) ClearAutoAdmitAgents() *SettingsUpsertOne {
 	return u.Update(func(s *SettingsUpsert) {
 		s.ClearAutoAdmitAgents()
+	})
+}
+
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (u *SettingsUpsertOne) SetDefaultItemsPerPage(v int) *SettingsUpsertOne {
+	return u.Update(func(s *SettingsUpsert) {
+		s.SetDefaultItemsPerPage(v)
+	})
+}
+
+// AddDefaultItemsPerPage adds v to the "default_items_per_page" field.
+func (u *SettingsUpsertOne) AddDefaultItemsPerPage(v int) *SettingsUpsertOne {
+	return u.Update(func(s *SettingsUpsert) {
+		s.AddDefaultItemsPerPage(v)
+	})
+}
+
+// UpdateDefaultItemsPerPage sets the "default_items_per_page" field to the value that was provided on create.
+func (u *SettingsUpsertOne) UpdateDefaultItemsPerPage() *SettingsUpsertOne {
+	return u.Update(func(s *SettingsUpsert) {
+		s.UpdateDefaultItemsPerPage()
+	})
+}
+
+// ClearDefaultItemsPerPage clears the value of the "default_items_per_page" field.
+func (u *SettingsUpsertOne) ClearDefaultItemsPerPage() *SettingsUpsertOne {
+	return u.Update(func(s *SettingsUpsert) {
+		s.ClearDefaultItemsPerPage()
 	})
 }
 
@@ -3495,6 +3569,34 @@ func (u *SettingsUpsertBulk) UpdateAutoAdmitAgents() *SettingsUpsertBulk {
 func (u *SettingsUpsertBulk) ClearAutoAdmitAgents() *SettingsUpsertBulk {
 	return u.Update(func(s *SettingsUpsert) {
 		s.ClearAutoAdmitAgents()
+	})
+}
+
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (u *SettingsUpsertBulk) SetDefaultItemsPerPage(v int) *SettingsUpsertBulk {
+	return u.Update(func(s *SettingsUpsert) {
+		s.SetDefaultItemsPerPage(v)
+	})
+}
+
+// AddDefaultItemsPerPage adds v to the "default_items_per_page" field.
+func (u *SettingsUpsertBulk) AddDefaultItemsPerPage(v int) *SettingsUpsertBulk {
+	return u.Update(func(s *SettingsUpsert) {
+		s.AddDefaultItemsPerPage(v)
+	})
+}
+
+// UpdateDefaultItemsPerPage sets the "default_items_per_page" field to the value that was provided on create.
+func (u *SettingsUpsertBulk) UpdateDefaultItemsPerPage() *SettingsUpsertBulk {
+	return u.Update(func(s *SettingsUpsert) {
+		s.UpdateDefaultItemsPerPage()
+	})
+}
+
+// ClearDefaultItemsPerPage clears the value of the "default_items_per_page" field.
+func (u *SettingsUpsertBulk) ClearDefaultItemsPerPage() *SettingsUpsertBulk {
+	return u.Update(func(s *SettingsUpsert) {
+		s.ClearDefaultItemsPerPage()
 	})
 }
 

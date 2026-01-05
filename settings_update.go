@@ -792,6 +792,33 @@ func (su *SettingsUpdate) ClearAutoAdmitAgents() *SettingsUpdate {
 	return su
 }
 
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (su *SettingsUpdate) SetDefaultItemsPerPage(i int) *SettingsUpdate {
+	su.mutation.ResetDefaultItemsPerPage()
+	su.mutation.SetDefaultItemsPerPage(i)
+	return su
+}
+
+// SetNillableDefaultItemsPerPage sets the "default_items_per_page" field if the given value is not nil.
+func (su *SettingsUpdate) SetNillableDefaultItemsPerPage(i *int) *SettingsUpdate {
+	if i != nil {
+		su.SetDefaultItemsPerPage(*i)
+	}
+	return su
+}
+
+// AddDefaultItemsPerPage adds i to the "default_items_per_page" field.
+func (su *SettingsUpdate) AddDefaultItemsPerPage(i int) *SettingsUpdate {
+	su.mutation.AddDefaultItemsPerPage(i)
+	return su
+}
+
+// ClearDefaultItemsPerPage clears the value of the "default_items_per_page" field.
+func (su *SettingsUpdate) ClearDefaultItemsPerPage() *SettingsUpdate {
+	su.mutation.ClearDefaultItemsPerPage()
+	return su
+}
+
 // SetTagID sets the "tag" edge to the Tag entity by ID.
 func (su *SettingsUpdate) SetTagID(id int) *SettingsUpdate {
 	su.mutation.SetTagID(id)
@@ -1134,6 +1161,15 @@ func (su *SettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if su.mutation.AutoAdmitAgentsCleared() {
 		_spec.ClearField(settings.FieldAutoAdmitAgents, field.TypeBool)
+	}
+	if value, ok := su.mutation.DefaultItemsPerPage(); ok {
+		_spec.SetField(settings.FieldDefaultItemsPerPage, field.TypeInt, value)
+	}
+	if value, ok := su.mutation.AddedDefaultItemsPerPage(); ok {
+		_spec.AddField(settings.FieldDefaultItemsPerPage, field.TypeInt, value)
+	}
+	if su.mutation.DefaultItemsPerPageCleared() {
+		_spec.ClearField(settings.FieldDefaultItemsPerPage, field.TypeInt)
 	}
 	if su.mutation.TagCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1976,6 +2012,33 @@ func (suo *SettingsUpdateOne) ClearAutoAdmitAgents() *SettingsUpdateOne {
 	return suo
 }
 
+// SetDefaultItemsPerPage sets the "default_items_per_page" field.
+func (suo *SettingsUpdateOne) SetDefaultItemsPerPage(i int) *SettingsUpdateOne {
+	suo.mutation.ResetDefaultItemsPerPage()
+	suo.mutation.SetDefaultItemsPerPage(i)
+	return suo
+}
+
+// SetNillableDefaultItemsPerPage sets the "default_items_per_page" field if the given value is not nil.
+func (suo *SettingsUpdateOne) SetNillableDefaultItemsPerPage(i *int) *SettingsUpdateOne {
+	if i != nil {
+		suo.SetDefaultItemsPerPage(*i)
+	}
+	return suo
+}
+
+// AddDefaultItemsPerPage adds i to the "default_items_per_page" field.
+func (suo *SettingsUpdateOne) AddDefaultItemsPerPage(i int) *SettingsUpdateOne {
+	suo.mutation.AddDefaultItemsPerPage(i)
+	return suo
+}
+
+// ClearDefaultItemsPerPage clears the value of the "default_items_per_page" field.
+func (suo *SettingsUpdateOne) ClearDefaultItemsPerPage() *SettingsUpdateOne {
+	suo.mutation.ClearDefaultItemsPerPage()
+	return suo
+}
+
 // SetTagID sets the "tag" edge to the Tag entity by ID.
 func (suo *SettingsUpdateOne) SetTagID(id int) *SettingsUpdateOne {
 	suo.mutation.SetTagID(id)
@@ -2348,6 +2411,15 @@ func (suo *SettingsUpdateOne) sqlSave(ctx context.Context) (_node *Settings, err
 	}
 	if suo.mutation.AutoAdmitAgentsCleared() {
 		_spec.ClearField(settings.FieldAutoAdmitAgents, field.TypeBool)
+	}
+	if value, ok := suo.mutation.DefaultItemsPerPage(); ok {
+		_spec.SetField(settings.FieldDefaultItemsPerPage, field.TypeInt, value)
+	}
+	if value, ok := suo.mutation.AddedDefaultItemsPerPage(); ok {
+		_spec.AddField(settings.FieldDefaultItemsPerPage, field.TypeInt, value)
+	}
+	if suo.mutation.DefaultItemsPerPageCleared() {
+		_spec.ClearField(settings.FieldDefaultItemsPerPage, field.TypeInt)
 	}
 	if suo.mutation.TagCleared() {
 		edge := &sqlgraph.EdgeSpec{

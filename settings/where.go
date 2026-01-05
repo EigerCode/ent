@@ -235,6 +235,11 @@ func AutoAdmitAgents(v bool) predicate.Settings {
 	return predicate.Settings(sql.FieldEQ(FieldAutoAdmitAgents, v))
 }
 
+// DefaultItemsPerPage applies equality check predicate on the "default_items_per_page" field. It's identical to DefaultItemsPerPageEQ.
+func DefaultItemsPerPage(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldEQ(FieldDefaultItemsPerPage, v))
+}
+
 // LanguageEQ applies the EQ predicate on the "language" field.
 func LanguageEQ(v string) predicate.Settings {
 	return predicate.Settings(sql.FieldEQ(FieldLanguage, v))
@@ -2158,6 +2163,56 @@ func AutoAdmitAgentsIsNil() predicate.Settings {
 // AutoAdmitAgentsNotNil applies the NotNil predicate on the "auto_admit_agents" field.
 func AutoAdmitAgentsNotNil() predicate.Settings {
 	return predicate.Settings(sql.FieldNotNull(FieldAutoAdmitAgents))
+}
+
+// DefaultItemsPerPageEQ applies the EQ predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageEQ(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldEQ(FieldDefaultItemsPerPage, v))
+}
+
+// DefaultItemsPerPageNEQ applies the NEQ predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageNEQ(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldNEQ(FieldDefaultItemsPerPage, v))
+}
+
+// DefaultItemsPerPageIn applies the In predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageIn(vs ...int) predicate.Settings {
+	return predicate.Settings(sql.FieldIn(FieldDefaultItemsPerPage, vs...))
+}
+
+// DefaultItemsPerPageNotIn applies the NotIn predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageNotIn(vs ...int) predicate.Settings {
+	return predicate.Settings(sql.FieldNotIn(FieldDefaultItemsPerPage, vs...))
+}
+
+// DefaultItemsPerPageGT applies the GT predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageGT(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldGT(FieldDefaultItemsPerPage, v))
+}
+
+// DefaultItemsPerPageGTE applies the GTE predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageGTE(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldGTE(FieldDefaultItemsPerPage, v))
+}
+
+// DefaultItemsPerPageLT applies the LT predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageLT(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldLT(FieldDefaultItemsPerPage, v))
+}
+
+// DefaultItemsPerPageLTE applies the LTE predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageLTE(v int) predicate.Settings {
+	return predicate.Settings(sql.FieldLTE(FieldDefaultItemsPerPage, v))
+}
+
+// DefaultItemsPerPageIsNil applies the IsNil predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageIsNil() predicate.Settings {
+	return predicate.Settings(sql.FieldIsNull(FieldDefaultItemsPerPage))
+}
+
+// DefaultItemsPerPageNotNil applies the NotNil predicate on the "default_items_per_page" field.
+func DefaultItemsPerPageNotNil() predicate.Settings {
+	return predicate.Settings(sql.FieldNotNull(FieldDefaultItemsPerPage))
 }
 
 // HasTag applies the HasEdge predicate on the "tag" edge.
