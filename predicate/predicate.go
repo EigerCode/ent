@@ -18,6 +18,9 @@ type App func(*sql.Selector)
 // Authentication is the predicate function for authentication builders.
 type Authentication func(*sql.Selector)
 
+// Branding is the predicate function for branding builders.
+type Branding func(*sql.Selector)
+
 // Certificate is the predicate function for certificate builders.
 type Certificate func(*sql.Selector)
 

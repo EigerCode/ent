@@ -20,6 +20,8 @@ type Tx struct {
 	App *AppClient
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// Branding is the client for interacting with the Branding builders.
+	Branding *BrandingClient
 	// Certificate is the client for interacting with the Certificate builders.
 	Certificate *CertificateClient
 	// Computer is the client for interacting with the Computer builders.
@@ -219,6 +221,7 @@ func (tx *Tx) init() {
 	tx.Antivirus = NewAntivirusClient(tx.config)
 	tx.App = NewAppClient(tx.config)
 	tx.Authentication = NewAuthenticationClient(tx.config)
+	tx.Branding = NewBrandingClient(tx.config)
 	tx.Certificate = NewCertificateClient(tx.config)
 	tx.Computer = NewComputerClient(tx.config)
 	tx.Deployment = NewDeploymentClient(tx.config)
