@@ -19,6 +19,7 @@ import (
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/app"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/computer"
 	"github.com/open-uem/ent/deployment"
@@ -66,6 +67,8 @@ type Client struct {
 	App *AppClient
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// Branding is the client for interacting with the Branding builders.
+	Branding *BrandingClient
 	// Certificate is the client for interacting with the Certificate builders.
 	Certificate *CertificateClient
 	// Computer is the client for interacting with the Computer builders.
@@ -145,6 +148,7 @@ func (c *Client) init() {
 	c.Antivirus = NewAntivirusClient(c.config)
 	c.App = NewAppClient(c.config)
 	c.Authentication = NewAuthenticationClient(c.config)
+	c.Branding = NewBrandingClient(c.config)
 	c.Certificate = NewCertificateClient(c.config)
 	c.Computer = NewComputerClient(c.config)
 	c.Deployment = NewDeploymentClient(c.config)
@@ -273,6 +277,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Antivirus:             NewAntivirusClient(cfg),
 		App:                   NewAppClient(cfg),
 		Authentication:        NewAuthenticationClient(cfg),
+		Branding:              NewBrandingClient(cfg),
 		Certificate:           NewCertificateClient(cfg),
 		Computer:              NewComputerClient(cfg),
 		Deployment:            NewDeploymentClient(cfg),
@@ -328,6 +333,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Antivirus:             NewAntivirusClient(cfg),
 		App:                   NewAppClient(cfg),
 		Authentication:        NewAuthenticationClient(cfg),
+		Branding:              NewBrandingClient(cfg),
 		Certificate:           NewCertificateClient(cfg),
 		Computer:              NewComputerClient(cfg),
 		Deployment:            NewDeploymentClient(cfg),
@@ -389,13 +395,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
-		c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata,
-		c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue, c.RecoveryCode,
-		c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions, c.Settings, c.Share,
-		c.Site, c.SystemUpdate, c.Tag, c.Task, c.Tenant, c.Update, c.User,
-		c.WingetConfigExclusion,
+		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
+		c.Computer, c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor,
+		c.Netbird, c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem,
+		c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue,
+		c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions,
+		c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task, c.Tenant, c.Update,
+		c.User, c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -405,13 +411,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
-		c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata,
-		c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue, c.RecoveryCode,
-		c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions, c.Settings, c.Share,
-		c.Site, c.SystemUpdate, c.Tag, c.Task, c.Tenant, c.Update, c.User,
-		c.WingetConfigExclusion,
+		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
+		c.Computer, c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor,
+		c.Netbird, c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem,
+		c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue,
+		c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions,
+		c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task, c.Tenant, c.Update,
+		c.User, c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -428,6 +434,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.App.mutate(ctx, m)
 	case *AuthenticationMutation:
 		return c.Authentication.mutate(ctx, m)
+	case *BrandingMutation:
+		return c.Branding.mutate(ctx, m)
 	case *CertificateMutation:
 		return c.Certificate.mutate(ctx, m)
 	case *ComputerMutation:
@@ -1394,6 +1402,139 @@ func (c *AuthenticationClient) mutate(ctx context.Context, m *AuthenticationMuta
 		return (&AuthenticationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Authentication mutation op: %q", m.Op())
+	}
+}
+
+// BrandingClient is a client for the Branding schema.
+type BrandingClient struct {
+	config
+}
+
+// NewBrandingClient returns a client for the Branding from the given config.
+func NewBrandingClient(c config) *BrandingClient {
+	return &BrandingClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `branding.Hooks(f(g(h())))`.
+func (c *BrandingClient) Use(hooks ...Hook) {
+	c.hooks.Branding = append(c.hooks.Branding, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `branding.Intercept(f(g(h())))`.
+func (c *BrandingClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Branding = append(c.inters.Branding, interceptors...)
+}
+
+// Create returns a builder for creating a Branding entity.
+func (c *BrandingClient) Create() *BrandingCreate {
+	mutation := newBrandingMutation(c.config, OpCreate)
+	return &BrandingCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Branding entities.
+func (c *BrandingClient) CreateBulk(builders ...*BrandingCreate) *BrandingCreateBulk {
+	return &BrandingCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BrandingClient) MapCreateBulk(slice any, setFunc func(*BrandingCreate, int)) *BrandingCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BrandingCreateBulk{err: fmt.Errorf("calling to BrandingClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BrandingCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BrandingCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Branding.
+func (c *BrandingClient) Update() *BrandingUpdate {
+	mutation := newBrandingMutation(c.config, OpUpdate)
+	return &BrandingUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BrandingClient) UpdateOne(b *Branding) *BrandingUpdateOne {
+	mutation := newBrandingMutation(c.config, OpUpdateOne, withBranding(b))
+	return &BrandingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BrandingClient) UpdateOneID(id int) *BrandingUpdateOne {
+	mutation := newBrandingMutation(c.config, OpUpdateOne, withBrandingID(id))
+	return &BrandingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Branding.
+func (c *BrandingClient) Delete() *BrandingDelete {
+	mutation := newBrandingMutation(c.config, OpDelete)
+	return &BrandingDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BrandingClient) DeleteOne(b *Branding) *BrandingDeleteOne {
+	return c.DeleteOneID(b.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BrandingClient) DeleteOneID(id int) *BrandingDeleteOne {
+	builder := c.Delete().Where(branding.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BrandingDeleteOne{builder}
+}
+
+// Query returns a query builder for Branding.
+func (c *BrandingClient) Query() *BrandingQuery {
+	return &BrandingQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBranding},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Branding entity by its id.
+func (c *BrandingClient) Get(ctx context.Context, id int) (*Branding, error) {
+	return c.Query().Where(branding.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BrandingClient) GetX(ctx context.Context, id int) *Branding {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BrandingClient) Hooks() []Hook {
+	return c.hooks.Branding
+}
+
+// Interceptors returns the client interceptors.
+func (c *BrandingClient) Interceptors() []Interceptor {
+	return c.inters.Branding
+}
+
+func (c *BrandingClient) mutate(ctx context.Context, m *BrandingMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BrandingCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BrandingUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BrandingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BrandingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Branding mutation op: %q", m.Op())
 	}
 }
 
@@ -6440,19 +6581,19 @@ func (c *WingetConfigExclusionClient) mutate(ctx context.Context, m *WingetConfi
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetbirdSettings,
-		NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile,
-		ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk, Server, Sessions,
-		Settings, Share, Site, SystemUpdate, Tag, Task, Tenant, Update, User,
-		WingetConfigExclusion []ent.Hook
+		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
+		Deployment, LogicalDisk, MemorySlot, Metadata, Monitor, Netbird,
+		NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk,
+		Printer, Profile, ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk,
+		Server, Sessions, Settings, Share, Site, SystemUpdate, Tag, Task, Tenant,
+		Update, User, WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
-		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetbirdSettings,
-		NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile,
-		ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk, Server, Sessions,
-		Settings, Share, Site, SystemUpdate, Tag, Task, Tenant, Update, User,
-		WingetConfigExclusion []ent.Interceptor
+		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
+		Deployment, LogicalDisk, MemorySlot, Metadata, Monitor, Netbird,
+		NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk,
+		Printer, Profile, ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk,
+		Server, Sessions, Settings, Share, Site, SystemUpdate, Tag, Task, Tenant,
+		Update, User, WingetConfigExclusion []ent.Interceptor
 	}
 )

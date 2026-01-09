@@ -57,6 +57,18 @@ func (f AuthenticationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthenticationMutation", m)
 }
 
+// The BrandingFunc type is an adapter to allow the use of ordinary
+// function as Branding mutator.
+type BrandingFunc func(context.Context, *ent.BrandingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BrandingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BrandingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BrandingMutation", m)
+}
+
 // The CertificateFunc type is an adapter to allow the use of ordinary
 // function as Certificate mutator.
 type CertificateFunc func(context.Context, *ent.CertificateMutation) (ent.Value, error)
