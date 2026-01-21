@@ -301,6 +301,10 @@ func init() {
 	profileDescApplyToAll := profileFields[1].Descriptor()
 	// profile.DefaultApplyToAll holds the default value on creation for the apply_to_all field.
 	profile.DefaultApplyToAll = profileDescApplyToAll.Default.(bool)
+	// profileDescDisabled is the schema descriptor for disabled field.
+	profileDescDisabled := profileFields[3].Descriptor()
+	// profile.DefaultDisabled holds the default value on creation for the disabled field.
+	profile.DefaultDisabled = profileDescDisabled.Default.(bool)
 	profileissueFields := schema.ProfileIssue{}.Fields()
 	_ = profileissueFields
 	// profileissueDescWhen is the schema descriptor for when field.

@@ -80,6 +80,20 @@ func (pu *ProfileUpdate) ClearType() *ProfileUpdate {
 	return pu
 }
 
+// SetDisabled sets the "disabled" field.
+func (pu *ProfileUpdate) SetDisabled(b bool) *ProfileUpdate {
+	pu.mutation.SetDisabled(b)
+	return pu
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableDisabled(b *bool) *ProfileUpdate {
+	if b != nil {
+		pu.SetDisabled(*b)
+	}
+	return pu
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (pu *ProfileUpdate) AddTagIDs(ids ...int) *ProfileUpdate {
 	pu.mutation.AddTagIDs(ids...)
@@ -289,6 +303,9 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.TypeCleared() {
 		_spec.ClearField(profile.FieldType, field.TypeEnum)
+	}
+	if value, ok := pu.mutation.Disabled(); ok {
+		_spec.SetField(profile.FieldDisabled, field.TypeBool, value)
 	}
 	if pu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -521,6 +538,20 @@ func (puo *ProfileUpdateOne) SetNillableType(pr *profile.Type) *ProfileUpdateOne
 // ClearType clears the value of the "type" field.
 func (puo *ProfileUpdateOne) ClearType() *ProfileUpdateOne {
 	puo.mutation.ClearType()
+	return puo
+}
+
+// SetDisabled sets the "disabled" field.
+func (puo *ProfileUpdateOne) SetDisabled(b bool) *ProfileUpdateOne {
+	puo.mutation.SetDisabled(b)
+	return puo
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableDisabled(b *bool) *ProfileUpdateOne {
+	if b != nil {
+		puo.SetDisabled(*b)
+	}
 	return puo
 }
 
@@ -763,6 +794,9 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if puo.mutation.TypeCleared() {
 		_spec.ClearField(profile.FieldType, field.TypeEnum)
+	}
+	if value, ok := puo.mutation.Disabled(); ok {
+		_spec.SetField(profile.FieldDisabled, field.TypeBool, value)
 	}
 	if puo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{

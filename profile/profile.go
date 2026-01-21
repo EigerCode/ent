@@ -20,6 +20,8 @@ const (
 	FieldApplyToAll = "apply_to_all"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldDisabled holds the string denoting the disabled field in the database.
+	FieldDisabled = "disabled"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeTasks holds the string denoting the tasks edge name in mutations.
@@ -64,6 +66,7 @@ var Columns = []string{
 	FieldName,
 	FieldApplyToAll,
 	FieldType,
+	FieldDisabled,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "profiles"
@@ -98,6 +101,8 @@ var (
 	NameValidator func(string) error
 	// DefaultApplyToAll holds the default value on creation for the "apply_to_all" field.
 	DefaultApplyToAll bool
+	// DefaultDisabled holds the default value on creation for the "disabled" field.
+	DefaultDisabled bool
 )
 
 // Type defines the type for the "type" enum field.
@@ -146,6 +151,11 @@ func ByApplyToAll(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByDisabled orders the results by the disabled field.
+func ByDisabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisabled, opts...).ToFunc()
 }
 
 // ByTagsCount orders the results by tags count.

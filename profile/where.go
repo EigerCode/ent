@@ -63,6 +63,11 @@ func ApplyToAll(v bool) predicate.Profile {
 	return predicate.Profile(sql.FieldEQ(FieldApplyToAll, v))
 }
 
+// Disabled applies equality check predicate on the "disabled" field. It's identical to DisabledEQ.
+func Disabled(v bool) predicate.Profile {
+	return predicate.Profile(sql.FieldEQ(FieldDisabled, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldEQ(FieldName, v))
@@ -166,6 +171,16 @@ func TypeIsNil() predicate.Profile {
 // TypeNotNil applies the NotNil predicate on the "type" field.
 func TypeNotNil() predicate.Profile {
 	return predicate.Profile(sql.FieldNotNull(FieldType))
+}
+
+// DisabledEQ applies the EQ predicate on the "disabled" field.
+func DisabledEQ(v bool) predicate.Profile {
+	return predicate.Profile(sql.FieldEQ(FieldDisabled, v))
+}
+
+// DisabledNEQ applies the NEQ predicate on the "disabled" field.
+func DisabledNEQ(v bool) predicate.Profile {
+	return predicate.Profile(sql.FieldNEQ(FieldDisabled, v))
 }
 
 // HasTags applies the HasEdge predicate on the "tags" edge.

@@ -17271,6 +17271,7 @@ type ProfileMutation struct {
 	name          *string
 	apply_to_all  *bool
 	_type         *profile.Type
+	disabled      *bool
 	clearedFields map[string]struct{}
 	tags          map[int]struct{}
 	removedtags   map[int]struct{}
@@ -17505,6 +17506,42 @@ func (m *ProfileMutation) TypeCleared() bool {
 func (m *ProfileMutation) ResetType() {
 	m._type = nil
 	delete(m.clearedFields, profile.FieldType)
+}
+
+// SetDisabled sets the "disabled" field.
+func (m *ProfileMutation) SetDisabled(b bool) {
+	m.disabled = &b
+}
+
+// Disabled returns the value of the "disabled" field in the mutation.
+func (m *ProfileMutation) Disabled() (r bool, exists bool) {
+	v := m.disabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisabled returns the old "disabled" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldDisabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisabled: %w", err)
+	}
+	return oldValue.Disabled, nil
+}
+
+// ResetDisabled resets all changes to the "disabled" field.
+func (m *ProfileMutation) ResetDisabled() {
+	m.disabled = nil
 }
 
 // AddTagIDs adds the "tags" edge to the Tag entity by ids.
@@ -17742,7 +17779,7 @@ func (m *ProfileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProfileMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.name != nil {
 		fields = append(fields, profile.FieldName)
 	}
@@ -17751,6 +17788,9 @@ func (m *ProfileMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, profile.FieldType)
+	}
+	if m.disabled != nil {
+		fields = append(fields, profile.FieldDisabled)
 	}
 	return fields
 }
@@ -17766,6 +17806,8 @@ func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
 		return m.ApplyToAll()
 	case profile.FieldType:
 		return m.GetType()
+	case profile.FieldDisabled:
+		return m.Disabled()
 	}
 	return nil, false
 }
@@ -17781,6 +17823,8 @@ func (m *ProfileMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldApplyToAll(ctx)
 	case profile.FieldType:
 		return m.OldType(ctx)
+	case profile.FieldDisabled:
+		return m.OldDisabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown Profile field %s", name)
 }
@@ -17810,6 +17854,13 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
+		return nil
+	case profile.FieldDisabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisabled(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Profile field %s", name)
@@ -17877,6 +17928,9 @@ func (m *ProfileMutation) ResetField(name string) error {
 		return nil
 	case profile.FieldType:
 		m.ResetType()
+		return nil
+	case profile.FieldDisabled:
+		m.ResetDisabled()
 		return nil
 	}
 	return fmt.Errorf("unknown Profile field %s", name)
