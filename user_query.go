@@ -16,6 +16,7 @@ import (
 	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 )
 
 // UserQuery is the builder for querying User entities.
@@ -27,6 +28,7 @@ type UserQuery struct {
 	predicates        []predicate.User
 	withSessions      *SessionsQuery
 	withRecoverycodes *RecoveryCodeQuery
+	withUserTenants   *UserTenantQuery
 	modifiers         []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -101,6 +103,28 @@ func (uq *UserQuery) QueryRecoverycodes() *RecoveryCodeQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(recoverycode.Table, recoverycode.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.RecoverycodesTable, user.RecoverycodesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserTenants chains the current query on the "user_tenants" edge.
+func (uq *UserQuery) QueryUserTenants() *UserTenantQuery {
+	query := (&UserTenantClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(usertenant.Table, usertenant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.UserTenantsTable, user.UserTenantsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -302,6 +326,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		predicates:        append([]predicate.User{}, uq.predicates...),
 		withSessions:      uq.withSessions.Clone(),
 		withRecoverycodes: uq.withRecoverycodes.Clone(),
+		withUserTenants:   uq.withUserTenants.Clone(),
 		// clone intermediate query.
 		sql:       uq.sql.Clone(),
 		path:      uq.path,
@@ -328,6 +353,17 @@ func (uq *UserQuery) WithRecoverycodes(opts ...func(*RecoveryCodeQuery)) *UserQu
 		opt(query)
 	}
 	uq.withRecoverycodes = query
+	return uq
+}
+
+// WithUserTenants tells the query-builder to eager-load the nodes that are connected to
+// the "user_tenants" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserTenants(opts ...func(*UserTenantQuery)) *UserQuery {
+	query := (&UserTenantClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withUserTenants = query
 	return uq
 }
 
@@ -409,9 +445,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			uq.withSessions != nil,
 			uq.withRecoverycodes != nil,
+			uq.withUserTenants != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -446,6 +483,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadRecoverycodes(ctx, query, nodes,
 			func(n *User) { n.Edges.Recoverycodes = []*RecoveryCode{} },
 			func(n *User, e *RecoveryCode) { n.Edges.Recoverycodes = append(n.Edges.Recoverycodes, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withUserTenants; query != nil {
+		if err := uq.loadUserTenants(ctx, query, nodes,
+			func(n *User) { n.Edges.UserTenants = []*UserTenant{} },
+			func(n *User, e *UserTenant) { n.Edges.UserTenants = append(n.Edges.UserTenants, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -509,6 +553,36 @@ func (uq *UserQuery) loadRecoverycodes(ctx context.Context, query *RecoveryCodeQ
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_recoverycodes" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadUserTenants(ctx context.Context, query *UserTenantQuery, nodes []*User, init func(*User), assign func(*User, *UserTenant)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(usertenant.FieldUserID)
+	}
+	query.Where(predicate.UserTenant(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.UserTenantsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

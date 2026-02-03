@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/predicate"
+	"github.com/open-uem/ent/tenant"
 )
 
 // CertificateQuery is the builder for querying Certificate entities.
@@ -22,6 +23,7 @@ type CertificateQuery struct {
 	order      []certificate.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Certificate
+	withTenant *TenantQuery
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -57,6 +59,28 @@ func (cq *CertificateQuery) Unique(unique bool) *CertificateQuery {
 func (cq *CertificateQuery) Order(o ...certificate.OrderOption) *CertificateQuery {
 	cq.order = append(cq.order, o...)
 	return cq
+}
+
+// QueryTenant chains the current query on the "tenant" edge.
+func (cq *CertificateQuery) QueryTenant() *TenantQuery {
+	query := (&TenantClient{config: cq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := cq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(certificate.Table, certificate.FieldID, selector),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, certificate.TenantTable, certificate.TenantColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Certificate entity from the query.
@@ -251,11 +275,23 @@ func (cq *CertificateQuery) Clone() *CertificateQuery {
 		order:      append([]certificate.OrderOption{}, cq.order...),
 		inters:     append([]Interceptor{}, cq.inters...),
 		predicates: append([]predicate.Certificate{}, cq.predicates...),
+		withTenant: cq.withTenant.Clone(),
 		// clone intermediate query.
 		sql:       cq.sql.Clone(),
 		path:      cq.path,
 		modifiers: append([]func(*sql.Selector){}, cq.modifiers...),
 	}
+}
+
+// WithTenant tells the query-builder to eager-load the nodes that are connected to
+// the "tenant" edge. The optional arguments are used to configure the query builder of the edge.
+func (cq *CertificateQuery) WithTenant(opts ...func(*TenantQuery)) *CertificateQuery {
+	query := (&TenantClient{config: cq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withTenant = query
+	return cq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -334,8 +370,11 @@ func (cq *CertificateQuery) prepareQuery(ctx context.Context) error {
 
 func (cq *CertificateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Certificate, error) {
 	var (
-		nodes = []*Certificate{}
-		_spec = cq.querySpec()
+		nodes       = []*Certificate{}
+		_spec       = cq.querySpec()
+		loadedTypes = [1]bool{
+			cq.withTenant != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Certificate).scanValues(nil, columns)
@@ -343,6 +382,7 @@ func (cq *CertificateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Certificate{config: cq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if len(cq.modifiers) > 0 {
@@ -357,7 +397,46 @@ func (cq *CertificateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := cq.withTenant; query != nil {
+		if err := cq.loadTenant(ctx, query, nodes, nil,
+			func(n *Certificate, e *Tenant) { n.Edges.Tenant = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (cq *CertificateQuery) loadTenant(ctx context.Context, query *TenantQuery, nodes []*Certificate, init func(*Certificate), assign func(*Certificate, *Tenant)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Certificate)
+	for i := range nodes {
+		if nodes[i].TenantID == nil {
+			continue
+		}
+		fk := *nodes[i].TenantID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(tenant.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "tenant_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (cq *CertificateQuery) sqlCount(ctx context.Context) (int, error) {
@@ -387,6 +466,9 @@ func (cq *CertificateQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != certificate.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if cq.withTenant != nil {
+			_spec.Node.AddColumnOnce(certificate.FieldTenantID)
 		}
 	}
 	if ps := cq.predicates; len(ps) > 0 {

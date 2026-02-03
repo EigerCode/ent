@@ -105,6 +105,18 @@ func (f DeploymentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DeploymentMutation", m)
 }
 
+// The EnrollmentTokenFunc type is an adapter to allow the use of ordinary
+// function as EnrollmentToken mutator.
+type EnrollmentTokenFunc func(context.Context, *ent.EnrollmentTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EnrollmentTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EnrollmentTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EnrollmentTokenMutation", m)
+}
+
 // The LogicalDiskFunc type is an adapter to allow the use of ordinary
 // function as LogicalDisk mutator.
 type LogicalDiskFunc func(context.Context, *ent.LogicalDiskMutation) (ent.Value, error)
@@ -439,6 +451,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The UserTenantFunc type is an adapter to allow the use of ordinary
+// function as UserTenant mutator.
+type UserTenantFunc func(context.Context, *ent.UserTenantMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserTenantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserTenantMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserTenantMutation", m)
 }
 
 // The WingetConfigExclusionFunc type is an adapter to allow the use of ordinary

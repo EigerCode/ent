@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// NetbirdSettings holds the schema definition for the Rustdesk entity.
+// NetbirdSettings holds the schema definition for the NetbirdSettings entity.
 type NetbirdSettings struct {
 	ent.Schema
 }

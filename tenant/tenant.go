@@ -3,6 +3,7 @@
 package tenant
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -18,6 +19,12 @@ const (
 	FieldDescription = "description"
 	// FieldIsDefault holds the string denoting the is_default field in the database.
 	FieldIsDefault = "is_default"
+	// FieldIsHosterTenant holds the string denoting the is_hoster_tenant field in the database.
+	FieldIsHosterTenant = "is_hoster_tenant"
+	// FieldOidcOrgID holds the string denoting the oidc_org_id field in the database.
+	FieldOidcOrgID = "oidc_org_id"
+	// FieldOidcDefaultRole holds the string denoting the oidc_default_role field in the database.
+	FieldOidcDefaultRole = "oidc_default_role"
 	// FieldCreated holds the string denoting the created field in the database.
 	FieldCreated = "created"
 	// FieldModified holds the string denoting the modified field in the database.
@@ -34,6 +41,10 @@ const (
 	EdgeRustdesk = "rustdesk"
 	// EdgeNetbird holds the string denoting the netbird edge name in mutations.
 	EdgeNetbird = "netbird"
+	// EdgeUserTenants holds the string denoting the user_tenants edge name in mutations.
+	EdgeUserTenants = "user_tenants"
+	// EdgeEnrollmentTokens holds the string denoting the enrollment_tokens edge name in mutations.
+	EdgeEnrollmentTokens = "enrollment_tokens"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 	// SitesTable is the table that holds the sites relation/edge.
@@ -76,6 +87,20 @@ const (
 	NetbirdInverseTable = "netbird_settings"
 	// NetbirdColumn is the table column denoting the netbird relation/edge.
 	NetbirdColumn = "tenant_netbird"
+	// UserTenantsTable is the table that holds the user_tenants relation/edge.
+	UserTenantsTable = "user_tenants"
+	// UserTenantsInverseTable is the table name for the UserTenant entity.
+	// It exists in this package in order to avoid circular dependency with the "usertenant" package.
+	UserTenantsInverseTable = "user_tenants"
+	// UserTenantsColumn is the table column denoting the user_tenants relation/edge.
+	UserTenantsColumn = "tenant_id"
+	// EnrollmentTokensTable is the table that holds the enrollment_tokens relation/edge.
+	EnrollmentTokensTable = "enrollment_tokens"
+	// EnrollmentTokensInverseTable is the table name for the EnrollmentToken entity.
+	// It exists in this package in order to avoid circular dependency with the "enrollmenttoken" package.
+	EnrollmentTokensInverseTable = "enrollment_tokens"
+	// EnrollmentTokensColumn is the table column denoting the enrollment_tokens relation/edge.
+	EnrollmentTokensColumn = "tenant_enrollment_tokens"
 )
 
 // Columns holds all SQL columns for tenant fields.
@@ -83,6 +108,9 @@ var Columns = []string{
 	FieldID,
 	FieldDescription,
 	FieldIsDefault,
+	FieldIsHosterTenant,
+	FieldOidcOrgID,
+	FieldOidcDefaultRole,
 	FieldCreated,
 	FieldModified,
 }
@@ -115,6 +143,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultIsHosterTenant holds the default value on creation for the "is_hoster_tenant" field.
+	DefaultIsHosterTenant bool
 	// DefaultCreated holds the default value on creation for the "created" field.
 	DefaultCreated func() time.Time
 	// DefaultModified holds the default value on creation for the "modified" field.
@@ -122,6 +152,33 @@ var (
 	// UpdateDefaultModified holds the default value on update for the "modified" field.
 	UpdateDefaultModified func() time.Time
 )
+
+// OidcDefaultRole defines the type for the "oidc_default_role" enum field.
+type OidcDefaultRole string
+
+// OidcDefaultRoleUser is the default value of the OidcDefaultRole enum.
+const DefaultOidcDefaultRole = OidcDefaultRoleUser
+
+// OidcDefaultRole values.
+const (
+	OidcDefaultRoleAdmin    OidcDefaultRole = "admin"
+	OidcDefaultRoleOperator OidcDefaultRole = "operator"
+	OidcDefaultRoleUser     OidcDefaultRole = "user"
+)
+
+func (odr OidcDefaultRole) String() string {
+	return string(odr)
+}
+
+// OidcDefaultRoleValidator is a validator for the "oidc_default_role" field enum values. It is called by the builders before save.
+func OidcDefaultRoleValidator(odr OidcDefaultRole) error {
+	switch odr {
+	case OidcDefaultRoleAdmin, OidcDefaultRoleOperator, OidcDefaultRoleUser:
+		return nil
+	default:
+		return fmt.Errorf("tenant: invalid enum value for oidc_default_role field: %q", odr)
+	}
+}
 
 // OrderOption defines the ordering options for the Tenant queries.
 type OrderOption func(*sql.Selector)
@@ -139,6 +196,21 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByIsDefault orders the results by the is_default field.
 func ByIsDefault(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsDefault, opts...).ToFunc()
+}
+
+// ByIsHosterTenant orders the results by the is_hoster_tenant field.
+func ByIsHosterTenant(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsHosterTenant, opts...).ToFunc()
+}
+
+// ByOidcOrgID orders the results by the oidc_org_id field.
+func ByOidcOrgID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOidcOrgID, opts...).ToFunc()
+}
+
+// ByOidcDefaultRole orders the results by the oidc_default_role field.
+func ByOidcDefaultRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOidcDefaultRole, opts...).ToFunc()
 }
 
 // ByCreated orders the results by the created field.
@@ -220,6 +292,34 @@ func ByNetbirdField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNetbirdStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByUserTenantsCount orders the results by user_tenants count.
+func ByUserTenantsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserTenantsStep(), opts...)
+	}
+}
+
+// ByUserTenants orders the results by user_tenants terms.
+func ByUserTenants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserTenantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEnrollmentTokensCount orders the results by enrollment_tokens count.
+func ByEnrollmentTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEnrollmentTokensStep(), opts...)
+	}
+}
+
+// ByEnrollmentTokens orders the results by enrollment_tokens terms.
+func ByEnrollmentTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEnrollmentTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newSitesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -260,5 +360,19 @@ func newNetbirdStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NetbirdInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, NetbirdTable, NetbirdColumn),
+	)
+}
+func newUserTenantsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserTenantsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserTenantsTable, UserTenantsColumn),
+	)
+}
+func newEnrollmentTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EnrollmentTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EnrollmentTokensTable, EnrollmentTokensColumn),
 	)
 }
