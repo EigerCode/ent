@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/certificate"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/certificate"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // CertificateQuery is the builder for querying Certificate entities.

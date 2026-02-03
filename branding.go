@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/branding"
+	"github.com/EigerCode/ent/branding"
 )
 
 // Branding is the model entity for the Branding schema.

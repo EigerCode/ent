@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/orgmetadata"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/orgmetadata"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // OrgMetadataDelete is the builder for deleting a OrgMetadata entity.

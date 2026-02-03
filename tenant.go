@@ -9,9 +9,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/netbirdsettings"
-	"github.com/open-uem/ent/settings"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/netbirdsettings"
+	"github.com/EigerCode/ent/settings"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // Tenant is the model entity for the Tenant schema.

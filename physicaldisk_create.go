@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/physicaldisk"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/physicaldisk"
 )
 
 // PhysicalDiskCreate is the builder for creating a PhysicalDisk entity.

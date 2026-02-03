@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/physicaldisk"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/physicaldisk"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // PhysicalDiskDelete is the builder for deleting a PhysicalDisk entity.

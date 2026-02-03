@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/settings"
-	"github.com/open-uem/ent/tag"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/settings"
+	"github.com/EigerCode/ent/tag"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // SettingsCreate is the builder for creating a Settings entity.

@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/branding"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/branding"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // BrandingQuery is the builder for querying Branding entities.

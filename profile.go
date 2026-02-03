@@ -8,8 +8,8 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/profile"
-	"github.com/open-uem/ent/site"
+	"github.com/EigerCode/ent/profile"
+	"github.com/EigerCode/ent/site"
 )
 
 // Profile is the model entity for the Profile schema.

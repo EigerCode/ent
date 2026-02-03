@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/release"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/release"
 )
 
 // ReleaseUpdate is the builder for updating Release entities.

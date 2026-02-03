@@ -11,10 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/tenant"
-	"github.com/open-uem/ent/user"
-	"github.com/open-uem/ent/usertenant"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/tenant"
+	"github.com/EigerCode/ent/user"
+	"github.com/EigerCode/ent/usertenant"
 )
 
 // UserTenantUpdate is the builder for updating UserTenant entities.

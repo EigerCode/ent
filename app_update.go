@@ -10,9 +10,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/app"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/app"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // AppUpdate is the builder for updating App entities.

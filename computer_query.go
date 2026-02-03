@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/computer"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/computer"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // ComputerQuery is the builder for querying Computer entities.

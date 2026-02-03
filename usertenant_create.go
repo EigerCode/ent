@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/tenant"
-	"github.com/open-uem/ent/user"
-	"github.com/open-uem/ent/usertenant"
+	"github.com/EigerCode/ent/tenant"
+	"github.com/EigerCode/ent/user"
+	"github.com/EigerCode/ent/usertenant"
 )
 
 // UserTenantCreate is the builder for creating a UserTenant entity.

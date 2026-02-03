@@ -10,11 +10,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/profile"
-	"github.com/open-uem/ent/tag"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/profile"
+	"github.com/EigerCode/ent/tag"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // TagUpdate is the builder for updating Tag entities.

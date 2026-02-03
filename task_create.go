@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/profile"
-	"github.com/open-uem/ent/tag"
-	"github.com/open-uem/ent/task"
+	"github.com/EigerCode/ent/profile"
+	"github.com/EigerCode/ent/tag"
+	"github.com/EigerCode/ent/task"
 )
 
 // TaskCreate is the builder for creating a Task entity.

@@ -9,13 +9,13 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/antivirus"
-	"github.com/open-uem/ent/computer"
-	"github.com/open-uem/ent/netbird"
-	"github.com/open-uem/ent/operatingsystem"
-	"github.com/open-uem/ent/release"
-	"github.com/open-uem/ent/systemupdate"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/antivirus"
+	"github.com/EigerCode/ent/computer"
+	"github.com/EigerCode/ent/netbird"
+	"github.com/EigerCode/ent/operatingsystem"
+	"github.com/EigerCode/ent/release"
+	"github.com/EigerCode/ent/systemupdate"
 )
 
 // Agent is the model entity for the Agent schema.

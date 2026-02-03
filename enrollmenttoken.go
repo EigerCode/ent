@@ -9,9 +9,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/enrollmenttoken"
-	"github.com/open-uem/ent/site"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/enrollmenttoken"
+	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // EnrollmentToken is the model entity for the EnrollmentToken schema.

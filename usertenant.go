@@ -9,9 +9,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/tenant"
-	"github.com/open-uem/ent/user"
-	"github.com/open-uem/ent/usertenant"
+	"github.com/EigerCode/ent/tenant"
+	"github.com/EigerCode/ent/user"
+	"github.com/EigerCode/ent/usertenant"
 )
 
 // UserTenant is the model entity for the UserTenant schema.

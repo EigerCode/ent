@@ -11,12 +11,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/enrollmenttoken"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/profile"
-	"github.com/open-uem/ent/site"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/enrollmenttoken"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/profile"
+	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // SiteUpdate is the builder for updating Site entities.

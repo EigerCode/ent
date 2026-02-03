@@ -12,10 +12,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/metadata"
-	"github.com/open-uem/ent/orgmetadata"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/metadata"
+	"github.com/EigerCode/ent/orgmetadata"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // OrgMetadataQuery is the builder for querying OrgMetadata entities.

@@ -1,4 +1,4 @@
-module github.com/open-uem/ent
+module github.com/EigerCode/ent
 
 go 1.25.5
 

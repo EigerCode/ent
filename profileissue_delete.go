@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/profileissue"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/profileissue"
 )
 
 // ProfileIssueDelete is the builder for deleting a ProfileIssue entity.

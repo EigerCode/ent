@@ -4,7 +4,7 @@ package branding
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.
