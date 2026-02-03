@@ -21,6 +21,8 @@ type Profile struct {
 	Name string `json:"name,omitempty"`
 	// ApplyToAll holds the value of the "apply_to_all" field.
 	ApplyToAll bool `json:"apply_to_all,omitempty"`
+	// Disabled holds the value of the "disabled" field.
+	Disabled bool `json:"disabled,omitempty"`
 	// Type holds the value of the "type" field.
 	Type profile.Type `json:"type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -88,7 +90,7 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case profile.FieldApplyToAll:
+		case profile.FieldApplyToAll, profile.FieldDisabled:
 			values[i] = new(sql.NullBool)
 		case profile.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -128,6 +130,12 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field apply_to_all", values[i])
 			} else if value.Valid {
 				pr.ApplyToAll = value.Bool
+			}
+		case profile.FieldDisabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field disabled", values[i])
+			} else if value.Valid {
+				pr.Disabled = value.Bool
 			}
 		case profile.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -203,6 +211,9 @@ func (pr *Profile) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("apply_to_all=")
 	builder.WriteString(fmt.Sprintf("%v", pr.ApplyToAll))
+	builder.WriteString(", ")
+	builder.WriteString("disabled=")
+	builder.WriteString(fmt.Sprintf("%v", pr.Disabled))
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Type))

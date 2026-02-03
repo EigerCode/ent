@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/predicate"
@@ -19,6 +20,7 @@ import (
 	"github.com/open-uem/ent/site"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/tenant"
+	"github.com/open-uem/ent/usertenant"
 )
 
 // TenantUpdate is the builder for updating Tenant entities.
@@ -72,6 +74,66 @@ func (tu *TenantUpdate) SetNillableIsDefault(b *bool) *TenantUpdate {
 // ClearIsDefault clears the value of the "is_default" field.
 func (tu *TenantUpdate) ClearIsDefault() *TenantUpdate {
 	tu.mutation.ClearIsDefault()
+	return tu
+}
+
+// SetIsHosterTenant sets the "is_hoster_tenant" field.
+func (tu *TenantUpdate) SetIsHosterTenant(b bool) *TenantUpdate {
+	tu.mutation.SetIsHosterTenant(b)
+	return tu
+}
+
+// SetNillableIsHosterTenant sets the "is_hoster_tenant" field if the given value is not nil.
+func (tu *TenantUpdate) SetNillableIsHosterTenant(b *bool) *TenantUpdate {
+	if b != nil {
+		tu.SetIsHosterTenant(*b)
+	}
+	return tu
+}
+
+// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
+func (tu *TenantUpdate) ClearIsHosterTenant() *TenantUpdate {
+	tu.mutation.ClearIsHosterTenant()
+	return tu
+}
+
+// SetOidcOrgID sets the "oidc_org_id" field.
+func (tu *TenantUpdate) SetOidcOrgID(s string) *TenantUpdate {
+	tu.mutation.SetOidcOrgID(s)
+	return tu
+}
+
+// SetNillableOidcOrgID sets the "oidc_org_id" field if the given value is not nil.
+func (tu *TenantUpdate) SetNillableOidcOrgID(s *string) *TenantUpdate {
+	if s != nil {
+		tu.SetOidcOrgID(*s)
+	}
+	return tu
+}
+
+// ClearOidcOrgID clears the value of the "oidc_org_id" field.
+func (tu *TenantUpdate) ClearOidcOrgID() *TenantUpdate {
+	tu.mutation.ClearOidcOrgID()
+	return tu
+}
+
+// SetOidcDefaultRole sets the "oidc_default_role" field.
+func (tu *TenantUpdate) SetOidcDefaultRole(tdr tenant.OidcDefaultRole) *TenantUpdate {
+	tu.mutation.SetOidcDefaultRole(tdr)
+	return tu
+}
+
+// SetNillableOidcDefaultRole sets the "oidc_default_role" field if the given value is not nil.
+func (tu *TenantUpdate) SetNillableOidcDefaultRole(tdr *tenant.OidcDefaultRole) *TenantUpdate {
+	if tdr != nil {
+		tu.SetOidcDefaultRole(*tdr)
+	}
+	return tu
+}
+
+// ClearOidcDefaultRole clears the value of the "oidc_default_role" field.
+func (tu *TenantUpdate) ClearOidcDefaultRole() *TenantUpdate {
+	tu.mutation.ClearOidcDefaultRole()
 	return tu
 }
 
@@ -205,6 +267,36 @@ func (tu *TenantUpdate) SetNetbird(n *NetbirdSettings) *TenantUpdate {
 	return tu.SetNetbirdID(n.ID)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (tu *TenantUpdate) AddUserTenantIDs(ids ...int) *TenantUpdate {
+	tu.mutation.AddUserTenantIDs(ids...)
+	return tu
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (tu *TenantUpdate) AddUserTenants(u ...*UserTenant) *TenantUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return tu.AddUserTenantIDs(ids...)
+}
+
+// AddEnrollmentTokenIDs adds the "enrollment_tokens" edge to the EnrollmentToken entity by IDs.
+func (tu *TenantUpdate) AddEnrollmentTokenIDs(ids ...int) *TenantUpdate {
+	tu.mutation.AddEnrollmentTokenIDs(ids...)
+	return tu
+}
+
+// AddEnrollmentTokens adds the "enrollment_tokens" edges to the EnrollmentToken entity.
+func (tu *TenantUpdate) AddEnrollmentTokens(e ...*EnrollmentToken) *TenantUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return tu.AddEnrollmentTokenIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tu *TenantUpdate) Mutation() *TenantMutation {
 	return tu.mutation
@@ -306,6 +398,48 @@ func (tu *TenantUpdate) ClearNetbird() *TenantUpdate {
 	return tu
 }
 
+// ClearUserTenants clears all "user_tenants" edges to the UserTenant entity.
+func (tu *TenantUpdate) ClearUserTenants() *TenantUpdate {
+	tu.mutation.ClearUserTenants()
+	return tu
+}
+
+// RemoveUserTenantIDs removes the "user_tenants" edge to UserTenant entities by IDs.
+func (tu *TenantUpdate) RemoveUserTenantIDs(ids ...int) *TenantUpdate {
+	tu.mutation.RemoveUserTenantIDs(ids...)
+	return tu
+}
+
+// RemoveUserTenants removes "user_tenants" edges to UserTenant entities.
+func (tu *TenantUpdate) RemoveUserTenants(u ...*UserTenant) *TenantUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return tu.RemoveUserTenantIDs(ids...)
+}
+
+// ClearEnrollmentTokens clears all "enrollment_tokens" edges to the EnrollmentToken entity.
+func (tu *TenantUpdate) ClearEnrollmentTokens() *TenantUpdate {
+	tu.mutation.ClearEnrollmentTokens()
+	return tu
+}
+
+// RemoveEnrollmentTokenIDs removes the "enrollment_tokens" edge to EnrollmentToken entities by IDs.
+func (tu *TenantUpdate) RemoveEnrollmentTokenIDs(ids ...int) *TenantUpdate {
+	tu.mutation.RemoveEnrollmentTokenIDs(ids...)
+	return tu
+}
+
+// RemoveEnrollmentTokens removes "enrollment_tokens" edges to EnrollmentToken entities.
+func (tu *TenantUpdate) RemoveEnrollmentTokens(e ...*EnrollmentToken) *TenantUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return tu.RemoveEnrollmentTokenIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (tu *TenantUpdate) Save(ctx context.Context) (int, error) {
 	tu.defaults()
@@ -342,6 +476,16 @@ func (tu *TenantUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tu *TenantUpdate) check() error {
+	if v, ok := tu.mutation.OidcDefaultRole(); ok {
+		if err := tenant.OidcDefaultRoleValidator(v); err != nil {
+			return &ValidationError{Name: "oidc_default_role", err: fmt.Errorf(`ent: validator failed for field "Tenant.oidc_default_role": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (tu *TenantUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TenantUpdate {
 	tu.modifiers = append(tu.modifiers, modifiers...)
@@ -349,6 +493,9 @@ func (tu *TenantUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TenantU
 }
 
 func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(tenant.Table, tenant.Columns, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -368,6 +515,24 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.IsDefaultCleared() {
 		_spec.ClearField(tenant.FieldIsDefault, field.TypeBool)
+	}
+	if value, ok := tu.mutation.IsHosterTenant(); ok {
+		_spec.SetField(tenant.FieldIsHosterTenant, field.TypeBool, value)
+	}
+	if tu.mutation.IsHosterTenantCleared() {
+		_spec.ClearField(tenant.FieldIsHosterTenant, field.TypeBool)
+	}
+	if value, ok := tu.mutation.OidcOrgID(); ok {
+		_spec.SetField(tenant.FieldOidcOrgID, field.TypeString, value)
+	}
+	if tu.mutation.OidcOrgIDCleared() {
+		_spec.ClearField(tenant.FieldOidcOrgID, field.TypeString)
+	}
+	if value, ok := tu.mutation.OidcDefaultRole(); ok {
+		_spec.SetField(tenant.FieldOidcDefaultRole, field.TypeEnum, value)
+	}
+	if tu.mutation.OidcDefaultRoleCleared() {
+		_spec.ClearField(tenant.FieldOidcDefaultRole, field.TypeEnum)
 	}
 	if value, ok := tu.mutation.Created(); ok {
 		_spec.SetField(tenant.FieldCreated, field.TypeTime, value)
@@ -619,6 +784,96 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tu.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedUserTenantsIDs(); len(nodes) > 0 && !tu.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedEnrollmentTokensIDs(); len(nodes) > 0 && !tu.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.EnrollmentTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(tu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -678,6 +933,66 @@ func (tuo *TenantUpdateOne) SetNillableIsDefault(b *bool) *TenantUpdateOne {
 // ClearIsDefault clears the value of the "is_default" field.
 func (tuo *TenantUpdateOne) ClearIsDefault() *TenantUpdateOne {
 	tuo.mutation.ClearIsDefault()
+	return tuo
+}
+
+// SetIsHosterTenant sets the "is_hoster_tenant" field.
+func (tuo *TenantUpdateOne) SetIsHosterTenant(b bool) *TenantUpdateOne {
+	tuo.mutation.SetIsHosterTenant(b)
+	return tuo
+}
+
+// SetNillableIsHosterTenant sets the "is_hoster_tenant" field if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableIsHosterTenant(b *bool) *TenantUpdateOne {
+	if b != nil {
+		tuo.SetIsHosterTenant(*b)
+	}
+	return tuo
+}
+
+// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
+func (tuo *TenantUpdateOne) ClearIsHosterTenant() *TenantUpdateOne {
+	tuo.mutation.ClearIsHosterTenant()
+	return tuo
+}
+
+// SetOidcOrgID sets the "oidc_org_id" field.
+func (tuo *TenantUpdateOne) SetOidcOrgID(s string) *TenantUpdateOne {
+	tuo.mutation.SetOidcOrgID(s)
+	return tuo
+}
+
+// SetNillableOidcOrgID sets the "oidc_org_id" field if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableOidcOrgID(s *string) *TenantUpdateOne {
+	if s != nil {
+		tuo.SetOidcOrgID(*s)
+	}
+	return tuo
+}
+
+// ClearOidcOrgID clears the value of the "oidc_org_id" field.
+func (tuo *TenantUpdateOne) ClearOidcOrgID() *TenantUpdateOne {
+	tuo.mutation.ClearOidcOrgID()
+	return tuo
+}
+
+// SetOidcDefaultRole sets the "oidc_default_role" field.
+func (tuo *TenantUpdateOne) SetOidcDefaultRole(tdr tenant.OidcDefaultRole) *TenantUpdateOne {
+	tuo.mutation.SetOidcDefaultRole(tdr)
+	return tuo
+}
+
+// SetNillableOidcDefaultRole sets the "oidc_default_role" field if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableOidcDefaultRole(tdr *tenant.OidcDefaultRole) *TenantUpdateOne {
+	if tdr != nil {
+		tuo.SetOidcDefaultRole(*tdr)
+	}
+	return tuo
+}
+
+// ClearOidcDefaultRole clears the value of the "oidc_default_role" field.
+func (tuo *TenantUpdateOne) ClearOidcDefaultRole() *TenantUpdateOne {
+	tuo.mutation.ClearOidcDefaultRole()
 	return tuo
 }
 
@@ -811,6 +1126,36 @@ func (tuo *TenantUpdateOne) SetNetbird(n *NetbirdSettings) *TenantUpdateOne {
 	return tuo.SetNetbirdID(n.ID)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (tuo *TenantUpdateOne) AddUserTenantIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.AddUserTenantIDs(ids...)
+	return tuo
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (tuo *TenantUpdateOne) AddUserTenants(u ...*UserTenant) *TenantUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return tuo.AddUserTenantIDs(ids...)
+}
+
+// AddEnrollmentTokenIDs adds the "enrollment_tokens" edge to the EnrollmentToken entity by IDs.
+func (tuo *TenantUpdateOne) AddEnrollmentTokenIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.AddEnrollmentTokenIDs(ids...)
+	return tuo
+}
+
+// AddEnrollmentTokens adds the "enrollment_tokens" edges to the EnrollmentToken entity.
+func (tuo *TenantUpdateOne) AddEnrollmentTokens(e ...*EnrollmentToken) *TenantUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return tuo.AddEnrollmentTokenIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tuo *TenantUpdateOne) Mutation() *TenantMutation {
 	return tuo.mutation
@@ -912,6 +1257,48 @@ func (tuo *TenantUpdateOne) ClearNetbird() *TenantUpdateOne {
 	return tuo
 }
 
+// ClearUserTenants clears all "user_tenants" edges to the UserTenant entity.
+func (tuo *TenantUpdateOne) ClearUserTenants() *TenantUpdateOne {
+	tuo.mutation.ClearUserTenants()
+	return tuo
+}
+
+// RemoveUserTenantIDs removes the "user_tenants" edge to UserTenant entities by IDs.
+func (tuo *TenantUpdateOne) RemoveUserTenantIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.RemoveUserTenantIDs(ids...)
+	return tuo
+}
+
+// RemoveUserTenants removes "user_tenants" edges to UserTenant entities.
+func (tuo *TenantUpdateOne) RemoveUserTenants(u ...*UserTenant) *TenantUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return tuo.RemoveUserTenantIDs(ids...)
+}
+
+// ClearEnrollmentTokens clears all "enrollment_tokens" edges to the EnrollmentToken entity.
+func (tuo *TenantUpdateOne) ClearEnrollmentTokens() *TenantUpdateOne {
+	tuo.mutation.ClearEnrollmentTokens()
+	return tuo
+}
+
+// RemoveEnrollmentTokenIDs removes the "enrollment_tokens" edge to EnrollmentToken entities by IDs.
+func (tuo *TenantUpdateOne) RemoveEnrollmentTokenIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.RemoveEnrollmentTokenIDs(ids...)
+	return tuo
+}
+
+// RemoveEnrollmentTokens removes "enrollment_tokens" edges to EnrollmentToken entities.
+func (tuo *TenantUpdateOne) RemoveEnrollmentTokens(e ...*EnrollmentToken) *TenantUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return tuo.RemoveEnrollmentTokenIDs(ids...)
+}
+
 // Where appends a list predicates to the TenantUpdate builder.
 func (tuo *TenantUpdateOne) Where(ps ...predicate.Tenant) *TenantUpdateOne {
 	tuo.mutation.Where(ps...)
@@ -961,6 +1348,16 @@ func (tuo *TenantUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TenantUpdateOne) check() error {
+	if v, ok := tuo.mutation.OidcDefaultRole(); ok {
+		if err := tenant.OidcDefaultRoleValidator(v); err != nil {
+			return &ValidationError{Name: "oidc_default_role", err: fmt.Errorf(`ent: validator failed for field "Tenant.oidc_default_role": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (tuo *TenantUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TenantUpdateOne {
 	tuo.modifiers = append(tuo.modifiers, modifiers...)
@@ -968,6 +1365,9 @@ func (tuo *TenantUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Ten
 }
 
 func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err error) {
+	if err := tuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(tenant.Table, tenant.Columns, sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt))
 	id, ok := tuo.mutation.ID()
 	if !ok {
@@ -1004,6 +1404,24 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 	}
 	if tuo.mutation.IsDefaultCleared() {
 		_spec.ClearField(tenant.FieldIsDefault, field.TypeBool)
+	}
+	if value, ok := tuo.mutation.IsHosterTenant(); ok {
+		_spec.SetField(tenant.FieldIsHosterTenant, field.TypeBool, value)
+	}
+	if tuo.mutation.IsHosterTenantCleared() {
+		_spec.ClearField(tenant.FieldIsHosterTenant, field.TypeBool)
+	}
+	if value, ok := tuo.mutation.OidcOrgID(); ok {
+		_spec.SetField(tenant.FieldOidcOrgID, field.TypeString, value)
+	}
+	if tuo.mutation.OidcOrgIDCleared() {
+		_spec.ClearField(tenant.FieldOidcOrgID, field.TypeString)
+	}
+	if value, ok := tuo.mutation.OidcDefaultRole(); ok {
+		_spec.SetField(tenant.FieldOidcDefaultRole, field.TypeEnum, value)
+	}
+	if tuo.mutation.OidcDefaultRoleCleared() {
+		_spec.ClearField(tenant.FieldOidcDefaultRole, field.TypeEnum)
 	}
 	if value, ok := tuo.mutation.Created(); ok {
 		_spec.SetField(tenant.FieldCreated, field.TypeTime, value)
@@ -1248,6 +1666,96 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedUserTenantsIDs(); len(nodes) > 0 && !tuo.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedEnrollmentTokensIDs(); len(nodes) > 0 && !tuo.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.EnrollmentTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

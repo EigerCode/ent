@@ -419,6 +419,29 @@ func HasProfilesWith(preds ...predicate.Profile) predicate.Site {
 	})
 }
 
+// HasEnrollmentTokens applies the HasEdge predicate on the "enrollment_tokens" edge.
+func HasEnrollmentTokens() predicate.Site {
+	return predicate.Site(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EnrollmentTokensTable, EnrollmentTokensColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEnrollmentTokensWith applies the HasEdge predicate on the "enrollment_tokens" edge with a given conditions (other predicates).
+func HasEnrollmentTokensWith(preds ...predicate.EnrollmentToken) predicate.Site {
+	return predicate.Site(func(s *sql.Selector) {
+		step := newEnrollmentTokensStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Site) predicate.Site {
 	return predicate.Site(sql.AndPredicates(predicates...))

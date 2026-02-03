@@ -45,6 +45,20 @@ func (pc *ProfileCreate) SetNillableApplyToAll(b *bool) *ProfileCreate {
 	return pc
 }
 
+// SetDisabled sets the "disabled" field.
+func (pc *ProfileCreate) SetDisabled(b bool) *ProfileCreate {
+	pc.mutation.SetDisabled(b)
+	return pc
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableDisabled(b *bool) *ProfileCreate {
+	if b != nil {
+		pc.SetDisabled(*b)
+	}
+	return pc
+}
+
 // SetType sets the "type" field.
 func (pc *ProfileCreate) SetType(pr profile.Type) *ProfileCreate {
 	pc.mutation.SetType(pr)
@@ -162,6 +176,10 @@ func (pc *ProfileCreate) defaults() {
 		v := profile.DefaultApplyToAll
 		pc.mutation.SetApplyToAll(v)
 	}
+	if _, ok := pc.mutation.Disabled(); !ok {
+		v := profile.DefaultDisabled
+		pc.mutation.SetDisabled(v)
+	}
 	if _, ok := pc.mutation.GetType(); !ok {
 		v := profile.DefaultType
 		pc.mutation.SetType(v)
@@ -180,6 +198,9 @@ func (pc *ProfileCreate) check() error {
 	}
 	if _, ok := pc.mutation.ApplyToAll(); !ok {
 		return &ValidationError{Name: "apply_to_all", err: errors.New(`ent: missing required field "Profile.apply_to_all"`)}
+	}
+	if _, ok := pc.mutation.Disabled(); !ok {
+		return &ValidationError{Name: "disabled", err: errors.New(`ent: missing required field "Profile.disabled"`)}
 	}
 	if v, ok := pc.mutation.GetType(); ok {
 		if err := profile.TypeValidator(v); err != nil {
@@ -220,6 +241,10 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.ApplyToAll(); ok {
 		_spec.SetField(profile.FieldApplyToAll, field.TypeBool, value)
 		_node.ApplyToAll = value
+	}
+	if value, ok := pc.mutation.Disabled(); ok {
+		_spec.SetField(profile.FieldDisabled, field.TypeBool, value)
+		_node.Disabled = value
 	}
 	if value, ok := pc.mutation.GetType(); ok {
 		_spec.SetField(profile.FieldType, field.TypeEnum, value)
@@ -366,6 +391,18 @@ func (u *ProfileUpsert) UpdateApplyToAll() *ProfileUpsert {
 	return u
 }
 
+// SetDisabled sets the "disabled" field.
+func (u *ProfileUpsert) SetDisabled(v bool) *ProfileUpsert {
+	u.Set(profile.FieldDisabled, v)
+	return u
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *ProfileUpsert) UpdateDisabled() *ProfileUpsert {
+	u.SetExcluded(profile.FieldDisabled)
+	return u
+}
+
 // SetType sets the "type" field.
 func (u *ProfileUpsert) SetType(v profile.Type) *ProfileUpsert {
 	u.Set(profile.FieldType, v)
@@ -449,6 +486,20 @@ func (u *ProfileUpsertOne) SetApplyToAll(v bool) *ProfileUpsertOne {
 func (u *ProfileUpsertOne) UpdateApplyToAll() *ProfileUpsertOne {
 	return u.Update(func(s *ProfileUpsert) {
 		s.UpdateApplyToAll()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *ProfileUpsertOne) SetDisabled(v bool) *ProfileUpsertOne {
+	return u.Update(func(s *ProfileUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *ProfileUpsertOne) UpdateDisabled() *ProfileUpsertOne {
+	return u.Update(func(s *ProfileUpsert) {
+		s.UpdateDisabled()
 	})
 }
 
@@ -702,6 +753,20 @@ func (u *ProfileUpsertBulk) SetApplyToAll(v bool) *ProfileUpsertBulk {
 func (u *ProfileUpsertBulk) UpdateApplyToAll() *ProfileUpsertBulk {
 	return u.Update(func(s *ProfileUpsert) {
 		s.UpdateApplyToAll()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *ProfileUpsertBulk) SetDisabled(v bool) *ProfileUpsertBulk {
+	return u.Update(func(s *ProfileUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *ProfileUpsertBulk) UpdateDisabled() *ProfileUpsertBulk {
+	return u.Update(func(s *ProfileUpsert) {
+		s.UpdateDisabled()
 	})
 }
 

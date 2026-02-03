@@ -60,6 +60,20 @@ func (pu *ProfileUpdate) SetNillableApplyToAll(b *bool) *ProfileUpdate {
 	return pu
 }
 
+// SetDisabled sets the "disabled" field.
+func (pu *ProfileUpdate) SetDisabled(b bool) *ProfileUpdate {
+	pu.mutation.SetDisabled(b)
+	return pu
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableDisabled(b *bool) *ProfileUpdate {
+	if b != nil {
+		pu.SetDisabled(*b)
+	}
+	return pu
+}
+
 // SetType sets the "type" field.
 func (pu *ProfileUpdate) SetType(pr profile.Type) *ProfileUpdate {
 	pu.mutation.SetType(pr)
@@ -284,6 +298,9 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.ApplyToAll(); ok {
 		_spec.SetField(profile.FieldApplyToAll, field.TypeBool, value)
 	}
+	if value, ok := pu.mutation.Disabled(); ok {
+		_spec.SetField(profile.FieldDisabled, field.TypeBool, value)
+	}
 	if value, ok := pu.mutation.GetType(); ok {
 		_spec.SetField(profile.FieldType, field.TypeEnum, value)
 	}
@@ -500,6 +517,20 @@ func (puo *ProfileUpdateOne) SetApplyToAll(b bool) *ProfileUpdateOne {
 func (puo *ProfileUpdateOne) SetNillableApplyToAll(b *bool) *ProfileUpdateOne {
 	if b != nil {
 		puo.SetApplyToAll(*b)
+	}
+	return puo
+}
+
+// SetDisabled sets the "disabled" field.
+func (puo *ProfileUpdateOne) SetDisabled(b bool) *ProfileUpdateOne {
+	puo.mutation.SetDisabled(b)
+	return puo
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableDisabled(b *bool) *ProfileUpdateOne {
+	if b != nil {
+		puo.SetDisabled(*b)
 	}
 	return puo
 }
@@ -757,6 +788,9 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if value, ok := puo.mutation.ApplyToAll(); ok {
 		_spec.SetField(profile.FieldApplyToAll, field.TypeBool, value)
+	}
+	if value, ok := puo.mutation.Disabled(); ok {
+		_spec.SetField(profile.FieldDisabled, field.TypeBool, value)
 	}
 	if value, ok := puo.mutation.GetType(); ok {
 		_spec.SetField(profile.FieldType, field.TypeEnum, value)
