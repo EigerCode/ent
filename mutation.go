@@ -15,6 +15,7 @@ import (
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/app"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/computer"
 	"github.com/open-uem/ent/deployment"
@@ -63,6 +64,7 @@ const (
 	TypeAntivirus             = "Antivirus"
 	TypeApp                   = "App"
 	TypeAuthentication        = "Authentication"
+	TypeBranding              = "Branding"
 	TypeCertificate           = "Certificate"
 	TypeComputer              = "Computer"
 	TypeDeployment            = "Deployment"
@@ -6328,6 +6330,573 @@ func (m *AuthenticationMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AuthenticationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Authentication edge %s", name)
+}
+
+// BrandingMutation represents an operation that mutates the Branding nodes in the graph.
+type BrandingMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	logo_light    *string
+	logo_small    *string
+	primary_color *string
+	product_name  *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Branding, error)
+	predicates    []predicate.Branding
+}
+
+var _ ent.Mutation = (*BrandingMutation)(nil)
+
+// brandingOption allows management of the mutation configuration using functional options.
+type brandingOption func(*BrandingMutation)
+
+// newBrandingMutation creates new mutation for the Branding entity.
+func newBrandingMutation(c config, op Op, opts ...brandingOption) *BrandingMutation {
+	m := &BrandingMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeBranding,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withBrandingID sets the ID field of the mutation.
+func withBrandingID(id int) brandingOption {
+	return func(m *BrandingMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Branding
+		)
+		m.oldValue = func(ctx context.Context) (*Branding, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Branding.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withBranding sets the old Branding of the mutation.
+func withBranding(node *Branding) brandingOption {
+	return func(m *BrandingMutation) {
+		m.oldValue = func(context.Context) (*Branding, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m BrandingMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m BrandingMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *BrandingMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *BrandingMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Branding.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetLogoLight sets the "logo_light" field.
+func (m *BrandingMutation) SetLogoLight(s string) {
+	m.logo_light = &s
+}
+
+// LogoLight returns the value of the "logo_light" field in the mutation.
+func (m *BrandingMutation) LogoLight() (r string, exists bool) {
+	v := m.logo_light
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogoLight returns the old "logo_light" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldLogoLight(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogoLight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogoLight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogoLight: %w", err)
+	}
+	return oldValue.LogoLight, nil
+}
+
+// ClearLogoLight clears the value of the "logo_light" field.
+func (m *BrandingMutation) ClearLogoLight() {
+	m.logo_light = nil
+	m.clearedFields[branding.FieldLogoLight] = struct{}{}
+}
+
+// LogoLightCleared returns if the "logo_light" field was cleared in this mutation.
+func (m *BrandingMutation) LogoLightCleared() bool {
+	_, ok := m.clearedFields[branding.FieldLogoLight]
+	return ok
+}
+
+// ResetLogoLight resets all changes to the "logo_light" field.
+func (m *BrandingMutation) ResetLogoLight() {
+	m.logo_light = nil
+	delete(m.clearedFields, branding.FieldLogoLight)
+}
+
+// SetLogoSmall sets the "logo_small" field.
+func (m *BrandingMutation) SetLogoSmall(s string) {
+	m.logo_small = &s
+}
+
+// LogoSmall returns the value of the "logo_small" field in the mutation.
+func (m *BrandingMutation) LogoSmall() (r string, exists bool) {
+	v := m.logo_small
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogoSmall returns the old "logo_small" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldLogoSmall(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogoSmall is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogoSmall requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogoSmall: %w", err)
+	}
+	return oldValue.LogoSmall, nil
+}
+
+// ClearLogoSmall clears the value of the "logo_small" field.
+func (m *BrandingMutation) ClearLogoSmall() {
+	m.logo_small = nil
+	m.clearedFields[branding.FieldLogoSmall] = struct{}{}
+}
+
+// LogoSmallCleared returns if the "logo_small" field was cleared in this mutation.
+func (m *BrandingMutation) LogoSmallCleared() bool {
+	_, ok := m.clearedFields[branding.FieldLogoSmall]
+	return ok
+}
+
+// ResetLogoSmall resets all changes to the "logo_small" field.
+func (m *BrandingMutation) ResetLogoSmall() {
+	m.logo_small = nil
+	delete(m.clearedFields, branding.FieldLogoSmall)
+}
+
+// SetPrimaryColor sets the "primary_color" field.
+func (m *BrandingMutation) SetPrimaryColor(s string) {
+	m.primary_color = &s
+}
+
+// PrimaryColor returns the value of the "primary_color" field in the mutation.
+func (m *BrandingMutation) PrimaryColor() (r string, exists bool) {
+	v := m.primary_color
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrimaryColor returns the old "primary_color" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldPrimaryColor(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrimaryColor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrimaryColor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrimaryColor: %w", err)
+	}
+	return oldValue.PrimaryColor, nil
+}
+
+// ClearPrimaryColor clears the value of the "primary_color" field.
+func (m *BrandingMutation) ClearPrimaryColor() {
+	m.primary_color = nil
+	m.clearedFields[branding.FieldPrimaryColor] = struct{}{}
+}
+
+// PrimaryColorCleared returns if the "primary_color" field was cleared in this mutation.
+func (m *BrandingMutation) PrimaryColorCleared() bool {
+	_, ok := m.clearedFields[branding.FieldPrimaryColor]
+	return ok
+}
+
+// ResetPrimaryColor resets all changes to the "primary_color" field.
+func (m *BrandingMutation) ResetPrimaryColor() {
+	m.primary_color = nil
+	delete(m.clearedFields, branding.FieldPrimaryColor)
+}
+
+// SetProductName sets the "product_name" field.
+func (m *BrandingMutation) SetProductName(s string) {
+	m.product_name = &s
+}
+
+// ProductName returns the value of the "product_name" field in the mutation.
+func (m *BrandingMutation) ProductName() (r string, exists bool) {
+	v := m.product_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProductName returns the old "product_name" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldProductName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProductName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProductName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProductName: %w", err)
+	}
+	return oldValue.ProductName, nil
+}
+
+// ClearProductName clears the value of the "product_name" field.
+func (m *BrandingMutation) ClearProductName() {
+	m.product_name = nil
+	m.clearedFields[branding.FieldProductName] = struct{}{}
+}
+
+// ProductNameCleared returns if the "product_name" field was cleared in this mutation.
+func (m *BrandingMutation) ProductNameCleared() bool {
+	_, ok := m.clearedFields[branding.FieldProductName]
+	return ok
+}
+
+// ResetProductName resets all changes to the "product_name" field.
+func (m *BrandingMutation) ResetProductName() {
+	m.product_name = nil
+	delete(m.clearedFields, branding.FieldProductName)
+}
+
+// Where appends a list predicates to the BrandingMutation builder.
+func (m *BrandingMutation) Where(ps ...predicate.Branding) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the BrandingMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *BrandingMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Branding, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *BrandingMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *BrandingMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Branding).
+func (m *BrandingMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *BrandingMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.logo_light != nil {
+		fields = append(fields, branding.FieldLogoLight)
+	}
+	if m.logo_small != nil {
+		fields = append(fields, branding.FieldLogoSmall)
+	}
+	if m.primary_color != nil {
+		fields = append(fields, branding.FieldPrimaryColor)
+	}
+	if m.product_name != nil {
+		fields = append(fields, branding.FieldProductName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *BrandingMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case branding.FieldLogoLight:
+		return m.LogoLight()
+	case branding.FieldLogoSmall:
+		return m.LogoSmall()
+	case branding.FieldPrimaryColor:
+		return m.PrimaryColor()
+	case branding.FieldProductName:
+		return m.ProductName()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *BrandingMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case branding.FieldLogoLight:
+		return m.OldLogoLight(ctx)
+	case branding.FieldLogoSmall:
+		return m.OldLogoSmall(ctx)
+	case branding.FieldPrimaryColor:
+		return m.OldPrimaryColor(ctx)
+	case branding.FieldProductName:
+		return m.OldProductName(ctx)
+	}
+	return nil, fmt.Errorf("unknown Branding field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *BrandingMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case branding.FieldLogoLight:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogoLight(v)
+		return nil
+	case branding.FieldLogoSmall:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogoSmall(v)
+		return nil
+	case branding.FieldPrimaryColor:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrimaryColor(v)
+		return nil
+	case branding.FieldProductName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProductName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Branding field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *BrandingMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *BrandingMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *BrandingMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Branding numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *BrandingMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(branding.FieldLogoLight) {
+		fields = append(fields, branding.FieldLogoLight)
+	}
+	if m.FieldCleared(branding.FieldLogoSmall) {
+		fields = append(fields, branding.FieldLogoSmall)
+	}
+	if m.FieldCleared(branding.FieldPrimaryColor) {
+		fields = append(fields, branding.FieldPrimaryColor)
+	}
+	if m.FieldCleared(branding.FieldProductName) {
+		fields = append(fields, branding.FieldProductName)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *BrandingMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *BrandingMutation) ClearField(name string) error {
+	switch name {
+	case branding.FieldLogoLight:
+		m.ClearLogoLight()
+		return nil
+	case branding.FieldLogoSmall:
+		m.ClearLogoSmall()
+		return nil
+	case branding.FieldPrimaryColor:
+		m.ClearPrimaryColor()
+		return nil
+	case branding.FieldProductName:
+		m.ClearProductName()
+		return nil
+	}
+	return fmt.Errorf("unknown Branding nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *BrandingMutation) ResetField(name string) error {
+	switch name {
+	case branding.FieldLogoLight:
+		m.ResetLogoLight()
+		return nil
+	case branding.FieldLogoSmall:
+		m.ResetLogoSmall()
+		return nil
+	case branding.FieldPrimaryColor:
+		m.ResetPrimaryColor()
+		return nil
+	case branding.FieldProductName:
+		m.ResetProductName()
+		return nil
+	}
+	return fmt.Errorf("unknown Branding field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *BrandingMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *BrandingMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *BrandingMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *BrandingMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *BrandingMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *BrandingMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *BrandingMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Branding unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *BrandingMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Branding edge %s", name)
 }
 
 // CertificateMutation represents an operation that mutates the Certificate nodes in the graph.

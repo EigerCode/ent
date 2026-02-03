@@ -131,6 +131,20 @@ var (
 		Columns:    AuthenticationsColumns,
 		PrimaryKey: []*schema.Column{AuthenticationsColumns[0]},
 	}
+	// BrandingsColumns holds the columns for the "brandings" table.
+	BrandingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "logo_light", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "logo_small", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "primary_color", Type: field.TypeString, Nullable: true, Default: "#16a34a"},
+		{Name: "product_name", Type: field.TypeString, Nullable: true, Default: "OpenUEM"},
+	}
+	// BrandingsTable holds the schema information for the "brandings" table.
+	BrandingsTable = &schema.Table{
+		Name:       "brandings",
+		Columns:    BrandingsColumns,
+		PrimaryKey: []*schema.Column{BrandingsColumns[0]},
+	}
 	// CertificatesColumns holds the columns for the "certificates" table.
 	CertificatesColumns = []*schema.Column{
 		{Name: "serial", Type: field.TypeInt64, Increment: true},
@@ -1159,6 +1173,7 @@ var (
 		AntiviriTable,
 		AppsTable,
 		AuthenticationsTable,
+		BrandingsTable,
 		CertificatesTable,
 		ComputersTable,
 		DeploymentsTable,

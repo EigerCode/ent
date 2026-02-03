@@ -7,6 +7,7 @@ import (
 
 	"github.com/open-uem/ent/agent"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/netbird"
@@ -185,6 +186,16 @@ func init() {
 	authenticationDescUsePasswd := authenticationFields[11].Descriptor()
 	// authentication.DefaultUsePasswd holds the default value on creation for the use_passwd field.
 	authentication.DefaultUsePasswd = authenticationDescUsePasswd.Default.(bool)
+	brandingFields := schema.Branding{}.Fields()
+	_ = brandingFields
+	// brandingDescPrimaryColor is the schema descriptor for primary_color field.
+	brandingDescPrimaryColor := brandingFields[2].Descriptor()
+	// branding.DefaultPrimaryColor holds the default value on creation for the primary_color field.
+	branding.DefaultPrimaryColor = brandingDescPrimaryColor.Default.(string)
+	// brandingDescProductName is the schema descriptor for product_name field.
+	brandingDescProductName := brandingFields[3].Descriptor()
+	// branding.DefaultProductName holds the default value on creation for the product_name field.
+	branding.DefaultProductName = brandingDescProductName.Default.(string)
 	deploymentFields := schema.Deployment{}.Fields()
 	_ = deploymentFields
 	// deploymentDescInstalled is the schema descriptor for installed field.
