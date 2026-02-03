@@ -6339,17 +6339,19 @@ func (m *AuthenticationMutation) ResetEdge(name string) error {
 // BrandingMutation represents an operation that mutates the Branding nodes in the graph.
 type BrandingMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	logo_light    *string
-	logo_small    *string
-	primary_color *string
-	product_name  *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Branding, error)
-	predicates    []predicate.Branding
+	op                     Op
+	typ                    string
+	id                     *int
+	logo_light             *string
+	logo_small             *string
+	primary_color          *string
+	product_name           *string
+	login_background_image *string
+	login_welcome_text     *string
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*Branding, error)
+	predicates             []predicate.Branding
 }
 
 var _ ent.Mutation = (*BrandingMutation)(nil)
@@ -6646,6 +6648,104 @@ func (m *BrandingMutation) ResetProductName() {
 	delete(m.clearedFields, branding.FieldProductName)
 }
 
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (m *BrandingMutation) SetLoginBackgroundImage(s string) {
+	m.login_background_image = &s
+}
+
+// LoginBackgroundImage returns the value of the "login_background_image" field in the mutation.
+func (m *BrandingMutation) LoginBackgroundImage() (r string, exists bool) {
+	v := m.login_background_image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLoginBackgroundImage returns the old "login_background_image" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldLoginBackgroundImage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLoginBackgroundImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLoginBackgroundImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLoginBackgroundImage: %w", err)
+	}
+	return oldValue.LoginBackgroundImage, nil
+}
+
+// ClearLoginBackgroundImage clears the value of the "login_background_image" field.
+func (m *BrandingMutation) ClearLoginBackgroundImage() {
+	m.login_background_image = nil
+	m.clearedFields[branding.FieldLoginBackgroundImage] = struct{}{}
+}
+
+// LoginBackgroundImageCleared returns if the "login_background_image" field was cleared in this mutation.
+func (m *BrandingMutation) LoginBackgroundImageCleared() bool {
+	_, ok := m.clearedFields[branding.FieldLoginBackgroundImage]
+	return ok
+}
+
+// ResetLoginBackgroundImage resets all changes to the "login_background_image" field.
+func (m *BrandingMutation) ResetLoginBackgroundImage() {
+	m.login_background_image = nil
+	delete(m.clearedFields, branding.FieldLoginBackgroundImage)
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (m *BrandingMutation) SetLoginWelcomeText(s string) {
+	m.login_welcome_text = &s
+}
+
+// LoginWelcomeText returns the value of the "login_welcome_text" field in the mutation.
+func (m *BrandingMutation) LoginWelcomeText() (r string, exists bool) {
+	v := m.login_welcome_text
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLoginWelcomeText returns the old "login_welcome_text" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldLoginWelcomeText(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLoginWelcomeText is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLoginWelcomeText requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLoginWelcomeText: %w", err)
+	}
+	return oldValue.LoginWelcomeText, nil
+}
+
+// ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
+func (m *BrandingMutation) ClearLoginWelcomeText() {
+	m.login_welcome_text = nil
+	m.clearedFields[branding.FieldLoginWelcomeText] = struct{}{}
+}
+
+// LoginWelcomeTextCleared returns if the "login_welcome_text" field was cleared in this mutation.
+func (m *BrandingMutation) LoginWelcomeTextCleared() bool {
+	_, ok := m.clearedFields[branding.FieldLoginWelcomeText]
+	return ok
+}
+
+// ResetLoginWelcomeText resets all changes to the "login_welcome_text" field.
+func (m *BrandingMutation) ResetLoginWelcomeText() {
+	m.login_welcome_text = nil
+	delete(m.clearedFields, branding.FieldLoginWelcomeText)
+}
+
 // Where appends a list predicates to the BrandingMutation builder.
 func (m *BrandingMutation) Where(ps ...predicate.Branding) {
 	m.predicates = append(m.predicates, ps...)
@@ -6680,7 +6780,7 @@ func (m *BrandingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BrandingMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 6)
 	if m.logo_light != nil {
 		fields = append(fields, branding.FieldLogoLight)
 	}
@@ -6692,6 +6792,12 @@ func (m *BrandingMutation) Fields() []string {
 	}
 	if m.product_name != nil {
 		fields = append(fields, branding.FieldProductName)
+	}
+	if m.login_background_image != nil {
+		fields = append(fields, branding.FieldLoginBackgroundImage)
+	}
+	if m.login_welcome_text != nil {
+		fields = append(fields, branding.FieldLoginWelcomeText)
 	}
 	return fields
 }
@@ -6709,6 +6815,10 @@ func (m *BrandingMutation) Field(name string) (ent.Value, bool) {
 		return m.PrimaryColor()
 	case branding.FieldProductName:
 		return m.ProductName()
+	case branding.FieldLoginBackgroundImage:
+		return m.LoginBackgroundImage()
+	case branding.FieldLoginWelcomeText:
+		return m.LoginWelcomeText()
 	}
 	return nil, false
 }
@@ -6726,6 +6836,10 @@ func (m *BrandingMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldPrimaryColor(ctx)
 	case branding.FieldProductName:
 		return m.OldProductName(ctx)
+	case branding.FieldLoginBackgroundImage:
+		return m.OldLoginBackgroundImage(ctx)
+	case branding.FieldLoginWelcomeText:
+		return m.OldLoginWelcomeText(ctx)
 	}
 	return nil, fmt.Errorf("unknown Branding field %s", name)
 }
@@ -6762,6 +6876,20 @@ func (m *BrandingMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetProductName(v)
+		return nil
+	case branding.FieldLoginBackgroundImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLoginBackgroundImage(v)
+		return nil
+	case branding.FieldLoginWelcomeText:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLoginWelcomeText(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Branding field %s", name)
@@ -6805,6 +6933,12 @@ func (m *BrandingMutation) ClearedFields() []string {
 	if m.FieldCleared(branding.FieldProductName) {
 		fields = append(fields, branding.FieldProductName)
 	}
+	if m.FieldCleared(branding.FieldLoginBackgroundImage) {
+		fields = append(fields, branding.FieldLoginBackgroundImage)
+	}
+	if m.FieldCleared(branding.FieldLoginWelcomeText) {
+		fields = append(fields, branding.FieldLoginWelcomeText)
+	}
 	return fields
 }
 
@@ -6831,6 +6965,12 @@ func (m *BrandingMutation) ClearField(name string) error {
 	case branding.FieldProductName:
 		m.ClearProductName()
 		return nil
+	case branding.FieldLoginBackgroundImage:
+		m.ClearLoginBackgroundImage()
+		return nil
+	case branding.FieldLoginWelcomeText:
+		m.ClearLoginWelcomeText()
+		return nil
 	}
 	return fmt.Errorf("unknown Branding nullable field %s", name)
 }
@@ -6850,6 +6990,12 @@ func (m *BrandingMutation) ResetField(name string) error {
 		return nil
 	case branding.FieldProductName:
 		m.ResetProductName()
+		return nil
+	case branding.FieldLoginBackgroundImage:
+		m.ResetLoginBackgroundImage()
+		return nil
+	case branding.FieldLoginWelcomeText:
+		m.ResetLoginWelcomeText()
 		return nil
 	}
 	return fmt.Errorf("unknown Branding field %s", name)

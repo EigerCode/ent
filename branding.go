@@ -23,8 +23,12 @@ type Branding struct {
 	// Primary brand color (hex)
 	PrimaryColor string `json:"primary_color,omitempty"`
 	// Custom product name to display
-	ProductName  string `json:"product_name,omitempty"`
-	selectValues sql.SelectValues
+	ProductName string `json:"product_name,omitempty"`
+	// Login page background image as base64 data URL
+	LoginBackgroundImage string `json:"login_background_image,omitempty"`
+	// Welcome text shown on login page
+	LoginWelcomeText string `json:"login_welcome_text,omitempty"`
+	selectValues     sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -34,7 +38,7 @@ func (*Branding) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case branding.FieldID:
 			values[i] = new(sql.NullInt64)
-		case branding.FieldLogoLight, branding.FieldLogoSmall, branding.FieldPrimaryColor, branding.FieldProductName:
+		case branding.FieldLogoLight, branding.FieldLogoSmall, branding.FieldPrimaryColor, branding.FieldProductName, branding.FieldLoginBackgroundImage, branding.FieldLoginWelcomeText:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -80,6 +84,18 @@ func (b *Branding) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field product_name", values[i])
 			} else if value.Valid {
 				b.ProductName = value.String
+			}
+		case branding.FieldLoginBackgroundImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field login_background_image", values[i])
+			} else if value.Valid {
+				b.LoginBackgroundImage = value.String
+			}
+		case branding.FieldLoginWelcomeText:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field login_welcome_text", values[i])
+			} else if value.Valid {
+				b.LoginWelcomeText = value.String
 			}
 		default:
 			b.selectValues.Set(columns[i], values[i])
@@ -128,6 +144,12 @@ func (b *Branding) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("product_name=")
 	builder.WriteString(b.ProductName)
+	builder.WriteString(", ")
+	builder.WriteString("login_background_image=")
+	builder.WriteString(b.LoginBackgroundImage)
+	builder.WriteString(", ")
+	builder.WriteString("login_welcome_text=")
+	builder.WriteString(b.LoginWelcomeText)
 	builder.WriteByte(')')
 	return builder.String()
 }

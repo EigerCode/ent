@@ -108,6 +108,46 @@ func (bu *BrandingUpdate) ClearProductName() *BrandingUpdate {
 	return bu
 }
 
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (bu *BrandingUpdate) SetLoginBackgroundImage(s string) *BrandingUpdate {
+	bu.mutation.SetLoginBackgroundImage(s)
+	return bu
+}
+
+// SetNillableLoginBackgroundImage sets the "login_background_image" field if the given value is not nil.
+func (bu *BrandingUpdate) SetNillableLoginBackgroundImage(s *string) *BrandingUpdate {
+	if s != nil {
+		bu.SetLoginBackgroundImage(*s)
+	}
+	return bu
+}
+
+// ClearLoginBackgroundImage clears the value of the "login_background_image" field.
+func (bu *BrandingUpdate) ClearLoginBackgroundImage() *BrandingUpdate {
+	bu.mutation.ClearLoginBackgroundImage()
+	return bu
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (bu *BrandingUpdate) SetLoginWelcomeText(s string) *BrandingUpdate {
+	bu.mutation.SetLoginWelcomeText(s)
+	return bu
+}
+
+// SetNillableLoginWelcomeText sets the "login_welcome_text" field if the given value is not nil.
+func (bu *BrandingUpdate) SetNillableLoginWelcomeText(s *string) *BrandingUpdate {
+	if s != nil {
+		bu.SetLoginWelcomeText(*s)
+	}
+	return bu
+}
+
+// ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
+func (bu *BrandingUpdate) ClearLoginWelcomeText() *BrandingUpdate {
+	bu.mutation.ClearLoginWelcomeText()
+	return bu
+}
+
 // Mutation returns the BrandingMutation object of the builder.
 func (bu *BrandingUpdate) Mutation() *BrandingMutation {
 	return bu.mutation
@@ -178,6 +218,18 @@ func (bu *BrandingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if bu.mutation.ProductNameCleared() {
 		_spec.ClearField(branding.FieldProductName, field.TypeString)
+	}
+	if value, ok := bu.mutation.LoginBackgroundImage(); ok {
+		_spec.SetField(branding.FieldLoginBackgroundImage, field.TypeString, value)
+	}
+	if bu.mutation.LoginBackgroundImageCleared() {
+		_spec.ClearField(branding.FieldLoginBackgroundImage, field.TypeString)
+	}
+	if value, ok := bu.mutation.LoginWelcomeText(); ok {
+		_spec.SetField(branding.FieldLoginWelcomeText, field.TypeString, value)
+	}
+	if bu.mutation.LoginWelcomeTextCleared() {
+		_spec.ClearField(branding.FieldLoginWelcomeText, field.TypeString)
 	}
 	_spec.AddModifiers(bu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
@@ -281,6 +333,46 @@ func (buo *BrandingUpdateOne) ClearProductName() *BrandingUpdateOne {
 	return buo
 }
 
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (buo *BrandingUpdateOne) SetLoginBackgroundImage(s string) *BrandingUpdateOne {
+	buo.mutation.SetLoginBackgroundImage(s)
+	return buo
+}
+
+// SetNillableLoginBackgroundImage sets the "login_background_image" field if the given value is not nil.
+func (buo *BrandingUpdateOne) SetNillableLoginBackgroundImage(s *string) *BrandingUpdateOne {
+	if s != nil {
+		buo.SetLoginBackgroundImage(*s)
+	}
+	return buo
+}
+
+// ClearLoginBackgroundImage clears the value of the "login_background_image" field.
+func (buo *BrandingUpdateOne) ClearLoginBackgroundImage() *BrandingUpdateOne {
+	buo.mutation.ClearLoginBackgroundImage()
+	return buo
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (buo *BrandingUpdateOne) SetLoginWelcomeText(s string) *BrandingUpdateOne {
+	buo.mutation.SetLoginWelcomeText(s)
+	return buo
+}
+
+// SetNillableLoginWelcomeText sets the "login_welcome_text" field if the given value is not nil.
+func (buo *BrandingUpdateOne) SetNillableLoginWelcomeText(s *string) *BrandingUpdateOne {
+	if s != nil {
+		buo.SetLoginWelcomeText(*s)
+	}
+	return buo
+}
+
+// ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
+func (buo *BrandingUpdateOne) ClearLoginWelcomeText() *BrandingUpdateOne {
+	buo.mutation.ClearLoginWelcomeText()
+	return buo
+}
+
 // Mutation returns the BrandingMutation object of the builder.
 func (buo *BrandingUpdateOne) Mutation() *BrandingMutation {
 	return buo.mutation
@@ -381,6 +473,18 @@ func (buo *BrandingUpdateOne) sqlSave(ctx context.Context) (_node *Branding, err
 	}
 	if buo.mutation.ProductNameCleared() {
 		_spec.ClearField(branding.FieldProductName, field.TypeString)
+	}
+	if value, ok := buo.mutation.LoginBackgroundImage(); ok {
+		_spec.SetField(branding.FieldLoginBackgroundImage, field.TypeString, value)
+	}
+	if buo.mutation.LoginBackgroundImageCleared() {
+		_spec.ClearField(branding.FieldLoginBackgroundImage, field.TypeString)
+	}
+	if value, ok := buo.mutation.LoginWelcomeText(); ok {
+		_spec.SetField(branding.FieldLoginWelcomeText, field.TypeString, value)
+	}
+	if buo.mutation.LoginWelcomeTextCleared() {
+		_spec.ClearField(branding.FieldLoginWelcomeText, field.TypeString)
 	}
 	_spec.AddModifiers(buo.modifiers...)
 	_node = &Branding{config: buo.config}

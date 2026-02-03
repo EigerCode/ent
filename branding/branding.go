@@ -19,6 +19,10 @@ const (
 	FieldPrimaryColor = "primary_color"
 	// FieldProductName holds the string denoting the product_name field in the database.
 	FieldProductName = "product_name"
+	// FieldLoginBackgroundImage holds the string denoting the login_background_image field in the database.
+	FieldLoginBackgroundImage = "login_background_image"
+	// FieldLoginWelcomeText holds the string denoting the login_welcome_text field in the database.
+	FieldLoginWelcomeText = "login_welcome_text"
 	// Table holds the table name of the branding in the database.
 	Table = "brandings"
 )
@@ -30,6 +34,8 @@ var Columns = []string{
 	FieldLogoSmall,
 	FieldPrimaryColor,
 	FieldProductName,
+	FieldLoginBackgroundImage,
+	FieldLoginWelcomeText,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -75,4 +81,14 @@ func ByPrimaryColor(opts ...sql.OrderTermOption) OrderOption {
 // ByProductName orders the results by the product_name field.
 func ByProductName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldProductName, opts...).ToFunc()
+}
+
+// ByLoginBackgroundImage orders the results by the login_background_image field.
+func ByLoginBackgroundImage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLoginBackgroundImage, opts...).ToFunc()
+}
+
+// ByLoginWelcomeText orders the results by the login_welcome_text field.
+func ByLoginWelcomeText(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLoginWelcomeText, opts...).ToFunc()
 }

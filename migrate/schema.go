@@ -138,6 +138,8 @@ var (
 		{Name: "logo_small", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "primary_color", Type: field.TypeString, Nullable: true, Default: "#16a34a"},
 		{Name: "product_name", Type: field.TypeString, Nullable: true, Default: "OpenUEM"},
+		{Name: "login_background_image", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "login_welcome_text", Type: field.TypeString, Nullable: true},
 	}
 	// BrandingsTable holds the schema information for the "brandings" table.
 	BrandingsTable = &schema.Table{
