@@ -39,6 +39,8 @@ type User struct {
 	Passwd bool `json:"passwd,omitempty"`
 	// Use2fa holds the value of the "use2fa" field.
 	Use2fa bool `json:"use2fa,omitempty"`
+	// If true, this user has access to hoster-level global settings
+	IsSuperAdmin bool `json:"is_super_admin,omitempty"`
 	// Created holds the value of the "created" field.
 	Created time.Time `json:"created,omitempty"`
 	// Modified holds the value of the "modified" field.
@@ -77,9 +79,11 @@ type UserEdges struct {
 	Sessions []*Sessions `json:"sessions,omitempty"`
 	// Recoverycodes holds the value of the recoverycodes edge.
 	Recoverycodes []*RecoveryCode `json:"recoverycodes,omitempty"`
+	// UserTenants holds the value of the user_tenants edge.
+	UserTenants []*UserTenant `json:"user_tenants,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // SessionsOrErr returns the Sessions value or an error if the edge
@@ -100,12 +104,21 @@ func (e UserEdges) RecoverycodesOrErr() ([]*RecoveryCode, error) {
 	return nil, &NotLoadedError{edge: "recoverycodes"}
 }
 
+// UserTenantsOrErr returns the UserTenants value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserTenantsOrErr() ([]*UserTenant, error) {
+	if e.loadedTypes[2] {
+		return e.UserTenants, nil
+	}
+	return nil, &NotLoadedError{edge: "user_tenants"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldEmailVerified, user.FieldOpenid, user.FieldPasswd, user.FieldUse2fa, user.FieldTotpSecretConfirmed:
+		case user.FieldEmailVerified, user.FieldOpenid, user.FieldPasswd, user.FieldUse2fa, user.FieldIsSuperAdmin, user.FieldTotpSecretConfirmed:
 			values[i] = new(sql.NullBool)
 		case user.FieldTokenExpiry:
 			values[i] = new(sql.NullInt64)
@@ -199,6 +212,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field use2fa", values[i])
 			} else if value.Valid {
 				u.Use2fa = value.Bool
+			}
+		case user.FieldIsSuperAdmin:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_super_admin", values[i])
+			} else if value.Valid {
+				u.IsSuperAdmin = value.Bool
 			}
 		case user.FieldCreated:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -301,6 +320,11 @@ func (u *User) QueryRecoverycodes() *RecoveryCodeQuery {
 	return NewUserClient(u.config).QueryRecoverycodes(u)
 }
 
+// QueryUserTenants queries the "user_tenants" edge of the User entity.
+func (u *User) QueryUserTenants() *UserTenantQuery {
+	return NewUserClient(u.config).QueryUserTenants(u)
+}
+
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -356,6 +380,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("use2fa=")
 	builder.WriteString(fmt.Sprintf("%v", u.Use2fa))
+	builder.WriteString(", ")
+	builder.WriteString("is_super_admin=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsSuperAdmin))
 	builder.WriteString(", ")
 	builder.WriteString("created=")
 	builder.WriteString(u.Created.Format(time.ANSIC))

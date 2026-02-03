@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/certificate"
+	"github.com/open-uem/ent/tenant"
 )
 
 // CertificateCreate is the builder for creating a Certificate entity.
@@ -70,10 +71,29 @@ func (cc *CertificateCreate) SetNillableUID(s *string) *CertificateCreate {
 	return cc
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (cc *CertificateCreate) SetTenantID(i int) *CertificateCreate {
+	cc.mutation.SetTenantID(i)
+	return cc
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (cc *CertificateCreate) SetNillableTenantID(i *int) *CertificateCreate {
+	if i != nil {
+		cc.SetTenantID(*i)
+	}
+	return cc
+}
+
 // SetID sets the "id" field.
 func (cc *CertificateCreate) SetID(i int64) *CertificateCreate {
 	cc.mutation.SetID(i)
 	return cc
+}
+
+// SetTenant sets the "tenant" edge to the Tenant entity.
+func (cc *CertificateCreate) SetTenant(t *Tenant) *CertificateCreate {
+	return cc.SetTenantID(t.ID)
 }
 
 // Mutation returns the CertificateMutation object of the builder.
@@ -166,6 +186,23 @@ func (cc *CertificateCreate) createSpec() (*Certificate, *sqlgraph.CreateSpec) {
 	if value, ok := cc.mutation.UID(); ok {
 		_spec.SetField(certificate.FieldUID, field.TypeString, value)
 		_node.UID = value
+	}
+	if nodes := cc.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   certificate.TenantTable,
+			Columns: []string{certificate.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.TenantID = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -282,6 +319,24 @@ func (u *CertificateUpsert) UpdateUID() *CertificateUpsert {
 // ClearUID clears the value of the "uid" field.
 func (u *CertificateUpsert) ClearUID() *CertificateUpsert {
 	u.SetNull(certificate.FieldUID)
+	return u
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (u *CertificateUpsert) SetTenantID(v int) *CertificateUpsert {
+	u.Set(certificate.FieldTenantID, v)
+	return u
+}
+
+// UpdateTenantID sets the "tenant_id" field to the value that was provided on create.
+func (u *CertificateUpsert) UpdateTenantID() *CertificateUpsert {
+	u.SetExcluded(certificate.FieldTenantID)
+	return u
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (u *CertificateUpsert) ClearTenantID() *CertificateUpsert {
+	u.SetNull(certificate.FieldTenantID)
 	return u
 }
 
@@ -407,6 +462,27 @@ func (u *CertificateUpsertOne) UpdateUID() *CertificateUpsertOne {
 func (u *CertificateUpsertOne) ClearUID() *CertificateUpsertOne {
 	return u.Update(func(s *CertificateUpsert) {
 		s.ClearUID()
+	})
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (u *CertificateUpsertOne) SetTenantID(v int) *CertificateUpsertOne {
+	return u.Update(func(s *CertificateUpsert) {
+		s.SetTenantID(v)
+	})
+}
+
+// UpdateTenantID sets the "tenant_id" field to the value that was provided on create.
+func (u *CertificateUpsertOne) UpdateTenantID() *CertificateUpsertOne {
+	return u.Update(func(s *CertificateUpsert) {
+		s.UpdateTenantID()
+	})
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (u *CertificateUpsertOne) ClearTenantID() *CertificateUpsertOne {
+	return u.Update(func(s *CertificateUpsert) {
+		s.ClearTenantID()
 	})
 }
 
@@ -697,6 +773,27 @@ func (u *CertificateUpsertBulk) UpdateUID() *CertificateUpsertBulk {
 func (u *CertificateUpsertBulk) ClearUID() *CertificateUpsertBulk {
 	return u.Update(func(s *CertificateUpsert) {
 		s.ClearUID()
+	})
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (u *CertificateUpsertBulk) SetTenantID(v int) *CertificateUpsertBulk {
+	return u.Update(func(s *CertificateUpsert) {
+		s.SetTenantID(v)
+	})
+}
+
+// UpdateTenantID sets the "tenant_id" field to the value that was provided on create.
+func (u *CertificateUpsertBulk) UpdateTenantID() *CertificateUpsertBulk {
+	return u.Update(func(s *CertificateUpsert) {
+		s.UpdateTenantID()
+	})
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (u *CertificateUpsertBulk) ClearTenantID() *CertificateUpsertBulk {
+	return u.Update(func(s *CertificateUpsert) {
+		s.ClearTenantID()
 	})
 }
 

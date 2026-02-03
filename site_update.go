@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/agent"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/predicate"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/site"
@@ -173,6 +174,21 @@ func (su *SiteUpdate) AddProfiles(p ...*Profile) *SiteUpdate {
 	return su.AddProfileIDs(ids...)
 }
 
+// AddEnrollmentTokenIDs adds the "enrollment_tokens" edge to the EnrollmentToken entity by IDs.
+func (su *SiteUpdate) AddEnrollmentTokenIDs(ids ...int) *SiteUpdate {
+	su.mutation.AddEnrollmentTokenIDs(ids...)
+	return su
+}
+
+// AddEnrollmentTokens adds the "enrollment_tokens" edges to the EnrollmentToken entity.
+func (su *SiteUpdate) AddEnrollmentTokens(e ...*EnrollmentToken) *SiteUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.AddEnrollmentTokenIDs(ids...)
+}
+
 // Mutation returns the SiteMutation object of the builder.
 func (su *SiteUpdate) Mutation() *SiteMutation {
 	return su.mutation
@@ -224,6 +240,27 @@ func (su *SiteUpdate) RemoveProfiles(p ...*Profile) *SiteUpdate {
 		ids[i] = p[i].ID
 	}
 	return su.RemoveProfileIDs(ids...)
+}
+
+// ClearEnrollmentTokens clears all "enrollment_tokens" edges to the EnrollmentToken entity.
+func (su *SiteUpdate) ClearEnrollmentTokens() *SiteUpdate {
+	su.mutation.ClearEnrollmentTokens()
+	return su
+}
+
+// RemoveEnrollmentTokenIDs removes the "enrollment_tokens" edge to EnrollmentToken entities by IDs.
+func (su *SiteUpdate) RemoveEnrollmentTokenIDs(ids ...int) *SiteUpdate {
+	su.mutation.RemoveEnrollmentTokenIDs(ids...)
+	return su
+}
+
+// RemoveEnrollmentTokens removes "enrollment_tokens" edges to EnrollmentToken entities.
+func (su *SiteUpdate) RemoveEnrollmentTokens(e ...*EnrollmentToken) *SiteUpdate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.RemoveEnrollmentTokenIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -426,6 +463,51 @@ func (su *SiteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if su.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedEnrollmentTokensIDs(); len(nodes) > 0 && !su.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.EnrollmentTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(su.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -589,6 +671,21 @@ func (suo *SiteUpdateOne) AddProfiles(p ...*Profile) *SiteUpdateOne {
 	return suo.AddProfileIDs(ids...)
 }
 
+// AddEnrollmentTokenIDs adds the "enrollment_tokens" edge to the EnrollmentToken entity by IDs.
+func (suo *SiteUpdateOne) AddEnrollmentTokenIDs(ids ...int) *SiteUpdateOne {
+	suo.mutation.AddEnrollmentTokenIDs(ids...)
+	return suo
+}
+
+// AddEnrollmentTokens adds the "enrollment_tokens" edges to the EnrollmentToken entity.
+func (suo *SiteUpdateOne) AddEnrollmentTokens(e ...*EnrollmentToken) *SiteUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.AddEnrollmentTokenIDs(ids...)
+}
+
 // Mutation returns the SiteMutation object of the builder.
 func (suo *SiteUpdateOne) Mutation() *SiteMutation {
 	return suo.mutation
@@ -640,6 +737,27 @@ func (suo *SiteUpdateOne) RemoveProfiles(p ...*Profile) *SiteUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return suo.RemoveProfileIDs(ids...)
+}
+
+// ClearEnrollmentTokens clears all "enrollment_tokens" edges to the EnrollmentToken entity.
+func (suo *SiteUpdateOne) ClearEnrollmentTokens() *SiteUpdateOne {
+	suo.mutation.ClearEnrollmentTokens()
+	return suo
+}
+
+// RemoveEnrollmentTokenIDs removes the "enrollment_tokens" edge to EnrollmentToken entities by IDs.
+func (suo *SiteUpdateOne) RemoveEnrollmentTokenIDs(ids ...int) *SiteUpdateOne {
+	suo.mutation.RemoveEnrollmentTokenIDs(ids...)
+	return suo
+}
+
+// RemoveEnrollmentTokens removes "enrollment_tokens" edges to EnrollmentToken entities.
+func (suo *SiteUpdateOne) RemoveEnrollmentTokens(e ...*EnrollmentToken) *SiteUpdateOne {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.RemoveEnrollmentTokenIDs(ids...)
 }
 
 // Where appends a list predicates to the SiteUpdate builder.
@@ -865,6 +983,51 @@ func (suo *SiteUpdateOne) sqlSave(ctx context.Context) (_node *Site, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedEnrollmentTokensIDs(); len(nodes) > 0 && !suo.mutation.EnrollmentTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.EnrollmentTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

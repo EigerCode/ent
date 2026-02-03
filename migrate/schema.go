@@ -138,12 +138,21 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "expiry", Type: field.TypeTime, Nullable: true},
 		{Name: "uid", Type: field.TypeString, Nullable: true},
+		{Name: "tenant_id", Type: field.TypeInt, Nullable: true},
 	}
 	// CertificatesTable holds the schema information for the "certificates" table.
 	CertificatesTable = &schema.Table{
 		Name:       "certificates",
 		Columns:    CertificatesColumns,
 		PrimaryKey: []*schema.Column{CertificatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "certificates_tenants_tenant",
+				Columns:    []*schema.Column{CertificatesColumns[5]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// ComputersColumns holds the columns for the "computers" table.
 	ComputersColumns = []*schema.Column{
@@ -193,6 +202,40 @@ var (
 				Symbol:     "deployments_agents_deployments",
 				Columns:    []*schema.Column{DeploymentsColumns[8]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// EnrollmentTokensColumns holds the columns for the "enrollment_tokens" table.
+	EnrollmentTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "max_uses", Type: field.TypeInt, Default: 0},
+		{Name: "current_uses", Type: field.TypeInt, Default: 0},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "site_enrollment_tokens", Type: field.TypeInt, Nullable: true},
+		{Name: "tenant_enrollment_tokens", Type: field.TypeInt},
+	}
+	// EnrollmentTokensTable holds the schema information for the "enrollment_tokens" table.
+	EnrollmentTokensTable = &schema.Table{
+		Name:       "enrollment_tokens",
+		Columns:    EnrollmentTokensColumns,
+		PrimaryKey: []*schema.Column{EnrollmentTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "enrollment_tokens_sites_enrollment_tokens",
+				Columns:    []*schema.Column{EnrollmentTokensColumns[9]},
+				RefColumns: []*schema.Column{SitesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "enrollment_tokens_tenants_enrollment_tokens",
+				Columns:    []*schema.Column{EnrollmentTokensColumns[10]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -484,6 +527,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "apply_to_all", Type: field.TypeBool, Default: false},
+		{Name: "disabled", Type: field.TypeBool, Default: false},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Enums: []string{"winget"}, Default: "winget"},
 		{Name: "site_profiles", Type: field.TypeInt, Nullable: true},
 	}
@@ -495,7 +539,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "profiles_sites_profiles",
-				Columns:    []*schema.Column{ProfilesColumns[4]},
+				Columns:    []*schema.Column{ProfilesColumns[5]},
 				RefColumns: []*schema.Column{SitesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -950,6 +994,9 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "is_default", Type: field.TypeBool, Nullable: true},
+		{Name: "is_hoster_tenant", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "oidc_org_id", Type: field.TypeString, Nullable: true},
+		{Name: "oidc_default_role", Type: field.TypeEnum, Nullable: true, Enums: []string{"admin", "operator", "user"}, Default: "user"},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
 		{Name: "tenant_netbird", Type: field.TypeInt, Nullable: true},
@@ -962,7 +1009,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tenants_netbird_settings_netbird",
-				Columns:    []*schema.Column{TenantsColumns[5]},
+				Columns:    []*schema.Column{TenantsColumns[8]},
 				RefColumns: []*schema.Column{NetbirdSettingsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -1004,6 +1051,7 @@ var (
 		{Name: "openid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "passwd", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "use2fa", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_super_admin", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
 		{Name: "access_token", Type: field.TypeString, Nullable: true, Default: ""},
@@ -1028,6 +1076,43 @@ var (
 				Name:    "users_email_idx",
 				Unique:  false,
 				Columns: []*schema.Column{UsersColumns[2]},
+			},
+		},
+	}
+	// UserTenantsColumns holds the columns for the "user_tenants" table.
+	UserTenantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "operator", "user"}, Default: "user"},
+		{Name: "is_default", Type: field.TypeBool, Default: false},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "tenant_id", Type: field.TypeInt},
+	}
+	// UserTenantsTable holds the schema information for the "user_tenants" table.
+	UserTenantsTable = &schema.Table{
+		Name:       "user_tenants",
+		Columns:    UserTenantsColumns,
+		PrimaryKey: []*schema.Column{UserTenantsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_tenants_users_user",
+				Columns:    []*schema.Column{UserTenantsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_tenants_tenants_tenant",
+				Columns:    []*schema.Column{UserTenantsColumns[6]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "usertenant_user_id_tenant_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserTenantsColumns[5], UserTenantsColumns[6]},
 			},
 		},
 	}
@@ -1161,6 +1246,7 @@ var (
 		CertificatesTable,
 		ComputersTable,
 		DeploymentsTable,
+		EnrollmentTokensTable,
 		LogicalDisksTable,
 		MemorySlotsTable,
 		MetadataTable,
@@ -1189,6 +1275,7 @@ var (
 		TenantsTable,
 		UpdatesTable,
 		UsersTable,
+		UserTenantsTable,
 		WingetConfigExclusionsTable,
 		AgentTagsTable,
 		ProfileTagsTable,
@@ -1201,8 +1288,11 @@ func init() {
 	AgentsTable.ForeignKeys[0].RefTable = ReleasesTable
 	AntiviriTable.ForeignKeys[0].RefTable = AgentsTable
 	AppsTable.ForeignKeys[0].RefTable = AgentsTable
+	CertificatesTable.ForeignKeys[0].RefTable = TenantsTable
 	ComputersTable.ForeignKeys[0].RefTable = AgentsTable
 	DeploymentsTable.ForeignKeys[0].RefTable = AgentsTable
+	EnrollmentTokensTable.ForeignKeys[0].RefTable = SitesTable
+	EnrollmentTokensTable.ForeignKeys[1].RefTable = TenantsTable
 	LogicalDisksTable.ForeignKeys[0].RefTable = AgentsTable
 	MemorySlotsTable.ForeignKeys[0].RefTable = AgentsTable
 	MetadataTable.ForeignKeys[0].RefTable = AgentsTable
@@ -1230,6 +1320,8 @@ func init() {
 	TasksTable.ForeignKeys[0].RefTable = ProfilesTable
 	TenantsTable.ForeignKeys[0].RefTable = NetbirdSettingsTable
 	UpdatesTable.ForeignKeys[0].RefTable = AgentsTable
+	UserTenantsTable.ForeignKeys[0].RefTable = UsersTable
+	UserTenantsTable.ForeignKeys[1].RefTable = TenantsTable
 	WingetConfigExclusionsTable.ForeignKeys[0].RefTable = AgentsTable
 	AgentTagsTable.ForeignKeys[0].RefTable = AgentsTable
 	AgentTagsTable.ForeignKeys[1].RefTable = TagsTable

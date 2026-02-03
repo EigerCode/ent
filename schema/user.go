@@ -30,6 +30,10 @@ func (User) Fields() []ent.Field {
 		field.Bool("openid").Optional().Default(false),
 		field.Bool("passwd").Optional().Default(false),
 		field.Bool("use2fa").Optional().Default(false),
+		field.Bool("is_super_admin").
+			Optional().
+			Default(false).
+			Comment("If true, this user has access to hoster-level global settings"),
 		field.Time("created").Optional().Default(time.Now),
 		field.Time("modified").Optional().Default(time.Now).UpdateDefault(time.Now),
 		field.String("access_token").Optional().Default(""),
@@ -50,6 +54,7 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("sessions", Sessions.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("recoverycodes", RecoveryCode.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.From("user_tenants", UserTenant.Type).Ref("user"),
 	}
 }
 

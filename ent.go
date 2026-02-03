@@ -19,6 +19,7 @@ import (
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/computer"
 	"github.com/open-uem/ent/deployment"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
@@ -47,6 +48,7 @@ import (
 	"github.com/open-uem/ent/tenant"
 	"github.com/open-uem/ent/update"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 	"github.com/open-uem/ent/wingetconfigexclusion"
 )
 
@@ -115,6 +117,7 @@ func checkColumn(table, column string) error {
 			certificate.Table:           certificate.ValidColumn,
 			computer.Table:              computer.ValidColumn,
 			deployment.Table:            deployment.ValidColumn,
+			enrollmenttoken.Table:       enrollmenttoken.ValidColumn,
 			logicaldisk.Table:           logicaldisk.ValidColumn,
 			memoryslot.Table:            memoryslot.ValidColumn,
 			metadata.Table:              metadata.ValidColumn,
@@ -143,6 +146,7 @@ func checkColumn(table, column string) error {
 			tenant.Table:                tenant.ValidColumn,
 			update.Table:                update.ValidColumn,
 			user.Table:                  user.ValidColumn,
+			usertenant.Table:            usertenant.ValidColumn,
 			wingetconfigexclusion.Table: wingetconfigexclusion.ValidColumn,
 		})
 	})

@@ -6,12 +6,12 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// MemorySlot holds the schema definition for the Monitor entity.
+// MemorySlot holds the schema definition for the MemorySlot entity.
 type MemorySlot struct {
 	ent.Schema
 }
 
-// Fields of the Memory.
+// Fields of the MemorySlot.
 func (MemorySlot) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("slot").Optional(),
@@ -24,7 +24,7 @@ func (MemorySlot) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Memory.
+// Edges of the MemorySlot.
 func (MemorySlot) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("owner", Agent.Type).Unique().Ref("memoryslots").Required(),
