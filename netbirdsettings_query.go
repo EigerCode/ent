@@ -12,9 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/netbirdsettings"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/netbirdsettings"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // NetbirdSettingsQuery is the builder for querying NetbirdSettings entities.

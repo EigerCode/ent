@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/site"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/site"
 )
 
 // SiteDelete is the builder for deleting a Site entity.

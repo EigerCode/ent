@@ -9,7 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/server"
+	"github.com/EigerCode/ent/server"
 )
 
 // Server is the model entity for the Server schema.

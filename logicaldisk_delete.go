@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/logicaldisk"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/logicaldisk"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // LogicalDiskDelete is the builder for deleting a LogicalDisk entity.

@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/authentication"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/authentication"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // AuthenticationDelete is the builder for deleting a Authentication entity.

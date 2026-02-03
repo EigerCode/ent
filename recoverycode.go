@@ -8,8 +8,8 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/recoverycode"
-	"github.com/open-uem/ent/user"
+	"github.com/EigerCode/ent/recoverycode"
+	"github.com/EigerCode/ent/user"
 )
 
 // RecoveryCode is the model entity for the RecoveryCode schema.

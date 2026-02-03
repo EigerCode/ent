@@ -9,9 +9,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/profile"
-	"github.com/open-uem/ent/profileissue"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/profile"
+	"github.com/EigerCode/ent/profileissue"
 )
 
 // ProfileIssue is the model entity for the ProfileIssue schema.

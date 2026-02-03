@@ -10,9 +10,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/netbird"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/netbird"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // NetbirdUpdate is the builder for updating Netbird entities.

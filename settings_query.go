@@ -11,10 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/settings"
-	"github.com/open-uem/ent/tag"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/settings"
+	"github.com/EigerCode/ent/tag"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // SettingsQuery is the builder for querying Settings entities.

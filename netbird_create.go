@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/netbird"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/netbird"
 )
 
 // NetbirdCreate is the builder for creating a Netbird entity.

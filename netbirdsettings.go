@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/netbirdsettings"
+	"github.com/EigerCode/ent/netbirdsettings"
 )
 
 // NetbirdSettings is the model entity for the NetbirdSettings schema.

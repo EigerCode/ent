@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/netbirdsettings"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/netbirdsettings"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // NetbirdSettingsCreate is the builder for creating a NetbirdSettings entity.

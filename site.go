@@ -9,8 +9,8 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/site"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // Site is the model entity for the Site schema.

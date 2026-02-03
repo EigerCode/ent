@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/open-uem/ent/authentication"
+	"github.com/EigerCode/ent/authentication"
 )
 
 // Authentication is the model entity for the Authentication schema.

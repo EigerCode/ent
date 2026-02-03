@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/operatingsystem"
-	"github.com/open-uem/ent/predicate"
+	"github.com/EigerCode/ent/operatingsystem"
+	"github.com/EigerCode/ent/predicate"
 )
 
 // OperatingSystemDelete is the builder for deleting a OperatingSystem entity.

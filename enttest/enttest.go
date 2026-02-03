@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/open-uem/ent"
+	"github.com/EigerCode/ent"
 	// required by schema hooks.
-	_ "github.com/open-uem/ent/runtime"
+	_ "github.com/EigerCode/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/open-uem/ent/migrate"
+	"github.com/EigerCode/ent/migrate"
 )
 
 type (

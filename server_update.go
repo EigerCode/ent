@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/server"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/server"
 )
 
 // ServerUpdate is the builder for updating Server entities.

@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/sessions"
-	"github.com/open-uem/ent/user"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/sessions"
+	"github.com/EigerCode/ent/user"
 )
 
 // SessionsQuery is the builder for querying Sessions entities.

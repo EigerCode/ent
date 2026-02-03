@@ -11,10 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/enrollmenttoken"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/site"
-	"github.com/open-uem/ent/tenant"
+	"github.com/EigerCode/ent/enrollmenttoken"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/tenant"
 )
 
 // EnrollmentTokenQuery is the builder for querying EnrollmentToken entities.

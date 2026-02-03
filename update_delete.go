@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/update"
+	"github.com/EigerCode/ent/predicate"
+	"github.com/EigerCode/ent/update"
 )
 
 // UpdateDelete is the builder for deleting a Update entity.

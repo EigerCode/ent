@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/agent"
-	"github.com/open-uem/ent/printer"
+	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/printer"
 )
 
 // PrinterCreate is the builder for creating a Printer entity.
