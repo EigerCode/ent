@@ -9,6 +9,7 @@ import (
 	"github.com/open-uem/ent/authentication"
 	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/deployment"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/netbirdsettings"
@@ -27,6 +28,7 @@ import (
 	"github.com/open-uem/ent/task"
 	"github.com/open-uem/ent/tenant"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 	"github.com/open-uem/ent/wingetconfigexclusion"
 )
 
@@ -216,6 +218,34 @@ func init() {
 	deploymentDescByProfile := deploymentFields[6].Descriptor()
 	// deployment.DefaultByProfile holds the default value on creation for the by_profile field.
 	deployment.DefaultByProfile = deploymentDescByProfile.Default.(bool)
+	enrollmenttokenFields := schema.EnrollmentToken{}.Fields()
+	_ = enrollmenttokenFields
+	// enrollmenttokenDescToken is the schema descriptor for token field.
+	enrollmenttokenDescToken := enrollmenttokenFields[0].Descriptor()
+	// enrollmenttoken.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	enrollmenttoken.TokenValidator = enrollmenttokenDescToken.Validators[0].(func(string) error)
+	// enrollmenttokenDescMaxUses is the schema descriptor for max_uses field.
+	enrollmenttokenDescMaxUses := enrollmenttokenFields[2].Descriptor()
+	// enrollmenttoken.DefaultMaxUses holds the default value on creation for the max_uses field.
+	enrollmenttoken.DefaultMaxUses = enrollmenttokenDescMaxUses.Default.(int)
+	// enrollmenttokenDescCurrentUses is the schema descriptor for current_uses field.
+	enrollmenttokenDescCurrentUses := enrollmenttokenFields[3].Descriptor()
+	// enrollmenttoken.DefaultCurrentUses holds the default value on creation for the current_uses field.
+	enrollmenttoken.DefaultCurrentUses = enrollmenttokenDescCurrentUses.Default.(int)
+	// enrollmenttokenDescActive is the schema descriptor for active field.
+	enrollmenttokenDescActive := enrollmenttokenFields[5].Descriptor()
+	// enrollmenttoken.DefaultActive holds the default value on creation for the active field.
+	enrollmenttoken.DefaultActive = enrollmenttokenDescActive.Default.(bool)
+	// enrollmenttokenDescCreated is the schema descriptor for created field.
+	enrollmenttokenDescCreated := enrollmenttokenFields[6].Descriptor()
+	// enrollmenttoken.DefaultCreated holds the default value on creation for the created field.
+	enrollmenttoken.DefaultCreated = enrollmenttokenDescCreated.Default.(func() time.Time)
+	// enrollmenttokenDescModified is the schema descriptor for modified field.
+	enrollmenttokenDescModified := enrollmenttokenFields[7].Descriptor()
+	// enrollmenttoken.DefaultModified holds the default value on creation for the modified field.
+	enrollmenttoken.DefaultModified = enrollmenttokenDescModified.Default.(func() time.Time)
+	// enrollmenttoken.UpdateDefaultModified holds the default value on update for the modified field.
+	enrollmenttoken.UpdateDefaultModified = enrollmenttokenDescModified.UpdateDefault.(func() time.Time)
 	logicaldiskFields := schema.LogicalDisk{}.Fields()
 	_ = logicaldiskFields
 	// logicaldiskDescUsage is the schema descriptor for usage field.
@@ -726,12 +756,16 @@ func init() {
 	task.DefaultNetbirdAllowExtraDNSLabels = taskDescNetbirdAllowExtraDNSLabels.Default.(bool)
 	tenantFields := schema.Tenant{}.Fields()
 	_ = tenantFields
+	// tenantDescIsHosterTenant is the schema descriptor for is_hoster_tenant field.
+	tenantDescIsHosterTenant := tenantFields[2].Descriptor()
+	// tenant.DefaultIsHosterTenant holds the default value on creation for the is_hoster_tenant field.
+	tenant.DefaultIsHosterTenant = tenantDescIsHosterTenant.Default.(bool)
 	// tenantDescCreated is the schema descriptor for created field.
-	tenantDescCreated := tenantFields[2].Descriptor()
+	tenantDescCreated := tenantFields[5].Descriptor()
 	// tenant.DefaultCreated holds the default value on creation for the created field.
 	tenant.DefaultCreated = tenantDescCreated.Default.(func() time.Time)
 	// tenantDescModified is the schema descriptor for modified field.
-	tenantDescModified := tenantFields[3].Descriptor()
+	tenantDescModified := tenantFields[6].Descriptor()
 	// tenant.DefaultModified holds the default value on creation for the modified field.
 	tenant.DefaultModified = tenantDescModified.Default.(func() time.Time)
 	// tenant.UpdateDefaultModified holds the default value on update for the modified field.
@@ -758,64 +792,88 @@ func init() {
 	userDescUse2fa := userFields[11].Descriptor()
 	// user.DefaultUse2fa holds the default value on creation for the use2fa field.
 	user.DefaultUse2fa = userDescUse2fa.Default.(bool)
+	// userDescIsSuperAdmin is the schema descriptor for is_super_admin field.
+	userDescIsSuperAdmin := userFields[12].Descriptor()
+	// user.DefaultIsSuperAdmin holds the default value on creation for the is_super_admin field.
+	user.DefaultIsSuperAdmin = userDescIsSuperAdmin.Default.(bool)
 	// userDescCreated is the schema descriptor for created field.
-	userDescCreated := userFields[12].Descriptor()
+	userDescCreated := userFields[13].Descriptor()
 	// user.DefaultCreated holds the default value on creation for the created field.
 	user.DefaultCreated = userDescCreated.Default.(func() time.Time)
 	// userDescModified is the schema descriptor for modified field.
-	userDescModified := userFields[13].Descriptor()
+	userDescModified := userFields[14].Descriptor()
 	// user.DefaultModified holds the default value on creation for the modified field.
 	user.DefaultModified = userDescModified.Default.(func() time.Time)
 	// user.UpdateDefaultModified holds the default value on update for the modified field.
 	user.UpdateDefaultModified = userDescModified.UpdateDefault.(func() time.Time)
 	// userDescAccessToken is the schema descriptor for access_token field.
-	userDescAccessToken := userFields[14].Descriptor()
+	userDescAccessToken := userFields[15].Descriptor()
 	// user.DefaultAccessToken holds the default value on creation for the access_token field.
 	user.DefaultAccessToken = userDescAccessToken.Default.(string)
 	// userDescRefreshToken is the schema descriptor for refresh_token field.
-	userDescRefreshToken := userFields[15].Descriptor()
+	userDescRefreshToken := userFields[16].Descriptor()
 	// user.DefaultRefreshToken holds the default value on creation for the refresh_token field.
 	user.DefaultRefreshToken = userDescRefreshToken.Default.(string)
 	// userDescIDToken is the schema descriptor for id_token field.
-	userDescIDToken := userFields[16].Descriptor()
+	userDescIDToken := userFields[17].Descriptor()
 	// user.DefaultIDToken holds the default value on creation for the id_token field.
 	user.DefaultIDToken = userDescIDToken.Default.(string)
 	// userDescTokenType is the schema descriptor for token_type field.
-	userDescTokenType := userFields[17].Descriptor()
+	userDescTokenType := userFields[18].Descriptor()
 	// user.DefaultTokenType holds the default value on creation for the token_type field.
 	user.DefaultTokenType = userDescTokenType.Default.(string)
 	// userDescTokenExpiry is the schema descriptor for token_expiry field.
-	userDescTokenExpiry := userFields[18].Descriptor()
+	userDescTokenExpiry := userFields[19].Descriptor()
 	// user.DefaultTokenExpiry holds the default value on creation for the token_expiry field.
 	user.DefaultTokenExpiry = userDescTokenExpiry.Default.(int)
 	// userDescHash is the schema descriptor for hash field.
-	userDescHash := userFields[19].Descriptor()
+	userDescHash := userFields[20].Descriptor()
 	// user.DefaultHash holds the default value on creation for the hash field.
 	user.DefaultHash = userDescHash.Default.(string)
 	// userDescTotpSecret is the schema descriptor for totp_secret field.
-	userDescTotpSecret := userFields[20].Descriptor()
+	userDescTotpSecret := userFields[21].Descriptor()
 	// user.DefaultTotpSecret holds the default value on creation for the totp_secret field.
 	user.DefaultTotpSecret = userDescTotpSecret.Default.(string)
 	// userDescTotpSecretConfirmed is the schema descriptor for totp_secret_confirmed field.
-	userDescTotpSecretConfirmed := userFields[21].Descriptor()
+	userDescTotpSecretConfirmed := userFields[22].Descriptor()
 	// user.DefaultTotpSecretConfirmed holds the default value on creation for the totp_secret_confirmed field.
 	user.DefaultTotpSecretConfirmed = userDescTotpSecretConfirmed.Default.(bool)
 	// userDescForgotPasswordCode is the schema descriptor for forgot_password_code field.
-	userDescForgotPasswordCode := userFields[22].Descriptor()
+	userDescForgotPasswordCode := userFields[23].Descriptor()
 	// user.DefaultForgotPasswordCode holds the default value on creation for the forgot_password_code field.
 	user.DefaultForgotPasswordCode = userDescForgotPasswordCode.Default.(string)
 	// userDescForgotPasswordCodeExpiresAt is the schema descriptor for forgot_password_code_expires_at field.
-	userDescForgotPasswordCodeExpiresAt := userFields[23].Descriptor()
+	userDescForgotPasswordCodeExpiresAt := userFields[24].Descriptor()
 	// user.DefaultForgotPasswordCodeExpiresAt holds the default value on creation for the forgot_password_code_expires_at field.
 	user.DefaultForgotPasswordCodeExpiresAt = userDescForgotPasswordCodeExpiresAt.Default.(func() time.Time)
 	// userDescNewUserToken is the schema descriptor for new_user_token field.
-	userDescNewUserToken := userFields[24].Descriptor()
+	userDescNewUserToken := userFields[25].Descriptor()
 	// user.DefaultNewUserToken holds the default value on creation for the new_user_token field.
 	user.DefaultNewUserToken = userDescNewUserToken.Default.(string)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	user.IDValidator = userDescID.Validators[0].(func(string) error)
+	usertenantFields := schema.UserTenant{}.Fields()
+	_ = usertenantFields
+	// usertenantDescUserID is the schema descriptor for user_id field.
+	usertenantDescUserID := usertenantFields[0].Descriptor()
+	// usertenant.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	usertenant.UserIDValidator = usertenantDescUserID.Validators[0].(func(string) error)
+	// usertenantDescIsDefault is the schema descriptor for is_default field.
+	usertenantDescIsDefault := usertenantFields[3].Descriptor()
+	// usertenant.DefaultIsDefault holds the default value on creation for the is_default field.
+	usertenant.DefaultIsDefault = usertenantDescIsDefault.Default.(bool)
+	// usertenantDescCreated is the schema descriptor for created field.
+	usertenantDescCreated := usertenantFields[4].Descriptor()
+	// usertenant.DefaultCreated holds the default value on creation for the created field.
+	usertenant.DefaultCreated = usertenantDescCreated.Default.(func() time.Time)
+	// usertenantDescModified is the schema descriptor for modified field.
+	usertenantDescModified := usertenantFields[5].Descriptor()
+	// usertenant.DefaultModified holds the default value on creation for the modified field.
+	usertenant.DefaultModified = usertenantDescModified.Default.(func() time.Time)
+	// usertenant.UpdateDefaultModified holds the default value on update for the modified field.
+	usertenant.UpdateDefaultModified = usertenantDescModified.UpdateDefault.(func() time.Time)
 	wingetconfigexclusionFields := schema.WingetConfigExclusion{}.Fields()
 	_ = wingetconfigexclusionFields
 	// wingetconfigexclusionDescWhen is the schema descriptor for when field.

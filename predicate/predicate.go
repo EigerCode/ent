@@ -30,6 +30,9 @@ type Computer func(*sql.Selector)
 // Deployment is the predicate function for deployment builders.
 type Deployment func(*sql.Selector)
 
+// EnrollmentToken is the predicate function for enrollmenttoken builders.
+type EnrollmentToken func(*sql.Selector)
+
 // LogicalDisk is the predicate function for logicaldisk builders.
 type LogicalDisk func(*sql.Selector)
 
@@ -113,6 +116,9 @@ type Update func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserTenant is the predicate function for usertenant builders.
+type UserTenant func(*sql.Selector)
 
 // WingetConfigExclusion is the predicate function for wingetconfigexclusion builders.
 type WingetConfigExclusion func(*sql.Selector)

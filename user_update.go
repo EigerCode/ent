@@ -15,6 +15,7 @@ import (
 	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -230,6 +231,26 @@ func (uu *UserUpdate) SetNillableUse2fa(b *bool) *UserUpdate {
 // ClearUse2fa clears the value of the "use2fa" field.
 func (uu *UserUpdate) ClearUse2fa() *UserUpdate {
 	uu.mutation.ClearUse2fa()
+	return uu
+}
+
+// SetIsSuperAdmin sets the "is_super_admin" field.
+func (uu *UserUpdate) SetIsSuperAdmin(b bool) *UserUpdate {
+	uu.mutation.SetIsSuperAdmin(b)
+	return uu
+}
+
+// SetNillableIsSuperAdmin sets the "is_super_admin" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableIsSuperAdmin(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetIsSuperAdmin(*b)
+	}
+	return uu
+}
+
+// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
+func (uu *UserUpdate) ClearIsSuperAdmin() *UserUpdate {
+	uu.mutation.ClearIsSuperAdmin()
 	return uu
 }
 
@@ -522,6 +543,21 @@ func (uu *UserUpdate) AddRecoverycodes(r ...*RecoveryCode) *UserUpdate {
 	return uu.AddRecoverycodeIDs(ids...)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (uu *UserUpdate) AddUserTenantIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddUserTenantIDs(ids...)
+	return uu
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (uu *UserUpdate) AddUserTenants(u ...*UserTenant) *UserUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.AddUserTenantIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -567,6 +603,27 @@ func (uu *UserUpdate) RemoveRecoverycodes(r ...*RecoveryCode) *UserUpdate {
 		ids[i] = r[i].ID
 	}
 	return uu.RemoveRecoverycodeIDs(ids...)
+}
+
+// ClearUserTenants clears all "user_tenants" edges to the UserTenant entity.
+func (uu *UserUpdate) ClearUserTenants() *UserUpdate {
+	uu.mutation.ClearUserTenants()
+	return uu
+}
+
+// RemoveUserTenantIDs removes the "user_tenants" edge to UserTenant entities by IDs.
+func (uu *UserUpdate) RemoveUserTenantIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveUserTenantIDs(ids...)
+	return uu
+}
+
+// RemoveUserTenants removes "user_tenants" edges to UserTenant entities.
+func (uu *UserUpdate) RemoveUserTenants(u ...*UserTenant) *UserUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uu.RemoveUserTenantIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -676,6 +733,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.Use2faCleared() {
 		_spec.ClearField(user.FieldUse2fa, field.TypeBool)
+	}
+	if value, ok := uu.mutation.IsSuperAdmin(); ok {
+		_spec.SetField(user.FieldIsSuperAdmin, field.TypeBool, value)
+	}
+	if uu.mutation.IsSuperAdminCleared() {
+		_spec.ClearField(user.FieldIsSuperAdmin, field.TypeBool)
 	}
 	if value, ok := uu.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
@@ -841,6 +904,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedUserTenantsIDs(); len(nodes) > 0 && !uu.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1069,6 +1177,26 @@ func (uuo *UserUpdateOne) SetNillableUse2fa(b *bool) *UserUpdateOne {
 // ClearUse2fa clears the value of the "use2fa" field.
 func (uuo *UserUpdateOne) ClearUse2fa() *UserUpdateOne {
 	uuo.mutation.ClearUse2fa()
+	return uuo
+}
+
+// SetIsSuperAdmin sets the "is_super_admin" field.
+func (uuo *UserUpdateOne) SetIsSuperAdmin(b bool) *UserUpdateOne {
+	uuo.mutation.SetIsSuperAdmin(b)
+	return uuo
+}
+
+// SetNillableIsSuperAdmin sets the "is_super_admin" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableIsSuperAdmin(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetIsSuperAdmin(*b)
+	}
+	return uuo
+}
+
+// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
+func (uuo *UserUpdateOne) ClearIsSuperAdmin() *UserUpdateOne {
+	uuo.mutation.ClearIsSuperAdmin()
 	return uuo
 }
 
@@ -1361,6 +1489,21 @@ func (uuo *UserUpdateOne) AddRecoverycodes(r ...*RecoveryCode) *UserUpdateOne {
 	return uuo.AddRecoverycodeIDs(ids...)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (uuo *UserUpdateOne) AddUserTenantIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddUserTenantIDs(ids...)
+	return uuo
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (uuo *UserUpdateOne) AddUserTenants(u ...*UserTenant) *UserUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.AddUserTenantIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1406,6 +1549,27 @@ func (uuo *UserUpdateOne) RemoveRecoverycodes(r ...*RecoveryCode) *UserUpdateOne
 		ids[i] = r[i].ID
 	}
 	return uuo.RemoveRecoverycodeIDs(ids...)
+}
+
+// ClearUserTenants clears all "user_tenants" edges to the UserTenant entity.
+func (uuo *UserUpdateOne) ClearUserTenants() *UserUpdateOne {
+	uuo.mutation.ClearUserTenants()
+	return uuo
+}
+
+// RemoveUserTenantIDs removes the "user_tenants" edge to UserTenant entities by IDs.
+func (uuo *UserUpdateOne) RemoveUserTenantIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveUserTenantIDs(ids...)
+	return uuo
+}
+
+// RemoveUserTenants removes "user_tenants" edges to UserTenant entities.
+func (uuo *UserUpdateOne) RemoveUserTenants(u ...*UserTenant) *UserUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uuo.RemoveUserTenantIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1545,6 +1709,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.Use2faCleared() {
 		_spec.ClearField(user.FieldUse2fa, field.TypeBool)
+	}
+	if value, ok := uuo.mutation.IsSuperAdmin(); ok {
+		_spec.SetField(user.FieldIsSuperAdmin, field.TypeBool, value)
+	}
+	if uuo.mutation.IsSuperAdminCleared() {
+		_spec.ClearField(user.FieldIsSuperAdmin, field.TypeBool)
 	}
 	if value, ok := uuo.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
@@ -1710,6 +1880,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedUserTenantsIDs(); len(nodes) > 0 && !uuo.mutation.UserTenantsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

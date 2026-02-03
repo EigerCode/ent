@@ -15,6 +15,7 @@ import (
 	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -167,6 +168,20 @@ func (uc *UserCreate) SetUse2fa(b bool) *UserCreate {
 func (uc *UserCreate) SetNillableUse2fa(b *bool) *UserCreate {
 	if b != nil {
 		uc.SetUse2fa(*b)
+	}
+	return uc
+}
+
+// SetIsSuperAdmin sets the "is_super_admin" field.
+func (uc *UserCreate) SetIsSuperAdmin(b bool) *UserCreate {
+	uc.mutation.SetIsSuperAdmin(b)
+	return uc
+}
+
+// SetNillableIsSuperAdmin sets the "is_super_admin" field if the given value is not nil.
+func (uc *UserCreate) SetNillableIsSuperAdmin(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetIsSuperAdmin(*b)
 	}
 	return uc
 }
@@ -389,6 +404,21 @@ func (uc *UserCreate) AddRecoverycodes(r ...*RecoveryCode) *UserCreate {
 	return uc.AddRecoverycodeIDs(ids...)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (uc *UserCreate) AddUserTenantIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserTenantIDs(ids...)
+	return uc
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (uc *UserCreate) AddUserTenants(u ...*UserTenant) *UserCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUserTenantIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -443,6 +473,10 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.Use2fa(); !ok {
 		v := user.DefaultUse2fa
 		uc.mutation.SetUse2fa(v)
+	}
+	if _, ok := uc.mutation.IsSuperAdmin(); !ok {
+		v := user.DefaultIsSuperAdmin
+		uc.mutation.SetIsSuperAdmin(v)
 	}
 	if _, ok := uc.mutation.Created(); !ok {
 		v := user.DefaultCreated()
@@ -594,6 +628,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldUse2fa, field.TypeBool, value)
 		_node.Use2fa = value
 	}
+	if value, ok := uc.mutation.IsSuperAdmin(); ok {
+		_spec.SetField(user.FieldIsSuperAdmin, field.TypeBool, value)
+		_node.IsSuperAdmin = value
+	}
 	if value, ok := uc.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
 		_node.Created = value
@@ -671,6 +709,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -907,6 +961,24 @@ func (u *UserUpsert) UpdateUse2fa() *UserUpsert {
 // ClearUse2fa clears the value of the "use2fa" field.
 func (u *UserUpsert) ClearUse2fa() *UserUpsert {
 	u.SetNull(user.FieldUse2fa)
+	return u
+}
+
+// SetIsSuperAdmin sets the "is_super_admin" field.
+func (u *UserUpsert) SetIsSuperAdmin(v bool) *UserUpsert {
+	u.Set(user.FieldIsSuperAdmin, v)
+	return u
+}
+
+// UpdateIsSuperAdmin sets the "is_super_admin" field to the value that was provided on create.
+func (u *UserUpsert) UpdateIsSuperAdmin() *UserUpsert {
+	u.SetExcluded(user.FieldIsSuperAdmin)
+	return u
+}
+
+// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
+func (u *UserUpsert) ClearIsSuperAdmin() *UserUpsert {
+	u.SetNull(user.FieldIsSuperAdmin)
 	return u
 }
 
@@ -1405,6 +1477,27 @@ func (u *UserUpsertOne) UpdateUse2fa() *UserUpsertOne {
 func (u *UserUpsertOne) ClearUse2fa() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearUse2fa()
+	})
+}
+
+// SetIsSuperAdmin sets the "is_super_admin" field.
+func (u *UserUpsertOne) SetIsSuperAdmin(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsSuperAdmin(v)
+	})
+}
+
+// UpdateIsSuperAdmin sets the "is_super_admin" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateIsSuperAdmin() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsSuperAdmin()
+	})
+}
+
+// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
+func (u *UserUpsertOne) ClearIsSuperAdmin() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearIsSuperAdmin()
 	})
 }
 
@@ -2110,6 +2203,27 @@ func (u *UserUpsertBulk) UpdateUse2fa() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearUse2fa() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearUse2fa()
+	})
+}
+
+// SetIsSuperAdmin sets the "is_super_admin" field.
+func (u *UserUpsertBulk) SetIsSuperAdmin(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetIsSuperAdmin(v)
+	})
+}
+
+// UpdateIsSuperAdmin sets the "is_super_admin" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateIsSuperAdmin() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateIsSuperAdmin()
+	})
+}
+
+// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
+func (u *UserUpsertBulk) ClearIsSuperAdmin() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearIsSuperAdmin()
 	})
 }
 

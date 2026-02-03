@@ -143,6 +143,16 @@ func ApplyToAllNEQ(v bool) predicate.Profile {
 	return predicate.Profile(sql.FieldNEQ(FieldApplyToAll, v))
 }
 
+// DisabledEQ applies the EQ predicate on the "disabled" field.
+func DisabledEQ(v bool) predicate.Profile {
+	return predicate.Profile(sql.FieldEQ(FieldDisabled, v))
+}
+
+// DisabledNEQ applies the NEQ predicate on the "disabled" field.
+func DisabledNEQ(v bool) predicate.Profile {
+	return predicate.Profile(sql.FieldNEQ(FieldDisabled, v))
+}
+
 // TypeEQ applies the EQ predicate on the "type" field.
 func TypeEQ(v Type) predicate.Profile {
 	return predicate.Profile(sql.FieldEQ(FieldType, v))

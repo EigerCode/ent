@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/open-uem/ent/predicate"
 )
 
@@ -67,6 +68,11 @@ func Expiry(v time.Time) predicate.Certificate {
 // UID applies equality check predicate on the "uid" field. It's identical to UIDEQ.
 func UID(v string) predicate.Certificate {
 	return predicate.Certificate(sql.FieldEQ(FieldUID, v))
+}
+
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v int) predicate.Certificate {
+	return predicate.Certificate(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TypeEQ applies the EQ predicate on the "type" field.
@@ -287,6 +293,59 @@ func UIDEqualFold(v string) predicate.Certificate {
 // UIDContainsFold applies the ContainsFold predicate on the "uid" field.
 func UIDContainsFold(v string) predicate.Certificate {
 	return predicate.Certificate(sql.FieldContainsFold(FieldUID, v))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v int) predicate.Certificate {
+	return predicate.Certificate(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v int) predicate.Certificate {
+	return predicate.Certificate(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...int) predicate.Certificate {
+	return predicate.Certificate(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...int) predicate.Certificate {
+	return predicate.Certificate(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDIsNil applies the IsNil predicate on the "tenant_id" field.
+func TenantIDIsNil() predicate.Certificate {
+	return predicate.Certificate(sql.FieldIsNull(FieldTenantID))
+}
+
+// TenantIDNotNil applies the NotNil predicate on the "tenant_id" field.
+func TenantIDNotNil() predicate.Certificate {
+	return predicate.Certificate(sql.FieldNotNull(FieldTenantID))
+}
+
+// HasTenant applies the HasEdge predicate on the "tenant" edge.
+func HasTenant() predicate.Certificate {
+	return predicate.Certificate(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, TenantTable, TenantColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTenantWith applies the HasEdge predicate on the "tenant" edge with a given conditions (other predicates).
+func HasTenantWith(preds ...predicate.Tenant) predicate.Certificate {
+	return predicate.Certificate(func(s *sql.Selector) {
+		step := newTenantStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

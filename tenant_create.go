@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/rustdesk"
@@ -18,6 +19,7 @@ import (
 	"github.com/open-uem/ent/site"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/tenant"
+	"github.com/open-uem/ent/usertenant"
 )
 
 // TenantCreate is the builder for creating a Tenant entity.
@@ -52,6 +54,48 @@ func (tc *TenantCreate) SetIsDefault(b bool) *TenantCreate {
 func (tc *TenantCreate) SetNillableIsDefault(b *bool) *TenantCreate {
 	if b != nil {
 		tc.SetIsDefault(*b)
+	}
+	return tc
+}
+
+// SetIsHosterTenant sets the "is_hoster_tenant" field.
+func (tc *TenantCreate) SetIsHosterTenant(b bool) *TenantCreate {
+	tc.mutation.SetIsHosterTenant(b)
+	return tc
+}
+
+// SetNillableIsHosterTenant sets the "is_hoster_tenant" field if the given value is not nil.
+func (tc *TenantCreate) SetNillableIsHosterTenant(b *bool) *TenantCreate {
+	if b != nil {
+		tc.SetIsHosterTenant(*b)
+	}
+	return tc
+}
+
+// SetOidcOrgID sets the "oidc_org_id" field.
+func (tc *TenantCreate) SetOidcOrgID(s string) *TenantCreate {
+	tc.mutation.SetOidcOrgID(s)
+	return tc
+}
+
+// SetNillableOidcOrgID sets the "oidc_org_id" field if the given value is not nil.
+func (tc *TenantCreate) SetNillableOidcOrgID(s *string) *TenantCreate {
+	if s != nil {
+		tc.SetOidcOrgID(*s)
+	}
+	return tc
+}
+
+// SetOidcDefaultRole sets the "oidc_default_role" field.
+func (tc *TenantCreate) SetOidcDefaultRole(tdr tenant.OidcDefaultRole) *TenantCreate {
+	tc.mutation.SetOidcDefaultRole(tdr)
+	return tc
+}
+
+// SetNillableOidcDefaultRole sets the "oidc_default_role" field if the given value is not nil.
+func (tc *TenantCreate) SetNillableOidcDefaultRole(tdr *tenant.OidcDefaultRole) *TenantCreate {
+	if tdr != nil {
+		tc.SetOidcDefaultRole(*tdr)
 	}
 	return tc
 }
@@ -182,6 +226,36 @@ func (tc *TenantCreate) SetNetbird(n *NetbirdSettings) *TenantCreate {
 	return tc.SetNetbirdID(n.ID)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (tc *TenantCreate) AddUserTenantIDs(ids ...int) *TenantCreate {
+	tc.mutation.AddUserTenantIDs(ids...)
+	return tc
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (tc *TenantCreate) AddUserTenants(u ...*UserTenant) *TenantCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return tc.AddUserTenantIDs(ids...)
+}
+
+// AddEnrollmentTokenIDs adds the "enrollment_tokens" edge to the EnrollmentToken entity by IDs.
+func (tc *TenantCreate) AddEnrollmentTokenIDs(ids ...int) *TenantCreate {
+	tc.mutation.AddEnrollmentTokenIDs(ids...)
+	return tc
+}
+
+// AddEnrollmentTokens adds the "enrollment_tokens" edges to the EnrollmentToken entity.
+func (tc *TenantCreate) AddEnrollmentTokens(e ...*EnrollmentToken) *TenantCreate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return tc.AddEnrollmentTokenIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tc *TenantCreate) Mutation() *TenantMutation {
 	return tc.mutation
@@ -217,6 +291,14 @@ func (tc *TenantCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TenantCreate) defaults() {
+	if _, ok := tc.mutation.IsHosterTenant(); !ok {
+		v := tenant.DefaultIsHosterTenant
+		tc.mutation.SetIsHosterTenant(v)
+	}
+	if _, ok := tc.mutation.OidcDefaultRole(); !ok {
+		v := tenant.DefaultOidcDefaultRole
+		tc.mutation.SetOidcDefaultRole(v)
+	}
 	if _, ok := tc.mutation.Created(); !ok {
 		v := tenant.DefaultCreated()
 		tc.mutation.SetCreated(v)
@@ -229,6 +311,11 @@ func (tc *TenantCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TenantCreate) check() error {
+	if v, ok := tc.mutation.OidcDefaultRole(); ok {
+		if err := tenant.OidcDefaultRoleValidator(v); err != nil {
+			return &ValidationError{Name: "oidc_default_role", err: fmt.Errorf(`ent: validator failed for field "Tenant.oidc_default_role": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -263,6 +350,18 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.IsDefault(); ok {
 		_spec.SetField(tenant.FieldIsDefault, field.TypeBool, value)
 		_node.IsDefault = value
+	}
+	if value, ok := tc.mutation.IsHosterTenant(); ok {
+		_spec.SetField(tenant.FieldIsHosterTenant, field.TypeBool, value)
+		_node.IsHosterTenant = value
+	}
+	if value, ok := tc.mutation.OidcOrgID(); ok {
+		_spec.SetField(tenant.FieldOidcOrgID, field.TypeString, value)
+		_node.OidcOrgID = value
+	}
+	if value, ok := tc.mutation.OidcDefaultRole(); ok {
+		_spec.SetField(tenant.FieldOidcDefaultRole, field.TypeEnum, value)
+		_node.OidcDefaultRole = value
 	}
 	if value, ok := tc.mutation.Created(); ok {
 		_spec.SetField(tenant.FieldCreated, field.TypeTime, value)
@@ -369,6 +468,38 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 		_node.tenant_netbird = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := tc.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   tenant.UserTenantsTable,
+			Columns: []string{tenant.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.EnrollmentTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.EnrollmentTokensTable,
+			Columns: []string{tenant.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -454,6 +585,60 @@ func (u *TenantUpsert) UpdateIsDefault() *TenantUpsert {
 // ClearIsDefault clears the value of the "is_default" field.
 func (u *TenantUpsert) ClearIsDefault() *TenantUpsert {
 	u.SetNull(tenant.FieldIsDefault)
+	return u
+}
+
+// SetIsHosterTenant sets the "is_hoster_tenant" field.
+func (u *TenantUpsert) SetIsHosterTenant(v bool) *TenantUpsert {
+	u.Set(tenant.FieldIsHosterTenant, v)
+	return u
+}
+
+// UpdateIsHosterTenant sets the "is_hoster_tenant" field to the value that was provided on create.
+func (u *TenantUpsert) UpdateIsHosterTenant() *TenantUpsert {
+	u.SetExcluded(tenant.FieldIsHosterTenant)
+	return u
+}
+
+// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
+func (u *TenantUpsert) ClearIsHosterTenant() *TenantUpsert {
+	u.SetNull(tenant.FieldIsHosterTenant)
+	return u
+}
+
+// SetOidcOrgID sets the "oidc_org_id" field.
+func (u *TenantUpsert) SetOidcOrgID(v string) *TenantUpsert {
+	u.Set(tenant.FieldOidcOrgID, v)
+	return u
+}
+
+// UpdateOidcOrgID sets the "oidc_org_id" field to the value that was provided on create.
+func (u *TenantUpsert) UpdateOidcOrgID() *TenantUpsert {
+	u.SetExcluded(tenant.FieldOidcOrgID)
+	return u
+}
+
+// ClearOidcOrgID clears the value of the "oidc_org_id" field.
+func (u *TenantUpsert) ClearOidcOrgID() *TenantUpsert {
+	u.SetNull(tenant.FieldOidcOrgID)
+	return u
+}
+
+// SetOidcDefaultRole sets the "oidc_default_role" field.
+func (u *TenantUpsert) SetOidcDefaultRole(v tenant.OidcDefaultRole) *TenantUpsert {
+	u.Set(tenant.FieldOidcDefaultRole, v)
+	return u
+}
+
+// UpdateOidcDefaultRole sets the "oidc_default_role" field to the value that was provided on create.
+func (u *TenantUpsert) UpdateOidcDefaultRole() *TenantUpsert {
+	u.SetExcluded(tenant.FieldOidcDefaultRole)
+	return u
+}
+
+// ClearOidcDefaultRole clears the value of the "oidc_default_role" field.
+func (u *TenantUpsert) ClearOidcDefaultRole() *TenantUpsert {
+	u.SetNull(tenant.FieldOidcDefaultRole)
 	return u
 }
 
@@ -572,6 +757,69 @@ func (u *TenantUpsertOne) UpdateIsDefault() *TenantUpsertOne {
 func (u *TenantUpsertOne) ClearIsDefault() *TenantUpsertOne {
 	return u.Update(func(s *TenantUpsert) {
 		s.ClearIsDefault()
+	})
+}
+
+// SetIsHosterTenant sets the "is_hoster_tenant" field.
+func (u *TenantUpsertOne) SetIsHosterTenant(v bool) *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.SetIsHosterTenant(v)
+	})
+}
+
+// UpdateIsHosterTenant sets the "is_hoster_tenant" field to the value that was provided on create.
+func (u *TenantUpsertOne) UpdateIsHosterTenant() *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.UpdateIsHosterTenant()
+	})
+}
+
+// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
+func (u *TenantUpsertOne) ClearIsHosterTenant() *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.ClearIsHosterTenant()
+	})
+}
+
+// SetOidcOrgID sets the "oidc_org_id" field.
+func (u *TenantUpsertOne) SetOidcOrgID(v string) *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.SetOidcOrgID(v)
+	})
+}
+
+// UpdateOidcOrgID sets the "oidc_org_id" field to the value that was provided on create.
+func (u *TenantUpsertOne) UpdateOidcOrgID() *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.UpdateOidcOrgID()
+	})
+}
+
+// ClearOidcOrgID clears the value of the "oidc_org_id" field.
+func (u *TenantUpsertOne) ClearOidcOrgID() *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.ClearOidcOrgID()
+	})
+}
+
+// SetOidcDefaultRole sets the "oidc_default_role" field.
+func (u *TenantUpsertOne) SetOidcDefaultRole(v tenant.OidcDefaultRole) *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.SetOidcDefaultRole(v)
+	})
+}
+
+// UpdateOidcDefaultRole sets the "oidc_default_role" field to the value that was provided on create.
+func (u *TenantUpsertOne) UpdateOidcDefaultRole() *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.UpdateOidcDefaultRole()
+	})
+}
+
+// ClearOidcDefaultRole clears the value of the "oidc_default_role" field.
+func (u *TenantUpsertOne) ClearOidcDefaultRole() *TenantUpsertOne {
+	return u.Update(func(s *TenantUpsert) {
+		s.ClearOidcDefaultRole()
 	})
 }
 
@@ -860,6 +1108,69 @@ func (u *TenantUpsertBulk) UpdateIsDefault() *TenantUpsertBulk {
 func (u *TenantUpsertBulk) ClearIsDefault() *TenantUpsertBulk {
 	return u.Update(func(s *TenantUpsert) {
 		s.ClearIsDefault()
+	})
+}
+
+// SetIsHosterTenant sets the "is_hoster_tenant" field.
+func (u *TenantUpsertBulk) SetIsHosterTenant(v bool) *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.SetIsHosterTenant(v)
+	})
+}
+
+// UpdateIsHosterTenant sets the "is_hoster_tenant" field to the value that was provided on create.
+func (u *TenantUpsertBulk) UpdateIsHosterTenant() *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.UpdateIsHosterTenant()
+	})
+}
+
+// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
+func (u *TenantUpsertBulk) ClearIsHosterTenant() *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.ClearIsHosterTenant()
+	})
+}
+
+// SetOidcOrgID sets the "oidc_org_id" field.
+func (u *TenantUpsertBulk) SetOidcOrgID(v string) *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.SetOidcOrgID(v)
+	})
+}
+
+// UpdateOidcOrgID sets the "oidc_org_id" field to the value that was provided on create.
+func (u *TenantUpsertBulk) UpdateOidcOrgID() *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.UpdateOidcOrgID()
+	})
+}
+
+// ClearOidcOrgID clears the value of the "oidc_org_id" field.
+func (u *TenantUpsertBulk) ClearOidcOrgID() *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.ClearOidcOrgID()
+	})
+}
+
+// SetOidcDefaultRole sets the "oidc_default_role" field.
+func (u *TenantUpsertBulk) SetOidcDefaultRole(v tenant.OidcDefaultRole) *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.SetOidcDefaultRole(v)
+	})
+}
+
+// UpdateOidcDefaultRole sets the "oidc_default_role" field to the value that was provided on create.
+func (u *TenantUpsertBulk) UpdateOidcDefaultRole() *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.UpdateOidcDefaultRole()
+	})
+}
+
+// ClearOidcDefaultRole clears the value of the "oidc_default_role" field.
+func (u *TenantUpsertBulk) ClearOidcDefaultRole() *TenantUpsertBulk {
+	return u.Update(func(s *TenantUpsert) {
+		s.ClearOidcDefaultRole()
 	})
 }
 
