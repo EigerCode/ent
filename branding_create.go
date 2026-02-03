@@ -77,6 +77,34 @@ func (bc *BrandingCreate) SetNillableProductName(s *string) *BrandingCreate {
 	return bc
 }
 
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (bc *BrandingCreate) SetLoginBackgroundImage(s string) *BrandingCreate {
+	bc.mutation.SetLoginBackgroundImage(s)
+	return bc
+}
+
+// SetNillableLoginBackgroundImage sets the "login_background_image" field if the given value is not nil.
+func (bc *BrandingCreate) SetNillableLoginBackgroundImage(s *string) *BrandingCreate {
+	if s != nil {
+		bc.SetLoginBackgroundImage(*s)
+	}
+	return bc
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (bc *BrandingCreate) SetLoginWelcomeText(s string) *BrandingCreate {
+	bc.mutation.SetLoginWelcomeText(s)
+	return bc
+}
+
+// SetNillableLoginWelcomeText sets the "login_welcome_text" field if the given value is not nil.
+func (bc *BrandingCreate) SetNillableLoginWelcomeText(s *string) *BrandingCreate {
+	if s != nil {
+		bc.SetLoginWelcomeText(*s)
+	}
+	return bc
+}
+
 // Mutation returns the BrandingMutation object of the builder.
 func (bc *BrandingCreate) Mutation() *BrandingMutation {
 	return bc.mutation
@@ -166,6 +194,14 @@ func (bc *BrandingCreate) createSpec() (*Branding, *sqlgraph.CreateSpec) {
 	if value, ok := bc.mutation.ProductName(); ok {
 		_spec.SetField(branding.FieldProductName, field.TypeString, value)
 		_node.ProductName = value
+	}
+	if value, ok := bc.mutation.LoginBackgroundImage(); ok {
+		_spec.SetField(branding.FieldLoginBackgroundImage, field.TypeString, value)
+		_node.LoginBackgroundImage = value
+	}
+	if value, ok := bc.mutation.LoginWelcomeText(); ok {
+		_spec.SetField(branding.FieldLoginWelcomeText, field.TypeString, value)
+		_node.LoginWelcomeText = value
 	}
 	return _node, _spec
 }
@@ -291,6 +327,42 @@ func (u *BrandingUpsert) ClearProductName() *BrandingUpsert {
 	return u
 }
 
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (u *BrandingUpsert) SetLoginBackgroundImage(v string) *BrandingUpsert {
+	u.Set(branding.FieldLoginBackgroundImage, v)
+	return u
+}
+
+// UpdateLoginBackgroundImage sets the "login_background_image" field to the value that was provided on create.
+func (u *BrandingUpsert) UpdateLoginBackgroundImage() *BrandingUpsert {
+	u.SetExcluded(branding.FieldLoginBackgroundImage)
+	return u
+}
+
+// ClearLoginBackgroundImage clears the value of the "login_background_image" field.
+func (u *BrandingUpsert) ClearLoginBackgroundImage() *BrandingUpsert {
+	u.SetNull(branding.FieldLoginBackgroundImage)
+	return u
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (u *BrandingUpsert) SetLoginWelcomeText(v string) *BrandingUpsert {
+	u.Set(branding.FieldLoginWelcomeText, v)
+	return u
+}
+
+// UpdateLoginWelcomeText sets the "login_welcome_text" field to the value that was provided on create.
+func (u *BrandingUpsert) UpdateLoginWelcomeText() *BrandingUpsert {
+	u.SetExcluded(branding.FieldLoginWelcomeText)
+	return u
+}
+
+// ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
+func (u *BrandingUpsert) ClearLoginWelcomeText() *BrandingUpsert {
+	u.SetNull(branding.FieldLoginWelcomeText)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -412,6 +484,48 @@ func (u *BrandingUpsertOne) UpdateProductName() *BrandingUpsertOne {
 func (u *BrandingUpsertOne) ClearProductName() *BrandingUpsertOne {
 	return u.Update(func(s *BrandingUpsert) {
 		s.ClearProductName()
+	})
+}
+
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (u *BrandingUpsertOne) SetLoginBackgroundImage(v string) *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetLoginBackgroundImage(v)
+	})
+}
+
+// UpdateLoginBackgroundImage sets the "login_background_image" field to the value that was provided on create.
+func (u *BrandingUpsertOne) UpdateLoginBackgroundImage() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateLoginBackgroundImage()
+	})
+}
+
+// ClearLoginBackgroundImage clears the value of the "login_background_image" field.
+func (u *BrandingUpsertOne) ClearLoginBackgroundImage() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearLoginBackgroundImage()
+	})
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (u *BrandingUpsertOne) SetLoginWelcomeText(v string) *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetLoginWelcomeText(v)
+	})
+}
+
+// UpdateLoginWelcomeText sets the "login_welcome_text" field to the value that was provided on create.
+func (u *BrandingUpsertOne) UpdateLoginWelcomeText() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateLoginWelcomeText()
+	})
+}
+
+// ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
+func (u *BrandingUpsertOne) ClearLoginWelcomeText() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearLoginWelcomeText()
 	})
 }
 
@@ -700,6 +814,48 @@ func (u *BrandingUpsertBulk) UpdateProductName() *BrandingUpsertBulk {
 func (u *BrandingUpsertBulk) ClearProductName() *BrandingUpsertBulk {
 	return u.Update(func(s *BrandingUpsert) {
 		s.ClearProductName()
+	})
+}
+
+// SetLoginBackgroundImage sets the "login_background_image" field.
+func (u *BrandingUpsertBulk) SetLoginBackgroundImage(v string) *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetLoginBackgroundImage(v)
+	})
+}
+
+// UpdateLoginBackgroundImage sets the "login_background_image" field to the value that was provided on create.
+func (u *BrandingUpsertBulk) UpdateLoginBackgroundImage() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateLoginBackgroundImage()
+	})
+}
+
+// ClearLoginBackgroundImage clears the value of the "login_background_image" field.
+func (u *BrandingUpsertBulk) ClearLoginBackgroundImage() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearLoginBackgroundImage()
+	})
+}
+
+// SetLoginWelcomeText sets the "login_welcome_text" field.
+func (u *BrandingUpsertBulk) SetLoginWelcomeText(v string) *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetLoginWelcomeText(v)
+	})
+}
+
+// UpdateLoginWelcomeText sets the "login_welcome_text" field to the value that was provided on create.
+func (u *BrandingUpsertBulk) UpdateLoginWelcomeText() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateLoginWelcomeText()
+	})
+}
+
+// ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
+func (u *BrandingUpsertBulk) ClearLoginWelcomeText() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearLoginWelcomeText()
 	})
 }
 

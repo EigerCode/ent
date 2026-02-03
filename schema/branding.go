@@ -33,6 +33,14 @@ func (Branding) Fields() []ent.Field {
 			Optional().
 			Default("OpenUEM").
 			Comment("Custom product name to display"),
+
+		// Login page customization
+		field.Text("login_background_image").
+			Optional().
+			Comment("Login page background image as base64 data URL"),
+		field.String("login_welcome_text").
+			Optional().
+			Comment("Welcome text shown on login page"),
 	}
 }
 

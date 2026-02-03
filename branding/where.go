@@ -72,6 +72,16 @@ func ProductName(v string) predicate.Branding {
 	return predicate.Branding(sql.FieldEQ(FieldProductName, v))
 }
 
+// LoginBackgroundImage applies equality check predicate on the "login_background_image" field. It's identical to LoginBackgroundImageEQ.
+func LoginBackgroundImage(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldLoginBackgroundImage, v))
+}
+
+// LoginWelcomeText applies equality check predicate on the "login_welcome_text" field. It's identical to LoginWelcomeTextEQ.
+func LoginWelcomeText(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldLoginWelcomeText, v))
+}
+
 // LogoLightEQ applies the EQ predicate on the "logo_light" field.
 func LogoLightEQ(v string) predicate.Branding {
 	return predicate.Branding(sql.FieldEQ(FieldLogoLight, v))
@@ -370,6 +380,156 @@ func ProductNameEqualFold(v string) predicate.Branding {
 // ProductNameContainsFold applies the ContainsFold predicate on the "product_name" field.
 func ProductNameContainsFold(v string) predicate.Branding {
 	return predicate.Branding(sql.FieldContainsFold(FieldProductName, v))
+}
+
+// LoginBackgroundImageEQ applies the EQ predicate on the "login_background_image" field.
+func LoginBackgroundImageEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageNEQ applies the NEQ predicate on the "login_background_image" field.
+func LoginBackgroundImageNEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldNEQ(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageIn applies the In predicate on the "login_background_image" field.
+func LoginBackgroundImageIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldIn(FieldLoginBackgroundImage, vs...))
+}
+
+// LoginBackgroundImageNotIn applies the NotIn predicate on the "login_background_image" field.
+func LoginBackgroundImageNotIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldNotIn(FieldLoginBackgroundImage, vs...))
+}
+
+// LoginBackgroundImageGT applies the GT predicate on the "login_background_image" field.
+func LoginBackgroundImageGT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGT(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageGTE applies the GTE predicate on the "login_background_image" field.
+func LoginBackgroundImageGTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGTE(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageLT applies the LT predicate on the "login_background_image" field.
+func LoginBackgroundImageLT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLT(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageLTE applies the LTE predicate on the "login_background_image" field.
+func LoginBackgroundImageLTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLTE(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageContains applies the Contains predicate on the "login_background_image" field.
+func LoginBackgroundImageContains(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContains(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageHasPrefix applies the HasPrefix predicate on the "login_background_image" field.
+func LoginBackgroundImageHasPrefix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasPrefix(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageHasSuffix applies the HasSuffix predicate on the "login_background_image" field.
+func LoginBackgroundImageHasSuffix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasSuffix(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageIsNil applies the IsNil predicate on the "login_background_image" field.
+func LoginBackgroundImageIsNil() predicate.Branding {
+	return predicate.Branding(sql.FieldIsNull(FieldLoginBackgroundImage))
+}
+
+// LoginBackgroundImageNotNil applies the NotNil predicate on the "login_background_image" field.
+func LoginBackgroundImageNotNil() predicate.Branding {
+	return predicate.Branding(sql.FieldNotNull(FieldLoginBackgroundImage))
+}
+
+// LoginBackgroundImageEqualFold applies the EqualFold predicate on the "login_background_image" field.
+func LoginBackgroundImageEqualFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEqualFold(FieldLoginBackgroundImage, v))
+}
+
+// LoginBackgroundImageContainsFold applies the ContainsFold predicate on the "login_background_image" field.
+func LoginBackgroundImageContainsFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContainsFold(FieldLoginBackgroundImage, v))
+}
+
+// LoginWelcomeTextEQ applies the EQ predicate on the "login_welcome_text" field.
+func LoginWelcomeTextEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextNEQ applies the NEQ predicate on the "login_welcome_text" field.
+func LoginWelcomeTextNEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldNEQ(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextIn applies the In predicate on the "login_welcome_text" field.
+func LoginWelcomeTextIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldIn(FieldLoginWelcomeText, vs...))
+}
+
+// LoginWelcomeTextNotIn applies the NotIn predicate on the "login_welcome_text" field.
+func LoginWelcomeTextNotIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldNotIn(FieldLoginWelcomeText, vs...))
+}
+
+// LoginWelcomeTextGT applies the GT predicate on the "login_welcome_text" field.
+func LoginWelcomeTextGT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGT(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextGTE applies the GTE predicate on the "login_welcome_text" field.
+func LoginWelcomeTextGTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGTE(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextLT applies the LT predicate on the "login_welcome_text" field.
+func LoginWelcomeTextLT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLT(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextLTE applies the LTE predicate on the "login_welcome_text" field.
+func LoginWelcomeTextLTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLTE(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextContains applies the Contains predicate on the "login_welcome_text" field.
+func LoginWelcomeTextContains(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContains(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextHasPrefix applies the HasPrefix predicate on the "login_welcome_text" field.
+func LoginWelcomeTextHasPrefix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasPrefix(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextHasSuffix applies the HasSuffix predicate on the "login_welcome_text" field.
+func LoginWelcomeTextHasSuffix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasSuffix(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextIsNil applies the IsNil predicate on the "login_welcome_text" field.
+func LoginWelcomeTextIsNil() predicate.Branding {
+	return predicate.Branding(sql.FieldIsNull(FieldLoginWelcomeText))
+}
+
+// LoginWelcomeTextNotNil applies the NotNil predicate on the "login_welcome_text" field.
+func LoginWelcomeTextNotNil() predicate.Branding {
+	return predicate.Branding(sql.FieldNotNull(FieldLoginWelcomeText))
+}
+
+// LoginWelcomeTextEqualFold applies the EqualFold predicate on the "login_welcome_text" field.
+func LoginWelcomeTextEqualFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEqualFold(FieldLoginWelcomeText, v))
+}
+
+// LoginWelcomeTextContainsFold applies the ContainsFold predicate on the "login_welcome_text" field.
+func LoginWelcomeTextContainsFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContainsFold(FieldLoginWelcomeText, v))
 }
 
 // And groups predicates with the AND operator between them.
