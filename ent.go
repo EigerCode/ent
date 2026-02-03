@@ -16,6 +16,7 @@ import (
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/app"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/computer"
 	"github.com/open-uem/ent/deployment"
@@ -112,6 +113,7 @@ func checkColumn(table, column string) error {
 			antivirus.Table:             antivirus.ValidColumn,
 			app.Table:                   app.ValidColumn,
 			authentication.Table:        authentication.ValidColumn,
+			branding.Table:              branding.ValidColumn,
 			certificate.Table:           certificate.ValidColumn,
 			computer.Table:              computer.ValidColumn,
 			deployment.Table:            deployment.ValidColumn,
