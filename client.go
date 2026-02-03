@@ -411,9 +411,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
 		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
 		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
-		c.Server, c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag,
-		c.Task, c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
+		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -427,9 +427,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
 		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
 		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
-		c.Server, c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag,
-		c.Task, c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
+		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -7020,6 +7020,7 @@ type (
 		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
 		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
 		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,
-		Tag, Task, Tenant, Update, User, UserTenant, WingetConfigExclusion []ent.Interceptor
+		Tag, Task, Tenant, Update, User, UserTenant,
+		WingetConfigExclusion []ent.Interceptor
 	}
 )

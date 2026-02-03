@@ -543,7 +543,6 @@ var (
 		{Name: "apply_to_all", Type: field.TypeBool, Default: false},
 		{Name: "disabled", Type: field.TypeBool, Default: false},
 		{Name: "type", Type: field.TypeEnum, Nullable: true, Enums: []string{"winget"}, Default: "winget"},
-		{Name: "disabled", Type: field.TypeBool, Default: false},
 		{Name: "site_profiles", Type: field.TypeInt, Nullable: true},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
