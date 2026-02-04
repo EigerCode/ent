@@ -5197,7 +5197,9 @@ type AuthenticationMutation struct {
 	_OIDC_provider              *string
 	_OIDC_issuer_url            *string
 	_OIDC_client_id             *string
-	_OIDC_role                  *string
+	_OIDC_role_admin            *string
+	_OIDC_role_operator         *string
+	_OIDC_role_user             *string
 	_OIDC_cookie_encription_key *string
 	_OIDC_keycloak_public_key   *string
 	_OIDC_auto_create_account   *bool
@@ -5601,53 +5603,151 @@ func (m *AuthenticationMutation) ResetOIDCClientID() {
 	delete(m.clearedFields, authentication.FieldOIDCClientID)
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (m *AuthenticationMutation) SetOIDCRole(s string) {
-	m._OIDC_role = &s
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (m *AuthenticationMutation) SetOIDCRoleAdmin(s string) {
+	m._OIDC_role_admin = &s
 }
 
-// OIDCRole returns the value of the "OIDC_role" field in the mutation.
-func (m *AuthenticationMutation) OIDCRole() (r string, exists bool) {
-	v := m._OIDC_role
+// OIDCRoleAdmin returns the value of the "OIDC_role_admin" field in the mutation.
+func (m *AuthenticationMutation) OIDCRoleAdmin() (r string, exists bool) {
+	v := m._OIDC_role_admin
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldOIDCRole returns the old "OIDC_role" field's value of the Authentication entity.
+// OldOIDCRoleAdmin returns the old "OIDC_role_admin" field's value of the Authentication entity.
 // If the Authentication object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AuthenticationMutation) OldOIDCRole(ctx context.Context) (v string, err error) {
+func (m *AuthenticationMutation) OldOIDCRoleAdmin(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOIDCRole is only allowed on UpdateOne operations")
+		return v, errors.New("OldOIDCRoleAdmin is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOIDCRole requires an ID field in the mutation")
+		return v, errors.New("OldOIDCRoleAdmin requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOIDCRole: %w", err)
+		return v, fmt.Errorf("querying old value for OldOIDCRoleAdmin: %w", err)
 	}
-	return oldValue.OIDCRole, nil
+	return oldValue.OIDCRoleAdmin, nil
 }
 
-// ClearOIDCRole clears the value of the "OIDC_role" field.
-func (m *AuthenticationMutation) ClearOIDCRole() {
-	m._OIDC_role = nil
-	m.clearedFields[authentication.FieldOIDCRole] = struct{}{}
+// ClearOIDCRoleAdmin clears the value of the "OIDC_role_admin" field.
+func (m *AuthenticationMutation) ClearOIDCRoleAdmin() {
+	m._OIDC_role_admin = nil
+	m.clearedFields[authentication.FieldOIDCRoleAdmin] = struct{}{}
 }
 
-// OIDCRoleCleared returns if the "OIDC_role" field was cleared in this mutation.
-func (m *AuthenticationMutation) OIDCRoleCleared() bool {
-	_, ok := m.clearedFields[authentication.FieldOIDCRole]
+// OIDCRoleAdminCleared returns if the "OIDC_role_admin" field was cleared in this mutation.
+func (m *AuthenticationMutation) OIDCRoleAdminCleared() bool {
+	_, ok := m.clearedFields[authentication.FieldOIDCRoleAdmin]
 	return ok
 }
 
-// ResetOIDCRole resets all changes to the "OIDC_role" field.
-func (m *AuthenticationMutation) ResetOIDCRole() {
-	m._OIDC_role = nil
-	delete(m.clearedFields, authentication.FieldOIDCRole)
+// ResetOIDCRoleAdmin resets all changes to the "OIDC_role_admin" field.
+func (m *AuthenticationMutation) ResetOIDCRoleAdmin() {
+	m._OIDC_role_admin = nil
+	delete(m.clearedFields, authentication.FieldOIDCRoleAdmin)
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (m *AuthenticationMutation) SetOIDCRoleOperator(s string) {
+	m._OIDC_role_operator = &s
+}
+
+// OIDCRoleOperator returns the value of the "OIDC_role_operator" field in the mutation.
+func (m *AuthenticationMutation) OIDCRoleOperator() (r string, exists bool) {
+	v := m._OIDC_role_operator
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOIDCRoleOperator returns the old "OIDC_role_operator" field's value of the Authentication entity.
+// If the Authentication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthenticationMutation) OldOIDCRoleOperator(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOIDCRoleOperator is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOIDCRoleOperator requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOIDCRoleOperator: %w", err)
+	}
+	return oldValue.OIDCRoleOperator, nil
+}
+
+// ClearOIDCRoleOperator clears the value of the "OIDC_role_operator" field.
+func (m *AuthenticationMutation) ClearOIDCRoleOperator() {
+	m._OIDC_role_operator = nil
+	m.clearedFields[authentication.FieldOIDCRoleOperator] = struct{}{}
+}
+
+// OIDCRoleOperatorCleared returns if the "OIDC_role_operator" field was cleared in this mutation.
+func (m *AuthenticationMutation) OIDCRoleOperatorCleared() bool {
+	_, ok := m.clearedFields[authentication.FieldOIDCRoleOperator]
+	return ok
+}
+
+// ResetOIDCRoleOperator resets all changes to the "OIDC_role_operator" field.
+func (m *AuthenticationMutation) ResetOIDCRoleOperator() {
+	m._OIDC_role_operator = nil
+	delete(m.clearedFields, authentication.FieldOIDCRoleOperator)
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (m *AuthenticationMutation) SetOIDCRoleUser(s string) {
+	m._OIDC_role_user = &s
+}
+
+// OIDCRoleUser returns the value of the "OIDC_role_user" field in the mutation.
+func (m *AuthenticationMutation) OIDCRoleUser() (r string, exists bool) {
+	v := m._OIDC_role_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOIDCRoleUser returns the old "OIDC_role_user" field's value of the Authentication entity.
+// If the Authentication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthenticationMutation) OldOIDCRoleUser(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOIDCRoleUser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOIDCRoleUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOIDCRoleUser: %w", err)
+	}
+	return oldValue.OIDCRoleUser, nil
+}
+
+// ClearOIDCRoleUser clears the value of the "OIDC_role_user" field.
+func (m *AuthenticationMutation) ClearOIDCRoleUser() {
+	m._OIDC_role_user = nil
+	m.clearedFields[authentication.FieldOIDCRoleUser] = struct{}{}
+}
+
+// OIDCRoleUserCleared returns if the "OIDC_role_user" field was cleared in this mutation.
+func (m *AuthenticationMutation) OIDCRoleUserCleared() bool {
+	_, ok := m.clearedFields[authentication.FieldOIDCRoleUser]
+	return ok
+}
+
+// ResetOIDCRoleUser resets all changes to the "OIDC_role_user" field.
+func (m *AuthenticationMutation) ResetOIDCRoleUser() {
+	m._OIDC_role_user = nil
+	delete(m.clearedFields, authentication.FieldOIDCRoleUser)
 }
 
 // SetOIDCCookieEncriptionKey sets the "OIDC_cookie_encription_key" field.
@@ -5929,7 +6029,7 @@ func (m *AuthenticationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AuthenticationMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 14)
 	if m.use_certificates != nil {
 		fields = append(fields, authentication.FieldUseCertificates)
 	}
@@ -5948,8 +6048,14 @@ func (m *AuthenticationMutation) Fields() []string {
 	if m._OIDC_client_id != nil {
 		fields = append(fields, authentication.FieldOIDCClientID)
 	}
-	if m._OIDC_role != nil {
-		fields = append(fields, authentication.FieldOIDCRole)
+	if m._OIDC_role_admin != nil {
+		fields = append(fields, authentication.FieldOIDCRoleAdmin)
+	}
+	if m._OIDC_role_operator != nil {
+		fields = append(fields, authentication.FieldOIDCRoleOperator)
+	}
+	if m._OIDC_role_user != nil {
+		fields = append(fields, authentication.FieldOIDCRoleUser)
 	}
 	if m._OIDC_cookie_encription_key != nil {
 		fields = append(fields, authentication.FieldOIDCCookieEncriptionKey)
@@ -5986,8 +6092,12 @@ func (m *AuthenticationMutation) Field(name string) (ent.Value, bool) {
 		return m.OIDCIssuerURL()
 	case authentication.FieldOIDCClientID:
 		return m.OIDCClientID()
-	case authentication.FieldOIDCRole:
-		return m.OIDCRole()
+	case authentication.FieldOIDCRoleAdmin:
+		return m.OIDCRoleAdmin()
+	case authentication.FieldOIDCRoleOperator:
+		return m.OIDCRoleOperator()
+	case authentication.FieldOIDCRoleUser:
+		return m.OIDCRoleUser()
 	case authentication.FieldOIDCCookieEncriptionKey:
 		return m.OIDCCookieEncriptionKey()
 	case authentication.FieldOIDCKeycloakPublicKey:
@@ -6019,8 +6129,12 @@ func (m *AuthenticationMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldOIDCIssuerURL(ctx)
 	case authentication.FieldOIDCClientID:
 		return m.OldOIDCClientID(ctx)
-	case authentication.FieldOIDCRole:
-		return m.OldOIDCRole(ctx)
+	case authentication.FieldOIDCRoleAdmin:
+		return m.OldOIDCRoleAdmin(ctx)
+	case authentication.FieldOIDCRoleOperator:
+		return m.OldOIDCRoleOperator(ctx)
+	case authentication.FieldOIDCRoleUser:
+		return m.OldOIDCRoleUser(ctx)
 	case authentication.FieldOIDCCookieEncriptionKey:
 		return m.OldOIDCCookieEncriptionKey(ctx)
 	case authentication.FieldOIDCKeycloakPublicKey:
@@ -6082,12 +6196,26 @@ func (m *AuthenticationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOIDCClientID(v)
 		return nil
-	case authentication.FieldOIDCRole:
+	case authentication.FieldOIDCRoleAdmin:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetOIDCRole(v)
+		m.SetOIDCRoleAdmin(v)
+		return nil
+	case authentication.FieldOIDCRoleOperator:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOIDCRoleOperator(v)
+		return nil
+	case authentication.FieldOIDCRoleUser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOIDCRoleUser(v)
 		return nil
 	case authentication.FieldOIDCCookieEncriptionKey:
 		v, ok := value.(string)
@@ -6172,8 +6300,14 @@ func (m *AuthenticationMutation) ClearedFields() []string {
 	if m.FieldCleared(authentication.FieldOIDCClientID) {
 		fields = append(fields, authentication.FieldOIDCClientID)
 	}
-	if m.FieldCleared(authentication.FieldOIDCRole) {
-		fields = append(fields, authentication.FieldOIDCRole)
+	if m.FieldCleared(authentication.FieldOIDCRoleAdmin) {
+		fields = append(fields, authentication.FieldOIDCRoleAdmin)
+	}
+	if m.FieldCleared(authentication.FieldOIDCRoleOperator) {
+		fields = append(fields, authentication.FieldOIDCRoleOperator)
+	}
+	if m.FieldCleared(authentication.FieldOIDCRoleUser) {
+		fields = append(fields, authentication.FieldOIDCRoleUser)
 	}
 	if m.FieldCleared(authentication.FieldOIDCCookieEncriptionKey) {
 		fields = append(fields, authentication.FieldOIDCCookieEncriptionKey)
@@ -6222,8 +6356,14 @@ func (m *AuthenticationMutation) ClearField(name string) error {
 	case authentication.FieldOIDCClientID:
 		m.ClearOIDCClientID()
 		return nil
-	case authentication.FieldOIDCRole:
-		m.ClearOIDCRole()
+	case authentication.FieldOIDCRoleAdmin:
+		m.ClearOIDCRoleAdmin()
+		return nil
+	case authentication.FieldOIDCRoleOperator:
+		m.ClearOIDCRoleOperator()
+		return nil
+	case authentication.FieldOIDCRoleUser:
+		m.ClearOIDCRoleUser()
 		return nil
 	case authentication.FieldOIDCCookieEncriptionKey:
 		m.ClearOIDCCookieEncriptionKey()
@@ -6266,8 +6406,14 @@ func (m *AuthenticationMutation) ResetField(name string) error {
 	case authentication.FieldOIDCClientID:
 		m.ResetOIDCClientID()
 		return nil
-	case authentication.FieldOIDCRole:
-		m.ResetOIDCRole()
+	case authentication.FieldOIDCRoleAdmin:
+		m.ResetOIDCRoleAdmin()
+		return nil
+	case authentication.FieldOIDCRoleOperator:
+		m.ResetOIDCRoleOperator()
+		return nil
+	case authentication.FieldOIDCRoleUser:
+		m.ResetOIDCRoleUser()
 		return nil
 	case authentication.FieldOIDCCookieEncriptionKey:
 		m.ResetOIDCCookieEncriptionKey()

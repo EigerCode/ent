@@ -105,16 +105,44 @@ func (ac *AuthenticationCreate) SetNillableOIDCClientID(s *string) *Authenticati
 	return ac
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (ac *AuthenticationCreate) SetOIDCRole(s string) *AuthenticationCreate {
-	ac.mutation.SetOIDCRole(s)
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (ac *AuthenticationCreate) SetOIDCRoleAdmin(s string) *AuthenticationCreate {
+	ac.mutation.SetOIDCRoleAdmin(s)
 	return ac
 }
 
-// SetNillableOIDCRole sets the "OIDC_role" field if the given value is not nil.
-func (ac *AuthenticationCreate) SetNillableOIDCRole(s *string) *AuthenticationCreate {
+// SetNillableOIDCRoleAdmin sets the "OIDC_role_admin" field if the given value is not nil.
+func (ac *AuthenticationCreate) SetNillableOIDCRoleAdmin(s *string) *AuthenticationCreate {
 	if s != nil {
-		ac.SetOIDCRole(*s)
+		ac.SetOIDCRoleAdmin(*s)
+	}
+	return ac
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (ac *AuthenticationCreate) SetOIDCRoleOperator(s string) *AuthenticationCreate {
+	ac.mutation.SetOIDCRoleOperator(s)
+	return ac
+}
+
+// SetNillableOIDCRoleOperator sets the "OIDC_role_operator" field if the given value is not nil.
+func (ac *AuthenticationCreate) SetNillableOIDCRoleOperator(s *string) *AuthenticationCreate {
+	if s != nil {
+		ac.SetOIDCRoleOperator(*s)
+	}
+	return ac
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (ac *AuthenticationCreate) SetOIDCRoleUser(s string) *AuthenticationCreate {
+	ac.mutation.SetOIDCRoleUser(s)
+	return ac
+}
+
+// SetNillableOIDCRoleUser sets the "OIDC_role_user" field if the given value is not nil.
+func (ac *AuthenticationCreate) SetNillableOIDCRoleUser(s *string) *AuthenticationCreate {
+	if s != nil {
+		ac.SetOIDCRoleUser(*s)
 	}
 	return ac
 }
@@ -248,9 +276,17 @@ func (ac *AuthenticationCreate) defaults() {
 		v := authentication.DefaultOIDCClientID
 		ac.mutation.SetOIDCClientID(v)
 	}
-	if _, ok := ac.mutation.OIDCRole(); !ok {
-		v := authentication.DefaultOIDCRole
-		ac.mutation.SetOIDCRole(v)
+	if _, ok := ac.mutation.OIDCRoleAdmin(); !ok {
+		v := authentication.DefaultOIDCRoleAdmin
+		ac.mutation.SetOIDCRoleAdmin(v)
+	}
+	if _, ok := ac.mutation.OIDCRoleOperator(); !ok {
+		v := authentication.DefaultOIDCRoleOperator
+		ac.mutation.SetOIDCRoleOperator(v)
+	}
+	if _, ok := ac.mutation.OIDCRoleUser(); !ok {
+		v := authentication.DefaultOIDCRoleUser
+		ac.mutation.SetOIDCRoleUser(v)
 	}
 	if _, ok := ac.mutation.OIDCCookieEncriptionKey(); !ok {
 		v := authentication.DefaultOIDCCookieEncriptionKey
@@ -327,9 +363,17 @@ func (ac *AuthenticationCreate) createSpec() (*Authentication, *sqlgraph.CreateS
 		_spec.SetField(authentication.FieldOIDCClientID, field.TypeString, value)
 		_node.OIDCClientID = value
 	}
-	if value, ok := ac.mutation.OIDCRole(); ok {
-		_spec.SetField(authentication.FieldOIDCRole, field.TypeString, value)
-		_node.OIDCRole = value
+	if value, ok := ac.mutation.OIDCRoleAdmin(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleAdmin, field.TypeString, value)
+		_node.OIDCRoleAdmin = value
+	}
+	if value, ok := ac.mutation.OIDCRoleOperator(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleOperator, field.TypeString, value)
+		_node.OIDCRoleOperator = value
+	}
+	if value, ok := ac.mutation.OIDCRoleUser(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleUser, field.TypeString, value)
+		_node.OIDCRoleUser = value
 	}
 	if value, ok := ac.mutation.OIDCCookieEncriptionKey(); ok {
 		_spec.SetField(authentication.FieldOIDCCookieEncriptionKey, field.TypeString, value)
@@ -511,21 +555,57 @@ func (u *AuthenticationUpsert) ClearOIDCClientID() *AuthenticationUpsert {
 	return u
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (u *AuthenticationUpsert) SetOIDCRole(v string) *AuthenticationUpsert {
-	u.Set(authentication.FieldOIDCRole, v)
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (u *AuthenticationUpsert) SetOIDCRoleAdmin(v string) *AuthenticationUpsert {
+	u.Set(authentication.FieldOIDCRoleAdmin, v)
 	return u
 }
 
-// UpdateOIDCRole sets the "OIDC_role" field to the value that was provided on create.
-func (u *AuthenticationUpsert) UpdateOIDCRole() *AuthenticationUpsert {
-	u.SetExcluded(authentication.FieldOIDCRole)
+// UpdateOIDCRoleAdmin sets the "OIDC_role_admin" field to the value that was provided on create.
+func (u *AuthenticationUpsert) UpdateOIDCRoleAdmin() *AuthenticationUpsert {
+	u.SetExcluded(authentication.FieldOIDCRoleAdmin)
 	return u
 }
 
-// ClearOIDCRole clears the value of the "OIDC_role" field.
-func (u *AuthenticationUpsert) ClearOIDCRole() *AuthenticationUpsert {
-	u.SetNull(authentication.FieldOIDCRole)
+// ClearOIDCRoleAdmin clears the value of the "OIDC_role_admin" field.
+func (u *AuthenticationUpsert) ClearOIDCRoleAdmin() *AuthenticationUpsert {
+	u.SetNull(authentication.FieldOIDCRoleAdmin)
+	return u
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (u *AuthenticationUpsert) SetOIDCRoleOperator(v string) *AuthenticationUpsert {
+	u.Set(authentication.FieldOIDCRoleOperator, v)
+	return u
+}
+
+// UpdateOIDCRoleOperator sets the "OIDC_role_operator" field to the value that was provided on create.
+func (u *AuthenticationUpsert) UpdateOIDCRoleOperator() *AuthenticationUpsert {
+	u.SetExcluded(authentication.FieldOIDCRoleOperator)
+	return u
+}
+
+// ClearOIDCRoleOperator clears the value of the "OIDC_role_operator" field.
+func (u *AuthenticationUpsert) ClearOIDCRoleOperator() *AuthenticationUpsert {
+	u.SetNull(authentication.FieldOIDCRoleOperator)
+	return u
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (u *AuthenticationUpsert) SetOIDCRoleUser(v string) *AuthenticationUpsert {
+	u.Set(authentication.FieldOIDCRoleUser, v)
+	return u
+}
+
+// UpdateOIDCRoleUser sets the "OIDC_role_user" field to the value that was provided on create.
+func (u *AuthenticationUpsert) UpdateOIDCRoleUser() *AuthenticationUpsert {
+	u.SetExcluded(authentication.FieldOIDCRoleUser)
+	return u
+}
+
+// ClearOIDCRoleUser clears the value of the "OIDC_role_user" field.
+func (u *AuthenticationUpsert) ClearOIDCRoleUser() *AuthenticationUpsert {
+	u.SetNull(authentication.FieldOIDCRoleUser)
 	return u
 }
 
@@ -785,24 +865,66 @@ func (u *AuthenticationUpsertOne) ClearOIDCClientID() *AuthenticationUpsertOne {
 	})
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (u *AuthenticationUpsertOne) SetOIDCRole(v string) *AuthenticationUpsertOne {
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (u *AuthenticationUpsertOne) SetOIDCRoleAdmin(v string) *AuthenticationUpsertOne {
 	return u.Update(func(s *AuthenticationUpsert) {
-		s.SetOIDCRole(v)
+		s.SetOIDCRoleAdmin(v)
 	})
 }
 
-// UpdateOIDCRole sets the "OIDC_role" field to the value that was provided on create.
-func (u *AuthenticationUpsertOne) UpdateOIDCRole() *AuthenticationUpsertOne {
+// UpdateOIDCRoleAdmin sets the "OIDC_role_admin" field to the value that was provided on create.
+func (u *AuthenticationUpsertOne) UpdateOIDCRoleAdmin() *AuthenticationUpsertOne {
 	return u.Update(func(s *AuthenticationUpsert) {
-		s.UpdateOIDCRole()
+		s.UpdateOIDCRoleAdmin()
 	})
 }
 
-// ClearOIDCRole clears the value of the "OIDC_role" field.
-func (u *AuthenticationUpsertOne) ClearOIDCRole() *AuthenticationUpsertOne {
+// ClearOIDCRoleAdmin clears the value of the "OIDC_role_admin" field.
+func (u *AuthenticationUpsertOne) ClearOIDCRoleAdmin() *AuthenticationUpsertOne {
 	return u.Update(func(s *AuthenticationUpsert) {
-		s.ClearOIDCRole()
+		s.ClearOIDCRoleAdmin()
+	})
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (u *AuthenticationUpsertOne) SetOIDCRoleOperator(v string) *AuthenticationUpsertOne {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.SetOIDCRoleOperator(v)
+	})
+}
+
+// UpdateOIDCRoleOperator sets the "OIDC_role_operator" field to the value that was provided on create.
+func (u *AuthenticationUpsertOne) UpdateOIDCRoleOperator() *AuthenticationUpsertOne {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.UpdateOIDCRoleOperator()
+	})
+}
+
+// ClearOIDCRoleOperator clears the value of the "OIDC_role_operator" field.
+func (u *AuthenticationUpsertOne) ClearOIDCRoleOperator() *AuthenticationUpsertOne {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.ClearOIDCRoleOperator()
+	})
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (u *AuthenticationUpsertOne) SetOIDCRoleUser(v string) *AuthenticationUpsertOne {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.SetOIDCRoleUser(v)
+	})
+}
+
+// UpdateOIDCRoleUser sets the "OIDC_role_user" field to the value that was provided on create.
+func (u *AuthenticationUpsertOne) UpdateOIDCRoleUser() *AuthenticationUpsertOne {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.UpdateOIDCRoleUser()
+	})
+}
+
+// ClearOIDCRoleUser clears the value of the "OIDC_role_user" field.
+func (u *AuthenticationUpsertOne) ClearOIDCRoleUser() *AuthenticationUpsertOne {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.ClearOIDCRoleUser()
 	})
 }
 
@@ -1241,24 +1363,66 @@ func (u *AuthenticationUpsertBulk) ClearOIDCClientID() *AuthenticationUpsertBulk
 	})
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (u *AuthenticationUpsertBulk) SetOIDCRole(v string) *AuthenticationUpsertBulk {
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (u *AuthenticationUpsertBulk) SetOIDCRoleAdmin(v string) *AuthenticationUpsertBulk {
 	return u.Update(func(s *AuthenticationUpsert) {
-		s.SetOIDCRole(v)
+		s.SetOIDCRoleAdmin(v)
 	})
 }
 
-// UpdateOIDCRole sets the "OIDC_role" field to the value that was provided on create.
-func (u *AuthenticationUpsertBulk) UpdateOIDCRole() *AuthenticationUpsertBulk {
+// UpdateOIDCRoleAdmin sets the "OIDC_role_admin" field to the value that was provided on create.
+func (u *AuthenticationUpsertBulk) UpdateOIDCRoleAdmin() *AuthenticationUpsertBulk {
 	return u.Update(func(s *AuthenticationUpsert) {
-		s.UpdateOIDCRole()
+		s.UpdateOIDCRoleAdmin()
 	})
 }
 
-// ClearOIDCRole clears the value of the "OIDC_role" field.
-func (u *AuthenticationUpsertBulk) ClearOIDCRole() *AuthenticationUpsertBulk {
+// ClearOIDCRoleAdmin clears the value of the "OIDC_role_admin" field.
+func (u *AuthenticationUpsertBulk) ClearOIDCRoleAdmin() *AuthenticationUpsertBulk {
 	return u.Update(func(s *AuthenticationUpsert) {
-		s.ClearOIDCRole()
+		s.ClearOIDCRoleAdmin()
+	})
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (u *AuthenticationUpsertBulk) SetOIDCRoleOperator(v string) *AuthenticationUpsertBulk {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.SetOIDCRoleOperator(v)
+	})
+}
+
+// UpdateOIDCRoleOperator sets the "OIDC_role_operator" field to the value that was provided on create.
+func (u *AuthenticationUpsertBulk) UpdateOIDCRoleOperator() *AuthenticationUpsertBulk {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.UpdateOIDCRoleOperator()
+	})
+}
+
+// ClearOIDCRoleOperator clears the value of the "OIDC_role_operator" field.
+func (u *AuthenticationUpsertBulk) ClearOIDCRoleOperator() *AuthenticationUpsertBulk {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.ClearOIDCRoleOperator()
+	})
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (u *AuthenticationUpsertBulk) SetOIDCRoleUser(v string) *AuthenticationUpsertBulk {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.SetOIDCRoleUser(v)
+	})
+}
+
+// UpdateOIDCRoleUser sets the "OIDC_role_user" field to the value that was provided on create.
+func (u *AuthenticationUpsertBulk) UpdateOIDCRoleUser() *AuthenticationUpsertBulk {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.UpdateOIDCRoleUser()
+	})
+}
+
+// ClearOIDCRoleUser clears the value of the "OIDC_role_user" field.
+func (u *AuthenticationUpsertBulk) ClearOIDCRoleUser() *AuthenticationUpsertBulk {
+	return u.Update(func(s *AuthenticationUpsert) {
+		s.ClearOIDCRoleUser()
 	})
 }
 
