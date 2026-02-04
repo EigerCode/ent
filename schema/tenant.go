@@ -19,10 +19,6 @@ func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("description").Optional(),
 		field.Bool("is_default").Optional(),
-		field.Bool("is_hoster_tenant").
-			Optional().
-			Default(false).
-			Comment("If true, this is the hoster/provider tenant with access to global settings"),
 		field.String("oidc_org_id").
 			Optional().
 			Comment("OIDC organization ID (e.g. Zitadel Org-ID) for automatic tenant mapping"),

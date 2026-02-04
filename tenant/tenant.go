@@ -19,8 +19,6 @@ const (
 	FieldDescription = "description"
 	// FieldIsDefault holds the string denoting the is_default field in the database.
 	FieldIsDefault = "is_default"
-	// FieldIsHosterTenant holds the string denoting the is_hoster_tenant field in the database.
-	FieldIsHosterTenant = "is_hoster_tenant"
 	// FieldOidcOrgID holds the string denoting the oidc_org_id field in the database.
 	FieldOidcOrgID = "oidc_org_id"
 	// FieldOidcDefaultRole holds the string denoting the oidc_default_role field in the database.
@@ -108,7 +106,6 @@ var Columns = []string{
 	FieldID,
 	FieldDescription,
 	FieldIsDefault,
-	FieldIsHosterTenant,
 	FieldOidcOrgID,
 	FieldOidcDefaultRole,
 	FieldCreated,
@@ -143,8 +140,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultIsHosterTenant holds the default value on creation for the "is_hoster_tenant" field.
-	DefaultIsHosterTenant bool
 	// DefaultCreated holds the default value on creation for the "created" field.
 	DefaultCreated func() time.Time
 	// DefaultModified holds the default value on creation for the "modified" field.
@@ -196,11 +191,6 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByIsDefault orders the results by the is_default field.
 func ByIsDefault(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsDefault, opts...).ToFunc()
-}
-
-// ByIsHosterTenant orders the results by the is_hoster_tenant field.
-func ByIsHosterTenant(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsHosterTenant, opts...).ToFunc()
 }
 
 // ByOidcOrgID orders the results by the oidc_org_id field.

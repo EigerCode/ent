@@ -36,8 +36,6 @@ const (
 	FieldPasswd = "passwd"
 	// FieldUse2fa holds the string denoting the use2fa field in the database.
 	FieldUse2fa = "use2fa"
-	// FieldIsSuperAdmin holds the string denoting the is_super_admin field in the database.
-	FieldIsSuperAdmin = "is_super_admin"
 	// FieldCreated holds the string denoting the created field in the database.
 	FieldCreated = "created"
 	// FieldModified holds the string denoting the modified field in the database.
@@ -115,7 +113,6 @@ var Columns = []string{
 	FieldOpenid,
 	FieldPasswd,
 	FieldUse2fa,
-	FieldIsSuperAdmin,
 	FieldCreated,
 	FieldModified,
 	FieldAccessToken,
@@ -152,8 +149,6 @@ var (
 	DefaultPasswd bool
 	// DefaultUse2fa holds the default value on creation for the "use2fa" field.
 	DefaultUse2fa bool
-	// DefaultIsSuperAdmin holds the default value on creation for the "is_super_admin" field.
-	DefaultIsSuperAdmin bool
 	// DefaultCreated holds the default value on creation for the "created" field.
 	DefaultCreated func() time.Time
 	// DefaultModified holds the default value on creation for the "modified" field.
@@ -247,11 +242,6 @@ func ByPasswd(opts ...sql.OrderTermOption) OrderOption {
 // ByUse2fa orders the results by the use2fa field.
 func ByUse2fa(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUse2fa, opts...).ToFunc()
-}
-
-// ByIsSuperAdmin orders the results by the is_super_admin field.
-func ByIsSuperAdmin(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsSuperAdmin, opts...).ToFunc()
 }
 
 // ByCreated orders the results by the created field.

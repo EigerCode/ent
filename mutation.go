@@ -38528,7 +38528,6 @@ type TenantMutation struct {
 	id                       *int
 	description              *string
 	is_default               *bool
-	is_hoster_tenant         *bool
 	oidc_org_id              *string
 	oidc_default_role        *tenant.OidcDefaultRole
 	created                  *time.Time
@@ -38755,55 +38754,6 @@ func (m *TenantMutation) IsDefaultCleared() bool {
 func (m *TenantMutation) ResetIsDefault() {
 	m.is_default = nil
 	delete(m.clearedFields, tenant.FieldIsDefault)
-}
-
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (m *TenantMutation) SetIsHosterTenant(b bool) {
-	m.is_hoster_tenant = &b
-}
-
-// IsHosterTenant returns the value of the "is_hoster_tenant" field in the mutation.
-func (m *TenantMutation) IsHosterTenant() (r bool, exists bool) {
-	v := m.is_hoster_tenant
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsHosterTenant returns the old "is_hoster_tenant" field's value of the Tenant entity.
-// If the Tenant object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TenantMutation) OldIsHosterTenant(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsHosterTenant is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsHosterTenant requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsHosterTenant: %w", err)
-	}
-	return oldValue.IsHosterTenant, nil
-}
-
-// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
-func (m *TenantMutation) ClearIsHosterTenant() {
-	m.is_hoster_tenant = nil
-	m.clearedFields[tenant.FieldIsHosterTenant] = struct{}{}
-}
-
-// IsHosterTenantCleared returns if the "is_hoster_tenant" field was cleared in this mutation.
-func (m *TenantMutation) IsHosterTenantCleared() bool {
-	_, ok := m.clearedFields[tenant.FieldIsHosterTenant]
-	return ok
-}
-
-// ResetIsHosterTenant resets all changes to the "is_hoster_tenant" field.
-func (m *TenantMutation) ResetIsHosterTenant() {
-	m.is_hoster_tenant = nil
-	delete(m.clearedFields, tenant.FieldIsHosterTenant)
 }
 
 // SetOidcOrgID sets the "oidc_org_id" field.
@@ -39438,15 +39388,12 @@ func (m *TenantMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TenantMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 6)
 	if m.description != nil {
 		fields = append(fields, tenant.FieldDescription)
 	}
 	if m.is_default != nil {
 		fields = append(fields, tenant.FieldIsDefault)
-	}
-	if m.is_hoster_tenant != nil {
-		fields = append(fields, tenant.FieldIsHosterTenant)
 	}
 	if m.oidc_org_id != nil {
 		fields = append(fields, tenant.FieldOidcOrgID)
@@ -39472,8 +39419,6 @@ func (m *TenantMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case tenant.FieldIsDefault:
 		return m.IsDefault()
-	case tenant.FieldIsHosterTenant:
-		return m.IsHosterTenant()
 	case tenant.FieldOidcOrgID:
 		return m.OidcOrgID()
 	case tenant.FieldOidcDefaultRole:
@@ -39495,8 +39440,6 @@ func (m *TenantMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldDescription(ctx)
 	case tenant.FieldIsDefault:
 		return m.OldIsDefault(ctx)
-	case tenant.FieldIsHosterTenant:
-		return m.OldIsHosterTenant(ctx)
 	case tenant.FieldOidcOrgID:
 		return m.OldOidcOrgID(ctx)
 	case tenant.FieldOidcDefaultRole:
@@ -39527,13 +39470,6 @@ func (m *TenantMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsDefault(v)
-		return nil
-	case tenant.FieldIsHosterTenant:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsHosterTenant(v)
 		return nil
 	case tenant.FieldOidcOrgID:
 		v, ok := value.(string)
@@ -39599,9 +39535,6 @@ func (m *TenantMutation) ClearedFields() []string {
 	if m.FieldCleared(tenant.FieldIsDefault) {
 		fields = append(fields, tenant.FieldIsDefault)
 	}
-	if m.FieldCleared(tenant.FieldIsHosterTenant) {
-		fields = append(fields, tenant.FieldIsHosterTenant)
-	}
 	if m.FieldCleared(tenant.FieldOidcOrgID) {
 		fields = append(fields, tenant.FieldOidcOrgID)
 	}
@@ -39634,9 +39567,6 @@ func (m *TenantMutation) ClearField(name string) error {
 	case tenant.FieldIsDefault:
 		m.ClearIsDefault()
 		return nil
-	case tenant.FieldIsHosterTenant:
-		m.ClearIsHosterTenant()
-		return nil
 	case tenant.FieldOidcOrgID:
 		m.ClearOidcOrgID()
 		return nil
@@ -39662,9 +39592,6 @@ func (m *TenantMutation) ResetField(name string) error {
 		return nil
 	case tenant.FieldIsDefault:
 		m.ResetIsDefault()
-		return nil
-	case tenant.FieldIsHosterTenant:
-		m.ResetIsHosterTenant()
 		return nil
 	case tenant.FieldOidcOrgID:
 		m.ResetOidcOrgID()
@@ -40472,7 +40399,6 @@ type UserMutation struct {
 	openid                          *bool
 	passwd                          *bool
 	use2fa                          *bool
-	is_super_admin                  *bool
 	created                         *time.Time
 	modified                        *time.Time
 	access_token                    *string
@@ -41104,55 +41030,6 @@ func (m *UserMutation) Use2faCleared() bool {
 func (m *UserMutation) ResetUse2fa() {
 	m.use2fa = nil
 	delete(m.clearedFields, user.FieldUse2fa)
-}
-
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (m *UserMutation) SetIsSuperAdmin(b bool) {
-	m.is_super_admin = &b
-}
-
-// IsSuperAdmin returns the value of the "is_super_admin" field in the mutation.
-func (m *UserMutation) IsSuperAdmin() (r bool, exists bool) {
-	v := m.is_super_admin
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsSuperAdmin returns the old "is_super_admin" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsSuperAdmin(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsSuperAdmin is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsSuperAdmin requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsSuperAdmin: %w", err)
-	}
-	return oldValue.IsSuperAdmin, nil
-}
-
-// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
-func (m *UserMutation) ClearIsSuperAdmin() {
-	m.is_super_admin = nil
-	m.clearedFields[user.FieldIsSuperAdmin] = struct{}{}
-}
-
-// IsSuperAdminCleared returns if the "is_super_admin" field was cleared in this mutation.
-func (m *UserMutation) IsSuperAdminCleared() bool {
-	_, ok := m.clearedFields[user.FieldIsSuperAdmin]
-	return ok
-}
-
-// ResetIsSuperAdmin resets all changes to the "is_super_admin" field.
-func (m *UserMutation) ResetIsSuperAdmin() {
-	m.is_super_admin = nil
-	delete(m.clearedFields, user.FieldIsSuperAdmin)
 }
 
 // SetCreated sets the "created" field.
@@ -42009,7 +41886,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 24)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
@@ -42042,9 +41919,6 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.use2fa != nil {
 		fields = append(fields, user.FieldUse2fa)
-	}
-	if m.is_super_admin != nil {
-		fields = append(fields, user.FieldIsSuperAdmin)
 	}
 	if m.created != nil {
 		fields = append(fields, user.FieldCreated)
@@ -42115,8 +41989,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Passwd()
 	case user.FieldUse2fa:
 		return m.Use2fa()
-	case user.FieldIsSuperAdmin:
-		return m.IsSuperAdmin()
 	case user.FieldCreated:
 		return m.Created()
 	case user.FieldModified:
@@ -42174,8 +42046,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPasswd(ctx)
 	case user.FieldUse2fa:
 		return m.OldUse2fa(ctx)
-	case user.FieldIsSuperAdmin:
-		return m.OldIsSuperAdmin(ctx)
 	case user.FieldCreated:
 		return m.OldCreated(ctx)
 	case user.FieldModified:
@@ -42287,13 +42157,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUse2fa(v)
-		return nil
-	case user.FieldIsSuperAdmin:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsSuperAdmin(v)
 		return nil
 	case user.FieldCreated:
 		v, ok := value.(time.Time)
@@ -42455,9 +42318,6 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldUse2fa) {
 		fields = append(fields, user.FieldUse2fa)
 	}
-	if m.FieldCleared(user.FieldIsSuperAdmin) {
-		fields = append(fields, user.FieldIsSuperAdmin)
-	}
 	if m.FieldCleared(user.FieldCreated) {
 		fields = append(fields, user.FieldCreated)
 	}
@@ -42534,9 +42394,6 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldUse2fa:
 		m.ClearUse2fa()
-		return nil
-	case user.FieldIsSuperAdmin:
-		m.ClearIsSuperAdmin()
 		return nil
 	case user.FieldCreated:
 		m.ClearCreated()
@@ -42617,9 +42474,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldUse2fa:
 		m.ResetUse2fa()
-		return nil
-	case user.FieldIsSuperAdmin:
-		m.ResetIsSuperAdmin()
 		return nil
 	case user.FieldCreated:
 		m.ResetCreated()
