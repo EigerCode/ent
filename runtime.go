@@ -164,28 +164,36 @@ func init() {
 	authenticationDescOIDCClientID := authenticationFields[5].Descriptor()
 	// authentication.DefaultOIDCClientID holds the default value on creation for the OIDC_client_id field.
 	authentication.DefaultOIDCClientID = authenticationDescOIDCClientID.Default.(string)
-	// authenticationDescOIDCRole is the schema descriptor for OIDC_role field.
-	authenticationDescOIDCRole := authenticationFields[6].Descriptor()
-	// authentication.DefaultOIDCRole holds the default value on creation for the OIDC_role field.
-	authentication.DefaultOIDCRole = authenticationDescOIDCRole.Default.(string)
+	// authenticationDescOIDCRoleAdmin is the schema descriptor for OIDC_role_admin field.
+	authenticationDescOIDCRoleAdmin := authenticationFields[6].Descriptor()
+	// authentication.DefaultOIDCRoleAdmin holds the default value on creation for the OIDC_role_admin field.
+	authentication.DefaultOIDCRoleAdmin = authenticationDescOIDCRoleAdmin.Default.(string)
+	// authenticationDescOIDCRoleOperator is the schema descriptor for OIDC_role_operator field.
+	authenticationDescOIDCRoleOperator := authenticationFields[7].Descriptor()
+	// authentication.DefaultOIDCRoleOperator holds the default value on creation for the OIDC_role_operator field.
+	authentication.DefaultOIDCRoleOperator = authenticationDescOIDCRoleOperator.Default.(string)
+	// authenticationDescOIDCRoleUser is the schema descriptor for OIDC_role_user field.
+	authenticationDescOIDCRoleUser := authenticationFields[8].Descriptor()
+	// authentication.DefaultOIDCRoleUser holds the default value on creation for the OIDC_role_user field.
+	authentication.DefaultOIDCRoleUser = authenticationDescOIDCRoleUser.Default.(string)
 	// authenticationDescOIDCCookieEncriptionKey is the schema descriptor for OIDC_cookie_encription_key field.
-	authenticationDescOIDCCookieEncriptionKey := authenticationFields[7].Descriptor()
+	authenticationDescOIDCCookieEncriptionKey := authenticationFields[9].Descriptor()
 	// authentication.DefaultOIDCCookieEncriptionKey holds the default value on creation for the OIDC_cookie_encription_key field.
 	authentication.DefaultOIDCCookieEncriptionKey = authenticationDescOIDCCookieEncriptionKey.Default.(string)
 	// authenticationDescOIDCKeycloakPublicKey is the schema descriptor for OIDC_keycloak_public_key field.
-	authenticationDescOIDCKeycloakPublicKey := authenticationFields[8].Descriptor()
+	authenticationDescOIDCKeycloakPublicKey := authenticationFields[10].Descriptor()
 	// authentication.DefaultOIDCKeycloakPublicKey holds the default value on creation for the OIDC_keycloak_public_key field.
 	authentication.DefaultOIDCKeycloakPublicKey = authenticationDescOIDCKeycloakPublicKey.Default.(string)
 	// authenticationDescOIDCAutoCreateAccount is the schema descriptor for OIDC_auto_create_account field.
-	authenticationDescOIDCAutoCreateAccount := authenticationFields[9].Descriptor()
+	authenticationDescOIDCAutoCreateAccount := authenticationFields[11].Descriptor()
 	// authentication.DefaultOIDCAutoCreateAccount holds the default value on creation for the OIDC_auto_create_account field.
 	authentication.DefaultOIDCAutoCreateAccount = authenticationDescOIDCAutoCreateAccount.Default.(bool)
 	// authenticationDescOIDCAutoApprove is the schema descriptor for OIDC_auto_approve field.
-	authenticationDescOIDCAutoApprove := authenticationFields[10].Descriptor()
+	authenticationDescOIDCAutoApprove := authenticationFields[12].Descriptor()
 	// authentication.DefaultOIDCAutoApprove holds the default value on creation for the OIDC_auto_approve field.
 	authentication.DefaultOIDCAutoApprove = authenticationDescOIDCAutoApprove.Default.(bool)
 	// authenticationDescUsePasswd is the schema descriptor for use_passwd field.
-	authenticationDescUsePasswd := authenticationFields[11].Descriptor()
+	authenticationDescUsePasswd := authenticationFields[13].Descriptor()
 	// authentication.DefaultUsePasswd holds the default value on creation for the use_passwd field.
 	authentication.DefaultUsePasswd = authenticationDescUsePasswd.Default.(bool)
 	brandingFields := schema.Branding{}.Fields()

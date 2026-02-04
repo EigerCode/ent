@@ -23,8 +23,12 @@ const (
 	FieldOIDCIssuerURL = "oidc_issuer_url"
 	// FieldOIDCClientID holds the string denoting the oidc_client_id field in the database.
 	FieldOIDCClientID = "oidc_client_id"
-	// FieldOIDCRole holds the string denoting the oidc_role field in the database.
-	FieldOIDCRole = "oidc_role"
+	// FieldOIDCRoleAdmin holds the string denoting the oidc_role_admin field in the database.
+	FieldOIDCRoleAdmin = "oidc_role_admin"
+	// FieldOIDCRoleOperator holds the string denoting the oidc_role_operator field in the database.
+	FieldOIDCRoleOperator = "oidc_role_operator"
+	// FieldOIDCRoleUser holds the string denoting the oidc_role_user field in the database.
+	FieldOIDCRoleUser = "oidc_role_user"
 	// FieldOIDCCookieEncriptionKey holds the string denoting the oidc_cookie_encription_key field in the database.
 	FieldOIDCCookieEncriptionKey = "oidc_cookie_encription_key"
 	// FieldOIDCKeycloakPublicKey holds the string denoting the oidc_keycloak_public_key field in the database.
@@ -48,7 +52,9 @@ var Columns = []string{
 	FieldOIDCProvider,
 	FieldOIDCIssuerURL,
 	FieldOIDCClientID,
-	FieldOIDCRole,
+	FieldOIDCRoleAdmin,
+	FieldOIDCRoleOperator,
+	FieldOIDCRoleUser,
 	FieldOIDCCookieEncriptionKey,
 	FieldOIDCKeycloakPublicKey,
 	FieldOIDCAutoCreateAccount,
@@ -79,8 +85,12 @@ var (
 	DefaultOIDCIssuerURL string
 	// DefaultOIDCClientID holds the default value on creation for the "OIDC_client_id" field.
 	DefaultOIDCClientID string
-	// DefaultOIDCRole holds the default value on creation for the "OIDC_role" field.
-	DefaultOIDCRole string
+	// DefaultOIDCRoleAdmin holds the default value on creation for the "OIDC_role_admin" field.
+	DefaultOIDCRoleAdmin string
+	// DefaultOIDCRoleOperator holds the default value on creation for the "OIDC_role_operator" field.
+	DefaultOIDCRoleOperator string
+	// DefaultOIDCRoleUser holds the default value on creation for the "OIDC_role_user" field.
+	DefaultOIDCRoleUser string
 	// DefaultOIDCCookieEncriptionKey holds the default value on creation for the "OIDC_cookie_encription_key" field.
 	DefaultOIDCCookieEncriptionKey string
 	// DefaultOIDCKeycloakPublicKey holds the default value on creation for the "OIDC_keycloak_public_key" field.
@@ -131,9 +141,19 @@ func ByOIDCClientID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOIDCClientID, opts...).ToFunc()
 }
 
-// ByOIDCRole orders the results by the OIDC_role field.
-func ByOIDCRole(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOIDCRole, opts...).ToFunc()
+// ByOIDCRoleAdmin orders the results by the OIDC_role_admin field.
+func ByOIDCRoleAdmin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOIDCRoleAdmin, opts...).ToFunc()
+}
+
+// ByOIDCRoleOperator orders the results by the OIDC_role_operator field.
+func ByOIDCRoleOperator(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOIDCRoleOperator, opts...).ToFunc()
+}
+
+// ByOIDCRoleUser orders the results by the OIDC_role_user field.
+func ByOIDCRoleUser(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOIDCRoleUser, opts...).ToFunc()
 }
 
 // ByOIDCCookieEncriptionKey orders the results by the OIDC_cookie_encription_key field.

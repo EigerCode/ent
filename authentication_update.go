@@ -148,23 +148,63 @@ func (au *AuthenticationUpdate) ClearOIDCClientID() *AuthenticationUpdate {
 	return au
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (au *AuthenticationUpdate) SetOIDCRole(s string) *AuthenticationUpdate {
-	au.mutation.SetOIDCRole(s)
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (au *AuthenticationUpdate) SetOIDCRoleAdmin(s string) *AuthenticationUpdate {
+	au.mutation.SetOIDCRoleAdmin(s)
 	return au
 }
 
-// SetNillableOIDCRole sets the "OIDC_role" field if the given value is not nil.
-func (au *AuthenticationUpdate) SetNillableOIDCRole(s *string) *AuthenticationUpdate {
+// SetNillableOIDCRoleAdmin sets the "OIDC_role_admin" field if the given value is not nil.
+func (au *AuthenticationUpdate) SetNillableOIDCRoleAdmin(s *string) *AuthenticationUpdate {
 	if s != nil {
-		au.SetOIDCRole(*s)
+		au.SetOIDCRoleAdmin(*s)
 	}
 	return au
 }
 
-// ClearOIDCRole clears the value of the "OIDC_role" field.
-func (au *AuthenticationUpdate) ClearOIDCRole() *AuthenticationUpdate {
-	au.mutation.ClearOIDCRole()
+// ClearOIDCRoleAdmin clears the value of the "OIDC_role_admin" field.
+func (au *AuthenticationUpdate) ClearOIDCRoleAdmin() *AuthenticationUpdate {
+	au.mutation.ClearOIDCRoleAdmin()
+	return au
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (au *AuthenticationUpdate) SetOIDCRoleOperator(s string) *AuthenticationUpdate {
+	au.mutation.SetOIDCRoleOperator(s)
+	return au
+}
+
+// SetNillableOIDCRoleOperator sets the "OIDC_role_operator" field if the given value is not nil.
+func (au *AuthenticationUpdate) SetNillableOIDCRoleOperator(s *string) *AuthenticationUpdate {
+	if s != nil {
+		au.SetOIDCRoleOperator(*s)
+	}
+	return au
+}
+
+// ClearOIDCRoleOperator clears the value of the "OIDC_role_operator" field.
+func (au *AuthenticationUpdate) ClearOIDCRoleOperator() *AuthenticationUpdate {
+	au.mutation.ClearOIDCRoleOperator()
+	return au
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (au *AuthenticationUpdate) SetOIDCRoleUser(s string) *AuthenticationUpdate {
+	au.mutation.SetOIDCRoleUser(s)
+	return au
+}
+
+// SetNillableOIDCRoleUser sets the "OIDC_role_user" field if the given value is not nil.
+func (au *AuthenticationUpdate) SetNillableOIDCRoleUser(s *string) *AuthenticationUpdate {
+	if s != nil {
+		au.SetOIDCRoleUser(*s)
+	}
+	return au
+}
+
+// ClearOIDCRoleUser clears the value of the "OIDC_role_user" field.
+func (au *AuthenticationUpdate) ClearOIDCRoleUser() *AuthenticationUpdate {
+	au.mutation.ClearOIDCRoleUser()
 	return au
 }
 
@@ -351,11 +391,23 @@ func (au *AuthenticationUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if au.mutation.OIDCClientIDCleared() {
 		_spec.ClearField(authentication.FieldOIDCClientID, field.TypeString)
 	}
-	if value, ok := au.mutation.OIDCRole(); ok {
-		_spec.SetField(authentication.FieldOIDCRole, field.TypeString, value)
+	if value, ok := au.mutation.OIDCRoleAdmin(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleAdmin, field.TypeString, value)
 	}
-	if au.mutation.OIDCRoleCleared() {
-		_spec.ClearField(authentication.FieldOIDCRole, field.TypeString)
+	if au.mutation.OIDCRoleAdminCleared() {
+		_spec.ClearField(authentication.FieldOIDCRoleAdmin, field.TypeString)
+	}
+	if value, ok := au.mutation.OIDCRoleOperator(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleOperator, field.TypeString, value)
+	}
+	if au.mutation.OIDCRoleOperatorCleared() {
+		_spec.ClearField(authentication.FieldOIDCRoleOperator, field.TypeString)
+	}
+	if value, ok := au.mutation.OIDCRoleUser(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleUser, field.TypeString, value)
+	}
+	if au.mutation.OIDCRoleUserCleared() {
+		_spec.ClearField(authentication.FieldOIDCRoleUser, field.TypeString)
 	}
 	if value, ok := au.mutation.OIDCCookieEncriptionKey(); ok {
 		_spec.SetField(authentication.FieldOIDCCookieEncriptionKey, field.TypeString, value)
@@ -529,23 +581,63 @@ func (auo *AuthenticationUpdateOne) ClearOIDCClientID() *AuthenticationUpdateOne
 	return auo
 }
 
-// SetOIDCRole sets the "OIDC_role" field.
-func (auo *AuthenticationUpdateOne) SetOIDCRole(s string) *AuthenticationUpdateOne {
-	auo.mutation.SetOIDCRole(s)
+// SetOIDCRoleAdmin sets the "OIDC_role_admin" field.
+func (auo *AuthenticationUpdateOne) SetOIDCRoleAdmin(s string) *AuthenticationUpdateOne {
+	auo.mutation.SetOIDCRoleAdmin(s)
 	return auo
 }
 
-// SetNillableOIDCRole sets the "OIDC_role" field if the given value is not nil.
-func (auo *AuthenticationUpdateOne) SetNillableOIDCRole(s *string) *AuthenticationUpdateOne {
+// SetNillableOIDCRoleAdmin sets the "OIDC_role_admin" field if the given value is not nil.
+func (auo *AuthenticationUpdateOne) SetNillableOIDCRoleAdmin(s *string) *AuthenticationUpdateOne {
 	if s != nil {
-		auo.SetOIDCRole(*s)
+		auo.SetOIDCRoleAdmin(*s)
 	}
 	return auo
 }
 
-// ClearOIDCRole clears the value of the "OIDC_role" field.
-func (auo *AuthenticationUpdateOne) ClearOIDCRole() *AuthenticationUpdateOne {
-	auo.mutation.ClearOIDCRole()
+// ClearOIDCRoleAdmin clears the value of the "OIDC_role_admin" field.
+func (auo *AuthenticationUpdateOne) ClearOIDCRoleAdmin() *AuthenticationUpdateOne {
+	auo.mutation.ClearOIDCRoleAdmin()
+	return auo
+}
+
+// SetOIDCRoleOperator sets the "OIDC_role_operator" field.
+func (auo *AuthenticationUpdateOne) SetOIDCRoleOperator(s string) *AuthenticationUpdateOne {
+	auo.mutation.SetOIDCRoleOperator(s)
+	return auo
+}
+
+// SetNillableOIDCRoleOperator sets the "OIDC_role_operator" field if the given value is not nil.
+func (auo *AuthenticationUpdateOne) SetNillableOIDCRoleOperator(s *string) *AuthenticationUpdateOne {
+	if s != nil {
+		auo.SetOIDCRoleOperator(*s)
+	}
+	return auo
+}
+
+// ClearOIDCRoleOperator clears the value of the "OIDC_role_operator" field.
+func (auo *AuthenticationUpdateOne) ClearOIDCRoleOperator() *AuthenticationUpdateOne {
+	auo.mutation.ClearOIDCRoleOperator()
+	return auo
+}
+
+// SetOIDCRoleUser sets the "OIDC_role_user" field.
+func (auo *AuthenticationUpdateOne) SetOIDCRoleUser(s string) *AuthenticationUpdateOne {
+	auo.mutation.SetOIDCRoleUser(s)
+	return auo
+}
+
+// SetNillableOIDCRoleUser sets the "OIDC_role_user" field if the given value is not nil.
+func (auo *AuthenticationUpdateOne) SetNillableOIDCRoleUser(s *string) *AuthenticationUpdateOne {
+	if s != nil {
+		auo.SetOIDCRoleUser(*s)
+	}
+	return auo
+}
+
+// ClearOIDCRoleUser clears the value of the "OIDC_role_user" field.
+func (auo *AuthenticationUpdateOne) ClearOIDCRoleUser() *AuthenticationUpdateOne {
+	auo.mutation.ClearOIDCRoleUser()
 	return auo
 }
 
@@ -762,11 +854,23 @@ func (auo *AuthenticationUpdateOne) sqlSave(ctx context.Context) (_node *Authent
 	if auo.mutation.OIDCClientIDCleared() {
 		_spec.ClearField(authentication.FieldOIDCClientID, field.TypeString)
 	}
-	if value, ok := auo.mutation.OIDCRole(); ok {
-		_spec.SetField(authentication.FieldOIDCRole, field.TypeString, value)
+	if value, ok := auo.mutation.OIDCRoleAdmin(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleAdmin, field.TypeString, value)
 	}
-	if auo.mutation.OIDCRoleCleared() {
-		_spec.ClearField(authentication.FieldOIDCRole, field.TypeString)
+	if auo.mutation.OIDCRoleAdminCleared() {
+		_spec.ClearField(authentication.FieldOIDCRoleAdmin, field.TypeString)
+	}
+	if value, ok := auo.mutation.OIDCRoleOperator(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleOperator, field.TypeString, value)
+	}
+	if auo.mutation.OIDCRoleOperatorCleared() {
+		_spec.ClearField(authentication.FieldOIDCRoleOperator, field.TypeString)
+	}
+	if value, ok := auo.mutation.OIDCRoleUser(); ok {
+		_spec.SetField(authentication.FieldOIDCRoleUser, field.TypeString, value)
+	}
+	if auo.mutation.OIDCRoleUserCleared() {
+		_spec.ClearField(authentication.FieldOIDCRoleUser, field.TypeString)
 	}
 	if value, ok := auo.mutation.OIDCCookieEncriptionKey(); ok {
 		_spec.SetField(authentication.FieldOIDCCookieEncriptionKey, field.TypeString, value)

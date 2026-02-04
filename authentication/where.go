@@ -82,9 +82,19 @@ func OIDCClientID(v string) predicate.Authentication {
 	return predicate.Authentication(sql.FieldEQ(FieldOIDCClientID, v))
 }
 
-// OIDCRole applies equality check predicate on the "OIDC_role" field. It's identical to OIDCRoleEQ.
-func OIDCRole(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldEQ(FieldOIDCRole, v))
+// OIDCRoleAdmin applies equality check predicate on the "OIDC_role_admin" field. It's identical to OIDCRoleAdminEQ.
+func OIDCRoleAdmin(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldOIDCRoleAdmin, v))
+}
+
+// OIDCRoleOperator applies equality check predicate on the "OIDC_role_operator" field. It's identical to OIDCRoleOperatorEQ.
+func OIDCRoleOperator(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleUser applies equality check predicate on the "OIDC_role_user" field. It's identical to OIDCRoleUserEQ.
+func OIDCRoleUser(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldOIDCRoleUser, v))
 }
 
 // OIDCCookieEncriptionKey applies equality check predicate on the "OIDC_cookie_encription_key" field. It's identical to OIDCCookieEncriptionKeyEQ.
@@ -397,79 +407,229 @@ func OIDCClientIDContainsFold(v string) predicate.Authentication {
 	return predicate.Authentication(sql.FieldContainsFold(FieldOIDCClientID, v))
 }
 
-// OIDCRoleEQ applies the EQ predicate on the "OIDC_role" field.
-func OIDCRoleEQ(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldEQ(FieldOIDCRole, v))
+// OIDCRoleAdminEQ applies the EQ predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminEQ(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleNEQ applies the NEQ predicate on the "OIDC_role" field.
-func OIDCRoleNEQ(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldNEQ(FieldOIDCRole, v))
+// OIDCRoleAdminNEQ applies the NEQ predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminNEQ(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNEQ(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleIn applies the In predicate on the "OIDC_role" field.
-func OIDCRoleIn(vs ...string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldIn(FieldOIDCRole, vs...))
+// OIDCRoleAdminIn applies the In predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminIn(vs ...string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldIn(FieldOIDCRoleAdmin, vs...))
 }
 
-// OIDCRoleNotIn applies the NotIn predicate on the "OIDC_role" field.
-func OIDCRoleNotIn(vs ...string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldNotIn(FieldOIDCRole, vs...))
+// OIDCRoleAdminNotIn applies the NotIn predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminNotIn(vs ...string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotIn(FieldOIDCRoleAdmin, vs...))
 }
 
-// OIDCRoleGT applies the GT predicate on the "OIDC_role" field.
-func OIDCRoleGT(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldGT(FieldOIDCRole, v))
+// OIDCRoleAdminGT applies the GT predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminGT(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldGT(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleGTE applies the GTE predicate on the "OIDC_role" field.
-func OIDCRoleGTE(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldGTE(FieldOIDCRole, v))
+// OIDCRoleAdminGTE applies the GTE predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminGTE(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldGTE(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleLT applies the LT predicate on the "OIDC_role" field.
-func OIDCRoleLT(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldLT(FieldOIDCRole, v))
+// OIDCRoleAdminLT applies the LT predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminLT(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldLT(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleLTE applies the LTE predicate on the "OIDC_role" field.
-func OIDCRoleLTE(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldLTE(FieldOIDCRole, v))
+// OIDCRoleAdminLTE applies the LTE predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminLTE(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldLTE(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleContains applies the Contains predicate on the "OIDC_role" field.
-func OIDCRoleContains(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldContains(FieldOIDCRole, v))
+// OIDCRoleAdminContains applies the Contains predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminContains(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldContains(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleHasPrefix applies the HasPrefix predicate on the "OIDC_role" field.
-func OIDCRoleHasPrefix(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldHasPrefix(FieldOIDCRole, v))
+// OIDCRoleAdminHasPrefix applies the HasPrefix predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminHasPrefix(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldHasPrefix(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleHasSuffix applies the HasSuffix predicate on the "OIDC_role" field.
-func OIDCRoleHasSuffix(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldHasSuffix(FieldOIDCRole, v))
+// OIDCRoleAdminHasSuffix applies the HasSuffix predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminHasSuffix(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldHasSuffix(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleIsNil applies the IsNil predicate on the "OIDC_role" field.
-func OIDCRoleIsNil() predicate.Authentication {
-	return predicate.Authentication(sql.FieldIsNull(FieldOIDCRole))
+// OIDCRoleAdminIsNil applies the IsNil predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminIsNil() predicate.Authentication {
+	return predicate.Authentication(sql.FieldIsNull(FieldOIDCRoleAdmin))
 }
 
-// OIDCRoleNotNil applies the NotNil predicate on the "OIDC_role" field.
-func OIDCRoleNotNil() predicate.Authentication {
-	return predicate.Authentication(sql.FieldNotNull(FieldOIDCRole))
+// OIDCRoleAdminNotNil applies the NotNil predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminNotNil() predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotNull(FieldOIDCRoleAdmin))
 }
 
-// OIDCRoleEqualFold applies the EqualFold predicate on the "OIDC_role" field.
-func OIDCRoleEqualFold(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldEqualFold(FieldOIDCRole, v))
+// OIDCRoleAdminEqualFold applies the EqualFold predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminEqualFold(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEqualFold(FieldOIDCRoleAdmin, v))
 }
 
-// OIDCRoleContainsFold applies the ContainsFold predicate on the "OIDC_role" field.
-func OIDCRoleContainsFold(v string) predicate.Authentication {
-	return predicate.Authentication(sql.FieldContainsFold(FieldOIDCRole, v))
+// OIDCRoleAdminContainsFold applies the ContainsFold predicate on the "OIDC_role_admin" field.
+func OIDCRoleAdminContainsFold(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldContainsFold(FieldOIDCRoleAdmin, v))
+}
+
+// OIDCRoleOperatorEQ applies the EQ predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorEQ(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorNEQ applies the NEQ predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorNEQ(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNEQ(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorIn applies the In predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorIn(vs ...string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldIn(FieldOIDCRoleOperator, vs...))
+}
+
+// OIDCRoleOperatorNotIn applies the NotIn predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorNotIn(vs ...string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotIn(FieldOIDCRoleOperator, vs...))
+}
+
+// OIDCRoleOperatorGT applies the GT predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorGT(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldGT(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorGTE applies the GTE predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorGTE(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldGTE(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorLT applies the LT predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorLT(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldLT(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorLTE applies the LTE predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorLTE(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldLTE(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorContains applies the Contains predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorContains(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldContains(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorHasPrefix applies the HasPrefix predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorHasPrefix(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldHasPrefix(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorHasSuffix applies the HasSuffix predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorHasSuffix(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldHasSuffix(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorIsNil applies the IsNil predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorIsNil() predicate.Authentication {
+	return predicate.Authentication(sql.FieldIsNull(FieldOIDCRoleOperator))
+}
+
+// OIDCRoleOperatorNotNil applies the NotNil predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorNotNil() predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotNull(FieldOIDCRoleOperator))
+}
+
+// OIDCRoleOperatorEqualFold applies the EqualFold predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorEqualFold(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEqualFold(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleOperatorContainsFold applies the ContainsFold predicate on the "OIDC_role_operator" field.
+func OIDCRoleOperatorContainsFold(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldContainsFold(FieldOIDCRoleOperator, v))
+}
+
+// OIDCRoleUserEQ applies the EQ predicate on the "OIDC_role_user" field.
+func OIDCRoleUserEQ(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserNEQ applies the NEQ predicate on the "OIDC_role_user" field.
+func OIDCRoleUserNEQ(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNEQ(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserIn applies the In predicate on the "OIDC_role_user" field.
+func OIDCRoleUserIn(vs ...string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldIn(FieldOIDCRoleUser, vs...))
+}
+
+// OIDCRoleUserNotIn applies the NotIn predicate on the "OIDC_role_user" field.
+func OIDCRoleUserNotIn(vs ...string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotIn(FieldOIDCRoleUser, vs...))
+}
+
+// OIDCRoleUserGT applies the GT predicate on the "OIDC_role_user" field.
+func OIDCRoleUserGT(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldGT(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserGTE applies the GTE predicate on the "OIDC_role_user" field.
+func OIDCRoleUserGTE(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldGTE(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserLT applies the LT predicate on the "OIDC_role_user" field.
+func OIDCRoleUserLT(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldLT(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserLTE applies the LTE predicate on the "OIDC_role_user" field.
+func OIDCRoleUserLTE(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldLTE(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserContains applies the Contains predicate on the "OIDC_role_user" field.
+func OIDCRoleUserContains(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldContains(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserHasPrefix applies the HasPrefix predicate on the "OIDC_role_user" field.
+func OIDCRoleUserHasPrefix(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldHasPrefix(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserHasSuffix applies the HasSuffix predicate on the "OIDC_role_user" field.
+func OIDCRoleUserHasSuffix(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldHasSuffix(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserIsNil applies the IsNil predicate on the "OIDC_role_user" field.
+func OIDCRoleUserIsNil() predicate.Authentication {
+	return predicate.Authentication(sql.FieldIsNull(FieldOIDCRoleUser))
+}
+
+// OIDCRoleUserNotNil applies the NotNil predicate on the "OIDC_role_user" field.
+func OIDCRoleUserNotNil() predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotNull(FieldOIDCRoleUser))
+}
+
+// OIDCRoleUserEqualFold applies the EqualFold predicate on the "OIDC_role_user" field.
+func OIDCRoleUserEqualFold(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEqualFold(FieldOIDCRoleUser, v))
+}
+
+// OIDCRoleUserContainsFold applies the ContainsFold predicate on the "OIDC_role_user" field.
+func OIDCRoleUserContainsFold(v string) predicate.Authentication {
+	return predicate.Authentication(sql.FieldContainsFold(FieldOIDCRoleUser, v))
 }
 
 // OIDCCookieEncriptionKeyEQ applies the EQ predicate on the "OIDC_cookie_encription_key" field.
