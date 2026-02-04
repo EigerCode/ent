@@ -172,20 +172,6 @@ func (uc *UserCreate) SetNillableUse2fa(b *bool) *UserCreate {
 	return uc
 }
 
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (uc *UserCreate) SetIsSuperAdmin(b bool) *UserCreate {
-	uc.mutation.SetIsSuperAdmin(b)
-	return uc
-}
-
-// SetNillableIsSuperAdmin sets the "is_super_admin" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsSuperAdmin(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsSuperAdmin(*b)
-	}
-	return uc
-}
-
 // SetCreated sets the "created" field.
 func (uc *UserCreate) SetCreated(t time.Time) *UserCreate {
 	uc.mutation.SetCreated(t)
@@ -474,10 +460,6 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultUse2fa
 		uc.mutation.SetUse2fa(v)
 	}
-	if _, ok := uc.mutation.IsSuperAdmin(); !ok {
-		v := user.DefaultIsSuperAdmin
-		uc.mutation.SetIsSuperAdmin(v)
-	}
 	if _, ok := uc.mutation.Created(); !ok {
 		v := user.DefaultCreated()
 		uc.mutation.SetCreated(v)
@@ -627,10 +609,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Use2fa(); ok {
 		_spec.SetField(user.FieldUse2fa, field.TypeBool, value)
 		_node.Use2fa = value
-	}
-	if value, ok := uc.mutation.IsSuperAdmin(); ok {
-		_spec.SetField(user.FieldIsSuperAdmin, field.TypeBool, value)
-		_node.IsSuperAdmin = value
 	}
 	if value, ok := uc.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
@@ -961,24 +939,6 @@ func (u *UserUpsert) UpdateUse2fa() *UserUpsert {
 // ClearUse2fa clears the value of the "use2fa" field.
 func (u *UserUpsert) ClearUse2fa() *UserUpsert {
 	u.SetNull(user.FieldUse2fa)
-	return u
-}
-
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (u *UserUpsert) SetIsSuperAdmin(v bool) *UserUpsert {
-	u.Set(user.FieldIsSuperAdmin, v)
-	return u
-}
-
-// UpdateIsSuperAdmin sets the "is_super_admin" field to the value that was provided on create.
-func (u *UserUpsert) UpdateIsSuperAdmin() *UserUpsert {
-	u.SetExcluded(user.FieldIsSuperAdmin)
-	return u
-}
-
-// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
-func (u *UserUpsert) ClearIsSuperAdmin() *UserUpsert {
-	u.SetNull(user.FieldIsSuperAdmin)
 	return u
 }
 
@@ -1477,27 +1437,6 @@ func (u *UserUpsertOne) UpdateUse2fa() *UserUpsertOne {
 func (u *UserUpsertOne) ClearUse2fa() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearUse2fa()
-	})
-}
-
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (u *UserUpsertOne) SetIsSuperAdmin(v bool) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.SetIsSuperAdmin(v)
-	})
-}
-
-// UpdateIsSuperAdmin sets the "is_super_admin" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateIsSuperAdmin() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateIsSuperAdmin()
-	})
-}
-
-// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
-func (u *UserUpsertOne) ClearIsSuperAdmin() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearIsSuperAdmin()
 	})
 }
 
@@ -2203,27 +2142,6 @@ func (u *UserUpsertBulk) UpdateUse2fa() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearUse2fa() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearUse2fa()
-	})
-}
-
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (u *UserUpsertBulk) SetIsSuperAdmin(v bool) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.SetIsSuperAdmin(v)
-	})
-}
-
-// UpdateIsSuperAdmin sets the "is_super_admin" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateIsSuperAdmin() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateIsSuperAdmin()
-	})
-}
-
-// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
-func (u *UserUpsertBulk) ClearIsSuperAdmin() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearIsSuperAdmin()
 	})
 }
 

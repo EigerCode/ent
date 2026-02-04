@@ -1010,7 +1010,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "is_default", Type: field.TypeBool, Nullable: true},
-		{Name: "is_hoster_tenant", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "oidc_org_id", Type: field.TypeString, Nullable: true},
 		{Name: "oidc_default_role", Type: field.TypeEnum, Nullable: true, Enums: []string{"admin", "operator", "user"}, Default: "user"},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
@@ -1025,7 +1024,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tenants_netbird_settings_netbird",
-				Columns:    []*schema.Column{TenantsColumns[8]},
+				Columns:    []*schema.Column{TenantsColumns[7]},
 				RefColumns: []*schema.Column{NetbirdSettingsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -1067,7 +1066,6 @@ var (
 		{Name: "openid", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "passwd", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "use2fa", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "is_super_admin", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
 		{Name: "access_token", Type: field.TypeString, Nullable: true, Default: ""},

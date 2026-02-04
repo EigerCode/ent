@@ -23,8 +23,6 @@ type Tenant struct {
 	Description string `json:"description,omitempty"`
 	// IsDefault holds the value of the "is_default" field.
 	IsDefault bool `json:"is_default,omitempty"`
-	// If true, this is the hoster/provider tenant with access to global settings
-	IsHosterTenant bool `json:"is_hoster_tenant,omitempty"`
 	// OIDC organization ID (e.g. Zitadel Org-ID) for automatic tenant mapping
 	OidcOrgID string `json:"oidc_org_id,omitempty"`
 	// Default role for users auto-assigned via OIDC
@@ -144,7 +142,7 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tenant.FieldIsDefault, tenant.FieldIsHosterTenant:
+		case tenant.FieldIsDefault:
 			values[i] = new(sql.NullBool)
 		case tenant.FieldID:
 			values[i] = new(sql.NullInt64)
@@ -186,12 +184,6 @@ func (t *Tenant) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_default", values[i])
 			} else if value.Valid {
 				t.IsDefault = value.Bool
-			}
-		case tenant.FieldIsHosterTenant:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_hoster_tenant", values[i])
-			} else if value.Valid {
-				t.IsHosterTenant = value.Bool
 			}
 		case tenant.FieldOidcOrgID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -305,9 +297,6 @@ func (t *Tenant) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_default=")
 	builder.WriteString(fmt.Sprintf("%v", t.IsDefault))
-	builder.WriteString(", ")
-	builder.WriteString("is_hoster_tenant=")
-	builder.WriteString(fmt.Sprintf("%v", t.IsHosterTenant))
 	builder.WriteString(", ")
 	builder.WriteString("oidc_org_id=")
 	builder.WriteString(t.OidcOrgID)

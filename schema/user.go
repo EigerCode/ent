@@ -30,10 +30,6 @@ func (User) Fields() []ent.Field {
 		field.Bool("openid").Optional().Default(false),
 		field.Bool("passwd").Optional().Default(false),
 		field.Bool("use2fa").Optional().Default(false),
-		field.Bool("is_super_admin").
-			Optional().
-			Default(false).
-			Comment("If true, this user has access to hoster-level global settings"),
 		field.Time("created").Optional().Default(time.Now),
 		field.Time("modified").Optional().Default(time.Now).UpdateDefault(time.Now),
 		field.String("access_token").Optional().Default(""),

@@ -77,26 +77,6 @@ func (tu *TenantUpdate) ClearIsDefault() *TenantUpdate {
 	return tu
 }
 
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (tu *TenantUpdate) SetIsHosterTenant(b bool) *TenantUpdate {
-	tu.mutation.SetIsHosterTenant(b)
-	return tu
-}
-
-// SetNillableIsHosterTenant sets the "is_hoster_tenant" field if the given value is not nil.
-func (tu *TenantUpdate) SetNillableIsHosterTenant(b *bool) *TenantUpdate {
-	if b != nil {
-		tu.SetIsHosterTenant(*b)
-	}
-	return tu
-}
-
-// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
-func (tu *TenantUpdate) ClearIsHosterTenant() *TenantUpdate {
-	tu.mutation.ClearIsHosterTenant()
-	return tu
-}
-
 // SetOidcOrgID sets the "oidc_org_id" field.
 func (tu *TenantUpdate) SetOidcOrgID(s string) *TenantUpdate {
 	tu.mutation.SetOidcOrgID(s)
@@ -516,12 +496,6 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.IsDefaultCleared() {
 		_spec.ClearField(tenant.FieldIsDefault, field.TypeBool)
 	}
-	if value, ok := tu.mutation.IsHosterTenant(); ok {
-		_spec.SetField(tenant.FieldIsHosterTenant, field.TypeBool, value)
-	}
-	if tu.mutation.IsHosterTenantCleared() {
-		_spec.ClearField(tenant.FieldIsHosterTenant, field.TypeBool)
-	}
 	if value, ok := tu.mutation.OidcOrgID(); ok {
 		_spec.SetField(tenant.FieldOidcOrgID, field.TypeString, value)
 	}
@@ -933,26 +907,6 @@ func (tuo *TenantUpdateOne) SetNillableIsDefault(b *bool) *TenantUpdateOne {
 // ClearIsDefault clears the value of the "is_default" field.
 func (tuo *TenantUpdateOne) ClearIsDefault() *TenantUpdateOne {
 	tuo.mutation.ClearIsDefault()
-	return tuo
-}
-
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (tuo *TenantUpdateOne) SetIsHosterTenant(b bool) *TenantUpdateOne {
-	tuo.mutation.SetIsHosterTenant(b)
-	return tuo
-}
-
-// SetNillableIsHosterTenant sets the "is_hoster_tenant" field if the given value is not nil.
-func (tuo *TenantUpdateOne) SetNillableIsHosterTenant(b *bool) *TenantUpdateOne {
-	if b != nil {
-		tuo.SetIsHosterTenant(*b)
-	}
-	return tuo
-}
-
-// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
-func (tuo *TenantUpdateOne) ClearIsHosterTenant() *TenantUpdateOne {
-	tuo.mutation.ClearIsHosterTenant()
 	return tuo
 }
 
@@ -1404,12 +1358,6 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 	}
 	if tuo.mutation.IsDefaultCleared() {
 		_spec.ClearField(tenant.FieldIsDefault, field.TypeBool)
-	}
-	if value, ok := tuo.mutation.IsHosterTenant(); ok {
-		_spec.SetField(tenant.FieldIsHosterTenant, field.TypeBool, value)
-	}
-	if tuo.mutation.IsHosterTenantCleared() {
-		_spec.ClearField(tenant.FieldIsHosterTenant, field.TypeBool)
 	}
 	if value, ok := tuo.mutation.OidcOrgID(); ok {
 		_spec.SetField(tenant.FieldOidcOrgID, field.TypeString, value)

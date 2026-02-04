@@ -58,20 +58,6 @@ func (tc *TenantCreate) SetNillableIsDefault(b *bool) *TenantCreate {
 	return tc
 }
 
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (tc *TenantCreate) SetIsHosterTenant(b bool) *TenantCreate {
-	tc.mutation.SetIsHosterTenant(b)
-	return tc
-}
-
-// SetNillableIsHosterTenant sets the "is_hoster_tenant" field if the given value is not nil.
-func (tc *TenantCreate) SetNillableIsHosterTenant(b *bool) *TenantCreate {
-	if b != nil {
-		tc.SetIsHosterTenant(*b)
-	}
-	return tc
-}
-
 // SetOidcOrgID sets the "oidc_org_id" field.
 func (tc *TenantCreate) SetOidcOrgID(s string) *TenantCreate {
 	tc.mutation.SetOidcOrgID(s)
@@ -291,10 +277,6 @@ func (tc *TenantCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TenantCreate) defaults() {
-	if _, ok := tc.mutation.IsHosterTenant(); !ok {
-		v := tenant.DefaultIsHosterTenant
-		tc.mutation.SetIsHosterTenant(v)
-	}
 	if _, ok := tc.mutation.OidcDefaultRole(); !ok {
 		v := tenant.DefaultOidcDefaultRole
 		tc.mutation.SetOidcDefaultRole(v)
@@ -350,10 +332,6 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.IsDefault(); ok {
 		_spec.SetField(tenant.FieldIsDefault, field.TypeBool, value)
 		_node.IsDefault = value
-	}
-	if value, ok := tc.mutation.IsHosterTenant(); ok {
-		_spec.SetField(tenant.FieldIsHosterTenant, field.TypeBool, value)
-		_node.IsHosterTenant = value
 	}
 	if value, ok := tc.mutation.OidcOrgID(); ok {
 		_spec.SetField(tenant.FieldOidcOrgID, field.TypeString, value)
@@ -588,24 +566,6 @@ func (u *TenantUpsert) ClearIsDefault() *TenantUpsert {
 	return u
 }
 
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (u *TenantUpsert) SetIsHosterTenant(v bool) *TenantUpsert {
-	u.Set(tenant.FieldIsHosterTenant, v)
-	return u
-}
-
-// UpdateIsHosterTenant sets the "is_hoster_tenant" field to the value that was provided on create.
-func (u *TenantUpsert) UpdateIsHosterTenant() *TenantUpsert {
-	u.SetExcluded(tenant.FieldIsHosterTenant)
-	return u
-}
-
-// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
-func (u *TenantUpsert) ClearIsHosterTenant() *TenantUpsert {
-	u.SetNull(tenant.FieldIsHosterTenant)
-	return u
-}
-
 // SetOidcOrgID sets the "oidc_org_id" field.
 func (u *TenantUpsert) SetOidcOrgID(v string) *TenantUpsert {
 	u.Set(tenant.FieldOidcOrgID, v)
@@ -757,27 +717,6 @@ func (u *TenantUpsertOne) UpdateIsDefault() *TenantUpsertOne {
 func (u *TenantUpsertOne) ClearIsDefault() *TenantUpsertOne {
 	return u.Update(func(s *TenantUpsert) {
 		s.ClearIsDefault()
-	})
-}
-
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (u *TenantUpsertOne) SetIsHosterTenant(v bool) *TenantUpsertOne {
-	return u.Update(func(s *TenantUpsert) {
-		s.SetIsHosterTenant(v)
-	})
-}
-
-// UpdateIsHosterTenant sets the "is_hoster_tenant" field to the value that was provided on create.
-func (u *TenantUpsertOne) UpdateIsHosterTenant() *TenantUpsertOne {
-	return u.Update(func(s *TenantUpsert) {
-		s.UpdateIsHosterTenant()
-	})
-}
-
-// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
-func (u *TenantUpsertOne) ClearIsHosterTenant() *TenantUpsertOne {
-	return u.Update(func(s *TenantUpsert) {
-		s.ClearIsHosterTenant()
 	})
 }
 
@@ -1108,27 +1047,6 @@ func (u *TenantUpsertBulk) UpdateIsDefault() *TenantUpsertBulk {
 func (u *TenantUpsertBulk) ClearIsDefault() *TenantUpsertBulk {
 	return u.Update(func(s *TenantUpsert) {
 		s.ClearIsDefault()
-	})
-}
-
-// SetIsHosterTenant sets the "is_hoster_tenant" field.
-func (u *TenantUpsertBulk) SetIsHosterTenant(v bool) *TenantUpsertBulk {
-	return u.Update(func(s *TenantUpsert) {
-		s.SetIsHosterTenant(v)
-	})
-}
-
-// UpdateIsHosterTenant sets the "is_hoster_tenant" field to the value that was provided on create.
-func (u *TenantUpsertBulk) UpdateIsHosterTenant() *TenantUpsertBulk {
-	return u.Update(func(s *TenantUpsert) {
-		s.UpdateIsHosterTenant()
-	})
-}
-
-// ClearIsHosterTenant clears the value of the "is_hoster_tenant" field.
-func (u *TenantUpsertBulk) ClearIsHosterTenant() *TenantUpsertBulk {
-	return u.Update(func(s *TenantUpsert) {
-		s.ClearIsHosterTenant()
 	})
 }
 

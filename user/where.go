@@ -120,11 +120,6 @@ func Use2fa(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUse2fa, v))
 }
 
-// IsSuperAdmin applies equality check predicate on the "is_super_admin" field. It's identical to IsSuperAdminEQ.
-func IsSuperAdmin(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsSuperAdmin, v))
-}
-
 // Created applies equality check predicate on the "created" field. It's identical to CreatedEQ.
 func Created(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreated, v))
@@ -738,26 +733,6 @@ func Use2faIsNil() predicate.User {
 // Use2faNotNil applies the NotNil predicate on the "use2fa" field.
 func Use2faNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldUse2fa))
-}
-
-// IsSuperAdminEQ applies the EQ predicate on the "is_super_admin" field.
-func IsSuperAdminEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsSuperAdmin, v))
-}
-
-// IsSuperAdminNEQ applies the NEQ predicate on the "is_super_admin" field.
-func IsSuperAdminNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsSuperAdmin, v))
-}
-
-// IsSuperAdminIsNil applies the IsNil predicate on the "is_super_admin" field.
-func IsSuperAdminIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldIsSuperAdmin))
-}
-
-// IsSuperAdminNotNil applies the NotNil predicate on the "is_super_admin" field.
-func IsSuperAdminNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldIsSuperAdmin))
 }
 
 // CreatedEQ applies the EQ predicate on the "created" field.

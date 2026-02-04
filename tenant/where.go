@@ -65,11 +65,6 @@ func IsDefault(v bool) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldIsDefault, v))
 }
 
-// IsHosterTenant applies equality check predicate on the "is_hoster_tenant" field. It's identical to IsHosterTenantEQ.
-func IsHosterTenant(v bool) predicate.Tenant {
-	return predicate.Tenant(sql.FieldEQ(FieldIsHosterTenant, v))
-}
-
 // OidcOrgID applies equality check predicate on the "oidc_org_id" field. It's identical to OidcOrgIDEQ.
 func OidcOrgID(v string) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldOidcOrgID, v))
@@ -178,26 +173,6 @@ func IsDefaultIsNil() predicate.Tenant {
 // IsDefaultNotNil applies the NotNil predicate on the "is_default" field.
 func IsDefaultNotNil() predicate.Tenant {
 	return predicate.Tenant(sql.FieldNotNull(FieldIsDefault))
-}
-
-// IsHosterTenantEQ applies the EQ predicate on the "is_hoster_tenant" field.
-func IsHosterTenantEQ(v bool) predicate.Tenant {
-	return predicate.Tenant(sql.FieldEQ(FieldIsHosterTenant, v))
-}
-
-// IsHosterTenantNEQ applies the NEQ predicate on the "is_hoster_tenant" field.
-func IsHosterTenantNEQ(v bool) predicate.Tenant {
-	return predicate.Tenant(sql.FieldNEQ(FieldIsHosterTenant, v))
-}
-
-// IsHosterTenantIsNil applies the IsNil predicate on the "is_hoster_tenant" field.
-func IsHosterTenantIsNil() predicate.Tenant {
-	return predicate.Tenant(sql.FieldIsNull(FieldIsHosterTenant))
-}
-
-// IsHosterTenantNotNil applies the NotNil predicate on the "is_hoster_tenant" field.
-func IsHosterTenantNotNil() predicate.Tenant {
-	return predicate.Tenant(sql.FieldNotNull(FieldIsHosterTenant))
 }
 
 // OidcOrgIDEQ applies the EQ predicate on the "oidc_org_id" field.

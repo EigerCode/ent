@@ -234,26 +234,6 @@ func (uu *UserUpdate) ClearUse2fa() *UserUpdate {
 	return uu
 }
 
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (uu *UserUpdate) SetIsSuperAdmin(b bool) *UserUpdate {
-	uu.mutation.SetIsSuperAdmin(b)
-	return uu
-}
-
-// SetNillableIsSuperAdmin sets the "is_super_admin" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsSuperAdmin(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsSuperAdmin(*b)
-	}
-	return uu
-}
-
-// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
-func (uu *UserUpdate) ClearIsSuperAdmin() *UserUpdate {
-	uu.mutation.ClearIsSuperAdmin()
-	return uu
-}
-
 // SetCreated sets the "created" field.
 func (uu *UserUpdate) SetCreated(t time.Time) *UserUpdate {
 	uu.mutation.SetCreated(t)
@@ -734,12 +714,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.Use2faCleared() {
 		_spec.ClearField(user.FieldUse2fa, field.TypeBool)
 	}
-	if value, ok := uu.mutation.IsSuperAdmin(); ok {
-		_spec.SetField(user.FieldIsSuperAdmin, field.TypeBool, value)
-	}
-	if uu.mutation.IsSuperAdminCleared() {
-		_spec.ClearField(user.FieldIsSuperAdmin, field.TypeBool)
-	}
 	if value, ok := uu.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
 	}
@@ -1177,26 +1151,6 @@ func (uuo *UserUpdateOne) SetNillableUse2fa(b *bool) *UserUpdateOne {
 // ClearUse2fa clears the value of the "use2fa" field.
 func (uuo *UserUpdateOne) ClearUse2fa() *UserUpdateOne {
 	uuo.mutation.ClearUse2fa()
-	return uuo
-}
-
-// SetIsSuperAdmin sets the "is_super_admin" field.
-func (uuo *UserUpdateOne) SetIsSuperAdmin(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsSuperAdmin(b)
-	return uuo
-}
-
-// SetNillableIsSuperAdmin sets the "is_super_admin" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsSuperAdmin(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsSuperAdmin(*b)
-	}
-	return uuo
-}
-
-// ClearIsSuperAdmin clears the value of the "is_super_admin" field.
-func (uuo *UserUpdateOne) ClearIsSuperAdmin() *UserUpdateOne {
-	uuo.mutation.ClearIsSuperAdmin()
 	return uuo
 }
 
@@ -1709,12 +1663,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.Use2faCleared() {
 		_spec.ClearField(user.FieldUse2fa, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.IsSuperAdmin(); ok {
-		_spec.SetField(user.FieldIsSuperAdmin, field.TypeBool, value)
-	}
-	if uuo.mutation.IsSuperAdminCleared() {
-		_spec.ClearField(user.FieldIsSuperAdmin, field.TypeBool)
 	}
 	if value, ok := uuo.mutation.Created(); ok {
 		_spec.SetField(user.FieldCreated, field.TypeTime, value)
