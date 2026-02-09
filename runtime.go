@@ -7,7 +7,9 @@ import (
 
 	"github.com/open-uem/ent/agent"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/deployment"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/netbirdsettings"
@@ -26,6 +28,7 @@ import (
 	"github.com/open-uem/ent/task"
 	"github.com/open-uem/ent/tenant"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 	"github.com/open-uem/ent/wingetconfigexclusion"
 )
 
@@ -161,30 +164,48 @@ func init() {
 	authenticationDescOIDCClientID := authenticationFields[5].Descriptor()
 	// authentication.DefaultOIDCClientID holds the default value on creation for the OIDC_client_id field.
 	authentication.DefaultOIDCClientID = authenticationDescOIDCClientID.Default.(string)
-	// authenticationDescOIDCRole is the schema descriptor for OIDC_role field.
-	authenticationDescOIDCRole := authenticationFields[6].Descriptor()
-	// authentication.DefaultOIDCRole holds the default value on creation for the OIDC_role field.
-	authentication.DefaultOIDCRole = authenticationDescOIDCRole.Default.(string)
+	// authenticationDescOIDCRoleAdmin is the schema descriptor for OIDC_role_admin field.
+	authenticationDescOIDCRoleAdmin := authenticationFields[6].Descriptor()
+	// authentication.DefaultOIDCRoleAdmin holds the default value on creation for the OIDC_role_admin field.
+	authentication.DefaultOIDCRoleAdmin = authenticationDescOIDCRoleAdmin.Default.(string)
+	// authenticationDescOIDCRoleOperator is the schema descriptor for OIDC_role_operator field.
+	authenticationDescOIDCRoleOperator := authenticationFields[7].Descriptor()
+	// authentication.DefaultOIDCRoleOperator holds the default value on creation for the OIDC_role_operator field.
+	authentication.DefaultOIDCRoleOperator = authenticationDescOIDCRoleOperator.Default.(string)
+	// authenticationDescOIDCRoleUser is the schema descriptor for OIDC_role_user field.
+	authenticationDescOIDCRoleUser := authenticationFields[8].Descriptor()
+	// authentication.DefaultOIDCRoleUser holds the default value on creation for the OIDC_role_user field.
+	authentication.DefaultOIDCRoleUser = authenticationDescOIDCRoleUser.Default.(string)
 	// authenticationDescOIDCCookieEncriptionKey is the schema descriptor for OIDC_cookie_encription_key field.
-	authenticationDescOIDCCookieEncriptionKey := authenticationFields[7].Descriptor()
+	authenticationDescOIDCCookieEncriptionKey := authenticationFields[9].Descriptor()
 	// authentication.DefaultOIDCCookieEncriptionKey holds the default value on creation for the OIDC_cookie_encription_key field.
 	authentication.DefaultOIDCCookieEncriptionKey = authenticationDescOIDCCookieEncriptionKey.Default.(string)
 	// authenticationDescOIDCKeycloakPublicKey is the schema descriptor for OIDC_keycloak_public_key field.
-	authenticationDescOIDCKeycloakPublicKey := authenticationFields[8].Descriptor()
+	authenticationDescOIDCKeycloakPublicKey := authenticationFields[10].Descriptor()
 	// authentication.DefaultOIDCKeycloakPublicKey holds the default value on creation for the OIDC_keycloak_public_key field.
 	authentication.DefaultOIDCKeycloakPublicKey = authenticationDescOIDCKeycloakPublicKey.Default.(string)
 	// authenticationDescOIDCAutoCreateAccount is the schema descriptor for OIDC_auto_create_account field.
-	authenticationDescOIDCAutoCreateAccount := authenticationFields[9].Descriptor()
+	authenticationDescOIDCAutoCreateAccount := authenticationFields[11].Descriptor()
 	// authentication.DefaultOIDCAutoCreateAccount holds the default value on creation for the OIDC_auto_create_account field.
 	authentication.DefaultOIDCAutoCreateAccount = authenticationDescOIDCAutoCreateAccount.Default.(bool)
 	// authenticationDescOIDCAutoApprove is the schema descriptor for OIDC_auto_approve field.
-	authenticationDescOIDCAutoApprove := authenticationFields[10].Descriptor()
+	authenticationDescOIDCAutoApprove := authenticationFields[12].Descriptor()
 	// authentication.DefaultOIDCAutoApprove holds the default value on creation for the OIDC_auto_approve field.
 	authentication.DefaultOIDCAutoApprove = authenticationDescOIDCAutoApprove.Default.(bool)
 	// authenticationDescUsePasswd is the schema descriptor for use_passwd field.
-	authenticationDescUsePasswd := authenticationFields[11].Descriptor()
+	authenticationDescUsePasswd := authenticationFields[13].Descriptor()
 	// authentication.DefaultUsePasswd holds the default value on creation for the use_passwd field.
 	authentication.DefaultUsePasswd = authenticationDescUsePasswd.Default.(bool)
+	brandingFields := schema.Branding{}.Fields()
+	_ = brandingFields
+	// brandingDescPrimaryColor is the schema descriptor for primary_color field.
+	brandingDescPrimaryColor := brandingFields[2].Descriptor()
+	// branding.DefaultPrimaryColor holds the default value on creation for the primary_color field.
+	branding.DefaultPrimaryColor = brandingDescPrimaryColor.Default.(string)
+	// brandingDescProductName is the schema descriptor for product_name field.
+	brandingDescProductName := brandingFields[3].Descriptor()
+	// branding.DefaultProductName holds the default value on creation for the product_name field.
+	branding.DefaultProductName = brandingDescProductName.Default.(string)
 	deploymentFields := schema.Deployment{}.Fields()
 	_ = deploymentFields
 	// deploymentDescInstalled is the schema descriptor for installed field.
@@ -205,6 +226,34 @@ func init() {
 	deploymentDescByProfile := deploymentFields[6].Descriptor()
 	// deployment.DefaultByProfile holds the default value on creation for the by_profile field.
 	deployment.DefaultByProfile = deploymentDescByProfile.Default.(bool)
+	enrollmenttokenFields := schema.EnrollmentToken{}.Fields()
+	_ = enrollmenttokenFields
+	// enrollmenttokenDescToken is the schema descriptor for token field.
+	enrollmenttokenDescToken := enrollmenttokenFields[0].Descriptor()
+	// enrollmenttoken.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	enrollmenttoken.TokenValidator = enrollmenttokenDescToken.Validators[0].(func(string) error)
+	// enrollmenttokenDescMaxUses is the schema descriptor for max_uses field.
+	enrollmenttokenDescMaxUses := enrollmenttokenFields[2].Descriptor()
+	// enrollmenttoken.DefaultMaxUses holds the default value on creation for the max_uses field.
+	enrollmenttoken.DefaultMaxUses = enrollmenttokenDescMaxUses.Default.(int)
+	// enrollmenttokenDescCurrentUses is the schema descriptor for current_uses field.
+	enrollmenttokenDescCurrentUses := enrollmenttokenFields[3].Descriptor()
+	// enrollmenttoken.DefaultCurrentUses holds the default value on creation for the current_uses field.
+	enrollmenttoken.DefaultCurrentUses = enrollmenttokenDescCurrentUses.Default.(int)
+	// enrollmenttokenDescActive is the schema descriptor for active field.
+	enrollmenttokenDescActive := enrollmenttokenFields[5].Descriptor()
+	// enrollmenttoken.DefaultActive holds the default value on creation for the active field.
+	enrollmenttoken.DefaultActive = enrollmenttokenDescActive.Default.(bool)
+	// enrollmenttokenDescCreated is the schema descriptor for created field.
+	enrollmenttokenDescCreated := enrollmenttokenFields[6].Descriptor()
+	// enrollmenttoken.DefaultCreated holds the default value on creation for the created field.
+	enrollmenttoken.DefaultCreated = enrollmenttokenDescCreated.Default.(func() time.Time)
+	// enrollmenttokenDescModified is the schema descriptor for modified field.
+	enrollmenttokenDescModified := enrollmenttokenFields[7].Descriptor()
+	// enrollmenttoken.DefaultModified holds the default value on creation for the modified field.
+	enrollmenttoken.DefaultModified = enrollmenttokenDescModified.Default.(func() time.Time)
+	// enrollmenttoken.UpdateDefaultModified holds the default value on update for the modified field.
+	enrollmenttoken.UpdateDefaultModified = enrollmenttokenDescModified.UpdateDefault.(func() time.Time)
 	logicaldiskFields := schema.LogicalDisk{}.Fields()
 	_ = logicaldiskFields
 	// logicaldiskDescUsage is the schema descriptor for usage field.
@@ -302,7 +351,7 @@ func init() {
 	// profile.DefaultApplyToAll holds the default value on creation for the apply_to_all field.
 	profile.DefaultApplyToAll = profileDescApplyToAll.Default.(bool)
 	// profileDescDisabled is the schema descriptor for disabled field.
-	profileDescDisabled := profileFields[3].Descriptor()
+	profileDescDisabled := profileFields[2].Descriptor()
 	// profile.DefaultDisabled holds the default value on creation for the disabled field.
 	profile.DefaultDisabled = profileDescDisabled.Default.(bool)
 	profileissueFields := schema.ProfileIssue{}.Fields()
@@ -716,11 +765,11 @@ func init() {
 	tenantFields := schema.Tenant{}.Fields()
 	_ = tenantFields
 	// tenantDescCreated is the schema descriptor for created field.
-	tenantDescCreated := tenantFields[2].Descriptor()
+	tenantDescCreated := tenantFields[4].Descriptor()
 	// tenant.DefaultCreated holds the default value on creation for the created field.
 	tenant.DefaultCreated = tenantDescCreated.Default.(func() time.Time)
 	// tenantDescModified is the schema descriptor for modified field.
-	tenantDescModified := tenantFields[3].Descriptor()
+	tenantDescModified := tenantFields[5].Descriptor()
 	// tenant.DefaultModified holds the default value on creation for the modified field.
 	tenant.DefaultModified = tenantDescModified.Default.(func() time.Time)
 	// tenant.UpdateDefaultModified holds the default value on update for the modified field.
@@ -805,6 +854,26 @@ func init() {
 	userDescID := userFields[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	user.IDValidator = userDescID.Validators[0].(func(string) error)
+	usertenantFields := schema.UserTenant{}.Fields()
+	_ = usertenantFields
+	// usertenantDescUserID is the schema descriptor for user_id field.
+	usertenantDescUserID := usertenantFields[0].Descriptor()
+	// usertenant.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	usertenant.UserIDValidator = usertenantDescUserID.Validators[0].(func(string) error)
+	// usertenantDescIsDefault is the schema descriptor for is_default field.
+	usertenantDescIsDefault := usertenantFields[3].Descriptor()
+	// usertenant.DefaultIsDefault holds the default value on creation for the is_default field.
+	usertenant.DefaultIsDefault = usertenantDescIsDefault.Default.(bool)
+	// usertenantDescCreated is the schema descriptor for created field.
+	usertenantDescCreated := usertenantFields[4].Descriptor()
+	// usertenant.DefaultCreated holds the default value on creation for the created field.
+	usertenant.DefaultCreated = usertenantDescCreated.Default.(func() time.Time)
+	// usertenantDescModified is the schema descriptor for modified field.
+	usertenantDescModified := usertenantFields[5].Descriptor()
+	// usertenant.DefaultModified holds the default value on creation for the modified field.
+	usertenant.DefaultModified = usertenantDescModified.Default.(func() time.Time)
+	// usertenant.UpdateDefaultModified holds the default value on update for the modified field.
+	usertenant.UpdateDefaultModified = usertenantDescModified.UpdateDefault.(func() time.Time)
 	wingetconfigexclusionFields := schema.WingetConfigExclusion{}.Fields()
 	_ = wingetconfigexclusionFields
 	// wingetconfigexclusionDescWhen is the schema descriptor for when field.

@@ -19,9 +19,11 @@ import (
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/app"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/branding"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/computer"
 	"github.com/open-uem/ent/deployment"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
@@ -50,6 +52,7 @@ import (
 	"github.com/open-uem/ent/tenant"
 	"github.com/open-uem/ent/update"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 	"github.com/open-uem/ent/wingetconfigexclusion"
 )
 
@@ -66,12 +69,16 @@ type Client struct {
 	App *AppClient
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// Branding is the client for interacting with the Branding builders.
+	Branding *BrandingClient
 	// Certificate is the client for interacting with the Certificate builders.
 	Certificate *CertificateClient
 	// Computer is the client for interacting with the Computer builders.
 	Computer *ComputerClient
 	// Deployment is the client for interacting with the Deployment builders.
 	Deployment *DeploymentClient
+	// EnrollmentToken is the client for interacting with the EnrollmentToken builders.
+	EnrollmentToken *EnrollmentTokenClient
 	// LogicalDisk is the client for interacting with the LogicalDisk builders.
 	LogicalDisk *LogicalDiskClient
 	// MemorySlot is the client for interacting with the MemorySlot builders.
@@ -128,6 +135,8 @@ type Client struct {
 	Update *UpdateClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserTenant is the client for interacting with the UserTenant builders.
+	UserTenant *UserTenantClient
 	// WingetConfigExclusion is the client for interacting with the WingetConfigExclusion builders.
 	WingetConfigExclusion *WingetConfigExclusionClient
 }
@@ -145,9 +154,11 @@ func (c *Client) init() {
 	c.Antivirus = NewAntivirusClient(c.config)
 	c.App = NewAppClient(c.config)
 	c.Authentication = NewAuthenticationClient(c.config)
+	c.Branding = NewBrandingClient(c.config)
 	c.Certificate = NewCertificateClient(c.config)
 	c.Computer = NewComputerClient(c.config)
 	c.Deployment = NewDeploymentClient(c.config)
+	c.EnrollmentToken = NewEnrollmentTokenClient(c.config)
 	c.LogicalDisk = NewLogicalDiskClient(c.config)
 	c.MemorySlot = NewMemorySlotClient(c.config)
 	c.Metadata = NewMetadataClient(c.config)
@@ -176,6 +187,7 @@ func (c *Client) init() {
 	c.Tenant = NewTenantClient(c.config)
 	c.Update = NewUpdateClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserTenant = NewUserTenantClient(c.config)
 	c.WingetConfigExclusion = NewWingetConfigExclusionClient(c.config)
 }
 
@@ -273,9 +285,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Antivirus:             NewAntivirusClient(cfg),
 		App:                   NewAppClient(cfg),
 		Authentication:        NewAuthenticationClient(cfg),
+		Branding:              NewBrandingClient(cfg),
 		Certificate:           NewCertificateClient(cfg),
 		Computer:              NewComputerClient(cfg),
 		Deployment:            NewDeploymentClient(cfg),
+		EnrollmentToken:       NewEnrollmentTokenClient(cfg),
 		LogicalDisk:           NewLogicalDiskClient(cfg),
 		MemorySlot:            NewMemorySlotClient(cfg),
 		Metadata:              NewMetadataClient(cfg),
@@ -304,6 +318,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Tenant:                NewTenantClient(cfg),
 		Update:                NewUpdateClient(cfg),
 		User:                  NewUserClient(cfg),
+		UserTenant:            NewUserTenantClient(cfg),
 		WingetConfigExclusion: NewWingetConfigExclusionClient(cfg),
 	}, nil
 }
@@ -328,9 +343,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Antivirus:             NewAntivirusClient(cfg),
 		App:                   NewAppClient(cfg),
 		Authentication:        NewAuthenticationClient(cfg),
+		Branding:              NewBrandingClient(cfg),
 		Certificate:           NewCertificateClient(cfg),
 		Computer:              NewComputerClient(cfg),
 		Deployment:            NewDeploymentClient(cfg),
+		EnrollmentToken:       NewEnrollmentTokenClient(cfg),
 		LogicalDisk:           NewLogicalDiskClient(cfg),
 		MemorySlot:            NewMemorySlotClient(cfg),
 		Metadata:              NewMetadataClient(cfg),
@@ -359,6 +376,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Tenant:                NewTenantClient(cfg),
 		Update:                NewUpdateClient(cfg),
 		User:                  NewUserClient(cfg),
+		UserTenant:            NewUserTenantClient(cfg),
 		WingetConfigExclusion: NewWingetConfigExclusionClient(cfg),
 	}, nil
 }
@@ -389,13 +407,13 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
-		c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata,
-		c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue, c.RecoveryCode,
-		c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions, c.Settings, c.Share,
-		c.Site, c.SystemUpdate, c.Tag, c.Task, c.Tenant, c.Update, c.User,
-		c.WingetConfigExclusion,
+		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
+		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
+		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
+		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
+		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -405,13 +423,13 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
-		c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata,
-		c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue, c.RecoveryCode,
-		c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions, c.Settings, c.Share,
-		c.Site, c.SystemUpdate, c.Tag, c.Task, c.Tenant, c.Update, c.User,
-		c.WingetConfigExclusion,
+		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
+		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
+		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
+		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
+		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -428,12 +446,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.App.mutate(ctx, m)
 	case *AuthenticationMutation:
 		return c.Authentication.mutate(ctx, m)
+	case *BrandingMutation:
+		return c.Branding.mutate(ctx, m)
 	case *CertificateMutation:
 		return c.Certificate.mutate(ctx, m)
 	case *ComputerMutation:
 		return c.Computer.mutate(ctx, m)
 	case *DeploymentMutation:
 		return c.Deployment.mutate(ctx, m)
+	case *EnrollmentTokenMutation:
+		return c.EnrollmentToken.mutate(ctx, m)
 	case *LogicalDiskMutation:
 		return c.LogicalDisk.mutate(ctx, m)
 	case *MemorySlotMutation:
@@ -490,6 +512,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Update.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *UserTenantMutation:
+		return c.UserTenant.mutate(ctx, m)
 	case *WingetConfigExclusionMutation:
 		return c.WingetConfigExclusion.mutate(ctx, m)
 	default:
@@ -1397,6 +1421,139 @@ func (c *AuthenticationClient) mutate(ctx context.Context, m *AuthenticationMuta
 	}
 }
 
+// BrandingClient is a client for the Branding schema.
+type BrandingClient struct {
+	config
+}
+
+// NewBrandingClient returns a client for the Branding from the given config.
+func NewBrandingClient(c config) *BrandingClient {
+	return &BrandingClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `branding.Hooks(f(g(h())))`.
+func (c *BrandingClient) Use(hooks ...Hook) {
+	c.hooks.Branding = append(c.hooks.Branding, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `branding.Intercept(f(g(h())))`.
+func (c *BrandingClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Branding = append(c.inters.Branding, interceptors...)
+}
+
+// Create returns a builder for creating a Branding entity.
+func (c *BrandingClient) Create() *BrandingCreate {
+	mutation := newBrandingMutation(c.config, OpCreate)
+	return &BrandingCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Branding entities.
+func (c *BrandingClient) CreateBulk(builders ...*BrandingCreate) *BrandingCreateBulk {
+	return &BrandingCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BrandingClient) MapCreateBulk(slice any, setFunc func(*BrandingCreate, int)) *BrandingCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BrandingCreateBulk{err: fmt.Errorf("calling to BrandingClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BrandingCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BrandingCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Branding.
+func (c *BrandingClient) Update() *BrandingUpdate {
+	mutation := newBrandingMutation(c.config, OpUpdate)
+	return &BrandingUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BrandingClient) UpdateOne(b *Branding) *BrandingUpdateOne {
+	mutation := newBrandingMutation(c.config, OpUpdateOne, withBranding(b))
+	return &BrandingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BrandingClient) UpdateOneID(id int) *BrandingUpdateOne {
+	mutation := newBrandingMutation(c.config, OpUpdateOne, withBrandingID(id))
+	return &BrandingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Branding.
+func (c *BrandingClient) Delete() *BrandingDelete {
+	mutation := newBrandingMutation(c.config, OpDelete)
+	return &BrandingDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BrandingClient) DeleteOne(b *Branding) *BrandingDeleteOne {
+	return c.DeleteOneID(b.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BrandingClient) DeleteOneID(id int) *BrandingDeleteOne {
+	builder := c.Delete().Where(branding.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BrandingDeleteOne{builder}
+}
+
+// Query returns a query builder for Branding.
+func (c *BrandingClient) Query() *BrandingQuery {
+	return &BrandingQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBranding},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Branding entity by its id.
+func (c *BrandingClient) Get(ctx context.Context, id int) (*Branding, error) {
+	return c.Query().Where(branding.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BrandingClient) GetX(ctx context.Context, id int) *Branding {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BrandingClient) Hooks() []Hook {
+	return c.hooks.Branding
+}
+
+// Interceptors returns the client interceptors.
+func (c *BrandingClient) Interceptors() []Interceptor {
+	return c.inters.Branding
+}
+
+func (c *BrandingClient) mutate(ctx context.Context, m *BrandingMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BrandingCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BrandingUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BrandingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BrandingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Branding mutation op: %q", m.Op())
+	}
+}
+
 // CertificateClient is a client for the Certificate schema.
 type CertificateClient struct {
 	config
@@ -1503,6 +1660,22 @@ func (c *CertificateClient) GetX(ctx context.Context, id int64) *Certificate {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryTenant queries the tenant edge of a Certificate.
+func (c *CertificateClient) QueryTenant(ce *Certificate) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ce.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(certificate.Table, certificate.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, certificate.TenantTable, certificate.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(ce.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -1825,6 +1998,171 @@ func (c *DeploymentClient) mutate(ctx context.Context, m *DeploymentMutation) (V
 		return (&DeploymentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Deployment mutation op: %q", m.Op())
+	}
+}
+
+// EnrollmentTokenClient is a client for the EnrollmentToken schema.
+type EnrollmentTokenClient struct {
+	config
+}
+
+// NewEnrollmentTokenClient returns a client for the EnrollmentToken from the given config.
+func NewEnrollmentTokenClient(c config) *EnrollmentTokenClient {
+	return &EnrollmentTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `enrollmenttoken.Hooks(f(g(h())))`.
+func (c *EnrollmentTokenClient) Use(hooks ...Hook) {
+	c.hooks.EnrollmentToken = append(c.hooks.EnrollmentToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `enrollmenttoken.Intercept(f(g(h())))`.
+func (c *EnrollmentTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EnrollmentToken = append(c.inters.EnrollmentToken, interceptors...)
+}
+
+// Create returns a builder for creating a EnrollmentToken entity.
+func (c *EnrollmentTokenClient) Create() *EnrollmentTokenCreate {
+	mutation := newEnrollmentTokenMutation(c.config, OpCreate)
+	return &EnrollmentTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EnrollmentToken entities.
+func (c *EnrollmentTokenClient) CreateBulk(builders ...*EnrollmentTokenCreate) *EnrollmentTokenCreateBulk {
+	return &EnrollmentTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EnrollmentTokenClient) MapCreateBulk(slice any, setFunc func(*EnrollmentTokenCreate, int)) *EnrollmentTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EnrollmentTokenCreateBulk{err: fmt.Errorf("calling to EnrollmentTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EnrollmentTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EnrollmentTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EnrollmentToken.
+func (c *EnrollmentTokenClient) Update() *EnrollmentTokenUpdate {
+	mutation := newEnrollmentTokenMutation(c.config, OpUpdate)
+	return &EnrollmentTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EnrollmentTokenClient) UpdateOne(et *EnrollmentToken) *EnrollmentTokenUpdateOne {
+	mutation := newEnrollmentTokenMutation(c.config, OpUpdateOne, withEnrollmentToken(et))
+	return &EnrollmentTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EnrollmentTokenClient) UpdateOneID(id int) *EnrollmentTokenUpdateOne {
+	mutation := newEnrollmentTokenMutation(c.config, OpUpdateOne, withEnrollmentTokenID(id))
+	return &EnrollmentTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EnrollmentToken.
+func (c *EnrollmentTokenClient) Delete() *EnrollmentTokenDelete {
+	mutation := newEnrollmentTokenMutation(c.config, OpDelete)
+	return &EnrollmentTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EnrollmentTokenClient) DeleteOne(et *EnrollmentToken) *EnrollmentTokenDeleteOne {
+	return c.DeleteOneID(et.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EnrollmentTokenClient) DeleteOneID(id int) *EnrollmentTokenDeleteOne {
+	builder := c.Delete().Where(enrollmenttoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EnrollmentTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for EnrollmentToken.
+func (c *EnrollmentTokenClient) Query() *EnrollmentTokenQuery {
+	return &EnrollmentTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEnrollmentToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EnrollmentToken entity by its id.
+func (c *EnrollmentTokenClient) Get(ctx context.Context, id int) (*EnrollmentToken, error) {
+	return c.Query().Where(enrollmenttoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EnrollmentTokenClient) GetX(ctx context.Context, id int) *EnrollmentToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTenant queries the tenant edge of a EnrollmentToken.
+func (c *EnrollmentTokenClient) QueryTenant(et *EnrollmentToken) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := et.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(enrollmenttoken.Table, enrollmenttoken.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, enrollmenttoken.TenantTable, enrollmenttoken.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(et.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySite queries the site edge of a EnrollmentToken.
+func (c *EnrollmentTokenClient) QuerySite(et *EnrollmentToken) *SiteQuery {
+	query := (&SiteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := et.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(enrollmenttoken.Table, enrollmenttoken.FieldID, id),
+			sqlgraph.To(site.Table, site.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, enrollmenttoken.SiteTable, enrollmenttoken.SiteColumn),
+		)
+		fromV = sqlgraph.Neighbors(et.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EnrollmentTokenClient) Hooks() []Hook {
+	return c.hooks.EnrollmentToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *EnrollmentTokenClient) Interceptors() []Interceptor {
+	return c.inters.EnrollmentToken
+}
+
+func (c *EnrollmentTokenClient) mutate(ctx context.Context, m *EnrollmentTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EnrollmentTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EnrollmentTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EnrollmentTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EnrollmentTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown EnrollmentToken mutation op: %q", m.Op())
 	}
 }
 
@@ -5193,6 +5531,22 @@ func (c *SiteClient) QueryProfiles(s *Site) *ProfileQuery {
 	return query
 }
 
+// QueryEnrollmentTokens queries the enrollment_tokens edge of a Site.
+func (c *SiteClient) QueryEnrollmentTokens(s *Site) *EnrollmentTokenQuery {
+	query := (&EnrollmentTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(site.Table, site.FieldID, id),
+			sqlgraph.To(enrollmenttoken.Table, enrollmenttoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, site.EnrollmentTokensTable, site.EnrollmentTokensColumn),
+		)
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *SiteClient) Hooks() []Hook {
 	return c.hooks.Site
@@ -5949,6 +6303,38 @@ func (c *TenantClient) QueryNetbird(t *Tenant) *NetbirdSettingsQuery {
 	return query
 }
 
+// QueryUserTenants queries the user_tenants edge of a Tenant.
+func (c *TenantClient) QueryUserTenants(t *Tenant) *UserTenantQuery {
+	query := (&UserTenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(usertenant.Table, usertenant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, tenant.UserTenantsTable, tenant.UserTenantsColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEnrollmentTokens queries the enrollment_tokens edge of a Tenant.
+func (c *TenantClient) QueryEnrollmentTokens(t *Tenant) *EnrollmentTokenQuery {
+	query := (&EnrollmentTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(enrollmenttoken.Table, enrollmenttoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.EnrollmentTokensTable, tenant.EnrollmentTokensColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TenantClient) Hooks() []Hook {
 	return c.hooks.Tenant
@@ -6263,6 +6649,22 @@ func (c *UserClient) QueryRecoverycodes(u *User) *RecoveryCodeQuery {
 	return query
 }
 
+// QueryUserTenants queries the user_tenants edge of a User.
+func (c *UserClient) QueryUserTenants(u *User) *UserTenantQuery {
+	query := (&UserTenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(usertenant.Table, usertenant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.UserTenantsTable, user.UserTenantsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -6285,6 +6687,171 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 		return (&UserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown User mutation op: %q", m.Op())
+	}
+}
+
+// UserTenantClient is a client for the UserTenant schema.
+type UserTenantClient struct {
+	config
+}
+
+// NewUserTenantClient returns a client for the UserTenant from the given config.
+func NewUserTenantClient(c config) *UserTenantClient {
+	return &UserTenantClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usertenant.Hooks(f(g(h())))`.
+func (c *UserTenantClient) Use(hooks ...Hook) {
+	c.hooks.UserTenant = append(c.hooks.UserTenant, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usertenant.Intercept(f(g(h())))`.
+func (c *UserTenantClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserTenant = append(c.inters.UserTenant, interceptors...)
+}
+
+// Create returns a builder for creating a UserTenant entity.
+func (c *UserTenantClient) Create() *UserTenantCreate {
+	mutation := newUserTenantMutation(c.config, OpCreate)
+	return &UserTenantCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserTenant entities.
+func (c *UserTenantClient) CreateBulk(builders ...*UserTenantCreate) *UserTenantCreateBulk {
+	return &UserTenantCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserTenantClient) MapCreateBulk(slice any, setFunc func(*UserTenantCreate, int)) *UserTenantCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserTenantCreateBulk{err: fmt.Errorf("calling to UserTenantClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserTenantCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserTenantCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserTenant.
+func (c *UserTenantClient) Update() *UserTenantUpdate {
+	mutation := newUserTenantMutation(c.config, OpUpdate)
+	return &UserTenantUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserTenantClient) UpdateOne(ut *UserTenant) *UserTenantUpdateOne {
+	mutation := newUserTenantMutation(c.config, OpUpdateOne, withUserTenant(ut))
+	return &UserTenantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserTenantClient) UpdateOneID(id int) *UserTenantUpdateOne {
+	mutation := newUserTenantMutation(c.config, OpUpdateOne, withUserTenantID(id))
+	return &UserTenantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserTenant.
+func (c *UserTenantClient) Delete() *UserTenantDelete {
+	mutation := newUserTenantMutation(c.config, OpDelete)
+	return &UserTenantDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserTenantClient) DeleteOne(ut *UserTenant) *UserTenantDeleteOne {
+	return c.DeleteOneID(ut.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserTenantClient) DeleteOneID(id int) *UserTenantDeleteOne {
+	builder := c.Delete().Where(usertenant.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserTenantDeleteOne{builder}
+}
+
+// Query returns a query builder for UserTenant.
+func (c *UserTenantClient) Query() *UserTenantQuery {
+	return &UserTenantQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserTenant},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserTenant entity by its id.
+func (c *UserTenantClient) Get(ctx context.Context, id int) (*UserTenant, error) {
+	return c.Query().Where(usertenant.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserTenantClient) GetX(ctx context.Context, id int) *UserTenant {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserTenant.
+func (c *UserTenantClient) QueryUser(ut *UserTenant) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ut.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usertenant.Table, usertenant.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usertenant.UserTable, usertenant.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ut.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTenant queries the tenant edge of a UserTenant.
+func (c *UserTenantClient) QueryTenant(ut *UserTenant) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ut.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usertenant.Table, usertenant.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usertenant.TenantTable, usertenant.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(ut.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserTenantClient) Hooks() []Hook {
+	return c.hooks.UserTenant
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserTenantClient) Interceptors() []Interceptor {
+	return c.inters.UserTenant
+}
+
+func (c *UserTenantClient) mutate(ctx context.Context, m *UserTenantMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserTenantCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserTenantUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserTenantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserTenantDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserTenant mutation op: %q", m.Op())
 	}
 }
 
@@ -6440,19 +7007,20 @@ func (c *WingetConfigExclusionClient) mutate(ctx context.Context, m *WingetConfi
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetbirdSettings,
-		NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile,
-		ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk, Server, Sessions,
-		Settings, Share, Site, SystemUpdate, Tag, Task, Tenant, Update, User,
-		WingetConfigExclusion []ent.Hook
+		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
+		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
+		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
+		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
+		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,
+		Tag, Task, Tenant, Update, User, UserTenant, WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
-		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetbirdSettings,
-		NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile,
-		ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk, Server, Sessions,
-		Settings, Share, Site, SystemUpdate, Tag, Task, Tenant, Update, User,
+		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
+		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
+		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
+		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
+		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,
+		Tag, Task, Tenant, Update, User, UserTenant,
 		WingetConfigExclusion []ent.Interceptor
 	}
 )

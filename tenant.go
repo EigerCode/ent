@@ -23,6 +23,10 @@ type Tenant struct {
 	Description string `json:"description,omitempty"`
 	// IsDefault holds the value of the "is_default" field.
 	IsDefault bool `json:"is_default,omitempty"`
+	// OIDC organization ID (e.g. Zitadel Org-ID) for automatic tenant mapping
+	OidcOrgID string `json:"oidc_org_id,omitempty"`
+	// Default role for users auto-assigned via OIDC
+	OidcDefaultRole tenant.OidcDefaultRole `json:"oidc_default_role,omitempty"`
 	// Created holds the value of the "created" field.
 	Created time.Time `json:"created,omitempty"`
 	// Modified holds the value of the "modified" field.
@@ -48,9 +52,13 @@ type TenantEdges struct {
 	Rustdesk []*Rustdesk `json:"rustdesk,omitempty"`
 	// Netbird holds the value of the netbird edge.
 	Netbird *NetbirdSettings `json:"netbird,omitempty"`
+	// UserTenants holds the value of the user_tenants edge.
+	UserTenants []*UserTenant `json:"user_tenants,omitempty"`
+	// EnrollmentTokens holds the value of the enrollment_tokens edge.
+	EnrollmentTokens []*EnrollmentToken `json:"enrollment_tokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [8]bool
 }
 
 // SitesOrErr returns the Sites value or an error if the edge
@@ -111,6 +119,24 @@ func (e TenantEdges) NetbirdOrErr() (*NetbirdSettings, error) {
 	return nil, &NotLoadedError{edge: "netbird"}
 }
 
+// UserTenantsOrErr returns the UserTenants value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) UserTenantsOrErr() ([]*UserTenant, error) {
+	if e.loadedTypes[6] {
+		return e.UserTenants, nil
+	}
+	return nil, &NotLoadedError{edge: "user_tenants"}
+}
+
+// EnrollmentTokensOrErr returns the EnrollmentTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) EnrollmentTokensOrErr() ([]*EnrollmentToken, error) {
+	if e.loadedTypes[7] {
+		return e.EnrollmentTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "enrollment_tokens"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Tenant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -120,7 +146,7 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case tenant.FieldID:
 			values[i] = new(sql.NullInt64)
-		case tenant.FieldDescription:
+		case tenant.FieldDescription, tenant.FieldOidcOrgID, tenant.FieldOidcDefaultRole:
 			values[i] = new(sql.NullString)
 		case tenant.FieldCreated, tenant.FieldModified:
 			values[i] = new(sql.NullTime)
@@ -158,6 +184,18 @@ func (t *Tenant) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_default", values[i])
 			} else if value.Valid {
 				t.IsDefault = value.Bool
+			}
+		case tenant.FieldOidcOrgID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field oidc_org_id", values[i])
+			} else if value.Valid {
+				t.OidcOrgID = value.String
+			}
+		case tenant.FieldOidcDefaultRole:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field oidc_default_role", values[i])
+			} else if value.Valid {
+				t.OidcDefaultRole = tenant.OidcDefaultRole(value.String)
 			}
 		case tenant.FieldCreated:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -221,6 +259,16 @@ func (t *Tenant) QueryNetbird() *NetbirdSettingsQuery {
 	return NewTenantClient(t.config).QueryNetbird(t)
 }
 
+// QueryUserTenants queries the "user_tenants" edge of the Tenant entity.
+func (t *Tenant) QueryUserTenants() *UserTenantQuery {
+	return NewTenantClient(t.config).QueryUserTenants(t)
+}
+
+// QueryEnrollmentTokens queries the "enrollment_tokens" edge of the Tenant entity.
+func (t *Tenant) QueryEnrollmentTokens() *EnrollmentTokenQuery {
+	return NewTenantClient(t.config).QueryEnrollmentTokens(t)
+}
+
 // Update returns a builder for updating this Tenant.
 // Note that you need to call Tenant.Unwrap() before calling this method if this Tenant
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -249,6 +297,12 @@ func (t *Tenant) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_default=")
 	builder.WriteString(fmt.Sprintf("%v", t.IsDefault))
+	builder.WriteString(", ")
+	builder.WriteString("oidc_org_id=")
+	builder.WriteString(t.OidcOrgID)
+	builder.WriteString(", ")
+	builder.WriteString("oidc_default_role=")
+	builder.WriteString(fmt.Sprintf("%v", t.OidcDefaultRole))
 	builder.WriteString(", ")
 	builder.WriteString("created=")
 	builder.WriteString(t.Created.Format(time.ANSIC))

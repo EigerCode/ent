@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -18,5 +19,18 @@ func (Certificate) Fields() []ent.Field {
 		field.String("description").Optional(),
 		field.Time("expiry").Optional(),
 		field.String("uid").Optional(),
+		field.Int("tenant_id").
+			Optional().
+			Nillable().
+			Comment("The tenant this certificate belongs to (nil for global/hoster certificates)"),
+	}
+}
+
+// Edges of the Certificate.
+func (Certificate) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("tenant", Tenant.Type).
+			Unique().
+			Field("tenant_id"),
 	}
 }

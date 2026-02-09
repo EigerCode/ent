@@ -1601,6 +1601,29 @@ func HasRecoverycodesWith(preds ...predicate.RecoveryCode) predicate.User {
 	})
 }
 
+// HasUserTenants applies the HasEdge predicate on the "user_tenants" edge.
+func HasUserTenants() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, UserTenantsTable, UserTenantsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserTenantsWith applies the HasEdge predicate on the "user_tenants" edge with a given conditions (other predicates).
+func HasUserTenantsWith(preds ...predicate.UserTenant) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newUserTenantsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

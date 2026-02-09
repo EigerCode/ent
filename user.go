@@ -77,9 +77,11 @@ type UserEdges struct {
 	Sessions []*Sessions `json:"sessions,omitempty"`
 	// Recoverycodes holds the value of the recoverycodes edge.
 	Recoverycodes []*RecoveryCode `json:"recoverycodes,omitempty"`
+	// UserTenants holds the value of the user_tenants edge.
+	UserTenants []*UserTenant `json:"user_tenants,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // SessionsOrErr returns the Sessions value or an error if the edge
@@ -98,6 +100,15 @@ func (e UserEdges) RecoverycodesOrErr() ([]*RecoveryCode, error) {
 		return e.Recoverycodes, nil
 	}
 	return nil, &NotLoadedError{edge: "recoverycodes"}
+}
+
+// UserTenantsOrErr returns the UserTenants value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserTenantsOrErr() ([]*UserTenant, error) {
+	if e.loadedTypes[2] {
+		return e.UserTenants, nil
+	}
+	return nil, &NotLoadedError{edge: "user_tenants"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -299,6 +310,11 @@ func (u *User) QuerySessions() *SessionsQuery {
 // QueryRecoverycodes queries the "recoverycodes" edge of the User entity.
 func (u *User) QueryRecoverycodes() *RecoveryCodeQuery {
 	return NewUserClient(u.config).QueryRecoverycodes(u)
+}
+
+// QueryUserTenants queries the "user_tenants" edge of the User entity.
+func (u *User) QueryUserTenants() *UserTenantQuery {
+	return NewUserClient(u.config).QueryUserTenants(u)
 }
 
 // Update returns a builder for updating this User.

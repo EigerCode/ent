@@ -21,10 +21,10 @@ type Profile struct {
 	Name string `json:"name,omitempty"`
 	// ApplyToAll holds the value of the "apply_to_all" field.
 	ApplyToAll bool `json:"apply_to_all,omitempty"`
-	// Type holds the value of the "type" field.
-	Type profile.Type `json:"type,omitempty"`
 	// Disabled holds the value of the "disabled" field.
 	Disabled bool `json:"disabled,omitempty"`
+	// Type holds the value of the "type" field.
+	Type profile.Type `json:"type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProfileQuery when eager-loading is set.
 	Edges         ProfileEdges `json:"edges"`
@@ -131,17 +131,17 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pr.ApplyToAll = value.Bool
 			}
-		case profile.FieldType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value.Valid {
-				pr.Type = profile.Type(value.String)
-			}
 		case profile.FieldDisabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field disabled", values[i])
 			} else if value.Valid {
 				pr.Disabled = value.Bool
+			}
+		case profile.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				pr.Type = profile.Type(value.String)
 			}
 		case profile.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -212,11 +212,11 @@ func (pr *Profile) String() string {
 	builder.WriteString("apply_to_all=")
 	builder.WriteString(fmt.Sprintf("%v", pr.ApplyToAll))
 	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", pr.Type))
-	builder.WriteString(", ")
 	builder.WriteString("disabled=")
 	builder.WriteString(fmt.Sprintf("%v", pr.Disabled))
+	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", pr.Type))
 	builder.WriteByte(')')
 	return builder.String()
 }

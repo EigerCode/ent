@@ -30,6 +30,8 @@ const (
 	EdgeAgents = "agents"
 	// EdgeProfiles holds the string denoting the profiles edge name in mutations.
 	EdgeProfiles = "profiles"
+	// EdgeEnrollmentTokens holds the string denoting the enrollment_tokens edge name in mutations.
+	EdgeEnrollmentTokens = "enrollment_tokens"
 	// AgentFieldID holds the string denoting the ID field of the Agent.
 	AgentFieldID = "oid"
 	// Table holds the table name of the site in the database.
@@ -53,6 +55,13 @@ const (
 	ProfilesInverseTable = "profiles"
 	// ProfilesColumn is the table column denoting the profiles relation/edge.
 	ProfilesColumn = "site_profiles"
+	// EnrollmentTokensTable is the table that holds the enrollment_tokens relation/edge.
+	EnrollmentTokensTable = "enrollment_tokens"
+	// EnrollmentTokensInverseTable is the table name for the EnrollmentToken entity.
+	// It exists in this package in order to avoid circular dependency with the "enrollmenttoken" package.
+	EnrollmentTokensInverseTable = "enrollment_tokens"
+	// EnrollmentTokensColumn is the table column denoting the enrollment_tokens relation/edge.
+	EnrollmentTokensColumn = "site_enrollment_tokens"
 )
 
 // Columns holds all SQL columns for site fields.
@@ -168,6 +177,20 @@ func ByProfiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newProfilesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByEnrollmentTokensCount orders the results by enrollment_tokens count.
+func ByEnrollmentTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEnrollmentTokensStep(), opts...)
+	}
+}
+
+// ByEnrollmentTokens orders the results by enrollment_tokens terms.
+func ByEnrollmentTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEnrollmentTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newTenantStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -187,5 +210,12 @@ func newProfilesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfilesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ProfilesTable, ProfilesColumn),
+	)
+}
+func newEnrollmentTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EnrollmentTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EnrollmentTokensTable, EnrollmentTokensColumn),
 	)
 }

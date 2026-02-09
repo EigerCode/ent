@@ -18,6 +18,9 @@ type App func(*sql.Selector)
 // Authentication is the predicate function for authentication builders.
 type Authentication func(*sql.Selector)
 
+// Branding is the predicate function for branding builders.
+type Branding func(*sql.Selector)
+
 // Certificate is the predicate function for certificate builders.
 type Certificate func(*sql.Selector)
 
@@ -26,6 +29,9 @@ type Computer func(*sql.Selector)
 
 // Deployment is the predicate function for deployment builders.
 type Deployment func(*sql.Selector)
+
+// EnrollmentToken is the predicate function for enrollmenttoken builders.
+type EnrollmentToken func(*sql.Selector)
 
 // LogicalDisk is the predicate function for logicaldisk builders.
 type LogicalDisk func(*sql.Selector)
@@ -110,6 +116,9 @@ type Update func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserTenant is the predicate function for usertenant builders.
+type UserTenant func(*sql.Selector)
 
 // WingetConfigExclusion is the predicate function for wingetconfigexclusion builders.
 type WingetConfigExclusion func(*sql.Selector)

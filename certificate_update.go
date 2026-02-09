@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/predicate"
+	"github.com/open-uem/ent/tenant"
 )
 
 // CertificateUpdate is the builder for updating Certificate entities.
@@ -103,9 +104,40 @@ func (cu *CertificateUpdate) ClearUID() *CertificateUpdate {
 	return cu
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (cu *CertificateUpdate) SetTenantID(i int) *CertificateUpdate {
+	cu.mutation.SetTenantID(i)
+	return cu
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (cu *CertificateUpdate) SetNillableTenantID(i *int) *CertificateUpdate {
+	if i != nil {
+		cu.SetTenantID(*i)
+	}
+	return cu
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (cu *CertificateUpdate) ClearTenantID() *CertificateUpdate {
+	cu.mutation.ClearTenantID()
+	return cu
+}
+
+// SetTenant sets the "tenant" edge to the Tenant entity.
+func (cu *CertificateUpdate) SetTenant(t *Tenant) *CertificateUpdate {
+	return cu.SetTenantID(t.ID)
+}
+
 // Mutation returns the CertificateMutation object of the builder.
 func (cu *CertificateUpdate) Mutation() *CertificateMutation {
 	return cu.mutation
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (cu *CertificateUpdate) ClearTenant() *CertificateUpdate {
+	cu.mutation.ClearTenant()
+	return cu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -183,6 +215,35 @@ func (cu *CertificateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if cu.mutation.UIDCleared() {
 		_spec.ClearField(certificate.FieldUID, field.TypeString)
+	}
+	if cu.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   certificate.TenantTable,
+			Columns: []string{certificate.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   certificate.TenantTable,
+			Columns: []string{certificate.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(cu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, cu.driver, _spec); err != nil {
@@ -280,9 +341,40 @@ func (cuo *CertificateUpdateOne) ClearUID() *CertificateUpdateOne {
 	return cuo
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (cuo *CertificateUpdateOne) SetTenantID(i int) *CertificateUpdateOne {
+	cuo.mutation.SetTenantID(i)
+	return cuo
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (cuo *CertificateUpdateOne) SetNillableTenantID(i *int) *CertificateUpdateOne {
+	if i != nil {
+		cuo.SetTenantID(*i)
+	}
+	return cuo
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (cuo *CertificateUpdateOne) ClearTenantID() *CertificateUpdateOne {
+	cuo.mutation.ClearTenantID()
+	return cuo
+}
+
+// SetTenant sets the "tenant" edge to the Tenant entity.
+func (cuo *CertificateUpdateOne) SetTenant(t *Tenant) *CertificateUpdateOne {
+	return cuo.SetTenantID(t.ID)
+}
+
 // Mutation returns the CertificateMutation object of the builder.
 func (cuo *CertificateUpdateOne) Mutation() *CertificateMutation {
 	return cuo.mutation
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (cuo *CertificateUpdateOne) ClearTenant() *CertificateUpdateOne {
+	cuo.mutation.ClearTenant()
+	return cuo
 }
 
 // Where appends a list predicates to the CertificateUpdate builder.
@@ -390,6 +482,35 @@ func (cuo *CertificateUpdateOne) sqlSave(ctx context.Context) (_node *Certificat
 	}
 	if cuo.mutation.UIDCleared() {
 		_spec.ClearField(certificate.FieldUID, field.TypeString)
+	}
+	if cuo.mutation.TenantCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   certificate.TenantTable,
+			Columns: []string{certificate.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.TenantIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   certificate.TenantTable,
+			Columns: []string{certificate.TenantColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(cuo.modifiers...)
 	_node = &Certificate{config: cuo.config}
