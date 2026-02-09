@@ -105,6 +105,48 @@ func (bc *BrandingCreate) SetNillableLoginWelcomeText(s *string) *BrandingCreate
 	return bc
 }
 
+// SetShowVersion sets the "show_version" field.
+func (bc *BrandingCreate) SetShowVersion(b bool) *BrandingCreate {
+	bc.mutation.SetShowVersion(b)
+	return bc
+}
+
+// SetNillableShowVersion sets the "show_version" field if the given value is not nil.
+func (bc *BrandingCreate) SetNillableShowVersion(b *bool) *BrandingCreate {
+	if b != nil {
+		bc.SetShowVersion(*b)
+	}
+	return bc
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (bc *BrandingCreate) SetBugReportLink(s string) *BrandingCreate {
+	bc.mutation.SetBugReportLink(s)
+	return bc
+}
+
+// SetNillableBugReportLink sets the "bug_report_link" field if the given value is not nil.
+func (bc *BrandingCreate) SetNillableBugReportLink(s *string) *BrandingCreate {
+	if s != nil {
+		bc.SetBugReportLink(*s)
+	}
+	return bc
+}
+
+// SetHelpLink sets the "help_link" field.
+func (bc *BrandingCreate) SetHelpLink(s string) *BrandingCreate {
+	bc.mutation.SetHelpLink(s)
+	return bc
+}
+
+// SetNillableHelpLink sets the "help_link" field if the given value is not nil.
+func (bc *BrandingCreate) SetNillableHelpLink(s *string) *BrandingCreate {
+	if s != nil {
+		bc.SetHelpLink(*s)
+	}
+	return bc
+}
+
 // Mutation returns the BrandingMutation object of the builder.
 func (bc *BrandingCreate) Mutation() *BrandingMutation {
 	return bc.mutation
@@ -147,6 +189,18 @@ func (bc *BrandingCreate) defaults() {
 	if _, ok := bc.mutation.ProductName(); !ok {
 		v := branding.DefaultProductName
 		bc.mutation.SetProductName(v)
+	}
+	if _, ok := bc.mutation.ShowVersion(); !ok {
+		v := branding.DefaultShowVersion
+		bc.mutation.SetShowVersion(v)
+	}
+	if _, ok := bc.mutation.BugReportLink(); !ok {
+		v := branding.DefaultBugReportLink
+		bc.mutation.SetBugReportLink(v)
+	}
+	if _, ok := bc.mutation.HelpLink(); !ok {
+		v := branding.DefaultHelpLink
+		bc.mutation.SetHelpLink(v)
 	}
 }
 
@@ -202,6 +256,18 @@ func (bc *BrandingCreate) createSpec() (*Branding, *sqlgraph.CreateSpec) {
 	if value, ok := bc.mutation.LoginWelcomeText(); ok {
 		_spec.SetField(branding.FieldLoginWelcomeText, field.TypeString, value)
 		_node.LoginWelcomeText = value
+	}
+	if value, ok := bc.mutation.ShowVersion(); ok {
+		_spec.SetField(branding.FieldShowVersion, field.TypeBool, value)
+		_node.ShowVersion = value
+	}
+	if value, ok := bc.mutation.BugReportLink(); ok {
+		_spec.SetField(branding.FieldBugReportLink, field.TypeString, value)
+		_node.BugReportLink = value
+	}
+	if value, ok := bc.mutation.HelpLink(); ok {
+		_spec.SetField(branding.FieldHelpLink, field.TypeString, value)
+		_node.HelpLink = value
 	}
 	return _node, _spec
 }
@@ -360,6 +426,60 @@ func (u *BrandingUpsert) UpdateLoginWelcomeText() *BrandingUpsert {
 // ClearLoginWelcomeText clears the value of the "login_welcome_text" field.
 func (u *BrandingUpsert) ClearLoginWelcomeText() *BrandingUpsert {
 	u.SetNull(branding.FieldLoginWelcomeText)
+	return u
+}
+
+// SetShowVersion sets the "show_version" field.
+func (u *BrandingUpsert) SetShowVersion(v bool) *BrandingUpsert {
+	u.Set(branding.FieldShowVersion, v)
+	return u
+}
+
+// UpdateShowVersion sets the "show_version" field to the value that was provided on create.
+func (u *BrandingUpsert) UpdateShowVersion() *BrandingUpsert {
+	u.SetExcluded(branding.FieldShowVersion)
+	return u
+}
+
+// ClearShowVersion clears the value of the "show_version" field.
+func (u *BrandingUpsert) ClearShowVersion() *BrandingUpsert {
+	u.SetNull(branding.FieldShowVersion)
+	return u
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (u *BrandingUpsert) SetBugReportLink(v string) *BrandingUpsert {
+	u.Set(branding.FieldBugReportLink, v)
+	return u
+}
+
+// UpdateBugReportLink sets the "bug_report_link" field to the value that was provided on create.
+func (u *BrandingUpsert) UpdateBugReportLink() *BrandingUpsert {
+	u.SetExcluded(branding.FieldBugReportLink)
+	return u
+}
+
+// ClearBugReportLink clears the value of the "bug_report_link" field.
+func (u *BrandingUpsert) ClearBugReportLink() *BrandingUpsert {
+	u.SetNull(branding.FieldBugReportLink)
+	return u
+}
+
+// SetHelpLink sets the "help_link" field.
+func (u *BrandingUpsert) SetHelpLink(v string) *BrandingUpsert {
+	u.Set(branding.FieldHelpLink, v)
+	return u
+}
+
+// UpdateHelpLink sets the "help_link" field to the value that was provided on create.
+func (u *BrandingUpsert) UpdateHelpLink() *BrandingUpsert {
+	u.SetExcluded(branding.FieldHelpLink)
+	return u
+}
+
+// ClearHelpLink clears the value of the "help_link" field.
+func (u *BrandingUpsert) ClearHelpLink() *BrandingUpsert {
+	u.SetNull(branding.FieldHelpLink)
 	return u
 }
 
@@ -526,6 +646,69 @@ func (u *BrandingUpsertOne) UpdateLoginWelcomeText() *BrandingUpsertOne {
 func (u *BrandingUpsertOne) ClearLoginWelcomeText() *BrandingUpsertOne {
 	return u.Update(func(s *BrandingUpsert) {
 		s.ClearLoginWelcomeText()
+	})
+}
+
+// SetShowVersion sets the "show_version" field.
+func (u *BrandingUpsertOne) SetShowVersion(v bool) *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetShowVersion(v)
+	})
+}
+
+// UpdateShowVersion sets the "show_version" field to the value that was provided on create.
+func (u *BrandingUpsertOne) UpdateShowVersion() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateShowVersion()
+	})
+}
+
+// ClearShowVersion clears the value of the "show_version" field.
+func (u *BrandingUpsertOne) ClearShowVersion() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearShowVersion()
+	})
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (u *BrandingUpsertOne) SetBugReportLink(v string) *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetBugReportLink(v)
+	})
+}
+
+// UpdateBugReportLink sets the "bug_report_link" field to the value that was provided on create.
+func (u *BrandingUpsertOne) UpdateBugReportLink() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateBugReportLink()
+	})
+}
+
+// ClearBugReportLink clears the value of the "bug_report_link" field.
+func (u *BrandingUpsertOne) ClearBugReportLink() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearBugReportLink()
+	})
+}
+
+// SetHelpLink sets the "help_link" field.
+func (u *BrandingUpsertOne) SetHelpLink(v string) *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetHelpLink(v)
+	})
+}
+
+// UpdateHelpLink sets the "help_link" field to the value that was provided on create.
+func (u *BrandingUpsertOne) UpdateHelpLink() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateHelpLink()
+	})
+}
+
+// ClearHelpLink clears the value of the "help_link" field.
+func (u *BrandingUpsertOne) ClearHelpLink() *BrandingUpsertOne {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearHelpLink()
 	})
 }
 
@@ -856,6 +1039,69 @@ func (u *BrandingUpsertBulk) UpdateLoginWelcomeText() *BrandingUpsertBulk {
 func (u *BrandingUpsertBulk) ClearLoginWelcomeText() *BrandingUpsertBulk {
 	return u.Update(func(s *BrandingUpsert) {
 		s.ClearLoginWelcomeText()
+	})
+}
+
+// SetShowVersion sets the "show_version" field.
+func (u *BrandingUpsertBulk) SetShowVersion(v bool) *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetShowVersion(v)
+	})
+}
+
+// UpdateShowVersion sets the "show_version" field to the value that was provided on create.
+func (u *BrandingUpsertBulk) UpdateShowVersion() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateShowVersion()
+	})
+}
+
+// ClearShowVersion clears the value of the "show_version" field.
+func (u *BrandingUpsertBulk) ClearShowVersion() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearShowVersion()
+	})
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (u *BrandingUpsertBulk) SetBugReportLink(v string) *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetBugReportLink(v)
+	})
+}
+
+// UpdateBugReportLink sets the "bug_report_link" field to the value that was provided on create.
+func (u *BrandingUpsertBulk) UpdateBugReportLink() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateBugReportLink()
+	})
+}
+
+// ClearBugReportLink clears the value of the "bug_report_link" field.
+func (u *BrandingUpsertBulk) ClearBugReportLink() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearBugReportLink()
+	})
+}
+
+// SetHelpLink sets the "help_link" field.
+func (u *BrandingUpsertBulk) SetHelpLink(v string) *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.SetHelpLink(v)
+	})
+}
+
+// UpdateHelpLink sets the "help_link" field to the value that was provided on create.
+func (u *BrandingUpsertBulk) UpdateHelpLink() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.UpdateHelpLink()
+	})
+}
+
+// ClearHelpLink clears the value of the "help_link" field.
+func (u *BrandingUpsertBulk) ClearHelpLink() *BrandingUpsertBulk {
+	return u.Update(func(s *BrandingUpsert) {
+		s.ClearHelpLink()
 	})
 }
 

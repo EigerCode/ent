@@ -142,6 +142,9 @@ var (
 		{Name: "product_name", Type: field.TypeString, Nullable: true, Default: "OpenUEM"},
 		{Name: "login_background_image", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "login_welcome_text", Type: field.TypeString, Nullable: true},
+		{Name: "show_version", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "bug_report_link", Type: field.TypeString, Nullable: true, Default: "https://github.com/open-uem/openuem-console/issues/new/choose"},
+		{Name: "help_link", Type: field.TypeString, Nullable: true, Default: "https://openuem.eu/docs/intro"},
 	}
 	// BrandingsTable holds the schema information for the "brandings" table.
 	BrandingsTable = &schema.Table{

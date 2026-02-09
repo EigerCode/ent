@@ -41,6 +41,22 @@ func (Branding) Fields() []ent.Field {
 		field.String("login_welcome_text").
 			Optional().
 			Comment("Welcome text shown on login page"),
+
+		// UI visibility
+		field.Bool("show_version").
+			Optional().
+			Default(true).
+			Comment("Whether to display the version number in the header"),
+
+		// Customizable links
+		field.String("bug_report_link").
+			Optional().
+			Default("https://github.com/open-uem/openuem-console/issues/new/choose").
+			Comment("URL or email for bug reports"),
+		field.String("help_link").
+			Optional().
+			Default("https://openuem.eu/docs/intro").
+			Comment("URL or email for help/documentation"),
 	}
 }
 

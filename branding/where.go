@@ -82,6 +82,21 @@ func LoginWelcomeText(v string) predicate.Branding {
 	return predicate.Branding(sql.FieldEQ(FieldLoginWelcomeText, v))
 }
 
+// ShowVersion applies equality check predicate on the "show_version" field. It's identical to ShowVersionEQ.
+func ShowVersion(v bool) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldShowVersion, v))
+}
+
+// BugReportLink applies equality check predicate on the "bug_report_link" field. It's identical to BugReportLinkEQ.
+func BugReportLink(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldBugReportLink, v))
+}
+
+// HelpLink applies equality check predicate on the "help_link" field. It's identical to HelpLinkEQ.
+func HelpLink(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldHelpLink, v))
+}
+
 // LogoLightEQ applies the EQ predicate on the "logo_light" field.
 func LogoLightEQ(v string) predicate.Branding {
 	return predicate.Branding(sql.FieldEQ(FieldLogoLight, v))
@@ -530,6 +545,176 @@ func LoginWelcomeTextEqualFold(v string) predicate.Branding {
 // LoginWelcomeTextContainsFold applies the ContainsFold predicate on the "login_welcome_text" field.
 func LoginWelcomeTextContainsFold(v string) predicate.Branding {
 	return predicate.Branding(sql.FieldContainsFold(FieldLoginWelcomeText, v))
+}
+
+// ShowVersionEQ applies the EQ predicate on the "show_version" field.
+func ShowVersionEQ(v bool) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldShowVersion, v))
+}
+
+// ShowVersionNEQ applies the NEQ predicate on the "show_version" field.
+func ShowVersionNEQ(v bool) predicate.Branding {
+	return predicate.Branding(sql.FieldNEQ(FieldShowVersion, v))
+}
+
+// ShowVersionIsNil applies the IsNil predicate on the "show_version" field.
+func ShowVersionIsNil() predicate.Branding {
+	return predicate.Branding(sql.FieldIsNull(FieldShowVersion))
+}
+
+// ShowVersionNotNil applies the NotNil predicate on the "show_version" field.
+func ShowVersionNotNil() predicate.Branding {
+	return predicate.Branding(sql.FieldNotNull(FieldShowVersion))
+}
+
+// BugReportLinkEQ applies the EQ predicate on the "bug_report_link" field.
+func BugReportLinkEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldBugReportLink, v))
+}
+
+// BugReportLinkNEQ applies the NEQ predicate on the "bug_report_link" field.
+func BugReportLinkNEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldNEQ(FieldBugReportLink, v))
+}
+
+// BugReportLinkIn applies the In predicate on the "bug_report_link" field.
+func BugReportLinkIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldIn(FieldBugReportLink, vs...))
+}
+
+// BugReportLinkNotIn applies the NotIn predicate on the "bug_report_link" field.
+func BugReportLinkNotIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldNotIn(FieldBugReportLink, vs...))
+}
+
+// BugReportLinkGT applies the GT predicate on the "bug_report_link" field.
+func BugReportLinkGT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGT(FieldBugReportLink, v))
+}
+
+// BugReportLinkGTE applies the GTE predicate on the "bug_report_link" field.
+func BugReportLinkGTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGTE(FieldBugReportLink, v))
+}
+
+// BugReportLinkLT applies the LT predicate on the "bug_report_link" field.
+func BugReportLinkLT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLT(FieldBugReportLink, v))
+}
+
+// BugReportLinkLTE applies the LTE predicate on the "bug_report_link" field.
+func BugReportLinkLTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLTE(FieldBugReportLink, v))
+}
+
+// BugReportLinkContains applies the Contains predicate on the "bug_report_link" field.
+func BugReportLinkContains(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContains(FieldBugReportLink, v))
+}
+
+// BugReportLinkHasPrefix applies the HasPrefix predicate on the "bug_report_link" field.
+func BugReportLinkHasPrefix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasPrefix(FieldBugReportLink, v))
+}
+
+// BugReportLinkHasSuffix applies the HasSuffix predicate on the "bug_report_link" field.
+func BugReportLinkHasSuffix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasSuffix(FieldBugReportLink, v))
+}
+
+// BugReportLinkIsNil applies the IsNil predicate on the "bug_report_link" field.
+func BugReportLinkIsNil() predicate.Branding {
+	return predicate.Branding(sql.FieldIsNull(FieldBugReportLink))
+}
+
+// BugReportLinkNotNil applies the NotNil predicate on the "bug_report_link" field.
+func BugReportLinkNotNil() predicate.Branding {
+	return predicate.Branding(sql.FieldNotNull(FieldBugReportLink))
+}
+
+// BugReportLinkEqualFold applies the EqualFold predicate on the "bug_report_link" field.
+func BugReportLinkEqualFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEqualFold(FieldBugReportLink, v))
+}
+
+// BugReportLinkContainsFold applies the ContainsFold predicate on the "bug_report_link" field.
+func BugReportLinkContainsFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContainsFold(FieldBugReportLink, v))
+}
+
+// HelpLinkEQ applies the EQ predicate on the "help_link" field.
+func HelpLinkEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEQ(FieldHelpLink, v))
+}
+
+// HelpLinkNEQ applies the NEQ predicate on the "help_link" field.
+func HelpLinkNEQ(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldNEQ(FieldHelpLink, v))
+}
+
+// HelpLinkIn applies the In predicate on the "help_link" field.
+func HelpLinkIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldIn(FieldHelpLink, vs...))
+}
+
+// HelpLinkNotIn applies the NotIn predicate on the "help_link" field.
+func HelpLinkNotIn(vs ...string) predicate.Branding {
+	return predicate.Branding(sql.FieldNotIn(FieldHelpLink, vs...))
+}
+
+// HelpLinkGT applies the GT predicate on the "help_link" field.
+func HelpLinkGT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGT(FieldHelpLink, v))
+}
+
+// HelpLinkGTE applies the GTE predicate on the "help_link" field.
+func HelpLinkGTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldGTE(FieldHelpLink, v))
+}
+
+// HelpLinkLT applies the LT predicate on the "help_link" field.
+func HelpLinkLT(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLT(FieldHelpLink, v))
+}
+
+// HelpLinkLTE applies the LTE predicate on the "help_link" field.
+func HelpLinkLTE(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldLTE(FieldHelpLink, v))
+}
+
+// HelpLinkContains applies the Contains predicate on the "help_link" field.
+func HelpLinkContains(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContains(FieldHelpLink, v))
+}
+
+// HelpLinkHasPrefix applies the HasPrefix predicate on the "help_link" field.
+func HelpLinkHasPrefix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasPrefix(FieldHelpLink, v))
+}
+
+// HelpLinkHasSuffix applies the HasSuffix predicate on the "help_link" field.
+func HelpLinkHasSuffix(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldHasSuffix(FieldHelpLink, v))
+}
+
+// HelpLinkIsNil applies the IsNil predicate on the "help_link" field.
+func HelpLinkIsNil() predicate.Branding {
+	return predicate.Branding(sql.FieldIsNull(FieldHelpLink))
+}
+
+// HelpLinkNotNil applies the NotNil predicate on the "help_link" field.
+func HelpLinkNotNil() predicate.Branding {
+	return predicate.Branding(sql.FieldNotNull(FieldHelpLink))
+}
+
+// HelpLinkEqualFold applies the EqualFold predicate on the "help_link" field.
+func HelpLinkEqualFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldEqualFold(FieldHelpLink, v))
+}
+
+// HelpLinkContainsFold applies the ContainsFold predicate on the "help_link" field.
+func HelpLinkContainsFold(v string) predicate.Branding {
+	return predicate.Branding(sql.FieldContainsFold(FieldHelpLink, v))
 }
 
 // And groups predicates with the AND operator between them.
