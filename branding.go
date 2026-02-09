@@ -28,7 +28,13 @@ type Branding struct {
 	LoginBackgroundImage string `json:"login_background_image,omitempty"`
 	// Welcome text shown on login page
 	LoginWelcomeText string `json:"login_welcome_text,omitempty"`
-	selectValues     sql.SelectValues
+	// Whether to display the version number in the header
+	ShowVersion bool `json:"show_version,omitempty"`
+	// URL or email for bug reports
+	BugReportLink string `json:"bug_report_link,omitempty"`
+	// URL or email for help/documentation
+	HelpLink     string `json:"help_link,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -36,9 +42,11 @@ func (*Branding) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case branding.FieldShowVersion:
+			values[i] = new(sql.NullBool)
 		case branding.FieldID:
 			values[i] = new(sql.NullInt64)
-		case branding.FieldLogoLight, branding.FieldLogoSmall, branding.FieldPrimaryColor, branding.FieldProductName, branding.FieldLoginBackgroundImage, branding.FieldLoginWelcomeText:
+		case branding.FieldLogoLight, branding.FieldLogoSmall, branding.FieldPrimaryColor, branding.FieldProductName, branding.FieldLoginBackgroundImage, branding.FieldLoginWelcomeText, branding.FieldBugReportLink, branding.FieldHelpLink:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -97,6 +105,24 @@ func (b *Branding) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				b.LoginWelcomeText = value.String
 			}
+		case branding.FieldShowVersion:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field show_version", values[i])
+			} else if value.Valid {
+				b.ShowVersion = value.Bool
+			}
+		case branding.FieldBugReportLink:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field bug_report_link", values[i])
+			} else if value.Valid {
+				b.BugReportLink = value.String
+			}
+		case branding.FieldHelpLink:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field help_link", values[i])
+			} else if value.Valid {
+				b.HelpLink = value.String
+			}
 		default:
 			b.selectValues.Set(columns[i], values[i])
 		}
@@ -150,6 +176,15 @@ func (b *Branding) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("login_welcome_text=")
 	builder.WriteString(b.LoginWelcomeText)
+	builder.WriteString(", ")
+	builder.WriteString("show_version=")
+	builder.WriteString(fmt.Sprintf("%v", b.ShowVersion))
+	builder.WriteString(", ")
+	builder.WriteString("bug_report_link=")
+	builder.WriteString(b.BugReportLink)
+	builder.WriteString(", ")
+	builder.WriteString("help_link=")
+	builder.WriteString(b.HelpLink)
 	builder.WriteByte(')')
 	return builder.String()
 }

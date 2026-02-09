@@ -206,6 +206,18 @@ func init() {
 	brandingDescProductName := brandingFields[3].Descriptor()
 	// branding.DefaultProductName holds the default value on creation for the product_name field.
 	branding.DefaultProductName = brandingDescProductName.Default.(string)
+	// brandingDescShowVersion is the schema descriptor for show_version field.
+	brandingDescShowVersion := brandingFields[6].Descriptor()
+	// branding.DefaultShowVersion holds the default value on creation for the show_version field.
+	branding.DefaultShowVersion = brandingDescShowVersion.Default.(bool)
+	// brandingDescBugReportLink is the schema descriptor for bug_report_link field.
+	brandingDescBugReportLink := brandingFields[7].Descriptor()
+	// branding.DefaultBugReportLink holds the default value on creation for the bug_report_link field.
+	branding.DefaultBugReportLink = brandingDescBugReportLink.Default.(string)
+	// brandingDescHelpLink is the schema descriptor for help_link field.
+	brandingDescHelpLink := brandingFields[8].Descriptor()
+	// branding.DefaultHelpLink holds the default value on creation for the help_link field.
+	branding.DefaultHelpLink = brandingDescHelpLink.Default.(string)
 	deploymentFields := schema.Deployment{}.Fields()
 	_ = deploymentFields
 	// deploymentDescInstalled is the schema descriptor for installed field.

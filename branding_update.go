@@ -148,6 +148,66 @@ func (bu *BrandingUpdate) ClearLoginWelcomeText() *BrandingUpdate {
 	return bu
 }
 
+// SetShowVersion sets the "show_version" field.
+func (bu *BrandingUpdate) SetShowVersion(b bool) *BrandingUpdate {
+	bu.mutation.SetShowVersion(b)
+	return bu
+}
+
+// SetNillableShowVersion sets the "show_version" field if the given value is not nil.
+func (bu *BrandingUpdate) SetNillableShowVersion(b *bool) *BrandingUpdate {
+	if b != nil {
+		bu.SetShowVersion(*b)
+	}
+	return bu
+}
+
+// ClearShowVersion clears the value of the "show_version" field.
+func (bu *BrandingUpdate) ClearShowVersion() *BrandingUpdate {
+	bu.mutation.ClearShowVersion()
+	return bu
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (bu *BrandingUpdate) SetBugReportLink(s string) *BrandingUpdate {
+	bu.mutation.SetBugReportLink(s)
+	return bu
+}
+
+// SetNillableBugReportLink sets the "bug_report_link" field if the given value is not nil.
+func (bu *BrandingUpdate) SetNillableBugReportLink(s *string) *BrandingUpdate {
+	if s != nil {
+		bu.SetBugReportLink(*s)
+	}
+	return bu
+}
+
+// ClearBugReportLink clears the value of the "bug_report_link" field.
+func (bu *BrandingUpdate) ClearBugReportLink() *BrandingUpdate {
+	bu.mutation.ClearBugReportLink()
+	return bu
+}
+
+// SetHelpLink sets the "help_link" field.
+func (bu *BrandingUpdate) SetHelpLink(s string) *BrandingUpdate {
+	bu.mutation.SetHelpLink(s)
+	return bu
+}
+
+// SetNillableHelpLink sets the "help_link" field if the given value is not nil.
+func (bu *BrandingUpdate) SetNillableHelpLink(s *string) *BrandingUpdate {
+	if s != nil {
+		bu.SetHelpLink(*s)
+	}
+	return bu
+}
+
+// ClearHelpLink clears the value of the "help_link" field.
+func (bu *BrandingUpdate) ClearHelpLink() *BrandingUpdate {
+	bu.mutation.ClearHelpLink()
+	return bu
+}
+
 // Mutation returns the BrandingMutation object of the builder.
 func (bu *BrandingUpdate) Mutation() *BrandingMutation {
 	return bu.mutation
@@ -230,6 +290,24 @@ func (bu *BrandingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if bu.mutation.LoginWelcomeTextCleared() {
 		_spec.ClearField(branding.FieldLoginWelcomeText, field.TypeString)
+	}
+	if value, ok := bu.mutation.ShowVersion(); ok {
+		_spec.SetField(branding.FieldShowVersion, field.TypeBool, value)
+	}
+	if bu.mutation.ShowVersionCleared() {
+		_spec.ClearField(branding.FieldShowVersion, field.TypeBool)
+	}
+	if value, ok := bu.mutation.BugReportLink(); ok {
+		_spec.SetField(branding.FieldBugReportLink, field.TypeString, value)
+	}
+	if bu.mutation.BugReportLinkCleared() {
+		_spec.ClearField(branding.FieldBugReportLink, field.TypeString)
+	}
+	if value, ok := bu.mutation.HelpLink(); ok {
+		_spec.SetField(branding.FieldHelpLink, field.TypeString, value)
+	}
+	if bu.mutation.HelpLinkCleared() {
+		_spec.ClearField(branding.FieldHelpLink, field.TypeString)
 	}
 	_spec.AddModifiers(bu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, bu.driver, _spec); err != nil {
@@ -373,6 +451,66 @@ func (buo *BrandingUpdateOne) ClearLoginWelcomeText() *BrandingUpdateOne {
 	return buo
 }
 
+// SetShowVersion sets the "show_version" field.
+func (buo *BrandingUpdateOne) SetShowVersion(b bool) *BrandingUpdateOne {
+	buo.mutation.SetShowVersion(b)
+	return buo
+}
+
+// SetNillableShowVersion sets the "show_version" field if the given value is not nil.
+func (buo *BrandingUpdateOne) SetNillableShowVersion(b *bool) *BrandingUpdateOne {
+	if b != nil {
+		buo.SetShowVersion(*b)
+	}
+	return buo
+}
+
+// ClearShowVersion clears the value of the "show_version" field.
+func (buo *BrandingUpdateOne) ClearShowVersion() *BrandingUpdateOne {
+	buo.mutation.ClearShowVersion()
+	return buo
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (buo *BrandingUpdateOne) SetBugReportLink(s string) *BrandingUpdateOne {
+	buo.mutation.SetBugReportLink(s)
+	return buo
+}
+
+// SetNillableBugReportLink sets the "bug_report_link" field if the given value is not nil.
+func (buo *BrandingUpdateOne) SetNillableBugReportLink(s *string) *BrandingUpdateOne {
+	if s != nil {
+		buo.SetBugReportLink(*s)
+	}
+	return buo
+}
+
+// ClearBugReportLink clears the value of the "bug_report_link" field.
+func (buo *BrandingUpdateOne) ClearBugReportLink() *BrandingUpdateOne {
+	buo.mutation.ClearBugReportLink()
+	return buo
+}
+
+// SetHelpLink sets the "help_link" field.
+func (buo *BrandingUpdateOne) SetHelpLink(s string) *BrandingUpdateOne {
+	buo.mutation.SetHelpLink(s)
+	return buo
+}
+
+// SetNillableHelpLink sets the "help_link" field if the given value is not nil.
+func (buo *BrandingUpdateOne) SetNillableHelpLink(s *string) *BrandingUpdateOne {
+	if s != nil {
+		buo.SetHelpLink(*s)
+	}
+	return buo
+}
+
+// ClearHelpLink clears the value of the "help_link" field.
+func (buo *BrandingUpdateOne) ClearHelpLink() *BrandingUpdateOne {
+	buo.mutation.ClearHelpLink()
+	return buo
+}
+
 // Mutation returns the BrandingMutation object of the builder.
 func (buo *BrandingUpdateOne) Mutation() *BrandingMutation {
 	return buo.mutation
@@ -485,6 +623,24 @@ func (buo *BrandingUpdateOne) sqlSave(ctx context.Context) (_node *Branding, err
 	}
 	if buo.mutation.LoginWelcomeTextCleared() {
 		_spec.ClearField(branding.FieldLoginWelcomeText, field.TypeString)
+	}
+	if value, ok := buo.mutation.ShowVersion(); ok {
+		_spec.SetField(branding.FieldShowVersion, field.TypeBool, value)
+	}
+	if buo.mutation.ShowVersionCleared() {
+		_spec.ClearField(branding.FieldShowVersion, field.TypeBool)
+	}
+	if value, ok := buo.mutation.BugReportLink(); ok {
+		_spec.SetField(branding.FieldBugReportLink, field.TypeString, value)
+	}
+	if buo.mutation.BugReportLinkCleared() {
+		_spec.ClearField(branding.FieldBugReportLink, field.TypeString)
+	}
+	if value, ok := buo.mutation.HelpLink(); ok {
+		_spec.SetField(branding.FieldHelpLink, field.TypeString, value)
+	}
+	if buo.mutation.HelpLinkCleared() {
+		_spec.ClearField(branding.FieldHelpLink, field.TypeString)
 	}
 	_spec.AddModifiers(buo.modifiers...)
 	_node = &Branding{config: buo.config}
