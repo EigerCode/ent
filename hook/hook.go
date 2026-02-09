@@ -57,6 +57,18 @@ func (f AuthenticationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthenticationMutation", m)
 }
 
+// The BrandingFunc type is an adapter to allow the use of ordinary
+// function as Branding mutator.
+type BrandingFunc func(context.Context, *ent.BrandingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BrandingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BrandingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BrandingMutation", m)
+}
+
 // The CertificateFunc type is an adapter to allow the use of ordinary
 // function as Certificate mutator.
 type CertificateFunc func(context.Context, *ent.CertificateMutation) (ent.Value, error)
@@ -91,6 +103,18 @@ func (f DeploymentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DeploymentMutation", m)
+}
+
+// The EnrollmentTokenFunc type is an adapter to allow the use of ordinary
+// function as EnrollmentToken mutator.
+type EnrollmentTokenFunc func(context.Context, *ent.EnrollmentTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EnrollmentTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EnrollmentTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EnrollmentTokenMutation", m)
 }
 
 // The LogicalDiskFunc type is an adapter to allow the use of ordinary
@@ -427,6 +451,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The UserTenantFunc type is an adapter to allow the use of ordinary
+// function as UserTenant mutator.
+type UserTenantFunc func(context.Context, *ent.UserTenantMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserTenantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserTenantMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserTenantMutation", m)
 }
 
 // The WingetConfigExclusionFunc type is an adapter to allow the use of ordinary

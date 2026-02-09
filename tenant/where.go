@@ -65,6 +65,11 @@ func IsDefault(v bool) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldIsDefault, v))
 }
 
+// OidcOrgID applies equality check predicate on the "oidc_org_id" field. It's identical to OidcOrgIDEQ.
+func OidcOrgID(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldOidcOrgID, v))
+}
+
 // Created applies equality check predicate on the "created" field. It's identical to CreatedEQ.
 func Created(v time.Time) predicate.Tenant {
 	return predicate.Tenant(sql.FieldEQ(FieldCreated, v))
@@ -168,6 +173,111 @@ func IsDefaultIsNil() predicate.Tenant {
 // IsDefaultNotNil applies the NotNil predicate on the "is_default" field.
 func IsDefaultNotNil() predicate.Tenant {
 	return predicate.Tenant(sql.FieldNotNull(FieldIsDefault))
+}
+
+// OidcOrgIDEQ applies the EQ predicate on the "oidc_org_id" field.
+func OidcOrgIDEQ(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDNEQ applies the NEQ predicate on the "oidc_org_id" field.
+func OidcOrgIDNEQ(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNEQ(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDIn applies the In predicate on the "oidc_org_id" field.
+func OidcOrgIDIn(vs ...string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldIn(FieldOidcOrgID, vs...))
+}
+
+// OidcOrgIDNotIn applies the NotIn predicate on the "oidc_org_id" field.
+func OidcOrgIDNotIn(vs ...string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotIn(FieldOidcOrgID, vs...))
+}
+
+// OidcOrgIDGT applies the GT predicate on the "oidc_org_id" field.
+func OidcOrgIDGT(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldGT(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDGTE applies the GTE predicate on the "oidc_org_id" field.
+func OidcOrgIDGTE(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldGTE(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDLT applies the LT predicate on the "oidc_org_id" field.
+func OidcOrgIDLT(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldLT(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDLTE applies the LTE predicate on the "oidc_org_id" field.
+func OidcOrgIDLTE(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldLTE(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDContains applies the Contains predicate on the "oidc_org_id" field.
+func OidcOrgIDContains(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldContains(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDHasPrefix applies the HasPrefix predicate on the "oidc_org_id" field.
+func OidcOrgIDHasPrefix(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldHasPrefix(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDHasSuffix applies the HasSuffix predicate on the "oidc_org_id" field.
+func OidcOrgIDHasSuffix(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldHasSuffix(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDIsNil applies the IsNil predicate on the "oidc_org_id" field.
+func OidcOrgIDIsNil() predicate.Tenant {
+	return predicate.Tenant(sql.FieldIsNull(FieldOidcOrgID))
+}
+
+// OidcOrgIDNotNil applies the NotNil predicate on the "oidc_org_id" field.
+func OidcOrgIDNotNil() predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotNull(FieldOidcOrgID))
+}
+
+// OidcOrgIDEqualFold applies the EqualFold predicate on the "oidc_org_id" field.
+func OidcOrgIDEqualFold(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEqualFold(FieldOidcOrgID, v))
+}
+
+// OidcOrgIDContainsFold applies the ContainsFold predicate on the "oidc_org_id" field.
+func OidcOrgIDContainsFold(v string) predicate.Tenant {
+	return predicate.Tenant(sql.FieldContainsFold(FieldOidcOrgID, v))
+}
+
+// OidcDefaultRoleEQ applies the EQ predicate on the "oidc_default_role" field.
+func OidcDefaultRoleEQ(v OidcDefaultRole) predicate.Tenant {
+	return predicate.Tenant(sql.FieldEQ(FieldOidcDefaultRole, v))
+}
+
+// OidcDefaultRoleNEQ applies the NEQ predicate on the "oidc_default_role" field.
+func OidcDefaultRoleNEQ(v OidcDefaultRole) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNEQ(FieldOidcDefaultRole, v))
+}
+
+// OidcDefaultRoleIn applies the In predicate on the "oidc_default_role" field.
+func OidcDefaultRoleIn(vs ...OidcDefaultRole) predicate.Tenant {
+	return predicate.Tenant(sql.FieldIn(FieldOidcDefaultRole, vs...))
+}
+
+// OidcDefaultRoleNotIn applies the NotIn predicate on the "oidc_default_role" field.
+func OidcDefaultRoleNotIn(vs ...OidcDefaultRole) predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotIn(FieldOidcDefaultRole, vs...))
+}
+
+// OidcDefaultRoleIsNil applies the IsNil predicate on the "oidc_default_role" field.
+func OidcDefaultRoleIsNil() predicate.Tenant {
+	return predicate.Tenant(sql.FieldIsNull(FieldOidcDefaultRole))
+}
+
+// OidcDefaultRoleNotNil applies the NotNil predicate on the "oidc_default_role" field.
+func OidcDefaultRoleNotNil() predicate.Tenant {
+	return predicate.Tenant(sql.FieldNotNull(FieldOidcDefaultRole))
 }
 
 // CreatedEQ applies the EQ predicate on the "created" field.
@@ -400,6 +510,52 @@ func HasNetbird() predicate.Tenant {
 func HasNetbirdWith(preds ...predicate.NetbirdSettings) predicate.Tenant {
 	return predicate.Tenant(func(s *sql.Selector) {
 		step := newNetbirdStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUserTenants applies the HasEdge predicate on the "user_tenants" edge.
+func HasUserTenants() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, UserTenantsTable, UserTenantsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserTenantsWith applies the HasEdge predicate on the "user_tenants" edge with a given conditions (other predicates).
+func HasUserTenantsWith(preds ...predicate.UserTenant) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newUserTenantsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasEnrollmentTokens applies the HasEdge predicate on the "enrollment_tokens" edge.
+func HasEnrollmentTokens() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EnrollmentTokensTable, EnrollmentTokensColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEnrollmentTokensWith applies the HasEdge predicate on the "enrollment_tokens" edge with a given conditions (other predicates).
+func HasEnrollmentTokensWith(preds ...predicate.EnrollmentToken) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newEnrollmentTokensStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

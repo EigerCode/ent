@@ -15,6 +15,7 @@ import (
 	"github.com/open-uem/ent/recoverycode"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/user"
+	"github.com/open-uem/ent/usertenant"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -389,6 +390,21 @@ func (uc *UserCreate) AddRecoverycodes(r ...*RecoveryCode) *UserCreate {
 	return uc.AddRecoverycodeIDs(ids...)
 }
 
+// AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
+func (uc *UserCreate) AddUserTenantIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserTenantIDs(ids...)
+	return uc
+}
+
+// AddUserTenants adds the "user_tenants" edges to the UserTenant entity.
+func (uc *UserCreate) AddUserTenants(u ...*UserTenant) *UserCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUserTenantIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -671,6 +687,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(recoverycode.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserTenantsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserTenantsTable,
+			Columns: []string{user.UserTenantsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usertenant.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

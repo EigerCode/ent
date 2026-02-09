@@ -66,10 +66,14 @@ const (
 	EdgeSessions = "sessions"
 	// EdgeRecoverycodes holds the string denoting the recoverycodes edge name in mutations.
 	EdgeRecoverycodes = "recoverycodes"
+	// EdgeUserTenants holds the string denoting the user_tenants edge name in mutations.
+	EdgeUserTenants = "user_tenants"
 	// SessionsFieldID holds the string denoting the ID field of the Sessions.
 	SessionsFieldID = "token"
 	// RecoveryCodeFieldID holds the string denoting the ID field of the RecoveryCode.
 	RecoveryCodeFieldID = "id"
+	// UserTenantFieldID holds the string denoting the ID field of the UserTenant.
+	UserTenantFieldID = "id"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// SessionsTable is the table that holds the sessions relation/edge.
@@ -86,6 +90,13 @@ const (
 	RecoverycodesInverseTable = "recovery_codes"
 	// RecoverycodesColumn is the table column denoting the recoverycodes relation/edge.
 	RecoverycodesColumn = "user_recoverycodes"
+	// UserTenantsTable is the table that holds the user_tenants relation/edge.
+	UserTenantsTable = "user_tenants"
+	// UserTenantsInverseTable is the table name for the UserTenant entity.
+	// It exists in this package in order to avoid circular dependency with the "usertenant" package.
+	UserTenantsInverseTable = "user_tenants"
+	// UserTenantsColumn is the table column denoting the user_tenants relation/edge.
+	UserTenantsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -325,6 +336,20 @@ func ByRecoverycodes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newRecoverycodesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUserTenantsCount orders the results by user_tenants count.
+func ByUserTenantsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserTenantsStep(), opts...)
+	}
+}
+
+// ByUserTenants orders the results by user_tenants terms.
+func ByUserTenants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserTenantsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newSessionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -337,5 +362,12 @@ func newRecoverycodesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RecoverycodesInverseTable, RecoveryCodeFieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RecoverycodesTable, RecoverycodesColumn),
+	)
+}
+func newUserTenantsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserTenantsInverseTable, UserTenantFieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserTenantsTable, UserTenantsColumn),
 	)
 }

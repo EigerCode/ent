@@ -28,8 +28,12 @@ type Authentication struct {
 	OIDCIssuerURL string `json:"OIDC_issuer_url,omitempty"`
 	// OIDCClientID holds the value of the "OIDC_client_id" field.
 	OIDCClientID string `json:"OIDC_client_id,omitempty"`
-	// OIDCRole holds the value of the "OIDC_role" field.
-	OIDCRole string `json:"OIDC_role,omitempty"`
+	// OIDC role/group that maps to admin (e.g. openuem_admin)
+	OIDCRoleAdmin string `json:"OIDC_role_admin,omitempty"`
+	// OIDC role/group that maps to operator (e.g. openuem_operator)
+	OIDCRoleOperator string `json:"OIDC_role_operator,omitempty"`
+	// OIDC role/group that maps to user (e.g. openuem_user)
+	OIDCRoleUser string `json:"OIDC_role_user,omitempty"`
 	// OIDCCookieEncriptionKey holds the value of the "OIDC_cookie_encription_key" field.
 	OIDCCookieEncriptionKey string `json:"OIDC_cookie_encription_key,omitempty"`
 	// OIDCKeycloakPublicKey holds the value of the "OIDC_keycloak_public_key" field.
@@ -52,7 +56,7 @@ func (*Authentication) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case authentication.FieldID:
 			values[i] = new(sql.NullInt64)
-		case authentication.FieldOIDCProvider, authentication.FieldOIDCIssuerURL, authentication.FieldOIDCClientID, authentication.FieldOIDCRole, authentication.FieldOIDCCookieEncriptionKey, authentication.FieldOIDCKeycloakPublicKey:
+		case authentication.FieldOIDCProvider, authentication.FieldOIDCIssuerURL, authentication.FieldOIDCClientID, authentication.FieldOIDCRoleAdmin, authentication.FieldOIDCRoleOperator, authentication.FieldOIDCRoleUser, authentication.FieldOIDCCookieEncriptionKey, authentication.FieldOIDCKeycloakPublicKey:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -111,11 +115,23 @@ func (a *Authentication) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.OIDCClientID = value.String
 			}
-		case authentication.FieldOIDCRole:
+		case authentication.FieldOIDCRoleAdmin:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field OIDC_role", values[i])
+				return fmt.Errorf("unexpected type %T for field OIDC_role_admin", values[i])
 			} else if value.Valid {
-				a.OIDCRole = value.String
+				a.OIDCRoleAdmin = value.String
+			}
+		case authentication.FieldOIDCRoleOperator:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field OIDC_role_operator", values[i])
+			} else if value.Valid {
+				a.OIDCRoleOperator = value.String
+			}
+		case authentication.FieldOIDCRoleUser:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field OIDC_role_user", values[i])
+			} else if value.Valid {
+				a.OIDCRoleUser = value.String
 			}
 		case authentication.FieldOIDCCookieEncriptionKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -201,8 +217,14 @@ func (a *Authentication) String() string {
 	builder.WriteString("OIDC_client_id=")
 	builder.WriteString(a.OIDCClientID)
 	builder.WriteString(", ")
-	builder.WriteString("OIDC_role=")
-	builder.WriteString(a.OIDCRole)
+	builder.WriteString("OIDC_role_admin=")
+	builder.WriteString(a.OIDCRoleAdmin)
+	builder.WriteString(", ")
+	builder.WriteString("OIDC_role_operator=")
+	builder.WriteString(a.OIDCRoleOperator)
+	builder.WriteString(", ")
+	builder.WriteString("OIDC_role_user=")
+	builder.WriteString(a.OIDCRoleUser)
 	builder.WriteString(", ")
 	builder.WriteString("OIDC_cookie_encription_key=")
 	builder.WriteString(a.OIDCCookieEncriptionKey)

@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/open-uem/ent/certificate"
+	"github.com/open-uem/ent/tenant"
 )
 
 // Certificate is the model entity for the Certificate schema.
@@ -24,8 +25,33 @@ type Certificate struct {
 	// Expiry holds the value of the "expiry" field.
 	Expiry time.Time `json:"expiry,omitempty"`
 	// UID holds the value of the "uid" field.
-	UID          string `json:"uid,omitempty"`
+	UID string `json:"uid,omitempty"`
+	// The tenant this certificate belongs to (nil for global/hoster certificates)
+	TenantID *int `json:"tenant_id,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the CertificateQuery when eager-loading is set.
+	Edges        CertificateEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// CertificateEdges holds the relations/edges for other nodes in the graph.
+type CertificateEdges struct {
+	// Tenant holds the value of the tenant edge.
+	Tenant *Tenant `json:"tenant,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// TenantOrErr returns the Tenant value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CertificateEdges) TenantOrErr() (*Tenant, error) {
+	if e.Tenant != nil {
+		return e.Tenant, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: tenant.Label}
+	}
+	return nil, &NotLoadedError{edge: "tenant"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -33,7 +59,7 @@ func (*Certificate) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case certificate.FieldID:
+		case certificate.FieldID, certificate.FieldTenantID:
 			values[i] = new(sql.NullInt64)
 		case certificate.FieldType, certificate.FieldDescription, certificate.FieldUID:
 			values[i] = new(sql.NullString)
@@ -84,6 +110,13 @@ func (c *Certificate) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				c.UID = value.String
 			}
+		case certificate.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				c.TenantID = new(int)
+				*c.TenantID = int(value.Int64)
+			}
 		default:
 			c.selectValues.Set(columns[i], values[i])
 		}
@@ -95,6 +128,11 @@ func (c *Certificate) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (c *Certificate) Value(name string) (ent.Value, error) {
 	return c.selectValues.Get(name)
+}
+
+// QueryTenant queries the "tenant" edge of the Certificate entity.
+func (c *Certificate) QueryTenant() *TenantQuery {
+	return NewCertificateClient(c.config).QueryTenant(c)
 }
 
 // Update returns a builder for updating this Certificate.
@@ -131,6 +169,11 @@ func (c *Certificate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("uid=")
 	builder.WriteString(c.UID)
+	builder.WriteString(", ")
+	if v := c.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -20,12 +20,16 @@ type Tx struct {
 	App *AppClient
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// Branding is the client for interacting with the Branding builders.
+	Branding *BrandingClient
 	// Certificate is the client for interacting with the Certificate builders.
 	Certificate *CertificateClient
 	// Computer is the client for interacting with the Computer builders.
 	Computer *ComputerClient
 	// Deployment is the client for interacting with the Deployment builders.
 	Deployment *DeploymentClient
+	// EnrollmentToken is the client for interacting with the EnrollmentToken builders.
+	EnrollmentToken *EnrollmentTokenClient
 	// LogicalDisk is the client for interacting with the LogicalDisk builders.
 	LogicalDisk *LogicalDiskClient
 	// MemorySlot is the client for interacting with the MemorySlot builders.
@@ -82,6 +86,8 @@ type Tx struct {
 	Update *UpdateClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserTenant is the client for interacting with the UserTenant builders.
+	UserTenant *UserTenantClient
 	// WingetConfigExclusion is the client for interacting with the WingetConfigExclusion builders.
 	WingetConfigExclusion *WingetConfigExclusionClient
 
@@ -219,9 +225,11 @@ func (tx *Tx) init() {
 	tx.Antivirus = NewAntivirusClient(tx.config)
 	tx.App = NewAppClient(tx.config)
 	tx.Authentication = NewAuthenticationClient(tx.config)
+	tx.Branding = NewBrandingClient(tx.config)
 	tx.Certificate = NewCertificateClient(tx.config)
 	tx.Computer = NewComputerClient(tx.config)
 	tx.Deployment = NewDeploymentClient(tx.config)
+	tx.EnrollmentToken = NewEnrollmentTokenClient(tx.config)
 	tx.LogicalDisk = NewLogicalDiskClient(tx.config)
 	tx.MemorySlot = NewMemorySlotClient(tx.config)
 	tx.Metadata = NewMetadataClient(tx.config)
@@ -250,6 +258,7 @@ func (tx *Tx) init() {
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.Update = NewUpdateClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserTenant = NewUserTenantClient(tx.config)
 	tx.WingetConfigExclusion = NewWingetConfigExclusionClient(tx.config)
 }
 

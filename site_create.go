@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/agent"
+	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/site"
 	"github.com/open-uem/ent/tenant"
@@ -142,6 +143,21 @@ func (sc *SiteCreate) AddProfiles(p ...*Profile) *SiteCreate {
 		ids[i] = p[i].ID
 	}
 	return sc.AddProfileIDs(ids...)
+}
+
+// AddEnrollmentTokenIDs adds the "enrollment_tokens" edge to the EnrollmentToken entity by IDs.
+func (sc *SiteCreate) AddEnrollmentTokenIDs(ids ...int) *SiteCreate {
+	sc.mutation.AddEnrollmentTokenIDs(ids...)
+	return sc
+}
+
+// AddEnrollmentTokens adds the "enrollment_tokens" edges to the EnrollmentToken entity.
+func (sc *SiteCreate) AddEnrollmentTokens(e ...*EnrollmentToken) *SiteCreate {
+	ids := make([]int, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return sc.AddEnrollmentTokenIDs(ids...)
 }
 
 // Mutation returns the SiteMutation object of the builder.
@@ -280,6 +296,22 @@ func (sc *SiteCreate) createSpec() (*Site, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := sc.mutation.EnrollmentTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   site.EnrollmentTokensTable,
+			Columns: []string{site.EnrollmentTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
