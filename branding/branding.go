@@ -23,6 +23,12 @@ const (
 	FieldLoginBackgroundImage = "login_background_image"
 	// FieldLoginWelcomeText holds the string denoting the login_welcome_text field in the database.
 	FieldLoginWelcomeText = "login_welcome_text"
+	// FieldShowVersion holds the string denoting the show_version field in the database.
+	FieldShowVersion = "show_version"
+	// FieldBugReportLink holds the string denoting the bug_report_link field in the database.
+	FieldBugReportLink = "bug_report_link"
+	// FieldHelpLink holds the string denoting the help_link field in the database.
+	FieldHelpLink = "help_link"
 	// Table holds the table name of the branding in the database.
 	Table = "brandings"
 )
@@ -36,6 +42,9 @@ var Columns = []string{
 	FieldProductName,
 	FieldLoginBackgroundImage,
 	FieldLoginWelcomeText,
+	FieldShowVersion,
+	FieldBugReportLink,
+	FieldHelpLink,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -53,6 +62,12 @@ var (
 	DefaultPrimaryColor string
 	// DefaultProductName holds the default value on creation for the "product_name" field.
 	DefaultProductName string
+	// DefaultShowVersion holds the default value on creation for the "show_version" field.
+	DefaultShowVersion bool
+	// DefaultBugReportLink holds the default value on creation for the "bug_report_link" field.
+	DefaultBugReportLink string
+	// DefaultHelpLink holds the default value on creation for the "help_link" field.
+	DefaultHelpLink string
 )
 
 // OrderOption defines the ordering options for the Branding queries.
@@ -91,4 +106,19 @@ func ByLoginBackgroundImage(opts ...sql.OrderTermOption) OrderOption {
 // ByLoginWelcomeText orders the results by the login_welcome_text field.
 func ByLoginWelcomeText(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLoginWelcomeText, opts...).ToFunc()
+}
+
+// ByShowVersion orders the results by the show_version field.
+func ByShowVersion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShowVersion, opts...).ToFunc()
+}
+
+// ByBugReportLink orders the results by the bug_report_link field.
+func ByBugReportLink(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBugReportLink, opts...).ToFunc()
+}
+
+// ByHelpLink orders the results by the help_link field.
+func ByHelpLink(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHelpLink, opts...).ToFunc()
 }
