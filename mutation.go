@@ -6494,6 +6494,9 @@ type BrandingMutation struct {
 	product_name           *string
 	login_background_image *string
 	login_welcome_text     *string
+	show_version           *bool
+	bug_report_link        *string
+	help_link              *string
 	clearedFields          map[string]struct{}
 	done                   bool
 	oldValue               func(context.Context) (*Branding, error)
@@ -6892,6 +6895,153 @@ func (m *BrandingMutation) ResetLoginWelcomeText() {
 	delete(m.clearedFields, branding.FieldLoginWelcomeText)
 }
 
+// SetShowVersion sets the "show_version" field.
+func (m *BrandingMutation) SetShowVersion(b bool) {
+	m.show_version = &b
+}
+
+// ShowVersion returns the value of the "show_version" field in the mutation.
+func (m *BrandingMutation) ShowVersion() (r bool, exists bool) {
+	v := m.show_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldShowVersion returns the old "show_version" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldShowVersion(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldShowVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldShowVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldShowVersion: %w", err)
+	}
+	return oldValue.ShowVersion, nil
+}
+
+// ClearShowVersion clears the value of the "show_version" field.
+func (m *BrandingMutation) ClearShowVersion() {
+	m.show_version = nil
+	m.clearedFields[branding.FieldShowVersion] = struct{}{}
+}
+
+// ShowVersionCleared returns if the "show_version" field was cleared in this mutation.
+func (m *BrandingMutation) ShowVersionCleared() bool {
+	_, ok := m.clearedFields[branding.FieldShowVersion]
+	return ok
+}
+
+// ResetShowVersion resets all changes to the "show_version" field.
+func (m *BrandingMutation) ResetShowVersion() {
+	m.show_version = nil
+	delete(m.clearedFields, branding.FieldShowVersion)
+}
+
+// SetBugReportLink sets the "bug_report_link" field.
+func (m *BrandingMutation) SetBugReportLink(s string) {
+	m.bug_report_link = &s
+}
+
+// BugReportLink returns the value of the "bug_report_link" field in the mutation.
+func (m *BrandingMutation) BugReportLink() (r string, exists bool) {
+	v := m.bug_report_link
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBugReportLink returns the old "bug_report_link" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldBugReportLink(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBugReportLink is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBugReportLink requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBugReportLink: %w", err)
+	}
+	return oldValue.BugReportLink, nil
+}
+
+// ClearBugReportLink clears the value of the "bug_report_link" field.
+func (m *BrandingMutation) ClearBugReportLink() {
+	m.bug_report_link = nil
+	m.clearedFields[branding.FieldBugReportLink] = struct{}{}
+}
+
+// BugReportLinkCleared returns if the "bug_report_link" field was cleared in this mutation.
+func (m *BrandingMutation) BugReportLinkCleared() bool {
+	_, ok := m.clearedFields[branding.FieldBugReportLink]
+	return ok
+}
+
+// ResetBugReportLink resets all changes to the "bug_report_link" field.
+func (m *BrandingMutation) ResetBugReportLink() {
+	m.bug_report_link = nil
+	delete(m.clearedFields, branding.FieldBugReportLink)
+}
+
+// SetHelpLink sets the "help_link" field.
+func (m *BrandingMutation) SetHelpLink(s string) {
+	m.help_link = &s
+}
+
+// HelpLink returns the value of the "help_link" field in the mutation.
+func (m *BrandingMutation) HelpLink() (r string, exists bool) {
+	v := m.help_link
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHelpLink returns the old "help_link" field's value of the Branding entity.
+// If the Branding object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BrandingMutation) OldHelpLink(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHelpLink is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHelpLink requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHelpLink: %w", err)
+	}
+	return oldValue.HelpLink, nil
+}
+
+// ClearHelpLink clears the value of the "help_link" field.
+func (m *BrandingMutation) ClearHelpLink() {
+	m.help_link = nil
+	m.clearedFields[branding.FieldHelpLink] = struct{}{}
+}
+
+// HelpLinkCleared returns if the "help_link" field was cleared in this mutation.
+func (m *BrandingMutation) HelpLinkCleared() bool {
+	_, ok := m.clearedFields[branding.FieldHelpLink]
+	return ok
+}
+
+// ResetHelpLink resets all changes to the "help_link" field.
+func (m *BrandingMutation) ResetHelpLink() {
+	m.help_link = nil
+	delete(m.clearedFields, branding.FieldHelpLink)
+}
+
 // Where appends a list predicates to the BrandingMutation builder.
 func (m *BrandingMutation) Where(ps ...predicate.Branding) {
 	m.predicates = append(m.predicates, ps...)
@@ -6926,7 +7076,7 @@ func (m *BrandingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BrandingMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 9)
 	if m.logo_light != nil {
 		fields = append(fields, branding.FieldLogoLight)
 	}
@@ -6944,6 +7094,15 @@ func (m *BrandingMutation) Fields() []string {
 	}
 	if m.login_welcome_text != nil {
 		fields = append(fields, branding.FieldLoginWelcomeText)
+	}
+	if m.show_version != nil {
+		fields = append(fields, branding.FieldShowVersion)
+	}
+	if m.bug_report_link != nil {
+		fields = append(fields, branding.FieldBugReportLink)
+	}
+	if m.help_link != nil {
+		fields = append(fields, branding.FieldHelpLink)
 	}
 	return fields
 }
@@ -6965,6 +7124,12 @@ func (m *BrandingMutation) Field(name string) (ent.Value, bool) {
 		return m.LoginBackgroundImage()
 	case branding.FieldLoginWelcomeText:
 		return m.LoginWelcomeText()
+	case branding.FieldShowVersion:
+		return m.ShowVersion()
+	case branding.FieldBugReportLink:
+		return m.BugReportLink()
+	case branding.FieldHelpLink:
+		return m.HelpLink()
 	}
 	return nil, false
 }
@@ -6986,6 +7151,12 @@ func (m *BrandingMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldLoginBackgroundImage(ctx)
 	case branding.FieldLoginWelcomeText:
 		return m.OldLoginWelcomeText(ctx)
+	case branding.FieldShowVersion:
+		return m.OldShowVersion(ctx)
+	case branding.FieldBugReportLink:
+		return m.OldBugReportLink(ctx)
+	case branding.FieldHelpLink:
+		return m.OldHelpLink(ctx)
 	}
 	return nil, fmt.Errorf("unknown Branding field %s", name)
 }
@@ -7037,6 +7208,27 @@ func (m *BrandingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLoginWelcomeText(v)
 		return nil
+	case branding.FieldShowVersion:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetShowVersion(v)
+		return nil
+	case branding.FieldBugReportLink:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBugReportLink(v)
+		return nil
+	case branding.FieldHelpLink:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHelpLink(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Branding field %s", name)
 }
@@ -7085,6 +7277,15 @@ func (m *BrandingMutation) ClearedFields() []string {
 	if m.FieldCleared(branding.FieldLoginWelcomeText) {
 		fields = append(fields, branding.FieldLoginWelcomeText)
 	}
+	if m.FieldCleared(branding.FieldShowVersion) {
+		fields = append(fields, branding.FieldShowVersion)
+	}
+	if m.FieldCleared(branding.FieldBugReportLink) {
+		fields = append(fields, branding.FieldBugReportLink)
+	}
+	if m.FieldCleared(branding.FieldHelpLink) {
+		fields = append(fields, branding.FieldHelpLink)
+	}
 	return fields
 }
 
@@ -7117,6 +7318,15 @@ func (m *BrandingMutation) ClearField(name string) error {
 	case branding.FieldLoginWelcomeText:
 		m.ClearLoginWelcomeText()
 		return nil
+	case branding.FieldShowVersion:
+		m.ClearShowVersion()
+		return nil
+	case branding.FieldBugReportLink:
+		m.ClearBugReportLink()
+		return nil
+	case branding.FieldHelpLink:
+		m.ClearHelpLink()
+		return nil
 	}
 	return fmt.Errorf("unknown Branding nullable field %s", name)
 }
@@ -7142,6 +7352,15 @@ func (m *BrandingMutation) ResetField(name string) error {
 		return nil
 	case branding.FieldLoginWelcomeText:
 		m.ResetLoginWelcomeText()
+		return nil
+	case branding.FieldShowVersion:
+		m.ResetShowVersion()
+		return nil
+	case branding.FieldBugReportLink:
+		m.ResetBugReportLink()
+		return nil
+	case branding.FieldHelpLink:
+		m.ResetHelpLink()
 		return nil
 	}
 	return fmt.Errorf("unknown Branding field %s", name)
