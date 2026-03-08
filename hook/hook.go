@@ -129,6 +129,18 @@ func (f LogicalDiskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LogicalDiskMutation", m)
 }
 
+// The MDMCommandFunc type is an adapter to allow the use of ordinary
+// function as MDMCommand mutator.
+type MDMCommandFunc func(context.Context, *ent.MDMCommandMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MDMCommandFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MDMCommandMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MDMCommandMutation", m)
+}
+
 // The MemorySlotFunc type is an adapter to allow the use of ordinary
 // function as MemorySlot mutator.
 type MemorySlotFunc func(context.Context, *ent.MemorySlotMutation) (ent.Value, error)
@@ -163,6 +175,54 @@ func (f MonitorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorMutation", m)
+}
+
+// The NanoHubInfoFunc type is an adapter to allow the use of ordinary
+// function as NanoHubInfo mutator.
+type NanoHubInfoFunc func(context.Context, *ent.NanoHubInfoMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NanoHubInfoFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NanoHubInfoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NanoHubInfoMutation", m)
+}
+
+// The NanoHubPushCertificateFunc type is an adapter to allow the use of ordinary
+// function as NanoHubPushCertificate mutator.
+type NanoHubPushCertificateFunc func(context.Context, *ent.NanoHubPushCertificateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NanoHubPushCertificateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NanoHubPushCertificateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NanoHubPushCertificateMutation", m)
+}
+
+// The NanoHubSettingsFunc type is an adapter to allow the use of ordinary
+// function as NanoHubSettings mutator.
+type NanoHubSettingsFunc func(context.Context, *ent.NanoHubSettingsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NanoHubSettingsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NanoHubSettingsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NanoHubSettingsMutation", m)
+}
+
+// The NanoHubUserFunc type is an adapter to allow the use of ordinary
+// function as NanoHubUser mutator.
+type NanoHubUserFunc func(context.Context, *ent.NanoHubUserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NanoHubUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.NanoHubUserMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NanoHubUserMutation", m)
 }
 
 // The NetbirdFunc type is an adapter to allow the use of ordinary

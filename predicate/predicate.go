@@ -36,6 +36,9 @@ type EnrollmentToken func(*sql.Selector)
 // LogicalDisk is the predicate function for logicaldisk builders.
 type LogicalDisk func(*sql.Selector)
 
+// MDMCommand is the predicate function for mdmcommand builders.
+type MDMCommand func(*sql.Selector)
+
 // MemorySlot is the predicate function for memoryslot builders.
 type MemorySlot func(*sql.Selector)
 
@@ -44,6 +47,18 @@ type Metadata func(*sql.Selector)
 
 // Monitor is the predicate function for monitor builders.
 type Monitor func(*sql.Selector)
+
+// NanoHubInfo is the predicate function for nanohubinfo builders.
+type NanoHubInfo func(*sql.Selector)
+
+// NanoHubPushCertificate is the predicate function for nanohubpushcertificate builders.
+type NanoHubPushCertificate func(*sql.Selector)
+
+// NanoHubSettings is the predicate function for nanohubsettings builders.
+type NanoHubSettings func(*sql.Selector)
+
+// NanoHubUser is the predicate function for nanohubuser builders.
+type NanoHubUser func(*sql.Selector)
 
 // Netbird is the predicate function for netbird builders.
 type Netbird func(*sql.Selector)

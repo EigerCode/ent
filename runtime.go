@@ -11,6 +11,10 @@ import (
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
+	"github.com/open-uem/ent/mdmcommand"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubpushcertificate"
+	"github.com/open-uem/ent/nanohubsettings"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
@@ -272,6 +276,242 @@ func init() {
 	logicaldiskDescUsage := logicaldiskFields[2].Descriptor()
 	// logicaldisk.DefaultUsage holds the default value on creation for the usage field.
 	logicaldisk.DefaultUsage = logicaldiskDescUsage.Default.(int8)
+	mdmcommandFields := schema.MDMCommand{}.Fields()
+	_ = mdmcommandFields
+	// mdmcommandDescType is the schema descriptor for type field.
+	mdmcommandDescType := mdmcommandFields[2].Descriptor()
+	// mdmcommand.DefaultType holds the default value on creation for the type field.
+	mdmcommand.DefaultType = mdmcommandDescType.Default.(string)
+	// mdmcommandDescAgentID is the schema descriptor for agent_id field.
+	mdmcommandDescAgentID := mdmcommandFields[3].Descriptor()
+	// mdmcommand.AgentIDValidator is a validator for the "agent_id" field. It is called by the builders before save.
+	mdmcommand.AgentIDValidator = mdmcommandDescAgentID.Validators[0].(func(string) error)
+	// mdmcommandDescID is the schema descriptor for id field.
+	mdmcommandDescID := mdmcommandFields[0].Descriptor()
+	// mdmcommand.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	mdmcommand.IDValidator = mdmcommandDescID.Validators[0].(func(string) error)
+	nanohubinfoFields := schema.NanoHubInfo{}.Fields()
+	_ = nanohubinfoFields
+	// nanohubinfoDescAvailableDeviceCapacity is the schema descriptor for available_device_capacity field.
+	nanohubinfoDescAvailableDeviceCapacity := nanohubinfoFields[0].Descriptor()
+	// nanohubinfo.DefaultAvailableDeviceCapacity holds the default value on creation for the available_device_capacity field.
+	nanohubinfo.DefaultAvailableDeviceCapacity = nanohubinfoDescAvailableDeviceCapacity.Default.(float64)
+	// nanohubinfoDescAwaitingConfiguration is the schema descriptor for awaiting_configuration field.
+	nanohubinfoDescAwaitingConfiguration := nanohubinfoFields[1].Descriptor()
+	// nanohubinfo.DefaultAwaitingConfiguration holds the default value on creation for the awaiting_configuration field.
+	nanohubinfo.DefaultAwaitingConfiguration = nanohubinfoDescAwaitingConfiguration.Default.(bool)
+	// nanohubinfoDescBatteryLevel is the schema descriptor for battery_level field.
+	nanohubinfoDescBatteryLevel := nanohubinfoFields[2].Descriptor()
+	// nanohubinfo.DefaultBatteryLevel holds the default value on creation for the battery_level field.
+	nanohubinfo.DefaultBatteryLevel = nanohubinfoDescBatteryLevel.Default.(float64)
+	// nanohubinfoDescBluetoothMAC is the schema descriptor for bluetooth_mac field.
+	nanohubinfoDescBluetoothMAC := nanohubinfoFields[3].Descriptor()
+	// nanohubinfo.DefaultBluetoothMAC holds the default value on creation for the bluetooth_mac field.
+	nanohubinfo.DefaultBluetoothMAC = nanohubinfoDescBluetoothMAC.Default.(string)
+	// nanohubinfoDescBuildVersion is the schema descriptor for build_version field.
+	nanohubinfoDescBuildVersion := nanohubinfoFields[4].Descriptor()
+	// nanohubinfo.DefaultBuildVersion holds the default value on creation for the build_version field.
+	nanohubinfo.DefaultBuildVersion = nanohubinfoDescBuildVersion.Default.(string)
+	// nanohubinfoDescCurrentConsoleManagedUser is the schema descriptor for current_console_managed_user field.
+	nanohubinfoDescCurrentConsoleManagedUser := nanohubinfoFields[5].Descriptor()
+	// nanohubinfo.DefaultCurrentConsoleManagedUser holds the default value on creation for the current_console_managed_user field.
+	nanohubinfo.DefaultCurrentConsoleManagedUser = nanohubinfoDescCurrentConsoleManagedUser.Default.(string)
+	// nanohubinfoDescDeviceCapacity is the schema descriptor for device_capacity field.
+	nanohubinfoDescDeviceCapacity := nanohubinfoFields[6].Descriptor()
+	// nanohubinfo.DefaultDeviceCapacity holds the default value on creation for the device_capacity field.
+	nanohubinfo.DefaultDeviceCapacity = nanohubinfoDescDeviceCapacity.Default.(float64)
+	// nanohubinfoDescDeviceName is the schema descriptor for device_name field.
+	nanohubinfoDescDeviceName := nanohubinfoFields[7].Descriptor()
+	// nanohubinfo.DefaultDeviceName holds the default value on creation for the device_name field.
+	nanohubinfo.DefaultDeviceName = nanohubinfoDescDeviceName.Default.(string)
+	// nanohubinfoDescEacsPreflight is the schema descriptor for eacs_preflight field.
+	nanohubinfoDescEacsPreflight := nanohubinfoFields[8].Descriptor()
+	// nanohubinfo.DefaultEacsPreflight holds the default value on creation for the eacs_preflight field.
+	nanohubinfo.DefaultEacsPreflight = nanohubinfoDescEacsPreflight.Default.(string)
+	// nanohubinfoDescEthernetMAC is the schema descriptor for ethernet_mac field.
+	nanohubinfoDescEthernetMAC := nanohubinfoFields[9].Descriptor()
+	// nanohubinfo.DefaultEthernetMAC holds the default value on creation for the ethernet_mac field.
+	nanohubinfo.DefaultEthernetMAC = nanohubinfoDescEthernetMAC.Default.(string)
+	// nanohubinfoDescWifiMAC is the schema descriptor for wifi_mac field.
+	nanohubinfoDescWifiMAC := nanohubinfoFields[10].Descriptor()
+	// nanohubinfo.DefaultWifiMAC holds the default value on creation for the wifi_mac field.
+	nanohubinfo.DefaultWifiMAC = nanohubinfoDescWifiMAC.Default.(string)
+	// nanohubinfoDescHasBattery is the schema descriptor for has_battery field.
+	nanohubinfoDescHasBattery := nanohubinfoFields[11].Descriptor()
+	// nanohubinfo.DefaultHasBattery holds the default value on creation for the has_battery field.
+	nanohubinfo.DefaultHasBattery = nanohubinfoDescHasBattery.Default.(bool)
+	// nanohubinfoDescHostname is the schema descriptor for hostname field.
+	nanohubinfoDescHostname := nanohubinfoFields[12].Descriptor()
+	// nanohubinfo.DefaultHostname holds the default value on creation for the hostname field.
+	nanohubinfo.DefaultHostname = nanohubinfoDescHostname.Default.(string)
+	// nanohubinfoDescIsActivationLockEnabled is the schema descriptor for is_activation_lock_enabled field.
+	nanohubinfoDescIsActivationLockEnabled := nanohubinfoFields[13].Descriptor()
+	// nanohubinfo.DefaultIsActivationLockEnabled holds the default value on creation for the is_activation_lock_enabled field.
+	nanohubinfo.DefaultIsActivationLockEnabled = nanohubinfoDescIsActivationLockEnabled.Default.(bool)
+	// nanohubinfoDescIsActivationLockSupported is the schema descriptor for is_activation_lock_supported field.
+	nanohubinfoDescIsActivationLockSupported := nanohubinfoFields[14].Descriptor()
+	// nanohubinfo.DefaultIsActivationLockSupported holds the default value on creation for the is_activation_lock_supported field.
+	nanohubinfo.DefaultIsActivationLockSupported = nanohubinfoDescIsActivationLockSupported.Default.(bool)
+	// nanohubinfoDescIsAppleSilicon is the schema descriptor for is_apple_silicon field.
+	nanohubinfoDescIsAppleSilicon := nanohubinfoFields[15].Descriptor()
+	// nanohubinfo.DefaultIsAppleSilicon holds the default value on creation for the is_apple_silicon field.
+	nanohubinfo.DefaultIsAppleSilicon = nanohubinfoDescIsAppleSilicon.Default.(bool)
+	// nanohubinfoDescIsSupervised is the schema descriptor for is_supervised field.
+	nanohubinfoDescIsSupervised := nanohubinfoFields[16].Descriptor()
+	// nanohubinfo.DefaultIsSupervised holds the default value on creation for the is_supervised field.
+	nanohubinfo.DefaultIsSupervised = nanohubinfoDescIsSupervised.Default.(bool)
+	// nanohubinfoDescLocalhostname is the schema descriptor for localhostname field.
+	nanohubinfoDescLocalhostname := nanohubinfoFields[17].Descriptor()
+	// nanohubinfo.DefaultLocalhostname holds the default value on creation for the localhostname field.
+	nanohubinfo.DefaultLocalhostname = nanohubinfoDescLocalhostname.Default.(string)
+	// nanohubinfoDescModel is the schema descriptor for model field.
+	nanohubinfoDescModel := nanohubinfoFields[18].Descriptor()
+	// nanohubinfo.DefaultModel holds the default value on creation for the model field.
+	nanohubinfo.DefaultModel = nanohubinfoDescModel.Default.(string)
+	// nanohubinfoDescModelName is the schema descriptor for model_name field.
+	nanohubinfoDescModelName := nanohubinfoFields[19].Descriptor()
+	// nanohubinfo.DefaultModelName holds the default value on creation for the model_name field.
+	nanohubinfo.DefaultModelName = nanohubinfoDescModelName.Default.(string)
+	// nanohubinfoDescAutoCheckEnabled is the schema descriptor for auto_check_enabled field.
+	nanohubinfoDescAutoCheckEnabled := nanohubinfoFields[20].Descriptor()
+	// nanohubinfo.DefaultAutoCheckEnabled holds the default value on creation for the auto_check_enabled field.
+	nanohubinfo.DefaultAutoCheckEnabled = nanohubinfoDescAutoCheckEnabled.Default.(bool)
+	// nanohubinfoDescAutomaticAppInstallationEnabled is the schema descriptor for automatic_app_installation_enabled field.
+	nanohubinfoDescAutomaticAppInstallationEnabled := nanohubinfoFields[21].Descriptor()
+	// nanohubinfo.DefaultAutomaticAppInstallationEnabled holds the default value on creation for the automatic_app_installation_enabled field.
+	nanohubinfo.DefaultAutomaticAppInstallationEnabled = nanohubinfoDescAutomaticAppInstallationEnabled.Default.(bool)
+	// nanohubinfoDescAutomaticOsInstallationEnabled is the schema descriptor for automatic_os_installation_enabled field.
+	nanohubinfoDescAutomaticOsInstallationEnabled := nanohubinfoFields[22].Descriptor()
+	// nanohubinfo.DefaultAutomaticOsInstallationEnabled holds the default value on creation for the automatic_os_installation_enabled field.
+	nanohubinfo.DefaultAutomaticOsInstallationEnabled = nanohubinfoDescAutomaticOsInstallationEnabled.Default.(bool)
+	// nanohubinfoDescAutomaticSecurityUpdatesEnabled is the schema descriptor for automatic_security_updates_enabled field.
+	nanohubinfoDescAutomaticSecurityUpdatesEnabled := nanohubinfoFields[23].Descriptor()
+	// nanohubinfo.DefaultAutomaticSecurityUpdatesEnabled holds the default value on creation for the automatic_security_updates_enabled field.
+	nanohubinfo.DefaultAutomaticSecurityUpdatesEnabled = nanohubinfoDescAutomaticSecurityUpdatesEnabled.Default.(bool)
+	// nanohubinfoDescBackgroundDownloadEnabled is the schema descriptor for background_download_enabled field.
+	nanohubinfoDescBackgroundDownloadEnabled := nanohubinfoFields[24].Descriptor()
+	// nanohubinfo.DefaultBackgroundDownloadEnabled holds the default value on creation for the background_download_enabled field.
+	nanohubinfo.DefaultBackgroundDownloadEnabled = nanohubinfoDescBackgroundDownloadEnabled.Default.(bool)
+	// nanohubinfoDescCatalogURL is the schema descriptor for catalog_url field.
+	nanohubinfoDescCatalogURL := nanohubinfoFields[25].Descriptor()
+	// nanohubinfo.DefaultCatalogURL holds the default value on creation for the catalog_url field.
+	nanohubinfo.DefaultCatalogURL = nanohubinfoDescCatalogURL.Default.(string)
+	// nanohubinfoDescIsDefaultCatalog is the schema descriptor for is_default_catalog field.
+	nanohubinfoDescIsDefaultCatalog := nanohubinfoFields[26].Descriptor()
+	// nanohubinfo.DefaultIsDefaultCatalog holds the default value on creation for the is_default_catalog field.
+	nanohubinfo.DefaultIsDefaultCatalog = nanohubinfoDescIsDefaultCatalog.Default.(bool)
+	// nanohubinfoDescPreviousScanResult is the schema descriptor for previous_scan_result field.
+	nanohubinfoDescPreviousScanResult := nanohubinfoFields[28].Descriptor()
+	// nanohubinfo.DefaultPreviousScanResult holds the default value on creation for the previous_scan_result field.
+	nanohubinfo.DefaultPreviousScanResult = nanohubinfoDescPreviousScanResult.Default.(int64)
+	// nanohubinfoDescOsVersion is the schema descriptor for os_version field.
+	nanohubinfoDescOsVersion := nanohubinfoFields[29].Descriptor()
+	// nanohubinfo.DefaultOsVersion holds the default value on creation for the os_version field.
+	nanohubinfo.DefaultOsVersion = nanohubinfoDescOsVersion.Default.(string)
+	// nanohubinfoDescPinRequiredForDeviceLock is the schema descriptor for pin_required_for_device_lock field.
+	nanohubinfoDescPinRequiredForDeviceLock := nanohubinfoFields[30].Descriptor()
+	// nanohubinfo.DefaultPinRequiredForDeviceLock holds the default value on creation for the pin_required_for_device_lock field.
+	nanohubinfo.DefaultPinRequiredForDeviceLock = nanohubinfoDescPinRequiredForDeviceLock.Default.(bool)
+	// nanohubinfoDescPinRequiredForEraseDevice is the schema descriptor for pin_required_for_erase_device field.
+	nanohubinfoDescPinRequiredForEraseDevice := nanohubinfoFields[31].Descriptor()
+	// nanohubinfo.DefaultPinRequiredForEraseDevice holds the default value on creation for the pin_required_for_erase_device field.
+	nanohubinfo.DefaultPinRequiredForEraseDevice = nanohubinfoDescPinRequiredForEraseDevice.Default.(bool)
+	// nanohubinfoDescProductName is the schema descriptor for product_name field.
+	nanohubinfoDescProductName := nanohubinfoFields[32].Descriptor()
+	// nanohubinfo.DefaultProductName holds the default value on creation for the product_name field.
+	nanohubinfo.DefaultProductName = nanohubinfoDescProductName.Default.(string)
+	// nanohubinfoDescProvisioningUdid is the schema descriptor for provisioning_udid field.
+	nanohubinfoDescProvisioningUdid := nanohubinfoFields[33].Descriptor()
+	// nanohubinfo.DefaultProvisioningUdid holds the default value on creation for the provisioning_udid field.
+	nanohubinfo.DefaultProvisioningUdid = nanohubinfoDescProvisioningUdid.Default.(string)
+	// nanohubinfoDescSerialNumber is the schema descriptor for serial_number field.
+	nanohubinfoDescSerialNumber := nanohubinfoFields[34].Descriptor()
+	// nanohubinfo.DefaultSerialNumber holds the default value on creation for the serial_number field.
+	nanohubinfo.DefaultSerialNumber = nanohubinfoDescSerialNumber.Default.(string)
+	// nanohubinfoDescSoftwareUpdateDeviceID is the schema descriptor for software_update_device_id field.
+	nanohubinfoDescSoftwareUpdateDeviceID := nanohubinfoFields[35].Descriptor()
+	// nanohubinfo.DefaultSoftwareUpdateDeviceID holds the default value on creation for the software_update_device_id field.
+	nanohubinfo.DefaultSoftwareUpdateDeviceID = nanohubinfoDescSoftwareUpdateDeviceID.Default.(string)
+	// nanohubinfoDescSupplementalBuildVersion is the schema descriptor for supplemental_build_version field.
+	nanohubinfoDescSupplementalBuildVersion := nanohubinfoFields[36].Descriptor()
+	// nanohubinfo.DefaultSupplementalBuildVersion holds the default value on creation for the supplemental_build_version field.
+	nanohubinfo.DefaultSupplementalBuildVersion = nanohubinfoDescSupplementalBuildVersion.Default.(string)
+	// nanohubinfoDescSupportsLomDevice is the schema descriptor for supports_lom_device field.
+	nanohubinfoDescSupportsLomDevice := nanohubinfoFields[37].Descriptor()
+	// nanohubinfo.DefaultSupportsLomDevice holds the default value on creation for the supports_lom_device field.
+	nanohubinfo.DefaultSupportsLomDevice = nanohubinfoDescSupportsLomDevice.Default.(bool)
+	// nanohubinfoDescSupportsIosAppInstalls is the schema descriptor for supports_ios_app_installs field.
+	nanohubinfoDescSupportsIosAppInstalls := nanohubinfoFields[38].Descriptor()
+	// nanohubinfo.DefaultSupportsIosAppInstalls holds the default value on creation for the supports_ios_app_installs field.
+	nanohubinfo.DefaultSupportsIosAppInstalls = nanohubinfoDescSupportsIosAppInstalls.Default.(bool)
+	// nanohubinfoDescSystemIntegrityProtectionEnabled is the schema descriptor for system_integrity_protection_enabled field.
+	nanohubinfoDescSystemIntegrityProtectionEnabled := nanohubinfoFields[39].Descriptor()
+	// nanohubinfo.DefaultSystemIntegrityProtectionEnabled holds the default value on creation for the system_integrity_protection_enabled field.
+	nanohubinfo.DefaultSystemIntegrityProtectionEnabled = nanohubinfoDescSystemIntegrityProtectionEnabled.Default.(bool)
+	// nanohubinfoDescUdid is the schema descriptor for udid field.
+	nanohubinfoDescUdid := nanohubinfoFields[40].Descriptor()
+	// nanohubinfo.DefaultUdid holds the default value on creation for the udid field.
+	nanohubinfo.DefaultUdid = nanohubinfoDescUdid.Default.(string)
+	nanohubpushcertificateFields := schema.NanoHubPushCertificate{}.Fields()
+	_ = nanohubpushcertificateFields
+	// nanohubpushcertificateDescPrivateKeyPem is the schema descriptor for private_key_pem field.
+	nanohubpushcertificateDescPrivateKeyPem := nanohubpushcertificateFields[0].Descriptor()
+	// nanohubpushcertificate.DefaultPrivateKeyPem holds the default value on creation for the private_key_pem field.
+	nanohubpushcertificate.DefaultPrivateKeyPem = nanohubpushcertificateDescPrivateKeyPem.Default.(string)
+	// nanohubpushcertificateDescCsrPem is the schema descriptor for csr_pem field.
+	nanohubpushcertificateDescCsrPem := nanohubpushcertificateFields[1].Descriptor()
+	// nanohubpushcertificate.DefaultCsrPem holds the default value on creation for the csr_pem field.
+	nanohubpushcertificate.DefaultCsrPem = nanohubpushcertificateDescCsrPem.Default.(string)
+	// nanohubpushcertificateDescCertificatePem is the schema descriptor for certificate_pem field.
+	nanohubpushcertificateDescCertificatePem := nanohubpushcertificateFields[2].Descriptor()
+	// nanohubpushcertificate.DefaultCertificatePem holds the default value on creation for the certificate_pem field.
+	nanohubpushcertificate.DefaultCertificatePem = nanohubpushcertificateDescCertificatePem.Default.(string)
+	// nanohubpushcertificateDescApnsTopic is the schema descriptor for apns_topic field.
+	nanohubpushcertificateDescApnsTopic := nanohubpushcertificateFields[3].Descriptor()
+	// nanohubpushcertificate.DefaultApnsTopic holds the default value on creation for the apns_topic field.
+	nanohubpushcertificate.DefaultApnsTopic = nanohubpushcertificateDescApnsTopic.Default.(string)
+	nanohubsettingsFields := schema.NanoHubSettings{}.Fields()
+	_ = nanohubsettingsFields
+	// nanohubsettingsDescServerURL is the schema descriptor for server_url field.
+	nanohubsettingsDescServerURL := nanohubsettingsFields[0].Descriptor()
+	// nanohubsettings.DefaultServerURL holds the default value on creation for the server_url field.
+	nanohubsettings.DefaultServerURL = nanohubsettingsDescServerURL.Default.(string)
+	// nanohubsettingsDescUsername is the schema descriptor for username field.
+	nanohubsettingsDescUsername := nanohubsettingsFields[1].Descriptor()
+	// nanohubsettings.DefaultUsername holds the default value on creation for the username field.
+	nanohubsettings.DefaultUsername = nanohubsettingsDescUsername.Default.(string)
+	// nanohubsettingsDescPassword is the schema descriptor for password field.
+	nanohubsettingsDescPassword := nanohubsettingsFields[2].Descriptor()
+	// nanohubsettings.DefaultPassword holds the default value on creation for the password field.
+	nanohubsettings.DefaultPassword = nanohubsettingsDescPassword.Default.(string)
+	// nanohubsettingsDescCaCerFile is the schema descriptor for ca_cer_file field.
+	nanohubsettingsDescCaCerFile := nanohubsettingsFields[3].Descriptor()
+	// nanohubsettings.DefaultCaCerFile holds the default value on creation for the ca_cer_file field.
+	nanohubsettings.DefaultCaCerFile = nanohubsettingsDescCaCerFile.Default.(string)
+	// nanohubsettingsDescScepURL is the schema descriptor for scep_url field.
+	nanohubsettingsDescScepURL := nanohubsettingsFields[4].Descriptor()
+	// nanohubsettings.DefaultScepURL holds the default value on creation for the scep_url field.
+	nanohubsettings.DefaultScepURL = nanohubsettingsDescScepURL.Default.(string)
+	// nanohubsettingsDescScepChallenge is the schema descriptor for scep_challenge field.
+	nanohubsettingsDescScepChallenge := nanohubsettingsFields[5].Descriptor()
+	// nanohubsettings.DefaultScepChallenge holds the default value on creation for the scep_challenge field.
+	nanohubsettings.DefaultScepChallenge = nanohubsettingsDescScepChallenge.Default.(string)
+	// nanohubsettingsDescMdmURL is the schema descriptor for mdm_url field.
+	nanohubsettingsDescMdmURL := nanohubsettingsFields[6].Descriptor()
+	// nanohubsettings.DefaultMdmURL holds the default value on creation for the mdm_url field.
+	nanohubsettings.DefaultMdmURL = nanohubsettingsDescMdmURL.Default.(string)
+	// nanohubsettingsDescVendorPrivateKeyPem is the schema descriptor for vendor_private_key_pem field.
+	nanohubsettingsDescVendorPrivateKeyPem := nanohubsettingsFields[7].Descriptor()
+	// nanohubsettings.DefaultVendorPrivateKeyPem holds the default value on creation for the vendor_private_key_pem field.
+	nanohubsettings.DefaultVendorPrivateKeyPem = nanohubsettingsDescVendorPrivateKeyPem.Default.(string)
+	// nanohubsettingsDescVendorCertPem is the schema descriptor for vendor_cert_pem field.
+	nanohubsettingsDescVendorCertPem := nanohubsettingsFields[8].Descriptor()
+	// nanohubsettings.DefaultVendorCertPem holds the default value on creation for the vendor_cert_pem field.
+	nanohubsettings.DefaultVendorCertPem = nanohubsettingsDescVendorCertPem.Default.(string)
+	// nanohubsettingsDescEnrollmentProfileID is the schema descriptor for enrollment_profile_id field.
+	nanohubsettingsDescEnrollmentProfileID := nanohubsettingsFields[9].Descriptor()
+	// nanohubsettings.DefaultEnrollmentProfileID holds the default value on creation for the enrollment_profile_id field.
+	nanohubsettings.DefaultEnrollmentProfileID = nanohubsettingsDescEnrollmentProfileID.Default.(string)
 	netbirdFields := schema.Netbird{}.Fields()
 	_ = netbirdFields
 	// netbirdDescVersion is the schema descriptor for version field.

@@ -32,12 +32,22 @@ type Tx struct {
 	EnrollmentToken *EnrollmentTokenClient
 	// LogicalDisk is the client for interacting with the LogicalDisk builders.
 	LogicalDisk *LogicalDiskClient
+	// MDMCommand is the client for interacting with the MDMCommand builders.
+	MDMCommand *MDMCommandClient
 	// MemorySlot is the client for interacting with the MemorySlot builders.
 	MemorySlot *MemorySlotClient
 	// Metadata is the client for interacting with the Metadata builders.
 	Metadata *MetadataClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
+	// NanoHubInfo is the client for interacting with the NanoHubInfo builders.
+	NanoHubInfo *NanoHubInfoClient
+	// NanoHubPushCertificate is the client for interacting with the NanoHubPushCertificate builders.
+	NanoHubPushCertificate *NanoHubPushCertificateClient
+	// NanoHubSettings is the client for interacting with the NanoHubSettings builders.
+	NanoHubSettings *NanoHubSettingsClient
+	// NanoHubUser is the client for interacting with the NanoHubUser builders.
+	NanoHubUser *NanoHubUserClient
 	// Netbird is the client for interacting with the Netbird builders.
 	Netbird *NetbirdClient
 	// NetbirdSettings is the client for interacting with the NetbirdSettings builders.
@@ -231,9 +241,14 @@ func (tx *Tx) init() {
 	tx.Deployment = NewDeploymentClient(tx.config)
 	tx.EnrollmentToken = NewEnrollmentTokenClient(tx.config)
 	tx.LogicalDisk = NewLogicalDiskClient(tx.config)
+	tx.MDMCommand = NewMDMCommandClient(tx.config)
 	tx.MemorySlot = NewMemorySlotClient(tx.config)
 	tx.Metadata = NewMetadataClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)
+	tx.NanoHubInfo = NewNanoHubInfoClient(tx.config)
+	tx.NanoHubPushCertificate = NewNanoHubPushCertificateClient(tx.config)
+	tx.NanoHubSettings = NewNanoHubSettingsClient(tx.config)
+	tx.NanoHubUser = NewNanoHubUserClient(tx.config)
 	tx.Netbird = NewNetbirdClient(tx.config)
 	tx.NetbirdSettings = NewNetbirdSettingsClient(tx.config)
 	tx.NetworkAdapter = NewNetworkAdapterClient(tx.config)

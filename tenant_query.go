@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/enrollmenttoken"
+	"github.com/open-uem/ent/nanohubpushcertificate"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/predicate"
@@ -37,6 +38,7 @@ type TenantQuery struct {
 	withMetadata         *OrgMetadataQuery
 	withRustdesk         *RustdeskQuery
 	withNetbird          *NetbirdSettingsQuery
+	withNanohubPush      *NanoHubPushCertificateQuery
 	withUserTenants      *UserTenantQuery
 	withEnrollmentTokens *EnrollmentTokenQuery
 	withFKs              bool
@@ -202,6 +204,28 @@ func (tq *TenantQuery) QueryNetbird() *NetbirdSettingsQuery {
 			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
 			sqlgraph.To(netbirdsettings.Table, netbirdsettings.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, tenant.NetbirdTable, tenant.NetbirdColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryNanohubPush chains the current query on the "nanohub_push" edge.
+func (tq *TenantQuery) QueryNanohubPush() *NanoHubPushCertificateQuery {
+	query := (&NanoHubPushCertificateClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(nanohubpushcertificate.Table, nanohubpushcertificate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, tenant.NanohubPushTable, tenant.NanohubPushColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -451,6 +475,7 @@ func (tq *TenantQuery) Clone() *TenantQuery {
 		withMetadata:         tq.withMetadata.Clone(),
 		withRustdesk:         tq.withRustdesk.Clone(),
 		withNetbird:          tq.withNetbird.Clone(),
+		withNanohubPush:      tq.withNanohubPush.Clone(),
 		withUserTenants:      tq.withUserTenants.Clone(),
 		withEnrollmentTokens: tq.withEnrollmentTokens.Clone(),
 		// clone intermediate query.
@@ -523,6 +548,17 @@ func (tq *TenantQuery) WithNetbird(opts ...func(*NetbirdSettingsQuery)) *TenantQ
 		opt(query)
 	}
 	tq.withNetbird = query
+	return tq
+}
+
+// WithNanohubPush tells the query-builder to eager-load the nodes that are connected to
+// the "nanohub_push" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TenantQuery) WithNanohubPush(opts ...func(*NanoHubPushCertificateQuery)) *TenantQuery {
+	query := (&NanoHubPushCertificateClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withNanohubPush = query
 	return tq
 }
 
@@ -627,18 +663,19 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 		nodes       = []*Tenant{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [9]bool{
 			tq.withSites != nil,
 			tq.withSettings != nil,
 			tq.withTags != nil,
 			tq.withMetadata != nil,
 			tq.withRustdesk != nil,
 			tq.withNetbird != nil,
+			tq.withNanohubPush != nil,
 			tq.withUserTenants != nil,
 			tq.withEnrollmentTokens != nil,
 		}
 	)
-	if tq.withNetbird != nil {
+	if tq.withNetbird != nil || tq.withNanohubPush != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -702,6 +739,12 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 	if query := tq.withNetbird; query != nil {
 		if err := tq.loadNetbird(ctx, query, nodes, nil,
 			func(n *Tenant, e *NetbirdSettings) { n.Edges.Netbird = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withNanohubPush; query != nil {
+		if err := tq.loadNanohubPush(ctx, query, nodes, nil,
+			func(n *Tenant, e *NanoHubPushCertificate) { n.Edges.NanohubPush = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -929,6 +972,38 @@ func (tq *TenantQuery) loadNetbird(ctx context.Context, query *NetbirdSettingsQu
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "tenant_netbird" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (tq *TenantQuery) loadNanohubPush(ctx context.Context, query *NanoHubPushCertificateQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *NanoHubPushCertificate)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Tenant)
+	for i := range nodes {
+		if nodes[i].tenant_nanohub_push == nil {
+			continue
+		}
+		fk := *nodes[i].tenant_nanohub_push
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(nanohubpushcertificate.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "tenant_nanohub_push" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

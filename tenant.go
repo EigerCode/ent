@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/open-uem/ent/nanohubpushcertificate"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/settings"
 	"github.com/open-uem/ent/tenant"
@@ -33,9 +34,10 @@ type Tenant struct {
 	Modified time.Time `json:"modified,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TenantQuery when eager-loading is set.
-	Edges          TenantEdges `json:"edges"`
-	tenant_netbird *int
-	selectValues   sql.SelectValues
+	Edges               TenantEdges `json:"edges"`
+	tenant_netbird      *int
+	tenant_nanohub_push *int
+	selectValues        sql.SelectValues
 }
 
 // TenantEdges holds the relations/edges for other nodes in the graph.
@@ -52,13 +54,15 @@ type TenantEdges struct {
 	Rustdesk []*Rustdesk `json:"rustdesk,omitempty"`
 	// Netbird holds the value of the netbird edge.
 	Netbird *NetbirdSettings `json:"netbird,omitempty"`
+	// NanohubPush holds the value of the nanohub_push edge.
+	NanohubPush *NanoHubPushCertificate `json:"nanohub_push,omitempty"`
 	// UserTenants holds the value of the user_tenants edge.
 	UserTenants []*UserTenant `json:"user_tenants,omitempty"`
 	// EnrollmentTokens holds the value of the enrollment_tokens edge.
 	EnrollmentTokens []*EnrollmentToken `json:"enrollment_tokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 }
 
 // SitesOrErr returns the Sites value or an error if the edge
@@ -119,10 +123,21 @@ func (e TenantEdges) NetbirdOrErr() (*NetbirdSettings, error) {
 	return nil, &NotLoadedError{edge: "netbird"}
 }
 
+// NanohubPushOrErr returns the NanohubPush value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TenantEdges) NanohubPushOrErr() (*NanoHubPushCertificate, error) {
+	if e.NanohubPush != nil {
+		return e.NanohubPush, nil
+	} else if e.loadedTypes[6] {
+		return nil, &NotFoundError{label: nanohubpushcertificate.Label}
+	}
+	return nil, &NotLoadedError{edge: "nanohub_push"}
+}
+
 // UserTenantsOrErr returns the UserTenants value or an error if the edge
 // was not loaded in eager-loading.
 func (e TenantEdges) UserTenantsOrErr() ([]*UserTenant, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.UserTenants, nil
 	}
 	return nil, &NotLoadedError{edge: "user_tenants"}
@@ -131,7 +146,7 @@ func (e TenantEdges) UserTenantsOrErr() ([]*UserTenant, error) {
 // EnrollmentTokensOrErr returns the EnrollmentTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e TenantEdges) EnrollmentTokensOrErr() ([]*EnrollmentToken, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.EnrollmentTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "enrollment_tokens"}
@@ -151,6 +166,8 @@ func (*Tenant) scanValues(columns []string) ([]any, error) {
 		case tenant.FieldCreated, tenant.FieldModified:
 			values[i] = new(sql.NullTime)
 		case tenant.ForeignKeys[0]: // tenant_netbird
+			values[i] = new(sql.NullInt64)
+		case tenant.ForeignKeys[1]: // tenant_nanohub_push
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -216,6 +233,13 @@ func (t *Tenant) assignValues(columns []string, values []any) error {
 				t.tenant_netbird = new(int)
 				*t.tenant_netbird = int(value.Int64)
 			}
+		case tenant.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field tenant_nanohub_push", value)
+			} else if value.Valid {
+				t.tenant_nanohub_push = new(int)
+				*t.tenant_nanohub_push = int(value.Int64)
+			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -257,6 +281,11 @@ func (t *Tenant) QueryRustdesk() *RustdeskQuery {
 // QueryNetbird queries the "netbird" edge of the Tenant entity.
 func (t *Tenant) QueryNetbird() *NetbirdSettingsQuery {
 	return NewTenantClient(t.config).QueryNetbird(t)
+}
+
+// QueryNanohubPush queries the "nanohub_push" edge of the Tenant entity.
+func (t *Tenant) QueryNanohubPush() *NanoHubPushCertificateQuery {
+	return NewTenantClient(t.config).QueryNanohubPush(t)
 }
 
 // QueryUserTenants queries the "user_tenants" edge of the Tenant entity.

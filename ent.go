@@ -22,9 +22,14 @@ import (
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
+	"github.com/open-uem/ent/mdmcommand"
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubpushcertificate"
+	"github.com/open-uem/ent/nanohubsettings"
+	"github.com/open-uem/ent/nanohubuser"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
@@ -111,45 +116,50 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			agent.Table:                 agent.ValidColumn,
-			antivirus.Table:             antivirus.ValidColumn,
-			app.Table:                   app.ValidColumn,
-			authentication.Table:        authentication.ValidColumn,
-			branding.Table:              branding.ValidColumn,
-			certificate.Table:           certificate.ValidColumn,
-			computer.Table:              computer.ValidColumn,
-			deployment.Table:            deployment.ValidColumn,
-			enrollmenttoken.Table:       enrollmenttoken.ValidColumn,
-			logicaldisk.Table:           logicaldisk.ValidColumn,
-			memoryslot.Table:            memoryslot.ValidColumn,
-			metadata.Table:              metadata.ValidColumn,
-			monitor.Table:               monitor.ValidColumn,
-			netbird.Table:               netbird.ValidColumn,
-			netbirdsettings.Table:       netbirdsettings.ValidColumn,
-			networkadapter.Table:        networkadapter.ValidColumn,
-			operatingsystem.Table:       operatingsystem.ValidColumn,
-			orgmetadata.Table:           orgmetadata.ValidColumn,
-			physicaldisk.Table:          physicaldisk.ValidColumn,
-			printer.Table:               printer.ValidColumn,
-			profile.Table:               profile.ValidColumn,
-			profileissue.Table:          profileissue.ValidColumn,
-			recoverycode.Table:          recoverycode.ValidColumn,
-			release.Table:               release.ValidColumn,
-			revocation.Table:            revocation.ValidColumn,
-			rustdesk.Table:              rustdesk.ValidColumn,
-			server.Table:                server.ValidColumn,
-			sessions.Table:              sessions.ValidColumn,
-			settings.Table:              settings.ValidColumn,
-			share.Table:                 share.ValidColumn,
-			site.Table:                  site.ValidColumn,
-			systemupdate.Table:          systemupdate.ValidColumn,
-			tag.Table:                   tag.ValidColumn,
-			task.Table:                  task.ValidColumn,
-			tenant.Table:                tenant.ValidColumn,
-			update.Table:                update.ValidColumn,
-			user.Table:                  user.ValidColumn,
-			usertenant.Table:            usertenant.ValidColumn,
-			wingetconfigexclusion.Table: wingetconfigexclusion.ValidColumn,
+			agent.Table:                  agent.ValidColumn,
+			antivirus.Table:              antivirus.ValidColumn,
+			app.Table:                    app.ValidColumn,
+			authentication.Table:         authentication.ValidColumn,
+			branding.Table:               branding.ValidColumn,
+			certificate.Table:            certificate.ValidColumn,
+			computer.Table:               computer.ValidColumn,
+			deployment.Table:             deployment.ValidColumn,
+			enrollmenttoken.Table:        enrollmenttoken.ValidColumn,
+			logicaldisk.Table:            logicaldisk.ValidColumn,
+			mdmcommand.Table:             mdmcommand.ValidColumn,
+			memoryslot.Table:             memoryslot.ValidColumn,
+			metadata.Table:               metadata.ValidColumn,
+			monitor.Table:                monitor.ValidColumn,
+			nanohubinfo.Table:            nanohubinfo.ValidColumn,
+			nanohubpushcertificate.Table: nanohubpushcertificate.ValidColumn,
+			nanohubsettings.Table:        nanohubsettings.ValidColumn,
+			nanohubuser.Table:            nanohubuser.ValidColumn,
+			netbird.Table:                netbird.ValidColumn,
+			netbirdsettings.Table:        netbirdsettings.ValidColumn,
+			networkadapter.Table:         networkadapter.ValidColumn,
+			operatingsystem.Table:        operatingsystem.ValidColumn,
+			orgmetadata.Table:            orgmetadata.ValidColumn,
+			physicaldisk.Table:           physicaldisk.ValidColumn,
+			printer.Table:                printer.ValidColumn,
+			profile.Table:                profile.ValidColumn,
+			profileissue.Table:           profileissue.ValidColumn,
+			recoverycode.Table:           recoverycode.ValidColumn,
+			release.Table:                release.ValidColumn,
+			revocation.Table:             revocation.ValidColumn,
+			rustdesk.Table:               rustdesk.ValidColumn,
+			server.Table:                 server.ValidColumn,
+			sessions.Table:               sessions.ValidColumn,
+			settings.Table:               settings.ValidColumn,
+			share.Table:                  share.ValidColumn,
+			site.Table:                   site.ValidColumn,
+			systemupdate.Table:           systemupdate.ValidColumn,
+			tag.Table:                    tag.ValidColumn,
+			task.Table:                   task.ValidColumn,
+			tenant.Table:                 tenant.ValidColumn,
+			update.Table:                 update.ValidColumn,
+			user.Table:                   user.ValidColumn,
+			usertenant.Table:             usertenant.ValidColumn,
+			wingetconfigexclusion.Table:  wingetconfigexclusion.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

@@ -21,9 +21,14 @@ import (
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
+	"github.com/open-uem/ent/mdmcommand"
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubpushcertificate"
+	"github.com/open-uem/ent/nanohubsettings"
+	"github.com/open-uem/ent/nanohubuser"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
@@ -62,45 +67,50 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAgent                 = "Agent"
-	TypeAntivirus             = "Antivirus"
-	TypeApp                   = "App"
-	TypeAuthentication        = "Authentication"
-	TypeBranding              = "Branding"
-	TypeCertificate           = "Certificate"
-	TypeComputer              = "Computer"
-	TypeDeployment            = "Deployment"
-	TypeEnrollmentToken       = "EnrollmentToken"
-	TypeLogicalDisk           = "LogicalDisk"
-	TypeMemorySlot            = "MemorySlot"
-	TypeMetadata              = "Metadata"
-	TypeMonitor               = "Monitor"
-	TypeNetbird               = "Netbird"
-	TypeNetbirdSettings       = "NetbirdSettings"
-	TypeNetworkAdapter        = "NetworkAdapter"
-	TypeOperatingSystem       = "OperatingSystem"
-	TypeOrgMetadata           = "OrgMetadata"
-	TypePhysicalDisk          = "PhysicalDisk"
-	TypePrinter               = "Printer"
-	TypeProfile               = "Profile"
-	TypeProfileIssue          = "ProfileIssue"
-	TypeRecoveryCode          = "RecoveryCode"
-	TypeRelease               = "Release"
-	TypeRevocation            = "Revocation"
-	TypeRustdesk              = "Rustdesk"
-	TypeServer                = "Server"
-	TypeSessions              = "Sessions"
-	TypeSettings              = "Settings"
-	TypeShare                 = "Share"
-	TypeSite                  = "Site"
-	TypeSystemUpdate          = "SystemUpdate"
-	TypeTag                   = "Tag"
-	TypeTask                  = "Task"
-	TypeTenant                = "Tenant"
-	TypeUpdate                = "Update"
-	TypeUser                  = "User"
-	TypeUserTenant            = "UserTenant"
-	TypeWingetConfigExclusion = "WingetConfigExclusion"
+	TypeAgent                  = "Agent"
+	TypeAntivirus              = "Antivirus"
+	TypeApp                    = "App"
+	TypeAuthentication         = "Authentication"
+	TypeBranding               = "Branding"
+	TypeCertificate            = "Certificate"
+	TypeComputer               = "Computer"
+	TypeDeployment             = "Deployment"
+	TypeEnrollmentToken        = "EnrollmentToken"
+	TypeLogicalDisk            = "LogicalDisk"
+	TypeMDMCommand             = "MDMCommand"
+	TypeMemorySlot             = "MemorySlot"
+	TypeMetadata               = "Metadata"
+	TypeMonitor                = "Monitor"
+	TypeNanoHubInfo            = "NanoHubInfo"
+	TypeNanoHubPushCertificate = "NanoHubPushCertificate"
+	TypeNanoHubSettings        = "NanoHubSettings"
+	TypeNanoHubUser            = "NanoHubUser"
+	TypeNetbird                = "Netbird"
+	TypeNetbirdSettings        = "NetbirdSettings"
+	TypeNetworkAdapter         = "NetworkAdapter"
+	TypeOperatingSystem        = "OperatingSystem"
+	TypeOrgMetadata            = "OrgMetadata"
+	TypePhysicalDisk           = "PhysicalDisk"
+	TypePrinter                = "Printer"
+	TypeProfile                = "Profile"
+	TypeProfileIssue           = "ProfileIssue"
+	TypeRecoveryCode           = "RecoveryCode"
+	TypeRelease                = "Release"
+	TypeRevocation             = "Revocation"
+	TypeRustdesk               = "Rustdesk"
+	TypeServer                 = "Server"
+	TypeSessions               = "Sessions"
+	TypeSettings               = "Settings"
+	TypeShare                  = "Share"
+	TypeSite                   = "Site"
+	TypeSystemUpdate           = "SystemUpdate"
+	TypeTag                    = "Tag"
+	TypeTask                   = "Task"
+	TypeTenant                 = "Tenant"
+	TypeUpdate                 = "Update"
+	TypeUser                   = "User"
+	TypeUserTenant             = "UserTenant"
+	TypeWingetConfigExclusion  = "WingetConfigExclusion"
 )
 
 // AgentMutation represents an operation that mutates the Agent nodes in the graph.
@@ -197,6 +207,11 @@ type AgentMutation struct {
 	clearedphysicaldisks       bool
 	netbird                    *int
 	clearednetbird             bool
+	nanohubinfo                *int
+	clearednanohubinfo         bool
+	nanohubusers               map[int]struct{}
+	removednanohubusers        map[int]struct{}
+	clearednanohubusers        bool
 	done                       bool
 	oldValue                   func(context.Context) (*Agent, error)
 	predicates                 []predicate.Agent
@@ -2755,6 +2770,99 @@ func (m *AgentMutation) ResetNetbird() {
 	m.clearednetbird = false
 }
 
+// SetNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by id.
+func (m *AgentMutation) SetNanohubinfoID(id int) {
+	m.nanohubinfo = &id
+}
+
+// ClearNanohubinfo clears the "nanohubinfo" edge to the NanoHubInfo entity.
+func (m *AgentMutation) ClearNanohubinfo() {
+	m.clearednanohubinfo = true
+}
+
+// NanohubinfoCleared reports if the "nanohubinfo" edge to the NanoHubInfo entity was cleared.
+func (m *AgentMutation) NanohubinfoCleared() bool {
+	return m.clearednanohubinfo
+}
+
+// NanohubinfoID returns the "nanohubinfo" edge ID in the mutation.
+func (m *AgentMutation) NanohubinfoID() (id int, exists bool) {
+	if m.nanohubinfo != nil {
+		return *m.nanohubinfo, true
+	}
+	return
+}
+
+// NanohubinfoIDs returns the "nanohubinfo" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// NanohubinfoID instead. It exists only for internal usage by the builders.
+func (m *AgentMutation) NanohubinfoIDs() (ids []int) {
+	if id := m.nanohubinfo; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetNanohubinfo resets all changes to the "nanohubinfo" edge.
+func (m *AgentMutation) ResetNanohubinfo() {
+	m.nanohubinfo = nil
+	m.clearednanohubinfo = false
+}
+
+// AddNanohubuserIDs adds the "nanohubusers" edge to the NanoHubUser entity by ids.
+func (m *AgentMutation) AddNanohubuserIDs(ids ...int) {
+	if m.nanohubusers == nil {
+		m.nanohubusers = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.nanohubusers[ids[i]] = struct{}{}
+	}
+}
+
+// ClearNanohubusers clears the "nanohubusers" edge to the NanoHubUser entity.
+func (m *AgentMutation) ClearNanohubusers() {
+	m.clearednanohubusers = true
+}
+
+// NanohubusersCleared reports if the "nanohubusers" edge to the NanoHubUser entity was cleared.
+func (m *AgentMutation) NanohubusersCleared() bool {
+	return m.clearednanohubusers
+}
+
+// RemoveNanohubuserIDs removes the "nanohubusers" edge to the NanoHubUser entity by IDs.
+func (m *AgentMutation) RemoveNanohubuserIDs(ids ...int) {
+	if m.removednanohubusers == nil {
+		m.removednanohubusers = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.nanohubusers, ids[i])
+		m.removednanohubusers[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedNanohubusers returns the removed IDs of the "nanohubusers" edge to the NanoHubUser entity.
+func (m *AgentMutation) RemovedNanohubusersIDs() (ids []int) {
+	for id := range m.removednanohubusers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// NanohubusersIDs returns the "nanohubusers" edge IDs in the mutation.
+func (m *AgentMutation) NanohubusersIDs() (ids []int) {
+	for id := range m.nanohubusers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetNanohubusers resets all changes to the "nanohubusers" edge.
+func (m *AgentMutation) ResetNanohubusers() {
+	m.nanohubusers = nil
+	m.clearednanohubusers = false
+	m.removednanohubusers = nil
+}
+
 // Where appends a list predicates to the AgentMutation builder.
 func (m *AgentMutation) Where(ps ...predicate.Agent) {
 	m.predicates = append(m.predicates, ps...)
@@ -3534,7 +3642,7 @@ func (m *AgentMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AgentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 21)
+	edges := make([]string, 0, 23)
 	if m.computer != nil {
 		edges = append(edges, agent.EdgeComputer)
 	}
@@ -3597,6 +3705,12 @@ func (m *AgentMutation) AddedEdges() []string {
 	}
 	if m.netbird != nil {
 		edges = append(edges, agent.EdgeNetbird)
+	}
+	if m.nanohubinfo != nil {
+		edges = append(edges, agent.EdgeNanohubinfo)
+	}
+	if m.nanohubusers != nil {
+		edges = append(edges, agent.EdgeNanohubusers)
 	}
 	return edges
 }
@@ -3719,13 +3833,23 @@ func (m *AgentMutation) AddedIDs(name string) []ent.Value {
 		if id := m.netbird; id != nil {
 			return []ent.Value{*id}
 		}
+	case agent.EdgeNanohubinfo:
+		if id := m.nanohubinfo; id != nil {
+			return []ent.Value{*id}
+		}
+	case agent.EdgeNanohubusers:
+		ids := make([]ent.Value, 0, len(m.nanohubusers))
+		for id := range m.nanohubusers {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AgentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 21)
+	edges := make([]string, 0, 23)
 	if m.removedlogicaldisks != nil {
 		edges = append(edges, agent.EdgeLogicaldisks)
 	}
@@ -3770,6 +3894,9 @@ func (m *AgentMutation) RemovedEdges() []string {
 	}
 	if m.removedphysicaldisks != nil {
 		edges = append(edges, agent.EdgePhysicaldisks)
+	}
+	if m.removednanohubusers != nil {
+		edges = append(edges, agent.EdgeNanohubusers)
 	}
 	return edges
 }
@@ -3868,13 +3995,19 @@ func (m *AgentMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case agent.EdgeNanohubusers:
+		ids := make([]ent.Value, 0, len(m.removednanohubusers))
+		for id := range m.removednanohubusers {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AgentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 21)
+	edges := make([]string, 0, 23)
 	if m.clearedcomputer {
 		edges = append(edges, agent.EdgeComputer)
 	}
@@ -3938,6 +4071,12 @@ func (m *AgentMutation) ClearedEdges() []string {
 	if m.clearednetbird {
 		edges = append(edges, agent.EdgeNetbird)
 	}
+	if m.clearednanohubinfo {
+		edges = append(edges, agent.EdgeNanohubinfo)
+	}
+	if m.clearednanohubusers {
+		edges = append(edges, agent.EdgeNanohubusers)
+	}
 	return edges
 }
 
@@ -3987,6 +4126,10 @@ func (m *AgentMutation) EdgeCleared(name string) bool {
 		return m.clearedphysicaldisks
 	case agent.EdgeNetbird:
 		return m.clearednetbird
+	case agent.EdgeNanohubinfo:
+		return m.clearednanohubinfo
+	case agent.EdgeNanohubusers:
+		return m.clearednanohubusers
 	}
 	return false
 }
@@ -4012,6 +4155,9 @@ func (m *AgentMutation) ClearEdge(name string) error {
 		return nil
 	case agent.EdgeNetbird:
 		m.ClearNetbird()
+		return nil
+	case agent.EdgeNanohubinfo:
+		m.ClearNanohubinfo()
 		return nil
 	}
 	return fmt.Errorf("unknown Agent unique edge %s", name)
@@ -4083,6 +4229,12 @@ func (m *AgentMutation) ResetEdge(name string) error {
 		return nil
 	case agent.EdgeNetbird:
 		m.ResetNetbird()
+		return nil
+	case agent.EdgeNanohubinfo:
+		m.ResetNanohubinfo()
+		return nil
+	case agent.EdgeNanohubusers:
+		m.ResetNanohubusers()
 		return nil
 	}
 	return fmt.Errorf("unknown Agent edge %s", name)
@@ -11666,6 +11818,468 @@ func (m *LogicalDiskMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown LogicalDisk edge %s", name)
 }
 
+// MDMCommandMutation represents an operation that mutates the MDMCommand nodes in the graph.
+type MDMCommandMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	when          *time.Time
+	_type         *string
+	agent_id      *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*MDMCommand, error)
+	predicates    []predicate.MDMCommand
+}
+
+var _ ent.Mutation = (*MDMCommandMutation)(nil)
+
+// mdmcommandOption allows management of the mutation configuration using functional options.
+type mdmcommandOption func(*MDMCommandMutation)
+
+// newMDMCommandMutation creates new mutation for the MDMCommand entity.
+func newMDMCommandMutation(c config, op Op, opts ...mdmcommandOption) *MDMCommandMutation {
+	m := &MDMCommandMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMDMCommand,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMDMCommandID sets the ID field of the mutation.
+func withMDMCommandID(id string) mdmcommandOption {
+	return func(m *MDMCommandMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MDMCommand
+		)
+		m.oldValue = func(ctx context.Context) (*MDMCommand, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MDMCommand.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMDMCommand sets the old MDMCommand of the mutation.
+func withMDMCommand(node *MDMCommand) mdmcommandOption {
+	return func(m *MDMCommandMutation) {
+		m.oldValue = func(context.Context) (*MDMCommand, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MDMCommandMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MDMCommandMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MDMCommand entities.
+func (m *MDMCommandMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MDMCommandMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MDMCommandMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MDMCommand.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetWhen sets the "when" field.
+func (m *MDMCommandMutation) SetWhen(t time.Time) {
+	m.when = &t
+}
+
+// When returns the value of the "when" field in the mutation.
+func (m *MDMCommandMutation) When() (r time.Time, exists bool) {
+	v := m.when
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWhen returns the old "when" field's value of the MDMCommand entity.
+// If the MDMCommand object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MDMCommandMutation) OldWhen(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWhen is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWhen requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWhen: %w", err)
+	}
+	return oldValue.When, nil
+}
+
+// ClearWhen clears the value of the "when" field.
+func (m *MDMCommandMutation) ClearWhen() {
+	m.when = nil
+	m.clearedFields[mdmcommand.FieldWhen] = struct{}{}
+}
+
+// WhenCleared returns if the "when" field was cleared in this mutation.
+func (m *MDMCommandMutation) WhenCleared() bool {
+	_, ok := m.clearedFields[mdmcommand.FieldWhen]
+	return ok
+}
+
+// ResetWhen resets all changes to the "when" field.
+func (m *MDMCommandMutation) ResetWhen() {
+	m.when = nil
+	delete(m.clearedFields, mdmcommand.FieldWhen)
+}
+
+// SetType sets the "type" field.
+func (m *MDMCommandMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *MDMCommandMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the MDMCommand entity.
+// If the MDMCommand object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MDMCommandMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *MDMCommandMutation) ResetType() {
+	m._type = nil
+}
+
+// SetAgentID sets the "agent_id" field.
+func (m *MDMCommandMutation) SetAgentID(s string) {
+	m.agent_id = &s
+}
+
+// AgentID returns the value of the "agent_id" field in the mutation.
+func (m *MDMCommandMutation) AgentID() (r string, exists bool) {
+	v := m.agent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAgentID returns the old "agent_id" field's value of the MDMCommand entity.
+// If the MDMCommand object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MDMCommandMutation) OldAgentID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAgentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAgentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAgentID: %w", err)
+	}
+	return oldValue.AgentID, nil
+}
+
+// ResetAgentID resets all changes to the "agent_id" field.
+func (m *MDMCommandMutation) ResetAgentID() {
+	m.agent_id = nil
+}
+
+// Where appends a list predicates to the MDMCommandMutation builder.
+func (m *MDMCommandMutation) Where(ps ...predicate.MDMCommand) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MDMCommandMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MDMCommandMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MDMCommand, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MDMCommandMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MDMCommandMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MDMCommand).
+func (m *MDMCommandMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MDMCommandMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.when != nil {
+		fields = append(fields, mdmcommand.FieldWhen)
+	}
+	if m._type != nil {
+		fields = append(fields, mdmcommand.FieldType)
+	}
+	if m.agent_id != nil {
+		fields = append(fields, mdmcommand.FieldAgentID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MDMCommandMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case mdmcommand.FieldWhen:
+		return m.When()
+	case mdmcommand.FieldType:
+		return m.GetType()
+	case mdmcommand.FieldAgentID:
+		return m.AgentID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MDMCommandMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case mdmcommand.FieldWhen:
+		return m.OldWhen(ctx)
+	case mdmcommand.FieldType:
+		return m.OldType(ctx)
+	case mdmcommand.FieldAgentID:
+		return m.OldAgentID(ctx)
+	}
+	return nil, fmt.Errorf("unknown MDMCommand field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MDMCommandMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case mdmcommand.FieldWhen:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWhen(v)
+		return nil
+	case mdmcommand.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case mdmcommand.FieldAgentID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAgentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MDMCommand field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MDMCommandMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MDMCommandMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MDMCommandMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown MDMCommand numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MDMCommandMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(mdmcommand.FieldWhen) {
+		fields = append(fields, mdmcommand.FieldWhen)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MDMCommandMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MDMCommandMutation) ClearField(name string) error {
+	switch name {
+	case mdmcommand.FieldWhen:
+		m.ClearWhen()
+		return nil
+	}
+	return fmt.Errorf("unknown MDMCommand nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MDMCommandMutation) ResetField(name string) error {
+	switch name {
+	case mdmcommand.FieldWhen:
+		m.ResetWhen()
+		return nil
+	case mdmcommand.FieldType:
+		m.ResetType()
+		return nil
+	case mdmcommand.FieldAgentID:
+		m.ResetAgentID()
+		return nil
+	}
+	return fmt.Errorf("unknown MDMCommand field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MDMCommandMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MDMCommandMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MDMCommandMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MDMCommandMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MDMCommandMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MDMCommandMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MDMCommandMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MDMCommand unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MDMCommandMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MDMCommand edge %s", name)
+}
+
 // MemorySlotMutation represents an operation that mutates the MemorySlot nodes in the graph.
 type MemorySlotMutation struct {
 	config
@@ -13676,6 +14290,6468 @@ func (m *MonitorMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Monitor edge %s", name)
+}
+
+// NanoHubInfoMutation represents an operation that mutates the NanoHubInfo nodes in the graph.
+type NanoHubInfoMutation struct {
+	config
+	op                                  Op
+	typ                                 string
+	id                                  *int
+	available_device_capacity           *float64
+	addavailable_device_capacity        *float64
+	awaiting_configuration              *bool
+	battery_level                       *float64
+	addbattery_level                    *float64
+	bluetooth_mac                       *string
+	build_version                       *string
+	current_console_managed_user        *string
+	device_capacity                     *float64
+	adddevice_capacity                  *float64
+	device_name                         *string
+	eacs_preflight                      *string
+	ethernet_mac                        *string
+	wifi_mac                            *string
+	has_battery                         *bool
+	hostname                            *string
+	is_activation_lock_enabled          *bool
+	is_activation_lock_supported        *bool
+	is_apple_silicon                    *bool
+	is_supervised                       *bool
+	localhostname                       *string
+	model                               *string
+	model_name                          *string
+	auto_check_enabled                  *bool
+	automatic_app_installation_enabled  *bool
+	automatic_os_installation_enabled   *bool
+	automatic_security_updates_enabled  *bool
+	background_download_enabled         *bool
+	catalog_url                         *string
+	is_default_catalog                  *bool
+	previous_scan_date                  *time.Time
+	previous_scan_result                *int64
+	addprevious_scan_result             *int64
+	os_version                          *string
+	pin_required_for_device_lock        *bool
+	pin_required_for_erase_device       *bool
+	product_name                        *string
+	provisioning_udid                   *string
+	serial_number                       *string
+	software_update_device_id           *string
+	supplemental_build_version          *string
+	supports_lom_device                 *bool
+	supports_ios_app_installs           *bool
+	system_integrity_protection_enabled *bool
+	udid                                *string
+	clearedFields                       map[string]struct{}
+	owner                               *string
+	clearedowner                        bool
+	done                                bool
+	oldValue                            func(context.Context) (*NanoHubInfo, error)
+	predicates                          []predicate.NanoHubInfo
+}
+
+var _ ent.Mutation = (*NanoHubInfoMutation)(nil)
+
+// nanohubinfoOption allows management of the mutation configuration using functional options.
+type nanohubinfoOption func(*NanoHubInfoMutation)
+
+// newNanoHubInfoMutation creates new mutation for the NanoHubInfo entity.
+func newNanoHubInfoMutation(c config, op Op, opts ...nanohubinfoOption) *NanoHubInfoMutation {
+	m := &NanoHubInfoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNanoHubInfo,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNanoHubInfoID sets the ID field of the mutation.
+func withNanoHubInfoID(id int) nanohubinfoOption {
+	return func(m *NanoHubInfoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NanoHubInfo
+		)
+		m.oldValue = func(ctx context.Context) (*NanoHubInfo, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NanoHubInfo.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNanoHubInfo sets the old NanoHubInfo of the mutation.
+func withNanoHubInfo(node *NanoHubInfo) nanohubinfoOption {
+	return func(m *NanoHubInfoMutation) {
+		m.oldValue = func(context.Context) (*NanoHubInfo, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NanoHubInfoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NanoHubInfoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NanoHubInfoMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NanoHubInfoMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NanoHubInfo.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetAvailableDeviceCapacity sets the "available_device_capacity" field.
+func (m *NanoHubInfoMutation) SetAvailableDeviceCapacity(f float64) {
+	m.available_device_capacity = &f
+	m.addavailable_device_capacity = nil
+}
+
+// AvailableDeviceCapacity returns the value of the "available_device_capacity" field in the mutation.
+func (m *NanoHubInfoMutation) AvailableDeviceCapacity() (r float64, exists bool) {
+	v := m.available_device_capacity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvailableDeviceCapacity returns the old "available_device_capacity" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldAvailableDeviceCapacity(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvailableDeviceCapacity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvailableDeviceCapacity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvailableDeviceCapacity: %w", err)
+	}
+	return oldValue.AvailableDeviceCapacity, nil
+}
+
+// AddAvailableDeviceCapacity adds f to the "available_device_capacity" field.
+func (m *NanoHubInfoMutation) AddAvailableDeviceCapacity(f float64) {
+	if m.addavailable_device_capacity != nil {
+		*m.addavailable_device_capacity += f
+	} else {
+		m.addavailable_device_capacity = &f
+	}
+}
+
+// AddedAvailableDeviceCapacity returns the value that was added to the "available_device_capacity" field in this mutation.
+func (m *NanoHubInfoMutation) AddedAvailableDeviceCapacity() (r float64, exists bool) {
+	v := m.addavailable_device_capacity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearAvailableDeviceCapacity clears the value of the "available_device_capacity" field.
+func (m *NanoHubInfoMutation) ClearAvailableDeviceCapacity() {
+	m.available_device_capacity = nil
+	m.addavailable_device_capacity = nil
+	m.clearedFields[nanohubinfo.FieldAvailableDeviceCapacity] = struct{}{}
+}
+
+// AvailableDeviceCapacityCleared returns if the "available_device_capacity" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) AvailableDeviceCapacityCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldAvailableDeviceCapacity]
+	return ok
+}
+
+// ResetAvailableDeviceCapacity resets all changes to the "available_device_capacity" field.
+func (m *NanoHubInfoMutation) ResetAvailableDeviceCapacity() {
+	m.available_device_capacity = nil
+	m.addavailable_device_capacity = nil
+	delete(m.clearedFields, nanohubinfo.FieldAvailableDeviceCapacity)
+}
+
+// SetAwaitingConfiguration sets the "awaiting_configuration" field.
+func (m *NanoHubInfoMutation) SetAwaitingConfiguration(b bool) {
+	m.awaiting_configuration = &b
+}
+
+// AwaitingConfiguration returns the value of the "awaiting_configuration" field in the mutation.
+func (m *NanoHubInfoMutation) AwaitingConfiguration() (r bool, exists bool) {
+	v := m.awaiting_configuration
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAwaitingConfiguration returns the old "awaiting_configuration" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldAwaitingConfiguration(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAwaitingConfiguration is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAwaitingConfiguration requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAwaitingConfiguration: %w", err)
+	}
+	return oldValue.AwaitingConfiguration, nil
+}
+
+// ClearAwaitingConfiguration clears the value of the "awaiting_configuration" field.
+func (m *NanoHubInfoMutation) ClearAwaitingConfiguration() {
+	m.awaiting_configuration = nil
+	m.clearedFields[nanohubinfo.FieldAwaitingConfiguration] = struct{}{}
+}
+
+// AwaitingConfigurationCleared returns if the "awaiting_configuration" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) AwaitingConfigurationCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldAwaitingConfiguration]
+	return ok
+}
+
+// ResetAwaitingConfiguration resets all changes to the "awaiting_configuration" field.
+func (m *NanoHubInfoMutation) ResetAwaitingConfiguration() {
+	m.awaiting_configuration = nil
+	delete(m.clearedFields, nanohubinfo.FieldAwaitingConfiguration)
+}
+
+// SetBatteryLevel sets the "battery_level" field.
+func (m *NanoHubInfoMutation) SetBatteryLevel(f float64) {
+	m.battery_level = &f
+	m.addbattery_level = nil
+}
+
+// BatteryLevel returns the value of the "battery_level" field in the mutation.
+func (m *NanoHubInfoMutation) BatteryLevel() (r float64, exists bool) {
+	v := m.battery_level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBatteryLevel returns the old "battery_level" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldBatteryLevel(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBatteryLevel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBatteryLevel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBatteryLevel: %w", err)
+	}
+	return oldValue.BatteryLevel, nil
+}
+
+// AddBatteryLevel adds f to the "battery_level" field.
+func (m *NanoHubInfoMutation) AddBatteryLevel(f float64) {
+	if m.addbattery_level != nil {
+		*m.addbattery_level += f
+	} else {
+		m.addbattery_level = &f
+	}
+}
+
+// AddedBatteryLevel returns the value that was added to the "battery_level" field in this mutation.
+func (m *NanoHubInfoMutation) AddedBatteryLevel() (r float64, exists bool) {
+	v := m.addbattery_level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearBatteryLevel clears the value of the "battery_level" field.
+func (m *NanoHubInfoMutation) ClearBatteryLevel() {
+	m.battery_level = nil
+	m.addbattery_level = nil
+	m.clearedFields[nanohubinfo.FieldBatteryLevel] = struct{}{}
+}
+
+// BatteryLevelCleared returns if the "battery_level" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) BatteryLevelCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldBatteryLevel]
+	return ok
+}
+
+// ResetBatteryLevel resets all changes to the "battery_level" field.
+func (m *NanoHubInfoMutation) ResetBatteryLevel() {
+	m.battery_level = nil
+	m.addbattery_level = nil
+	delete(m.clearedFields, nanohubinfo.FieldBatteryLevel)
+}
+
+// SetBluetoothMAC sets the "bluetooth_mac" field.
+func (m *NanoHubInfoMutation) SetBluetoothMAC(s string) {
+	m.bluetooth_mac = &s
+}
+
+// BluetoothMAC returns the value of the "bluetooth_mac" field in the mutation.
+func (m *NanoHubInfoMutation) BluetoothMAC() (r string, exists bool) {
+	v := m.bluetooth_mac
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBluetoothMAC returns the old "bluetooth_mac" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldBluetoothMAC(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBluetoothMAC is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBluetoothMAC requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBluetoothMAC: %w", err)
+	}
+	return oldValue.BluetoothMAC, nil
+}
+
+// ClearBluetoothMAC clears the value of the "bluetooth_mac" field.
+func (m *NanoHubInfoMutation) ClearBluetoothMAC() {
+	m.bluetooth_mac = nil
+	m.clearedFields[nanohubinfo.FieldBluetoothMAC] = struct{}{}
+}
+
+// BluetoothMACCleared returns if the "bluetooth_mac" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) BluetoothMACCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldBluetoothMAC]
+	return ok
+}
+
+// ResetBluetoothMAC resets all changes to the "bluetooth_mac" field.
+func (m *NanoHubInfoMutation) ResetBluetoothMAC() {
+	m.bluetooth_mac = nil
+	delete(m.clearedFields, nanohubinfo.FieldBluetoothMAC)
+}
+
+// SetBuildVersion sets the "build_version" field.
+func (m *NanoHubInfoMutation) SetBuildVersion(s string) {
+	m.build_version = &s
+}
+
+// BuildVersion returns the value of the "build_version" field in the mutation.
+func (m *NanoHubInfoMutation) BuildVersion() (r string, exists bool) {
+	v := m.build_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBuildVersion returns the old "build_version" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldBuildVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBuildVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBuildVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBuildVersion: %w", err)
+	}
+	return oldValue.BuildVersion, nil
+}
+
+// ClearBuildVersion clears the value of the "build_version" field.
+func (m *NanoHubInfoMutation) ClearBuildVersion() {
+	m.build_version = nil
+	m.clearedFields[nanohubinfo.FieldBuildVersion] = struct{}{}
+}
+
+// BuildVersionCleared returns if the "build_version" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) BuildVersionCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldBuildVersion]
+	return ok
+}
+
+// ResetBuildVersion resets all changes to the "build_version" field.
+func (m *NanoHubInfoMutation) ResetBuildVersion() {
+	m.build_version = nil
+	delete(m.clearedFields, nanohubinfo.FieldBuildVersion)
+}
+
+// SetCurrentConsoleManagedUser sets the "current_console_managed_user" field.
+func (m *NanoHubInfoMutation) SetCurrentConsoleManagedUser(s string) {
+	m.current_console_managed_user = &s
+}
+
+// CurrentConsoleManagedUser returns the value of the "current_console_managed_user" field in the mutation.
+func (m *NanoHubInfoMutation) CurrentConsoleManagedUser() (r string, exists bool) {
+	v := m.current_console_managed_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentConsoleManagedUser returns the old "current_console_managed_user" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldCurrentConsoleManagedUser(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentConsoleManagedUser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentConsoleManagedUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentConsoleManagedUser: %w", err)
+	}
+	return oldValue.CurrentConsoleManagedUser, nil
+}
+
+// ClearCurrentConsoleManagedUser clears the value of the "current_console_managed_user" field.
+func (m *NanoHubInfoMutation) ClearCurrentConsoleManagedUser() {
+	m.current_console_managed_user = nil
+	m.clearedFields[nanohubinfo.FieldCurrentConsoleManagedUser] = struct{}{}
+}
+
+// CurrentConsoleManagedUserCleared returns if the "current_console_managed_user" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) CurrentConsoleManagedUserCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldCurrentConsoleManagedUser]
+	return ok
+}
+
+// ResetCurrentConsoleManagedUser resets all changes to the "current_console_managed_user" field.
+func (m *NanoHubInfoMutation) ResetCurrentConsoleManagedUser() {
+	m.current_console_managed_user = nil
+	delete(m.clearedFields, nanohubinfo.FieldCurrentConsoleManagedUser)
+}
+
+// SetDeviceCapacity sets the "device_capacity" field.
+func (m *NanoHubInfoMutation) SetDeviceCapacity(f float64) {
+	m.device_capacity = &f
+	m.adddevice_capacity = nil
+}
+
+// DeviceCapacity returns the value of the "device_capacity" field in the mutation.
+func (m *NanoHubInfoMutation) DeviceCapacity() (r float64, exists bool) {
+	v := m.device_capacity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceCapacity returns the old "device_capacity" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldDeviceCapacity(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceCapacity is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceCapacity requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceCapacity: %w", err)
+	}
+	return oldValue.DeviceCapacity, nil
+}
+
+// AddDeviceCapacity adds f to the "device_capacity" field.
+func (m *NanoHubInfoMutation) AddDeviceCapacity(f float64) {
+	if m.adddevice_capacity != nil {
+		*m.adddevice_capacity += f
+	} else {
+		m.adddevice_capacity = &f
+	}
+}
+
+// AddedDeviceCapacity returns the value that was added to the "device_capacity" field in this mutation.
+func (m *NanoHubInfoMutation) AddedDeviceCapacity() (r float64, exists bool) {
+	v := m.adddevice_capacity
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeviceCapacity clears the value of the "device_capacity" field.
+func (m *NanoHubInfoMutation) ClearDeviceCapacity() {
+	m.device_capacity = nil
+	m.adddevice_capacity = nil
+	m.clearedFields[nanohubinfo.FieldDeviceCapacity] = struct{}{}
+}
+
+// DeviceCapacityCleared returns if the "device_capacity" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) DeviceCapacityCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldDeviceCapacity]
+	return ok
+}
+
+// ResetDeviceCapacity resets all changes to the "device_capacity" field.
+func (m *NanoHubInfoMutation) ResetDeviceCapacity() {
+	m.device_capacity = nil
+	m.adddevice_capacity = nil
+	delete(m.clearedFields, nanohubinfo.FieldDeviceCapacity)
+}
+
+// SetDeviceName sets the "device_name" field.
+func (m *NanoHubInfoMutation) SetDeviceName(s string) {
+	m.device_name = &s
+}
+
+// DeviceName returns the value of the "device_name" field in the mutation.
+func (m *NanoHubInfoMutation) DeviceName() (r string, exists bool) {
+	v := m.device_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeviceName returns the old "device_name" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldDeviceName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeviceName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeviceName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeviceName: %w", err)
+	}
+	return oldValue.DeviceName, nil
+}
+
+// ClearDeviceName clears the value of the "device_name" field.
+func (m *NanoHubInfoMutation) ClearDeviceName() {
+	m.device_name = nil
+	m.clearedFields[nanohubinfo.FieldDeviceName] = struct{}{}
+}
+
+// DeviceNameCleared returns if the "device_name" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) DeviceNameCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldDeviceName]
+	return ok
+}
+
+// ResetDeviceName resets all changes to the "device_name" field.
+func (m *NanoHubInfoMutation) ResetDeviceName() {
+	m.device_name = nil
+	delete(m.clearedFields, nanohubinfo.FieldDeviceName)
+}
+
+// SetEacsPreflight sets the "eacs_preflight" field.
+func (m *NanoHubInfoMutation) SetEacsPreflight(s string) {
+	m.eacs_preflight = &s
+}
+
+// EacsPreflight returns the value of the "eacs_preflight" field in the mutation.
+func (m *NanoHubInfoMutation) EacsPreflight() (r string, exists bool) {
+	v := m.eacs_preflight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEacsPreflight returns the old "eacs_preflight" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldEacsPreflight(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEacsPreflight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEacsPreflight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEacsPreflight: %w", err)
+	}
+	return oldValue.EacsPreflight, nil
+}
+
+// ClearEacsPreflight clears the value of the "eacs_preflight" field.
+func (m *NanoHubInfoMutation) ClearEacsPreflight() {
+	m.eacs_preflight = nil
+	m.clearedFields[nanohubinfo.FieldEacsPreflight] = struct{}{}
+}
+
+// EacsPreflightCleared returns if the "eacs_preflight" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) EacsPreflightCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldEacsPreflight]
+	return ok
+}
+
+// ResetEacsPreflight resets all changes to the "eacs_preflight" field.
+func (m *NanoHubInfoMutation) ResetEacsPreflight() {
+	m.eacs_preflight = nil
+	delete(m.clearedFields, nanohubinfo.FieldEacsPreflight)
+}
+
+// SetEthernetMAC sets the "ethernet_mac" field.
+func (m *NanoHubInfoMutation) SetEthernetMAC(s string) {
+	m.ethernet_mac = &s
+}
+
+// EthernetMAC returns the value of the "ethernet_mac" field in the mutation.
+func (m *NanoHubInfoMutation) EthernetMAC() (r string, exists bool) {
+	v := m.ethernet_mac
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEthernetMAC returns the old "ethernet_mac" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldEthernetMAC(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEthernetMAC is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEthernetMAC requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEthernetMAC: %w", err)
+	}
+	return oldValue.EthernetMAC, nil
+}
+
+// ClearEthernetMAC clears the value of the "ethernet_mac" field.
+func (m *NanoHubInfoMutation) ClearEthernetMAC() {
+	m.ethernet_mac = nil
+	m.clearedFields[nanohubinfo.FieldEthernetMAC] = struct{}{}
+}
+
+// EthernetMACCleared returns if the "ethernet_mac" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) EthernetMACCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldEthernetMAC]
+	return ok
+}
+
+// ResetEthernetMAC resets all changes to the "ethernet_mac" field.
+func (m *NanoHubInfoMutation) ResetEthernetMAC() {
+	m.ethernet_mac = nil
+	delete(m.clearedFields, nanohubinfo.FieldEthernetMAC)
+}
+
+// SetWifiMAC sets the "wifi_mac" field.
+func (m *NanoHubInfoMutation) SetWifiMAC(s string) {
+	m.wifi_mac = &s
+}
+
+// WifiMAC returns the value of the "wifi_mac" field in the mutation.
+func (m *NanoHubInfoMutation) WifiMAC() (r string, exists bool) {
+	v := m.wifi_mac
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWifiMAC returns the old "wifi_mac" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldWifiMAC(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWifiMAC is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWifiMAC requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWifiMAC: %w", err)
+	}
+	return oldValue.WifiMAC, nil
+}
+
+// ClearWifiMAC clears the value of the "wifi_mac" field.
+func (m *NanoHubInfoMutation) ClearWifiMAC() {
+	m.wifi_mac = nil
+	m.clearedFields[nanohubinfo.FieldWifiMAC] = struct{}{}
+}
+
+// WifiMACCleared returns if the "wifi_mac" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) WifiMACCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldWifiMAC]
+	return ok
+}
+
+// ResetWifiMAC resets all changes to the "wifi_mac" field.
+func (m *NanoHubInfoMutation) ResetWifiMAC() {
+	m.wifi_mac = nil
+	delete(m.clearedFields, nanohubinfo.FieldWifiMAC)
+}
+
+// SetHasBattery sets the "has_battery" field.
+func (m *NanoHubInfoMutation) SetHasBattery(b bool) {
+	m.has_battery = &b
+}
+
+// HasBattery returns the value of the "has_battery" field in the mutation.
+func (m *NanoHubInfoMutation) HasBattery() (r bool, exists bool) {
+	v := m.has_battery
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHasBattery returns the old "has_battery" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldHasBattery(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHasBattery is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHasBattery requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHasBattery: %w", err)
+	}
+	return oldValue.HasBattery, nil
+}
+
+// ClearHasBattery clears the value of the "has_battery" field.
+func (m *NanoHubInfoMutation) ClearHasBattery() {
+	m.has_battery = nil
+	m.clearedFields[nanohubinfo.FieldHasBattery] = struct{}{}
+}
+
+// HasBatteryCleared returns if the "has_battery" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) HasBatteryCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldHasBattery]
+	return ok
+}
+
+// ResetHasBattery resets all changes to the "has_battery" field.
+func (m *NanoHubInfoMutation) ResetHasBattery() {
+	m.has_battery = nil
+	delete(m.clearedFields, nanohubinfo.FieldHasBattery)
+}
+
+// SetHostname sets the "hostname" field.
+func (m *NanoHubInfoMutation) SetHostname(s string) {
+	m.hostname = &s
+}
+
+// Hostname returns the value of the "hostname" field in the mutation.
+func (m *NanoHubInfoMutation) Hostname() (r string, exists bool) {
+	v := m.hostname
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHostname returns the old "hostname" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldHostname(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHostname is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHostname requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHostname: %w", err)
+	}
+	return oldValue.Hostname, nil
+}
+
+// ClearHostname clears the value of the "hostname" field.
+func (m *NanoHubInfoMutation) ClearHostname() {
+	m.hostname = nil
+	m.clearedFields[nanohubinfo.FieldHostname] = struct{}{}
+}
+
+// HostnameCleared returns if the "hostname" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) HostnameCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldHostname]
+	return ok
+}
+
+// ResetHostname resets all changes to the "hostname" field.
+func (m *NanoHubInfoMutation) ResetHostname() {
+	m.hostname = nil
+	delete(m.clearedFields, nanohubinfo.FieldHostname)
+}
+
+// SetIsActivationLockEnabled sets the "is_activation_lock_enabled" field.
+func (m *NanoHubInfoMutation) SetIsActivationLockEnabled(b bool) {
+	m.is_activation_lock_enabled = &b
+}
+
+// IsActivationLockEnabled returns the value of the "is_activation_lock_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) IsActivationLockEnabled() (r bool, exists bool) {
+	v := m.is_activation_lock_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsActivationLockEnabled returns the old "is_activation_lock_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldIsActivationLockEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsActivationLockEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsActivationLockEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsActivationLockEnabled: %w", err)
+	}
+	return oldValue.IsActivationLockEnabled, nil
+}
+
+// ClearIsActivationLockEnabled clears the value of the "is_activation_lock_enabled" field.
+func (m *NanoHubInfoMutation) ClearIsActivationLockEnabled() {
+	m.is_activation_lock_enabled = nil
+	m.clearedFields[nanohubinfo.FieldIsActivationLockEnabled] = struct{}{}
+}
+
+// IsActivationLockEnabledCleared returns if the "is_activation_lock_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) IsActivationLockEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldIsActivationLockEnabled]
+	return ok
+}
+
+// ResetIsActivationLockEnabled resets all changes to the "is_activation_lock_enabled" field.
+func (m *NanoHubInfoMutation) ResetIsActivationLockEnabled() {
+	m.is_activation_lock_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldIsActivationLockEnabled)
+}
+
+// SetIsActivationLockSupported sets the "is_activation_lock_supported" field.
+func (m *NanoHubInfoMutation) SetIsActivationLockSupported(b bool) {
+	m.is_activation_lock_supported = &b
+}
+
+// IsActivationLockSupported returns the value of the "is_activation_lock_supported" field in the mutation.
+func (m *NanoHubInfoMutation) IsActivationLockSupported() (r bool, exists bool) {
+	v := m.is_activation_lock_supported
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsActivationLockSupported returns the old "is_activation_lock_supported" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldIsActivationLockSupported(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsActivationLockSupported is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsActivationLockSupported requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsActivationLockSupported: %w", err)
+	}
+	return oldValue.IsActivationLockSupported, nil
+}
+
+// ClearIsActivationLockSupported clears the value of the "is_activation_lock_supported" field.
+func (m *NanoHubInfoMutation) ClearIsActivationLockSupported() {
+	m.is_activation_lock_supported = nil
+	m.clearedFields[nanohubinfo.FieldIsActivationLockSupported] = struct{}{}
+}
+
+// IsActivationLockSupportedCleared returns if the "is_activation_lock_supported" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) IsActivationLockSupportedCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldIsActivationLockSupported]
+	return ok
+}
+
+// ResetIsActivationLockSupported resets all changes to the "is_activation_lock_supported" field.
+func (m *NanoHubInfoMutation) ResetIsActivationLockSupported() {
+	m.is_activation_lock_supported = nil
+	delete(m.clearedFields, nanohubinfo.FieldIsActivationLockSupported)
+}
+
+// SetIsAppleSilicon sets the "is_apple_silicon" field.
+func (m *NanoHubInfoMutation) SetIsAppleSilicon(b bool) {
+	m.is_apple_silicon = &b
+}
+
+// IsAppleSilicon returns the value of the "is_apple_silicon" field in the mutation.
+func (m *NanoHubInfoMutation) IsAppleSilicon() (r bool, exists bool) {
+	v := m.is_apple_silicon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsAppleSilicon returns the old "is_apple_silicon" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldIsAppleSilicon(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsAppleSilicon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsAppleSilicon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsAppleSilicon: %w", err)
+	}
+	return oldValue.IsAppleSilicon, nil
+}
+
+// ClearIsAppleSilicon clears the value of the "is_apple_silicon" field.
+func (m *NanoHubInfoMutation) ClearIsAppleSilicon() {
+	m.is_apple_silicon = nil
+	m.clearedFields[nanohubinfo.FieldIsAppleSilicon] = struct{}{}
+}
+
+// IsAppleSiliconCleared returns if the "is_apple_silicon" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) IsAppleSiliconCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldIsAppleSilicon]
+	return ok
+}
+
+// ResetIsAppleSilicon resets all changes to the "is_apple_silicon" field.
+func (m *NanoHubInfoMutation) ResetIsAppleSilicon() {
+	m.is_apple_silicon = nil
+	delete(m.clearedFields, nanohubinfo.FieldIsAppleSilicon)
+}
+
+// SetIsSupervised sets the "is_supervised" field.
+func (m *NanoHubInfoMutation) SetIsSupervised(b bool) {
+	m.is_supervised = &b
+}
+
+// IsSupervised returns the value of the "is_supervised" field in the mutation.
+func (m *NanoHubInfoMutation) IsSupervised() (r bool, exists bool) {
+	v := m.is_supervised
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsSupervised returns the old "is_supervised" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldIsSupervised(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsSupervised is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsSupervised requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsSupervised: %w", err)
+	}
+	return oldValue.IsSupervised, nil
+}
+
+// ClearIsSupervised clears the value of the "is_supervised" field.
+func (m *NanoHubInfoMutation) ClearIsSupervised() {
+	m.is_supervised = nil
+	m.clearedFields[nanohubinfo.FieldIsSupervised] = struct{}{}
+}
+
+// IsSupervisedCleared returns if the "is_supervised" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) IsSupervisedCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldIsSupervised]
+	return ok
+}
+
+// ResetIsSupervised resets all changes to the "is_supervised" field.
+func (m *NanoHubInfoMutation) ResetIsSupervised() {
+	m.is_supervised = nil
+	delete(m.clearedFields, nanohubinfo.FieldIsSupervised)
+}
+
+// SetLocalhostname sets the "localhostname" field.
+func (m *NanoHubInfoMutation) SetLocalhostname(s string) {
+	m.localhostname = &s
+}
+
+// Localhostname returns the value of the "localhostname" field in the mutation.
+func (m *NanoHubInfoMutation) Localhostname() (r string, exists bool) {
+	v := m.localhostname
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocalhostname returns the old "localhostname" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldLocalhostname(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocalhostname is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocalhostname requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocalhostname: %w", err)
+	}
+	return oldValue.Localhostname, nil
+}
+
+// ClearLocalhostname clears the value of the "localhostname" field.
+func (m *NanoHubInfoMutation) ClearLocalhostname() {
+	m.localhostname = nil
+	m.clearedFields[nanohubinfo.FieldLocalhostname] = struct{}{}
+}
+
+// LocalhostnameCleared returns if the "localhostname" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) LocalhostnameCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldLocalhostname]
+	return ok
+}
+
+// ResetLocalhostname resets all changes to the "localhostname" field.
+func (m *NanoHubInfoMutation) ResetLocalhostname() {
+	m.localhostname = nil
+	delete(m.clearedFields, nanohubinfo.FieldLocalhostname)
+}
+
+// SetModel sets the "model" field.
+func (m *NanoHubInfoMutation) SetModel(s string) {
+	m.model = &s
+}
+
+// Model returns the value of the "model" field in the mutation.
+func (m *NanoHubInfoMutation) Model() (r string, exists bool) {
+	v := m.model
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModel returns the old "model" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldModel(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModel: %w", err)
+	}
+	return oldValue.Model, nil
+}
+
+// ClearModel clears the value of the "model" field.
+func (m *NanoHubInfoMutation) ClearModel() {
+	m.model = nil
+	m.clearedFields[nanohubinfo.FieldModel] = struct{}{}
+}
+
+// ModelCleared returns if the "model" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) ModelCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldModel]
+	return ok
+}
+
+// ResetModel resets all changes to the "model" field.
+func (m *NanoHubInfoMutation) ResetModel() {
+	m.model = nil
+	delete(m.clearedFields, nanohubinfo.FieldModel)
+}
+
+// SetModelName sets the "model_name" field.
+func (m *NanoHubInfoMutation) SetModelName(s string) {
+	m.model_name = &s
+}
+
+// ModelName returns the value of the "model_name" field in the mutation.
+func (m *NanoHubInfoMutation) ModelName() (r string, exists bool) {
+	v := m.model_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModelName returns the old "model_name" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldModelName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModelName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModelName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModelName: %w", err)
+	}
+	return oldValue.ModelName, nil
+}
+
+// ClearModelName clears the value of the "model_name" field.
+func (m *NanoHubInfoMutation) ClearModelName() {
+	m.model_name = nil
+	m.clearedFields[nanohubinfo.FieldModelName] = struct{}{}
+}
+
+// ModelNameCleared returns if the "model_name" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) ModelNameCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldModelName]
+	return ok
+}
+
+// ResetModelName resets all changes to the "model_name" field.
+func (m *NanoHubInfoMutation) ResetModelName() {
+	m.model_name = nil
+	delete(m.clearedFields, nanohubinfo.FieldModelName)
+}
+
+// SetAutoCheckEnabled sets the "auto_check_enabled" field.
+func (m *NanoHubInfoMutation) SetAutoCheckEnabled(b bool) {
+	m.auto_check_enabled = &b
+}
+
+// AutoCheckEnabled returns the value of the "auto_check_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) AutoCheckEnabled() (r bool, exists bool) {
+	v := m.auto_check_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutoCheckEnabled returns the old "auto_check_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldAutoCheckEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutoCheckEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutoCheckEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutoCheckEnabled: %w", err)
+	}
+	return oldValue.AutoCheckEnabled, nil
+}
+
+// ClearAutoCheckEnabled clears the value of the "auto_check_enabled" field.
+func (m *NanoHubInfoMutation) ClearAutoCheckEnabled() {
+	m.auto_check_enabled = nil
+	m.clearedFields[nanohubinfo.FieldAutoCheckEnabled] = struct{}{}
+}
+
+// AutoCheckEnabledCleared returns if the "auto_check_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) AutoCheckEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldAutoCheckEnabled]
+	return ok
+}
+
+// ResetAutoCheckEnabled resets all changes to the "auto_check_enabled" field.
+func (m *NanoHubInfoMutation) ResetAutoCheckEnabled() {
+	m.auto_check_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldAutoCheckEnabled)
+}
+
+// SetAutomaticAppInstallationEnabled sets the "automatic_app_installation_enabled" field.
+func (m *NanoHubInfoMutation) SetAutomaticAppInstallationEnabled(b bool) {
+	m.automatic_app_installation_enabled = &b
+}
+
+// AutomaticAppInstallationEnabled returns the value of the "automatic_app_installation_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) AutomaticAppInstallationEnabled() (r bool, exists bool) {
+	v := m.automatic_app_installation_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutomaticAppInstallationEnabled returns the old "automatic_app_installation_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldAutomaticAppInstallationEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutomaticAppInstallationEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutomaticAppInstallationEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutomaticAppInstallationEnabled: %w", err)
+	}
+	return oldValue.AutomaticAppInstallationEnabled, nil
+}
+
+// ClearAutomaticAppInstallationEnabled clears the value of the "automatic_app_installation_enabled" field.
+func (m *NanoHubInfoMutation) ClearAutomaticAppInstallationEnabled() {
+	m.automatic_app_installation_enabled = nil
+	m.clearedFields[nanohubinfo.FieldAutomaticAppInstallationEnabled] = struct{}{}
+}
+
+// AutomaticAppInstallationEnabledCleared returns if the "automatic_app_installation_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) AutomaticAppInstallationEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldAutomaticAppInstallationEnabled]
+	return ok
+}
+
+// ResetAutomaticAppInstallationEnabled resets all changes to the "automatic_app_installation_enabled" field.
+func (m *NanoHubInfoMutation) ResetAutomaticAppInstallationEnabled() {
+	m.automatic_app_installation_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldAutomaticAppInstallationEnabled)
+}
+
+// SetAutomaticOsInstallationEnabled sets the "automatic_os_installation_enabled" field.
+func (m *NanoHubInfoMutation) SetAutomaticOsInstallationEnabled(b bool) {
+	m.automatic_os_installation_enabled = &b
+}
+
+// AutomaticOsInstallationEnabled returns the value of the "automatic_os_installation_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) AutomaticOsInstallationEnabled() (r bool, exists bool) {
+	v := m.automatic_os_installation_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutomaticOsInstallationEnabled returns the old "automatic_os_installation_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldAutomaticOsInstallationEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutomaticOsInstallationEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutomaticOsInstallationEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutomaticOsInstallationEnabled: %w", err)
+	}
+	return oldValue.AutomaticOsInstallationEnabled, nil
+}
+
+// ClearAutomaticOsInstallationEnabled clears the value of the "automatic_os_installation_enabled" field.
+func (m *NanoHubInfoMutation) ClearAutomaticOsInstallationEnabled() {
+	m.automatic_os_installation_enabled = nil
+	m.clearedFields[nanohubinfo.FieldAutomaticOsInstallationEnabled] = struct{}{}
+}
+
+// AutomaticOsInstallationEnabledCleared returns if the "automatic_os_installation_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) AutomaticOsInstallationEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldAutomaticOsInstallationEnabled]
+	return ok
+}
+
+// ResetAutomaticOsInstallationEnabled resets all changes to the "automatic_os_installation_enabled" field.
+func (m *NanoHubInfoMutation) ResetAutomaticOsInstallationEnabled() {
+	m.automatic_os_installation_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldAutomaticOsInstallationEnabled)
+}
+
+// SetAutomaticSecurityUpdatesEnabled sets the "automatic_security_updates_enabled" field.
+func (m *NanoHubInfoMutation) SetAutomaticSecurityUpdatesEnabled(b bool) {
+	m.automatic_security_updates_enabled = &b
+}
+
+// AutomaticSecurityUpdatesEnabled returns the value of the "automatic_security_updates_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) AutomaticSecurityUpdatesEnabled() (r bool, exists bool) {
+	v := m.automatic_security_updates_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAutomaticSecurityUpdatesEnabled returns the old "automatic_security_updates_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldAutomaticSecurityUpdatesEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAutomaticSecurityUpdatesEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAutomaticSecurityUpdatesEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAutomaticSecurityUpdatesEnabled: %w", err)
+	}
+	return oldValue.AutomaticSecurityUpdatesEnabled, nil
+}
+
+// ClearAutomaticSecurityUpdatesEnabled clears the value of the "automatic_security_updates_enabled" field.
+func (m *NanoHubInfoMutation) ClearAutomaticSecurityUpdatesEnabled() {
+	m.automatic_security_updates_enabled = nil
+	m.clearedFields[nanohubinfo.FieldAutomaticSecurityUpdatesEnabled] = struct{}{}
+}
+
+// AutomaticSecurityUpdatesEnabledCleared returns if the "automatic_security_updates_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) AutomaticSecurityUpdatesEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldAutomaticSecurityUpdatesEnabled]
+	return ok
+}
+
+// ResetAutomaticSecurityUpdatesEnabled resets all changes to the "automatic_security_updates_enabled" field.
+func (m *NanoHubInfoMutation) ResetAutomaticSecurityUpdatesEnabled() {
+	m.automatic_security_updates_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldAutomaticSecurityUpdatesEnabled)
+}
+
+// SetBackgroundDownloadEnabled sets the "background_download_enabled" field.
+func (m *NanoHubInfoMutation) SetBackgroundDownloadEnabled(b bool) {
+	m.background_download_enabled = &b
+}
+
+// BackgroundDownloadEnabled returns the value of the "background_download_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) BackgroundDownloadEnabled() (r bool, exists bool) {
+	v := m.background_download_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBackgroundDownloadEnabled returns the old "background_download_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldBackgroundDownloadEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBackgroundDownloadEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBackgroundDownloadEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBackgroundDownloadEnabled: %w", err)
+	}
+	return oldValue.BackgroundDownloadEnabled, nil
+}
+
+// ClearBackgroundDownloadEnabled clears the value of the "background_download_enabled" field.
+func (m *NanoHubInfoMutation) ClearBackgroundDownloadEnabled() {
+	m.background_download_enabled = nil
+	m.clearedFields[nanohubinfo.FieldBackgroundDownloadEnabled] = struct{}{}
+}
+
+// BackgroundDownloadEnabledCleared returns if the "background_download_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) BackgroundDownloadEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldBackgroundDownloadEnabled]
+	return ok
+}
+
+// ResetBackgroundDownloadEnabled resets all changes to the "background_download_enabled" field.
+func (m *NanoHubInfoMutation) ResetBackgroundDownloadEnabled() {
+	m.background_download_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldBackgroundDownloadEnabled)
+}
+
+// SetCatalogURL sets the "catalog_url" field.
+func (m *NanoHubInfoMutation) SetCatalogURL(s string) {
+	m.catalog_url = &s
+}
+
+// CatalogURL returns the value of the "catalog_url" field in the mutation.
+func (m *NanoHubInfoMutation) CatalogURL() (r string, exists bool) {
+	v := m.catalog_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCatalogURL returns the old "catalog_url" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldCatalogURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCatalogURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCatalogURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCatalogURL: %w", err)
+	}
+	return oldValue.CatalogURL, nil
+}
+
+// ClearCatalogURL clears the value of the "catalog_url" field.
+func (m *NanoHubInfoMutation) ClearCatalogURL() {
+	m.catalog_url = nil
+	m.clearedFields[nanohubinfo.FieldCatalogURL] = struct{}{}
+}
+
+// CatalogURLCleared returns if the "catalog_url" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) CatalogURLCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldCatalogURL]
+	return ok
+}
+
+// ResetCatalogURL resets all changes to the "catalog_url" field.
+func (m *NanoHubInfoMutation) ResetCatalogURL() {
+	m.catalog_url = nil
+	delete(m.clearedFields, nanohubinfo.FieldCatalogURL)
+}
+
+// SetIsDefaultCatalog sets the "is_default_catalog" field.
+func (m *NanoHubInfoMutation) SetIsDefaultCatalog(b bool) {
+	m.is_default_catalog = &b
+}
+
+// IsDefaultCatalog returns the value of the "is_default_catalog" field in the mutation.
+func (m *NanoHubInfoMutation) IsDefaultCatalog() (r bool, exists bool) {
+	v := m.is_default_catalog
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsDefaultCatalog returns the old "is_default_catalog" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldIsDefaultCatalog(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsDefaultCatalog is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsDefaultCatalog requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsDefaultCatalog: %w", err)
+	}
+	return oldValue.IsDefaultCatalog, nil
+}
+
+// ClearIsDefaultCatalog clears the value of the "is_default_catalog" field.
+func (m *NanoHubInfoMutation) ClearIsDefaultCatalog() {
+	m.is_default_catalog = nil
+	m.clearedFields[nanohubinfo.FieldIsDefaultCatalog] = struct{}{}
+}
+
+// IsDefaultCatalogCleared returns if the "is_default_catalog" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) IsDefaultCatalogCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldIsDefaultCatalog]
+	return ok
+}
+
+// ResetIsDefaultCatalog resets all changes to the "is_default_catalog" field.
+func (m *NanoHubInfoMutation) ResetIsDefaultCatalog() {
+	m.is_default_catalog = nil
+	delete(m.clearedFields, nanohubinfo.FieldIsDefaultCatalog)
+}
+
+// SetPreviousScanDate sets the "previous_scan_date" field.
+func (m *NanoHubInfoMutation) SetPreviousScanDate(t time.Time) {
+	m.previous_scan_date = &t
+}
+
+// PreviousScanDate returns the value of the "previous_scan_date" field in the mutation.
+func (m *NanoHubInfoMutation) PreviousScanDate() (r time.Time, exists bool) {
+	v := m.previous_scan_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreviousScanDate returns the old "previous_scan_date" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldPreviousScanDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPreviousScanDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPreviousScanDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreviousScanDate: %w", err)
+	}
+	return oldValue.PreviousScanDate, nil
+}
+
+// ClearPreviousScanDate clears the value of the "previous_scan_date" field.
+func (m *NanoHubInfoMutation) ClearPreviousScanDate() {
+	m.previous_scan_date = nil
+	m.clearedFields[nanohubinfo.FieldPreviousScanDate] = struct{}{}
+}
+
+// PreviousScanDateCleared returns if the "previous_scan_date" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) PreviousScanDateCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldPreviousScanDate]
+	return ok
+}
+
+// ResetPreviousScanDate resets all changes to the "previous_scan_date" field.
+func (m *NanoHubInfoMutation) ResetPreviousScanDate() {
+	m.previous_scan_date = nil
+	delete(m.clearedFields, nanohubinfo.FieldPreviousScanDate)
+}
+
+// SetPreviousScanResult sets the "previous_scan_result" field.
+func (m *NanoHubInfoMutation) SetPreviousScanResult(i int64) {
+	m.previous_scan_result = &i
+	m.addprevious_scan_result = nil
+}
+
+// PreviousScanResult returns the value of the "previous_scan_result" field in the mutation.
+func (m *NanoHubInfoMutation) PreviousScanResult() (r int64, exists bool) {
+	v := m.previous_scan_result
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreviousScanResult returns the old "previous_scan_result" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldPreviousScanResult(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPreviousScanResult is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPreviousScanResult requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreviousScanResult: %w", err)
+	}
+	return oldValue.PreviousScanResult, nil
+}
+
+// AddPreviousScanResult adds i to the "previous_scan_result" field.
+func (m *NanoHubInfoMutation) AddPreviousScanResult(i int64) {
+	if m.addprevious_scan_result != nil {
+		*m.addprevious_scan_result += i
+	} else {
+		m.addprevious_scan_result = &i
+	}
+}
+
+// AddedPreviousScanResult returns the value that was added to the "previous_scan_result" field in this mutation.
+func (m *NanoHubInfoMutation) AddedPreviousScanResult() (r int64, exists bool) {
+	v := m.addprevious_scan_result
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPreviousScanResult clears the value of the "previous_scan_result" field.
+func (m *NanoHubInfoMutation) ClearPreviousScanResult() {
+	m.previous_scan_result = nil
+	m.addprevious_scan_result = nil
+	m.clearedFields[nanohubinfo.FieldPreviousScanResult] = struct{}{}
+}
+
+// PreviousScanResultCleared returns if the "previous_scan_result" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) PreviousScanResultCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldPreviousScanResult]
+	return ok
+}
+
+// ResetPreviousScanResult resets all changes to the "previous_scan_result" field.
+func (m *NanoHubInfoMutation) ResetPreviousScanResult() {
+	m.previous_scan_result = nil
+	m.addprevious_scan_result = nil
+	delete(m.clearedFields, nanohubinfo.FieldPreviousScanResult)
+}
+
+// SetOsVersion sets the "os_version" field.
+func (m *NanoHubInfoMutation) SetOsVersion(s string) {
+	m.os_version = &s
+}
+
+// OsVersion returns the value of the "os_version" field in the mutation.
+func (m *NanoHubInfoMutation) OsVersion() (r string, exists bool) {
+	v := m.os_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOsVersion returns the old "os_version" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldOsVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOsVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOsVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOsVersion: %w", err)
+	}
+	return oldValue.OsVersion, nil
+}
+
+// ClearOsVersion clears the value of the "os_version" field.
+func (m *NanoHubInfoMutation) ClearOsVersion() {
+	m.os_version = nil
+	m.clearedFields[nanohubinfo.FieldOsVersion] = struct{}{}
+}
+
+// OsVersionCleared returns if the "os_version" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) OsVersionCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldOsVersion]
+	return ok
+}
+
+// ResetOsVersion resets all changes to the "os_version" field.
+func (m *NanoHubInfoMutation) ResetOsVersion() {
+	m.os_version = nil
+	delete(m.clearedFields, nanohubinfo.FieldOsVersion)
+}
+
+// SetPinRequiredForDeviceLock sets the "pin_required_for_device_lock" field.
+func (m *NanoHubInfoMutation) SetPinRequiredForDeviceLock(b bool) {
+	m.pin_required_for_device_lock = &b
+}
+
+// PinRequiredForDeviceLock returns the value of the "pin_required_for_device_lock" field in the mutation.
+func (m *NanoHubInfoMutation) PinRequiredForDeviceLock() (r bool, exists bool) {
+	v := m.pin_required_for_device_lock
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPinRequiredForDeviceLock returns the old "pin_required_for_device_lock" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldPinRequiredForDeviceLock(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPinRequiredForDeviceLock is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPinRequiredForDeviceLock requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPinRequiredForDeviceLock: %w", err)
+	}
+	return oldValue.PinRequiredForDeviceLock, nil
+}
+
+// ClearPinRequiredForDeviceLock clears the value of the "pin_required_for_device_lock" field.
+func (m *NanoHubInfoMutation) ClearPinRequiredForDeviceLock() {
+	m.pin_required_for_device_lock = nil
+	m.clearedFields[nanohubinfo.FieldPinRequiredForDeviceLock] = struct{}{}
+}
+
+// PinRequiredForDeviceLockCleared returns if the "pin_required_for_device_lock" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) PinRequiredForDeviceLockCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldPinRequiredForDeviceLock]
+	return ok
+}
+
+// ResetPinRequiredForDeviceLock resets all changes to the "pin_required_for_device_lock" field.
+func (m *NanoHubInfoMutation) ResetPinRequiredForDeviceLock() {
+	m.pin_required_for_device_lock = nil
+	delete(m.clearedFields, nanohubinfo.FieldPinRequiredForDeviceLock)
+}
+
+// SetPinRequiredForEraseDevice sets the "pin_required_for_erase_device" field.
+func (m *NanoHubInfoMutation) SetPinRequiredForEraseDevice(b bool) {
+	m.pin_required_for_erase_device = &b
+}
+
+// PinRequiredForEraseDevice returns the value of the "pin_required_for_erase_device" field in the mutation.
+func (m *NanoHubInfoMutation) PinRequiredForEraseDevice() (r bool, exists bool) {
+	v := m.pin_required_for_erase_device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPinRequiredForEraseDevice returns the old "pin_required_for_erase_device" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldPinRequiredForEraseDevice(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPinRequiredForEraseDevice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPinRequiredForEraseDevice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPinRequiredForEraseDevice: %w", err)
+	}
+	return oldValue.PinRequiredForEraseDevice, nil
+}
+
+// ClearPinRequiredForEraseDevice clears the value of the "pin_required_for_erase_device" field.
+func (m *NanoHubInfoMutation) ClearPinRequiredForEraseDevice() {
+	m.pin_required_for_erase_device = nil
+	m.clearedFields[nanohubinfo.FieldPinRequiredForEraseDevice] = struct{}{}
+}
+
+// PinRequiredForEraseDeviceCleared returns if the "pin_required_for_erase_device" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) PinRequiredForEraseDeviceCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldPinRequiredForEraseDevice]
+	return ok
+}
+
+// ResetPinRequiredForEraseDevice resets all changes to the "pin_required_for_erase_device" field.
+func (m *NanoHubInfoMutation) ResetPinRequiredForEraseDevice() {
+	m.pin_required_for_erase_device = nil
+	delete(m.clearedFields, nanohubinfo.FieldPinRequiredForEraseDevice)
+}
+
+// SetProductName sets the "product_name" field.
+func (m *NanoHubInfoMutation) SetProductName(s string) {
+	m.product_name = &s
+}
+
+// ProductName returns the value of the "product_name" field in the mutation.
+func (m *NanoHubInfoMutation) ProductName() (r string, exists bool) {
+	v := m.product_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProductName returns the old "product_name" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldProductName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProductName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProductName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProductName: %w", err)
+	}
+	return oldValue.ProductName, nil
+}
+
+// ClearProductName clears the value of the "product_name" field.
+func (m *NanoHubInfoMutation) ClearProductName() {
+	m.product_name = nil
+	m.clearedFields[nanohubinfo.FieldProductName] = struct{}{}
+}
+
+// ProductNameCleared returns if the "product_name" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) ProductNameCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldProductName]
+	return ok
+}
+
+// ResetProductName resets all changes to the "product_name" field.
+func (m *NanoHubInfoMutation) ResetProductName() {
+	m.product_name = nil
+	delete(m.clearedFields, nanohubinfo.FieldProductName)
+}
+
+// SetProvisioningUdid sets the "provisioning_udid" field.
+func (m *NanoHubInfoMutation) SetProvisioningUdid(s string) {
+	m.provisioning_udid = &s
+}
+
+// ProvisioningUdid returns the value of the "provisioning_udid" field in the mutation.
+func (m *NanoHubInfoMutation) ProvisioningUdid() (r string, exists bool) {
+	v := m.provisioning_udid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProvisioningUdid returns the old "provisioning_udid" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldProvisioningUdid(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProvisioningUdid is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProvisioningUdid requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProvisioningUdid: %w", err)
+	}
+	return oldValue.ProvisioningUdid, nil
+}
+
+// ClearProvisioningUdid clears the value of the "provisioning_udid" field.
+func (m *NanoHubInfoMutation) ClearProvisioningUdid() {
+	m.provisioning_udid = nil
+	m.clearedFields[nanohubinfo.FieldProvisioningUdid] = struct{}{}
+}
+
+// ProvisioningUdidCleared returns if the "provisioning_udid" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) ProvisioningUdidCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldProvisioningUdid]
+	return ok
+}
+
+// ResetProvisioningUdid resets all changes to the "provisioning_udid" field.
+func (m *NanoHubInfoMutation) ResetProvisioningUdid() {
+	m.provisioning_udid = nil
+	delete(m.clearedFields, nanohubinfo.FieldProvisioningUdid)
+}
+
+// SetSerialNumber sets the "serial_number" field.
+func (m *NanoHubInfoMutation) SetSerialNumber(s string) {
+	m.serial_number = &s
+}
+
+// SerialNumber returns the value of the "serial_number" field in the mutation.
+func (m *NanoHubInfoMutation) SerialNumber() (r string, exists bool) {
+	v := m.serial_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSerialNumber returns the old "serial_number" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldSerialNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSerialNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSerialNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSerialNumber: %w", err)
+	}
+	return oldValue.SerialNumber, nil
+}
+
+// ClearSerialNumber clears the value of the "serial_number" field.
+func (m *NanoHubInfoMutation) ClearSerialNumber() {
+	m.serial_number = nil
+	m.clearedFields[nanohubinfo.FieldSerialNumber] = struct{}{}
+}
+
+// SerialNumberCleared returns if the "serial_number" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) SerialNumberCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldSerialNumber]
+	return ok
+}
+
+// ResetSerialNumber resets all changes to the "serial_number" field.
+func (m *NanoHubInfoMutation) ResetSerialNumber() {
+	m.serial_number = nil
+	delete(m.clearedFields, nanohubinfo.FieldSerialNumber)
+}
+
+// SetSoftwareUpdateDeviceID sets the "software_update_device_id" field.
+func (m *NanoHubInfoMutation) SetSoftwareUpdateDeviceID(s string) {
+	m.software_update_device_id = &s
+}
+
+// SoftwareUpdateDeviceID returns the value of the "software_update_device_id" field in the mutation.
+func (m *NanoHubInfoMutation) SoftwareUpdateDeviceID() (r string, exists bool) {
+	v := m.software_update_device_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSoftwareUpdateDeviceID returns the old "software_update_device_id" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldSoftwareUpdateDeviceID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSoftwareUpdateDeviceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSoftwareUpdateDeviceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSoftwareUpdateDeviceID: %w", err)
+	}
+	return oldValue.SoftwareUpdateDeviceID, nil
+}
+
+// ClearSoftwareUpdateDeviceID clears the value of the "software_update_device_id" field.
+func (m *NanoHubInfoMutation) ClearSoftwareUpdateDeviceID() {
+	m.software_update_device_id = nil
+	m.clearedFields[nanohubinfo.FieldSoftwareUpdateDeviceID] = struct{}{}
+}
+
+// SoftwareUpdateDeviceIDCleared returns if the "software_update_device_id" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) SoftwareUpdateDeviceIDCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldSoftwareUpdateDeviceID]
+	return ok
+}
+
+// ResetSoftwareUpdateDeviceID resets all changes to the "software_update_device_id" field.
+func (m *NanoHubInfoMutation) ResetSoftwareUpdateDeviceID() {
+	m.software_update_device_id = nil
+	delete(m.clearedFields, nanohubinfo.FieldSoftwareUpdateDeviceID)
+}
+
+// SetSupplementalBuildVersion sets the "supplemental_build_version" field.
+func (m *NanoHubInfoMutation) SetSupplementalBuildVersion(s string) {
+	m.supplemental_build_version = &s
+}
+
+// SupplementalBuildVersion returns the value of the "supplemental_build_version" field in the mutation.
+func (m *NanoHubInfoMutation) SupplementalBuildVersion() (r string, exists bool) {
+	v := m.supplemental_build_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupplementalBuildVersion returns the old "supplemental_build_version" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldSupplementalBuildVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupplementalBuildVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupplementalBuildVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupplementalBuildVersion: %w", err)
+	}
+	return oldValue.SupplementalBuildVersion, nil
+}
+
+// ClearSupplementalBuildVersion clears the value of the "supplemental_build_version" field.
+func (m *NanoHubInfoMutation) ClearSupplementalBuildVersion() {
+	m.supplemental_build_version = nil
+	m.clearedFields[nanohubinfo.FieldSupplementalBuildVersion] = struct{}{}
+}
+
+// SupplementalBuildVersionCleared returns if the "supplemental_build_version" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) SupplementalBuildVersionCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldSupplementalBuildVersion]
+	return ok
+}
+
+// ResetSupplementalBuildVersion resets all changes to the "supplemental_build_version" field.
+func (m *NanoHubInfoMutation) ResetSupplementalBuildVersion() {
+	m.supplemental_build_version = nil
+	delete(m.clearedFields, nanohubinfo.FieldSupplementalBuildVersion)
+}
+
+// SetSupportsLomDevice sets the "supports_lom_device" field.
+func (m *NanoHubInfoMutation) SetSupportsLomDevice(b bool) {
+	m.supports_lom_device = &b
+}
+
+// SupportsLomDevice returns the value of the "supports_lom_device" field in the mutation.
+func (m *NanoHubInfoMutation) SupportsLomDevice() (r bool, exists bool) {
+	v := m.supports_lom_device
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportsLomDevice returns the old "supports_lom_device" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldSupportsLomDevice(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportsLomDevice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportsLomDevice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportsLomDevice: %w", err)
+	}
+	return oldValue.SupportsLomDevice, nil
+}
+
+// ClearSupportsLomDevice clears the value of the "supports_lom_device" field.
+func (m *NanoHubInfoMutation) ClearSupportsLomDevice() {
+	m.supports_lom_device = nil
+	m.clearedFields[nanohubinfo.FieldSupportsLomDevice] = struct{}{}
+}
+
+// SupportsLomDeviceCleared returns if the "supports_lom_device" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) SupportsLomDeviceCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldSupportsLomDevice]
+	return ok
+}
+
+// ResetSupportsLomDevice resets all changes to the "supports_lom_device" field.
+func (m *NanoHubInfoMutation) ResetSupportsLomDevice() {
+	m.supports_lom_device = nil
+	delete(m.clearedFields, nanohubinfo.FieldSupportsLomDevice)
+}
+
+// SetSupportsIosAppInstalls sets the "supports_ios_app_installs" field.
+func (m *NanoHubInfoMutation) SetSupportsIosAppInstalls(b bool) {
+	m.supports_ios_app_installs = &b
+}
+
+// SupportsIosAppInstalls returns the value of the "supports_ios_app_installs" field in the mutation.
+func (m *NanoHubInfoMutation) SupportsIosAppInstalls() (r bool, exists bool) {
+	v := m.supports_ios_app_installs
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportsIosAppInstalls returns the old "supports_ios_app_installs" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldSupportsIosAppInstalls(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportsIosAppInstalls is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportsIosAppInstalls requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportsIosAppInstalls: %w", err)
+	}
+	return oldValue.SupportsIosAppInstalls, nil
+}
+
+// ClearSupportsIosAppInstalls clears the value of the "supports_ios_app_installs" field.
+func (m *NanoHubInfoMutation) ClearSupportsIosAppInstalls() {
+	m.supports_ios_app_installs = nil
+	m.clearedFields[nanohubinfo.FieldSupportsIosAppInstalls] = struct{}{}
+}
+
+// SupportsIosAppInstallsCleared returns if the "supports_ios_app_installs" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) SupportsIosAppInstallsCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldSupportsIosAppInstalls]
+	return ok
+}
+
+// ResetSupportsIosAppInstalls resets all changes to the "supports_ios_app_installs" field.
+func (m *NanoHubInfoMutation) ResetSupportsIosAppInstalls() {
+	m.supports_ios_app_installs = nil
+	delete(m.clearedFields, nanohubinfo.FieldSupportsIosAppInstalls)
+}
+
+// SetSystemIntegrityProtectionEnabled sets the "system_integrity_protection_enabled" field.
+func (m *NanoHubInfoMutation) SetSystemIntegrityProtectionEnabled(b bool) {
+	m.system_integrity_protection_enabled = &b
+}
+
+// SystemIntegrityProtectionEnabled returns the value of the "system_integrity_protection_enabled" field in the mutation.
+func (m *NanoHubInfoMutation) SystemIntegrityProtectionEnabled() (r bool, exists bool) {
+	v := m.system_integrity_protection_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSystemIntegrityProtectionEnabled returns the old "system_integrity_protection_enabled" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldSystemIntegrityProtectionEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSystemIntegrityProtectionEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSystemIntegrityProtectionEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSystemIntegrityProtectionEnabled: %w", err)
+	}
+	return oldValue.SystemIntegrityProtectionEnabled, nil
+}
+
+// ClearSystemIntegrityProtectionEnabled clears the value of the "system_integrity_protection_enabled" field.
+func (m *NanoHubInfoMutation) ClearSystemIntegrityProtectionEnabled() {
+	m.system_integrity_protection_enabled = nil
+	m.clearedFields[nanohubinfo.FieldSystemIntegrityProtectionEnabled] = struct{}{}
+}
+
+// SystemIntegrityProtectionEnabledCleared returns if the "system_integrity_protection_enabled" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) SystemIntegrityProtectionEnabledCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldSystemIntegrityProtectionEnabled]
+	return ok
+}
+
+// ResetSystemIntegrityProtectionEnabled resets all changes to the "system_integrity_protection_enabled" field.
+func (m *NanoHubInfoMutation) ResetSystemIntegrityProtectionEnabled() {
+	m.system_integrity_protection_enabled = nil
+	delete(m.clearedFields, nanohubinfo.FieldSystemIntegrityProtectionEnabled)
+}
+
+// SetUdid sets the "udid" field.
+func (m *NanoHubInfoMutation) SetUdid(s string) {
+	m.udid = &s
+}
+
+// Udid returns the value of the "udid" field in the mutation.
+func (m *NanoHubInfoMutation) Udid() (r string, exists bool) {
+	v := m.udid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUdid returns the old "udid" field's value of the NanoHubInfo entity.
+// If the NanoHubInfo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubInfoMutation) OldUdid(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUdid is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUdid requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUdid: %w", err)
+	}
+	return oldValue.Udid, nil
+}
+
+// ClearUdid clears the value of the "udid" field.
+func (m *NanoHubInfoMutation) ClearUdid() {
+	m.udid = nil
+	m.clearedFields[nanohubinfo.FieldUdid] = struct{}{}
+}
+
+// UdidCleared returns if the "udid" field was cleared in this mutation.
+func (m *NanoHubInfoMutation) UdidCleared() bool {
+	_, ok := m.clearedFields[nanohubinfo.FieldUdid]
+	return ok
+}
+
+// ResetUdid resets all changes to the "udid" field.
+func (m *NanoHubInfoMutation) ResetUdid() {
+	m.udid = nil
+	delete(m.clearedFields, nanohubinfo.FieldUdid)
+}
+
+// SetOwnerID sets the "owner" edge to the Agent entity by id.
+func (m *NanoHubInfoMutation) SetOwnerID(id string) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the Agent entity.
+func (m *NanoHubInfoMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the Agent entity was cleared.
+func (m *NanoHubInfoMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *NanoHubInfoMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *NanoHubInfoMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *NanoHubInfoMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// Where appends a list predicates to the NanoHubInfoMutation builder.
+func (m *NanoHubInfoMutation) Where(ps ...predicate.NanoHubInfo) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NanoHubInfoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NanoHubInfoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NanoHubInfo, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NanoHubInfoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NanoHubInfoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NanoHubInfo).
+func (m *NanoHubInfoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NanoHubInfoMutation) Fields() []string {
+	fields := make([]string, 0, 41)
+	if m.available_device_capacity != nil {
+		fields = append(fields, nanohubinfo.FieldAvailableDeviceCapacity)
+	}
+	if m.awaiting_configuration != nil {
+		fields = append(fields, nanohubinfo.FieldAwaitingConfiguration)
+	}
+	if m.battery_level != nil {
+		fields = append(fields, nanohubinfo.FieldBatteryLevel)
+	}
+	if m.bluetooth_mac != nil {
+		fields = append(fields, nanohubinfo.FieldBluetoothMAC)
+	}
+	if m.build_version != nil {
+		fields = append(fields, nanohubinfo.FieldBuildVersion)
+	}
+	if m.current_console_managed_user != nil {
+		fields = append(fields, nanohubinfo.FieldCurrentConsoleManagedUser)
+	}
+	if m.device_capacity != nil {
+		fields = append(fields, nanohubinfo.FieldDeviceCapacity)
+	}
+	if m.device_name != nil {
+		fields = append(fields, nanohubinfo.FieldDeviceName)
+	}
+	if m.eacs_preflight != nil {
+		fields = append(fields, nanohubinfo.FieldEacsPreflight)
+	}
+	if m.ethernet_mac != nil {
+		fields = append(fields, nanohubinfo.FieldEthernetMAC)
+	}
+	if m.wifi_mac != nil {
+		fields = append(fields, nanohubinfo.FieldWifiMAC)
+	}
+	if m.has_battery != nil {
+		fields = append(fields, nanohubinfo.FieldHasBattery)
+	}
+	if m.hostname != nil {
+		fields = append(fields, nanohubinfo.FieldHostname)
+	}
+	if m.is_activation_lock_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldIsActivationLockEnabled)
+	}
+	if m.is_activation_lock_supported != nil {
+		fields = append(fields, nanohubinfo.FieldIsActivationLockSupported)
+	}
+	if m.is_apple_silicon != nil {
+		fields = append(fields, nanohubinfo.FieldIsAppleSilicon)
+	}
+	if m.is_supervised != nil {
+		fields = append(fields, nanohubinfo.FieldIsSupervised)
+	}
+	if m.localhostname != nil {
+		fields = append(fields, nanohubinfo.FieldLocalhostname)
+	}
+	if m.model != nil {
+		fields = append(fields, nanohubinfo.FieldModel)
+	}
+	if m.model_name != nil {
+		fields = append(fields, nanohubinfo.FieldModelName)
+	}
+	if m.auto_check_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldAutoCheckEnabled)
+	}
+	if m.automatic_app_installation_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldAutomaticAppInstallationEnabled)
+	}
+	if m.automatic_os_installation_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldAutomaticOsInstallationEnabled)
+	}
+	if m.automatic_security_updates_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldAutomaticSecurityUpdatesEnabled)
+	}
+	if m.background_download_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldBackgroundDownloadEnabled)
+	}
+	if m.catalog_url != nil {
+		fields = append(fields, nanohubinfo.FieldCatalogURL)
+	}
+	if m.is_default_catalog != nil {
+		fields = append(fields, nanohubinfo.FieldIsDefaultCatalog)
+	}
+	if m.previous_scan_date != nil {
+		fields = append(fields, nanohubinfo.FieldPreviousScanDate)
+	}
+	if m.previous_scan_result != nil {
+		fields = append(fields, nanohubinfo.FieldPreviousScanResult)
+	}
+	if m.os_version != nil {
+		fields = append(fields, nanohubinfo.FieldOsVersion)
+	}
+	if m.pin_required_for_device_lock != nil {
+		fields = append(fields, nanohubinfo.FieldPinRequiredForDeviceLock)
+	}
+	if m.pin_required_for_erase_device != nil {
+		fields = append(fields, nanohubinfo.FieldPinRequiredForEraseDevice)
+	}
+	if m.product_name != nil {
+		fields = append(fields, nanohubinfo.FieldProductName)
+	}
+	if m.provisioning_udid != nil {
+		fields = append(fields, nanohubinfo.FieldProvisioningUdid)
+	}
+	if m.serial_number != nil {
+		fields = append(fields, nanohubinfo.FieldSerialNumber)
+	}
+	if m.software_update_device_id != nil {
+		fields = append(fields, nanohubinfo.FieldSoftwareUpdateDeviceID)
+	}
+	if m.supplemental_build_version != nil {
+		fields = append(fields, nanohubinfo.FieldSupplementalBuildVersion)
+	}
+	if m.supports_lom_device != nil {
+		fields = append(fields, nanohubinfo.FieldSupportsLomDevice)
+	}
+	if m.supports_ios_app_installs != nil {
+		fields = append(fields, nanohubinfo.FieldSupportsIosAppInstalls)
+	}
+	if m.system_integrity_protection_enabled != nil {
+		fields = append(fields, nanohubinfo.FieldSystemIntegrityProtectionEnabled)
+	}
+	if m.udid != nil {
+		fields = append(fields, nanohubinfo.FieldUdid)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NanoHubInfoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		return m.AvailableDeviceCapacity()
+	case nanohubinfo.FieldAwaitingConfiguration:
+		return m.AwaitingConfiguration()
+	case nanohubinfo.FieldBatteryLevel:
+		return m.BatteryLevel()
+	case nanohubinfo.FieldBluetoothMAC:
+		return m.BluetoothMAC()
+	case nanohubinfo.FieldBuildVersion:
+		return m.BuildVersion()
+	case nanohubinfo.FieldCurrentConsoleManagedUser:
+		return m.CurrentConsoleManagedUser()
+	case nanohubinfo.FieldDeviceCapacity:
+		return m.DeviceCapacity()
+	case nanohubinfo.FieldDeviceName:
+		return m.DeviceName()
+	case nanohubinfo.FieldEacsPreflight:
+		return m.EacsPreflight()
+	case nanohubinfo.FieldEthernetMAC:
+		return m.EthernetMAC()
+	case nanohubinfo.FieldWifiMAC:
+		return m.WifiMAC()
+	case nanohubinfo.FieldHasBattery:
+		return m.HasBattery()
+	case nanohubinfo.FieldHostname:
+		return m.Hostname()
+	case nanohubinfo.FieldIsActivationLockEnabled:
+		return m.IsActivationLockEnabled()
+	case nanohubinfo.FieldIsActivationLockSupported:
+		return m.IsActivationLockSupported()
+	case nanohubinfo.FieldIsAppleSilicon:
+		return m.IsAppleSilicon()
+	case nanohubinfo.FieldIsSupervised:
+		return m.IsSupervised()
+	case nanohubinfo.FieldLocalhostname:
+		return m.Localhostname()
+	case nanohubinfo.FieldModel:
+		return m.Model()
+	case nanohubinfo.FieldModelName:
+		return m.ModelName()
+	case nanohubinfo.FieldAutoCheckEnabled:
+		return m.AutoCheckEnabled()
+	case nanohubinfo.FieldAutomaticAppInstallationEnabled:
+		return m.AutomaticAppInstallationEnabled()
+	case nanohubinfo.FieldAutomaticOsInstallationEnabled:
+		return m.AutomaticOsInstallationEnabled()
+	case nanohubinfo.FieldAutomaticSecurityUpdatesEnabled:
+		return m.AutomaticSecurityUpdatesEnabled()
+	case nanohubinfo.FieldBackgroundDownloadEnabled:
+		return m.BackgroundDownloadEnabled()
+	case nanohubinfo.FieldCatalogURL:
+		return m.CatalogURL()
+	case nanohubinfo.FieldIsDefaultCatalog:
+		return m.IsDefaultCatalog()
+	case nanohubinfo.FieldPreviousScanDate:
+		return m.PreviousScanDate()
+	case nanohubinfo.FieldPreviousScanResult:
+		return m.PreviousScanResult()
+	case nanohubinfo.FieldOsVersion:
+		return m.OsVersion()
+	case nanohubinfo.FieldPinRequiredForDeviceLock:
+		return m.PinRequiredForDeviceLock()
+	case nanohubinfo.FieldPinRequiredForEraseDevice:
+		return m.PinRequiredForEraseDevice()
+	case nanohubinfo.FieldProductName:
+		return m.ProductName()
+	case nanohubinfo.FieldProvisioningUdid:
+		return m.ProvisioningUdid()
+	case nanohubinfo.FieldSerialNumber:
+		return m.SerialNumber()
+	case nanohubinfo.FieldSoftwareUpdateDeviceID:
+		return m.SoftwareUpdateDeviceID()
+	case nanohubinfo.FieldSupplementalBuildVersion:
+		return m.SupplementalBuildVersion()
+	case nanohubinfo.FieldSupportsLomDevice:
+		return m.SupportsLomDevice()
+	case nanohubinfo.FieldSupportsIosAppInstalls:
+		return m.SupportsIosAppInstalls()
+	case nanohubinfo.FieldSystemIntegrityProtectionEnabled:
+		return m.SystemIntegrityProtectionEnabled()
+	case nanohubinfo.FieldUdid:
+		return m.Udid()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NanoHubInfoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		return m.OldAvailableDeviceCapacity(ctx)
+	case nanohubinfo.FieldAwaitingConfiguration:
+		return m.OldAwaitingConfiguration(ctx)
+	case nanohubinfo.FieldBatteryLevel:
+		return m.OldBatteryLevel(ctx)
+	case nanohubinfo.FieldBluetoothMAC:
+		return m.OldBluetoothMAC(ctx)
+	case nanohubinfo.FieldBuildVersion:
+		return m.OldBuildVersion(ctx)
+	case nanohubinfo.FieldCurrentConsoleManagedUser:
+		return m.OldCurrentConsoleManagedUser(ctx)
+	case nanohubinfo.FieldDeviceCapacity:
+		return m.OldDeviceCapacity(ctx)
+	case nanohubinfo.FieldDeviceName:
+		return m.OldDeviceName(ctx)
+	case nanohubinfo.FieldEacsPreflight:
+		return m.OldEacsPreflight(ctx)
+	case nanohubinfo.FieldEthernetMAC:
+		return m.OldEthernetMAC(ctx)
+	case nanohubinfo.FieldWifiMAC:
+		return m.OldWifiMAC(ctx)
+	case nanohubinfo.FieldHasBattery:
+		return m.OldHasBattery(ctx)
+	case nanohubinfo.FieldHostname:
+		return m.OldHostname(ctx)
+	case nanohubinfo.FieldIsActivationLockEnabled:
+		return m.OldIsActivationLockEnabled(ctx)
+	case nanohubinfo.FieldIsActivationLockSupported:
+		return m.OldIsActivationLockSupported(ctx)
+	case nanohubinfo.FieldIsAppleSilicon:
+		return m.OldIsAppleSilicon(ctx)
+	case nanohubinfo.FieldIsSupervised:
+		return m.OldIsSupervised(ctx)
+	case nanohubinfo.FieldLocalhostname:
+		return m.OldLocalhostname(ctx)
+	case nanohubinfo.FieldModel:
+		return m.OldModel(ctx)
+	case nanohubinfo.FieldModelName:
+		return m.OldModelName(ctx)
+	case nanohubinfo.FieldAutoCheckEnabled:
+		return m.OldAutoCheckEnabled(ctx)
+	case nanohubinfo.FieldAutomaticAppInstallationEnabled:
+		return m.OldAutomaticAppInstallationEnabled(ctx)
+	case nanohubinfo.FieldAutomaticOsInstallationEnabled:
+		return m.OldAutomaticOsInstallationEnabled(ctx)
+	case nanohubinfo.FieldAutomaticSecurityUpdatesEnabled:
+		return m.OldAutomaticSecurityUpdatesEnabled(ctx)
+	case nanohubinfo.FieldBackgroundDownloadEnabled:
+		return m.OldBackgroundDownloadEnabled(ctx)
+	case nanohubinfo.FieldCatalogURL:
+		return m.OldCatalogURL(ctx)
+	case nanohubinfo.FieldIsDefaultCatalog:
+		return m.OldIsDefaultCatalog(ctx)
+	case nanohubinfo.FieldPreviousScanDate:
+		return m.OldPreviousScanDate(ctx)
+	case nanohubinfo.FieldPreviousScanResult:
+		return m.OldPreviousScanResult(ctx)
+	case nanohubinfo.FieldOsVersion:
+		return m.OldOsVersion(ctx)
+	case nanohubinfo.FieldPinRequiredForDeviceLock:
+		return m.OldPinRequiredForDeviceLock(ctx)
+	case nanohubinfo.FieldPinRequiredForEraseDevice:
+		return m.OldPinRequiredForEraseDevice(ctx)
+	case nanohubinfo.FieldProductName:
+		return m.OldProductName(ctx)
+	case nanohubinfo.FieldProvisioningUdid:
+		return m.OldProvisioningUdid(ctx)
+	case nanohubinfo.FieldSerialNumber:
+		return m.OldSerialNumber(ctx)
+	case nanohubinfo.FieldSoftwareUpdateDeviceID:
+		return m.OldSoftwareUpdateDeviceID(ctx)
+	case nanohubinfo.FieldSupplementalBuildVersion:
+		return m.OldSupplementalBuildVersion(ctx)
+	case nanohubinfo.FieldSupportsLomDevice:
+		return m.OldSupportsLomDevice(ctx)
+	case nanohubinfo.FieldSupportsIosAppInstalls:
+		return m.OldSupportsIosAppInstalls(ctx)
+	case nanohubinfo.FieldSystemIntegrityProtectionEnabled:
+		return m.OldSystemIntegrityProtectionEnabled(ctx)
+	case nanohubinfo.FieldUdid:
+		return m.OldUdid(ctx)
+	}
+	return nil, fmt.Errorf("unknown NanoHubInfo field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubInfoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvailableDeviceCapacity(v)
+		return nil
+	case nanohubinfo.FieldAwaitingConfiguration:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAwaitingConfiguration(v)
+		return nil
+	case nanohubinfo.FieldBatteryLevel:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBatteryLevel(v)
+		return nil
+	case nanohubinfo.FieldBluetoothMAC:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBluetoothMAC(v)
+		return nil
+	case nanohubinfo.FieldBuildVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBuildVersion(v)
+		return nil
+	case nanohubinfo.FieldCurrentConsoleManagedUser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentConsoleManagedUser(v)
+		return nil
+	case nanohubinfo.FieldDeviceCapacity:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceCapacity(v)
+		return nil
+	case nanohubinfo.FieldDeviceName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeviceName(v)
+		return nil
+	case nanohubinfo.FieldEacsPreflight:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEacsPreflight(v)
+		return nil
+	case nanohubinfo.FieldEthernetMAC:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEthernetMAC(v)
+		return nil
+	case nanohubinfo.FieldWifiMAC:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWifiMAC(v)
+		return nil
+	case nanohubinfo.FieldHasBattery:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHasBattery(v)
+		return nil
+	case nanohubinfo.FieldHostname:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHostname(v)
+		return nil
+	case nanohubinfo.FieldIsActivationLockEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsActivationLockEnabled(v)
+		return nil
+	case nanohubinfo.FieldIsActivationLockSupported:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsActivationLockSupported(v)
+		return nil
+	case nanohubinfo.FieldIsAppleSilicon:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsAppleSilicon(v)
+		return nil
+	case nanohubinfo.FieldIsSupervised:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsSupervised(v)
+		return nil
+	case nanohubinfo.FieldLocalhostname:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocalhostname(v)
+		return nil
+	case nanohubinfo.FieldModel:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModel(v)
+		return nil
+	case nanohubinfo.FieldModelName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModelName(v)
+		return nil
+	case nanohubinfo.FieldAutoCheckEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutoCheckEnabled(v)
+		return nil
+	case nanohubinfo.FieldAutomaticAppInstallationEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutomaticAppInstallationEnabled(v)
+		return nil
+	case nanohubinfo.FieldAutomaticOsInstallationEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutomaticOsInstallationEnabled(v)
+		return nil
+	case nanohubinfo.FieldAutomaticSecurityUpdatesEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAutomaticSecurityUpdatesEnabled(v)
+		return nil
+	case nanohubinfo.FieldBackgroundDownloadEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBackgroundDownloadEnabled(v)
+		return nil
+	case nanohubinfo.FieldCatalogURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCatalogURL(v)
+		return nil
+	case nanohubinfo.FieldIsDefaultCatalog:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsDefaultCatalog(v)
+		return nil
+	case nanohubinfo.FieldPreviousScanDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPreviousScanDate(v)
+		return nil
+	case nanohubinfo.FieldPreviousScanResult:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPreviousScanResult(v)
+		return nil
+	case nanohubinfo.FieldOsVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOsVersion(v)
+		return nil
+	case nanohubinfo.FieldPinRequiredForDeviceLock:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPinRequiredForDeviceLock(v)
+		return nil
+	case nanohubinfo.FieldPinRequiredForEraseDevice:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPinRequiredForEraseDevice(v)
+		return nil
+	case nanohubinfo.FieldProductName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProductName(v)
+		return nil
+	case nanohubinfo.FieldProvisioningUdid:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProvisioningUdid(v)
+		return nil
+	case nanohubinfo.FieldSerialNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSerialNumber(v)
+		return nil
+	case nanohubinfo.FieldSoftwareUpdateDeviceID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSoftwareUpdateDeviceID(v)
+		return nil
+	case nanohubinfo.FieldSupplementalBuildVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupplementalBuildVersion(v)
+		return nil
+	case nanohubinfo.FieldSupportsLomDevice:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportsLomDevice(v)
+		return nil
+	case nanohubinfo.FieldSupportsIosAppInstalls:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportsIosAppInstalls(v)
+		return nil
+	case nanohubinfo.FieldSystemIntegrityProtectionEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSystemIntegrityProtectionEnabled(v)
+		return nil
+	case nanohubinfo.FieldUdid:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUdid(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubInfo field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NanoHubInfoMutation) AddedFields() []string {
+	var fields []string
+	if m.addavailable_device_capacity != nil {
+		fields = append(fields, nanohubinfo.FieldAvailableDeviceCapacity)
+	}
+	if m.addbattery_level != nil {
+		fields = append(fields, nanohubinfo.FieldBatteryLevel)
+	}
+	if m.adddevice_capacity != nil {
+		fields = append(fields, nanohubinfo.FieldDeviceCapacity)
+	}
+	if m.addprevious_scan_result != nil {
+		fields = append(fields, nanohubinfo.FieldPreviousScanResult)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NanoHubInfoMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		return m.AddedAvailableDeviceCapacity()
+	case nanohubinfo.FieldBatteryLevel:
+		return m.AddedBatteryLevel()
+	case nanohubinfo.FieldDeviceCapacity:
+		return m.AddedDeviceCapacity()
+	case nanohubinfo.FieldPreviousScanResult:
+		return m.AddedPreviousScanResult()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubInfoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAvailableDeviceCapacity(v)
+		return nil
+	case nanohubinfo.FieldBatteryLevel:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBatteryLevel(v)
+		return nil
+	case nanohubinfo.FieldDeviceCapacity:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeviceCapacity(v)
+		return nil
+	case nanohubinfo.FieldPreviousScanResult:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPreviousScanResult(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubInfo numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NanoHubInfoMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(nanohubinfo.FieldAvailableDeviceCapacity) {
+		fields = append(fields, nanohubinfo.FieldAvailableDeviceCapacity)
+	}
+	if m.FieldCleared(nanohubinfo.FieldAwaitingConfiguration) {
+		fields = append(fields, nanohubinfo.FieldAwaitingConfiguration)
+	}
+	if m.FieldCleared(nanohubinfo.FieldBatteryLevel) {
+		fields = append(fields, nanohubinfo.FieldBatteryLevel)
+	}
+	if m.FieldCleared(nanohubinfo.FieldBluetoothMAC) {
+		fields = append(fields, nanohubinfo.FieldBluetoothMAC)
+	}
+	if m.FieldCleared(nanohubinfo.FieldBuildVersion) {
+		fields = append(fields, nanohubinfo.FieldBuildVersion)
+	}
+	if m.FieldCleared(nanohubinfo.FieldCurrentConsoleManagedUser) {
+		fields = append(fields, nanohubinfo.FieldCurrentConsoleManagedUser)
+	}
+	if m.FieldCleared(nanohubinfo.FieldDeviceCapacity) {
+		fields = append(fields, nanohubinfo.FieldDeviceCapacity)
+	}
+	if m.FieldCleared(nanohubinfo.FieldDeviceName) {
+		fields = append(fields, nanohubinfo.FieldDeviceName)
+	}
+	if m.FieldCleared(nanohubinfo.FieldEacsPreflight) {
+		fields = append(fields, nanohubinfo.FieldEacsPreflight)
+	}
+	if m.FieldCleared(nanohubinfo.FieldEthernetMAC) {
+		fields = append(fields, nanohubinfo.FieldEthernetMAC)
+	}
+	if m.FieldCleared(nanohubinfo.FieldWifiMAC) {
+		fields = append(fields, nanohubinfo.FieldWifiMAC)
+	}
+	if m.FieldCleared(nanohubinfo.FieldHasBattery) {
+		fields = append(fields, nanohubinfo.FieldHasBattery)
+	}
+	if m.FieldCleared(nanohubinfo.FieldHostname) {
+		fields = append(fields, nanohubinfo.FieldHostname)
+	}
+	if m.FieldCleared(nanohubinfo.FieldIsActivationLockEnabled) {
+		fields = append(fields, nanohubinfo.FieldIsActivationLockEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldIsActivationLockSupported) {
+		fields = append(fields, nanohubinfo.FieldIsActivationLockSupported)
+	}
+	if m.FieldCleared(nanohubinfo.FieldIsAppleSilicon) {
+		fields = append(fields, nanohubinfo.FieldIsAppleSilicon)
+	}
+	if m.FieldCleared(nanohubinfo.FieldIsSupervised) {
+		fields = append(fields, nanohubinfo.FieldIsSupervised)
+	}
+	if m.FieldCleared(nanohubinfo.FieldLocalhostname) {
+		fields = append(fields, nanohubinfo.FieldLocalhostname)
+	}
+	if m.FieldCleared(nanohubinfo.FieldModel) {
+		fields = append(fields, nanohubinfo.FieldModel)
+	}
+	if m.FieldCleared(nanohubinfo.FieldModelName) {
+		fields = append(fields, nanohubinfo.FieldModelName)
+	}
+	if m.FieldCleared(nanohubinfo.FieldAutoCheckEnabled) {
+		fields = append(fields, nanohubinfo.FieldAutoCheckEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldAutomaticAppInstallationEnabled) {
+		fields = append(fields, nanohubinfo.FieldAutomaticAppInstallationEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldAutomaticOsInstallationEnabled) {
+		fields = append(fields, nanohubinfo.FieldAutomaticOsInstallationEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldAutomaticSecurityUpdatesEnabled) {
+		fields = append(fields, nanohubinfo.FieldAutomaticSecurityUpdatesEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldBackgroundDownloadEnabled) {
+		fields = append(fields, nanohubinfo.FieldBackgroundDownloadEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldCatalogURL) {
+		fields = append(fields, nanohubinfo.FieldCatalogURL)
+	}
+	if m.FieldCleared(nanohubinfo.FieldIsDefaultCatalog) {
+		fields = append(fields, nanohubinfo.FieldIsDefaultCatalog)
+	}
+	if m.FieldCleared(nanohubinfo.FieldPreviousScanDate) {
+		fields = append(fields, nanohubinfo.FieldPreviousScanDate)
+	}
+	if m.FieldCleared(nanohubinfo.FieldPreviousScanResult) {
+		fields = append(fields, nanohubinfo.FieldPreviousScanResult)
+	}
+	if m.FieldCleared(nanohubinfo.FieldOsVersion) {
+		fields = append(fields, nanohubinfo.FieldOsVersion)
+	}
+	if m.FieldCleared(nanohubinfo.FieldPinRequiredForDeviceLock) {
+		fields = append(fields, nanohubinfo.FieldPinRequiredForDeviceLock)
+	}
+	if m.FieldCleared(nanohubinfo.FieldPinRequiredForEraseDevice) {
+		fields = append(fields, nanohubinfo.FieldPinRequiredForEraseDevice)
+	}
+	if m.FieldCleared(nanohubinfo.FieldProductName) {
+		fields = append(fields, nanohubinfo.FieldProductName)
+	}
+	if m.FieldCleared(nanohubinfo.FieldProvisioningUdid) {
+		fields = append(fields, nanohubinfo.FieldProvisioningUdid)
+	}
+	if m.FieldCleared(nanohubinfo.FieldSerialNumber) {
+		fields = append(fields, nanohubinfo.FieldSerialNumber)
+	}
+	if m.FieldCleared(nanohubinfo.FieldSoftwareUpdateDeviceID) {
+		fields = append(fields, nanohubinfo.FieldSoftwareUpdateDeviceID)
+	}
+	if m.FieldCleared(nanohubinfo.FieldSupplementalBuildVersion) {
+		fields = append(fields, nanohubinfo.FieldSupplementalBuildVersion)
+	}
+	if m.FieldCleared(nanohubinfo.FieldSupportsLomDevice) {
+		fields = append(fields, nanohubinfo.FieldSupportsLomDevice)
+	}
+	if m.FieldCleared(nanohubinfo.FieldSupportsIosAppInstalls) {
+		fields = append(fields, nanohubinfo.FieldSupportsIosAppInstalls)
+	}
+	if m.FieldCleared(nanohubinfo.FieldSystemIntegrityProtectionEnabled) {
+		fields = append(fields, nanohubinfo.FieldSystemIntegrityProtectionEnabled)
+	}
+	if m.FieldCleared(nanohubinfo.FieldUdid) {
+		fields = append(fields, nanohubinfo.FieldUdid)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NanoHubInfoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NanoHubInfoMutation) ClearField(name string) error {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		m.ClearAvailableDeviceCapacity()
+		return nil
+	case nanohubinfo.FieldAwaitingConfiguration:
+		m.ClearAwaitingConfiguration()
+		return nil
+	case nanohubinfo.FieldBatteryLevel:
+		m.ClearBatteryLevel()
+		return nil
+	case nanohubinfo.FieldBluetoothMAC:
+		m.ClearBluetoothMAC()
+		return nil
+	case nanohubinfo.FieldBuildVersion:
+		m.ClearBuildVersion()
+		return nil
+	case nanohubinfo.FieldCurrentConsoleManagedUser:
+		m.ClearCurrentConsoleManagedUser()
+		return nil
+	case nanohubinfo.FieldDeviceCapacity:
+		m.ClearDeviceCapacity()
+		return nil
+	case nanohubinfo.FieldDeviceName:
+		m.ClearDeviceName()
+		return nil
+	case nanohubinfo.FieldEacsPreflight:
+		m.ClearEacsPreflight()
+		return nil
+	case nanohubinfo.FieldEthernetMAC:
+		m.ClearEthernetMAC()
+		return nil
+	case nanohubinfo.FieldWifiMAC:
+		m.ClearWifiMAC()
+		return nil
+	case nanohubinfo.FieldHasBattery:
+		m.ClearHasBattery()
+		return nil
+	case nanohubinfo.FieldHostname:
+		m.ClearHostname()
+		return nil
+	case nanohubinfo.FieldIsActivationLockEnabled:
+		m.ClearIsActivationLockEnabled()
+		return nil
+	case nanohubinfo.FieldIsActivationLockSupported:
+		m.ClearIsActivationLockSupported()
+		return nil
+	case nanohubinfo.FieldIsAppleSilicon:
+		m.ClearIsAppleSilicon()
+		return nil
+	case nanohubinfo.FieldIsSupervised:
+		m.ClearIsSupervised()
+		return nil
+	case nanohubinfo.FieldLocalhostname:
+		m.ClearLocalhostname()
+		return nil
+	case nanohubinfo.FieldModel:
+		m.ClearModel()
+		return nil
+	case nanohubinfo.FieldModelName:
+		m.ClearModelName()
+		return nil
+	case nanohubinfo.FieldAutoCheckEnabled:
+		m.ClearAutoCheckEnabled()
+		return nil
+	case nanohubinfo.FieldAutomaticAppInstallationEnabled:
+		m.ClearAutomaticAppInstallationEnabled()
+		return nil
+	case nanohubinfo.FieldAutomaticOsInstallationEnabled:
+		m.ClearAutomaticOsInstallationEnabled()
+		return nil
+	case nanohubinfo.FieldAutomaticSecurityUpdatesEnabled:
+		m.ClearAutomaticSecurityUpdatesEnabled()
+		return nil
+	case nanohubinfo.FieldBackgroundDownloadEnabled:
+		m.ClearBackgroundDownloadEnabled()
+		return nil
+	case nanohubinfo.FieldCatalogURL:
+		m.ClearCatalogURL()
+		return nil
+	case nanohubinfo.FieldIsDefaultCatalog:
+		m.ClearIsDefaultCatalog()
+		return nil
+	case nanohubinfo.FieldPreviousScanDate:
+		m.ClearPreviousScanDate()
+		return nil
+	case nanohubinfo.FieldPreviousScanResult:
+		m.ClearPreviousScanResult()
+		return nil
+	case nanohubinfo.FieldOsVersion:
+		m.ClearOsVersion()
+		return nil
+	case nanohubinfo.FieldPinRequiredForDeviceLock:
+		m.ClearPinRequiredForDeviceLock()
+		return nil
+	case nanohubinfo.FieldPinRequiredForEraseDevice:
+		m.ClearPinRequiredForEraseDevice()
+		return nil
+	case nanohubinfo.FieldProductName:
+		m.ClearProductName()
+		return nil
+	case nanohubinfo.FieldProvisioningUdid:
+		m.ClearProvisioningUdid()
+		return nil
+	case nanohubinfo.FieldSerialNumber:
+		m.ClearSerialNumber()
+		return nil
+	case nanohubinfo.FieldSoftwareUpdateDeviceID:
+		m.ClearSoftwareUpdateDeviceID()
+		return nil
+	case nanohubinfo.FieldSupplementalBuildVersion:
+		m.ClearSupplementalBuildVersion()
+		return nil
+	case nanohubinfo.FieldSupportsLomDevice:
+		m.ClearSupportsLomDevice()
+		return nil
+	case nanohubinfo.FieldSupportsIosAppInstalls:
+		m.ClearSupportsIosAppInstalls()
+		return nil
+	case nanohubinfo.FieldSystemIntegrityProtectionEnabled:
+		m.ClearSystemIntegrityProtectionEnabled()
+		return nil
+	case nanohubinfo.FieldUdid:
+		m.ClearUdid()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubInfo nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NanoHubInfoMutation) ResetField(name string) error {
+	switch name {
+	case nanohubinfo.FieldAvailableDeviceCapacity:
+		m.ResetAvailableDeviceCapacity()
+		return nil
+	case nanohubinfo.FieldAwaitingConfiguration:
+		m.ResetAwaitingConfiguration()
+		return nil
+	case nanohubinfo.FieldBatteryLevel:
+		m.ResetBatteryLevel()
+		return nil
+	case nanohubinfo.FieldBluetoothMAC:
+		m.ResetBluetoothMAC()
+		return nil
+	case nanohubinfo.FieldBuildVersion:
+		m.ResetBuildVersion()
+		return nil
+	case nanohubinfo.FieldCurrentConsoleManagedUser:
+		m.ResetCurrentConsoleManagedUser()
+		return nil
+	case nanohubinfo.FieldDeviceCapacity:
+		m.ResetDeviceCapacity()
+		return nil
+	case nanohubinfo.FieldDeviceName:
+		m.ResetDeviceName()
+		return nil
+	case nanohubinfo.FieldEacsPreflight:
+		m.ResetEacsPreflight()
+		return nil
+	case nanohubinfo.FieldEthernetMAC:
+		m.ResetEthernetMAC()
+		return nil
+	case nanohubinfo.FieldWifiMAC:
+		m.ResetWifiMAC()
+		return nil
+	case nanohubinfo.FieldHasBattery:
+		m.ResetHasBattery()
+		return nil
+	case nanohubinfo.FieldHostname:
+		m.ResetHostname()
+		return nil
+	case nanohubinfo.FieldIsActivationLockEnabled:
+		m.ResetIsActivationLockEnabled()
+		return nil
+	case nanohubinfo.FieldIsActivationLockSupported:
+		m.ResetIsActivationLockSupported()
+		return nil
+	case nanohubinfo.FieldIsAppleSilicon:
+		m.ResetIsAppleSilicon()
+		return nil
+	case nanohubinfo.FieldIsSupervised:
+		m.ResetIsSupervised()
+		return nil
+	case nanohubinfo.FieldLocalhostname:
+		m.ResetLocalhostname()
+		return nil
+	case nanohubinfo.FieldModel:
+		m.ResetModel()
+		return nil
+	case nanohubinfo.FieldModelName:
+		m.ResetModelName()
+		return nil
+	case nanohubinfo.FieldAutoCheckEnabled:
+		m.ResetAutoCheckEnabled()
+		return nil
+	case nanohubinfo.FieldAutomaticAppInstallationEnabled:
+		m.ResetAutomaticAppInstallationEnabled()
+		return nil
+	case nanohubinfo.FieldAutomaticOsInstallationEnabled:
+		m.ResetAutomaticOsInstallationEnabled()
+		return nil
+	case nanohubinfo.FieldAutomaticSecurityUpdatesEnabled:
+		m.ResetAutomaticSecurityUpdatesEnabled()
+		return nil
+	case nanohubinfo.FieldBackgroundDownloadEnabled:
+		m.ResetBackgroundDownloadEnabled()
+		return nil
+	case nanohubinfo.FieldCatalogURL:
+		m.ResetCatalogURL()
+		return nil
+	case nanohubinfo.FieldIsDefaultCatalog:
+		m.ResetIsDefaultCatalog()
+		return nil
+	case nanohubinfo.FieldPreviousScanDate:
+		m.ResetPreviousScanDate()
+		return nil
+	case nanohubinfo.FieldPreviousScanResult:
+		m.ResetPreviousScanResult()
+		return nil
+	case nanohubinfo.FieldOsVersion:
+		m.ResetOsVersion()
+		return nil
+	case nanohubinfo.FieldPinRequiredForDeviceLock:
+		m.ResetPinRequiredForDeviceLock()
+		return nil
+	case nanohubinfo.FieldPinRequiredForEraseDevice:
+		m.ResetPinRequiredForEraseDevice()
+		return nil
+	case nanohubinfo.FieldProductName:
+		m.ResetProductName()
+		return nil
+	case nanohubinfo.FieldProvisioningUdid:
+		m.ResetProvisioningUdid()
+		return nil
+	case nanohubinfo.FieldSerialNumber:
+		m.ResetSerialNumber()
+		return nil
+	case nanohubinfo.FieldSoftwareUpdateDeviceID:
+		m.ResetSoftwareUpdateDeviceID()
+		return nil
+	case nanohubinfo.FieldSupplementalBuildVersion:
+		m.ResetSupplementalBuildVersion()
+		return nil
+	case nanohubinfo.FieldSupportsLomDevice:
+		m.ResetSupportsLomDevice()
+		return nil
+	case nanohubinfo.FieldSupportsIosAppInstalls:
+		m.ResetSupportsIosAppInstalls()
+		return nil
+	case nanohubinfo.FieldSystemIntegrityProtectionEnabled:
+		m.ResetSystemIntegrityProtectionEnabled()
+		return nil
+	case nanohubinfo.FieldUdid:
+		m.ResetUdid()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubInfo field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NanoHubInfoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.owner != nil {
+		edges = append(edges, nanohubinfo.EdgeOwner)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NanoHubInfoMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case nanohubinfo.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NanoHubInfoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NanoHubInfoMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NanoHubInfoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedowner {
+		edges = append(edges, nanohubinfo.EdgeOwner)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NanoHubInfoMutation) EdgeCleared(name string) bool {
+	switch name {
+	case nanohubinfo.EdgeOwner:
+		return m.clearedowner
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NanoHubInfoMutation) ClearEdge(name string) error {
+	switch name {
+	case nanohubinfo.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubInfo unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NanoHubInfoMutation) ResetEdge(name string) error {
+	switch name {
+	case nanohubinfo.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubInfo edge %s", name)
+}
+
+// NanoHubPushCertificateMutation represents an operation that mutates the NanoHubPushCertificate nodes in the graph.
+type NanoHubPushCertificateMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	private_key_pem *string
+	csr_pem         *string
+	certificate_pem *string
+	apns_topic      *string
+	expires_at      *time.Time
+	uploaded_at     *time.Time
+	clearedFields   map[string]struct{}
+	tenant          map[int]struct{}
+	removedtenant   map[int]struct{}
+	clearedtenant   bool
+	done            bool
+	oldValue        func(context.Context) (*NanoHubPushCertificate, error)
+	predicates      []predicate.NanoHubPushCertificate
+}
+
+var _ ent.Mutation = (*NanoHubPushCertificateMutation)(nil)
+
+// nanohubpushcertificateOption allows management of the mutation configuration using functional options.
+type nanohubpushcertificateOption func(*NanoHubPushCertificateMutation)
+
+// newNanoHubPushCertificateMutation creates new mutation for the NanoHubPushCertificate entity.
+func newNanoHubPushCertificateMutation(c config, op Op, opts ...nanohubpushcertificateOption) *NanoHubPushCertificateMutation {
+	m := &NanoHubPushCertificateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNanoHubPushCertificate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNanoHubPushCertificateID sets the ID field of the mutation.
+func withNanoHubPushCertificateID(id int) nanohubpushcertificateOption {
+	return func(m *NanoHubPushCertificateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NanoHubPushCertificate
+		)
+		m.oldValue = func(ctx context.Context) (*NanoHubPushCertificate, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NanoHubPushCertificate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNanoHubPushCertificate sets the old NanoHubPushCertificate of the mutation.
+func withNanoHubPushCertificate(node *NanoHubPushCertificate) nanohubpushcertificateOption {
+	return func(m *NanoHubPushCertificateMutation) {
+		m.oldValue = func(context.Context) (*NanoHubPushCertificate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NanoHubPushCertificateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NanoHubPushCertificateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NanoHubPushCertificateMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NanoHubPushCertificateMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NanoHubPushCertificate.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetPrivateKeyPem sets the "private_key_pem" field.
+func (m *NanoHubPushCertificateMutation) SetPrivateKeyPem(s string) {
+	m.private_key_pem = &s
+}
+
+// PrivateKeyPem returns the value of the "private_key_pem" field in the mutation.
+func (m *NanoHubPushCertificateMutation) PrivateKeyPem() (r string, exists bool) {
+	v := m.private_key_pem
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrivateKeyPem returns the old "private_key_pem" field's value of the NanoHubPushCertificate entity.
+// If the NanoHubPushCertificate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubPushCertificateMutation) OldPrivateKeyPem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrivateKeyPem is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrivateKeyPem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrivateKeyPem: %w", err)
+	}
+	return oldValue.PrivateKeyPem, nil
+}
+
+// ClearPrivateKeyPem clears the value of the "private_key_pem" field.
+func (m *NanoHubPushCertificateMutation) ClearPrivateKeyPem() {
+	m.private_key_pem = nil
+	m.clearedFields[nanohubpushcertificate.FieldPrivateKeyPem] = struct{}{}
+}
+
+// PrivateKeyPemCleared returns if the "private_key_pem" field was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) PrivateKeyPemCleared() bool {
+	_, ok := m.clearedFields[nanohubpushcertificate.FieldPrivateKeyPem]
+	return ok
+}
+
+// ResetPrivateKeyPem resets all changes to the "private_key_pem" field.
+func (m *NanoHubPushCertificateMutation) ResetPrivateKeyPem() {
+	m.private_key_pem = nil
+	delete(m.clearedFields, nanohubpushcertificate.FieldPrivateKeyPem)
+}
+
+// SetCsrPem sets the "csr_pem" field.
+func (m *NanoHubPushCertificateMutation) SetCsrPem(s string) {
+	m.csr_pem = &s
+}
+
+// CsrPem returns the value of the "csr_pem" field in the mutation.
+func (m *NanoHubPushCertificateMutation) CsrPem() (r string, exists bool) {
+	v := m.csr_pem
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCsrPem returns the old "csr_pem" field's value of the NanoHubPushCertificate entity.
+// If the NanoHubPushCertificate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubPushCertificateMutation) OldCsrPem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCsrPem is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCsrPem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCsrPem: %w", err)
+	}
+	return oldValue.CsrPem, nil
+}
+
+// ClearCsrPem clears the value of the "csr_pem" field.
+func (m *NanoHubPushCertificateMutation) ClearCsrPem() {
+	m.csr_pem = nil
+	m.clearedFields[nanohubpushcertificate.FieldCsrPem] = struct{}{}
+}
+
+// CsrPemCleared returns if the "csr_pem" field was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) CsrPemCleared() bool {
+	_, ok := m.clearedFields[nanohubpushcertificate.FieldCsrPem]
+	return ok
+}
+
+// ResetCsrPem resets all changes to the "csr_pem" field.
+func (m *NanoHubPushCertificateMutation) ResetCsrPem() {
+	m.csr_pem = nil
+	delete(m.clearedFields, nanohubpushcertificate.FieldCsrPem)
+}
+
+// SetCertificatePem sets the "certificate_pem" field.
+func (m *NanoHubPushCertificateMutation) SetCertificatePem(s string) {
+	m.certificate_pem = &s
+}
+
+// CertificatePem returns the value of the "certificate_pem" field in the mutation.
+func (m *NanoHubPushCertificateMutation) CertificatePem() (r string, exists bool) {
+	v := m.certificate_pem
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCertificatePem returns the old "certificate_pem" field's value of the NanoHubPushCertificate entity.
+// If the NanoHubPushCertificate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubPushCertificateMutation) OldCertificatePem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCertificatePem is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCertificatePem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCertificatePem: %w", err)
+	}
+	return oldValue.CertificatePem, nil
+}
+
+// ClearCertificatePem clears the value of the "certificate_pem" field.
+func (m *NanoHubPushCertificateMutation) ClearCertificatePem() {
+	m.certificate_pem = nil
+	m.clearedFields[nanohubpushcertificate.FieldCertificatePem] = struct{}{}
+}
+
+// CertificatePemCleared returns if the "certificate_pem" field was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) CertificatePemCleared() bool {
+	_, ok := m.clearedFields[nanohubpushcertificate.FieldCertificatePem]
+	return ok
+}
+
+// ResetCertificatePem resets all changes to the "certificate_pem" field.
+func (m *NanoHubPushCertificateMutation) ResetCertificatePem() {
+	m.certificate_pem = nil
+	delete(m.clearedFields, nanohubpushcertificate.FieldCertificatePem)
+}
+
+// SetApnsTopic sets the "apns_topic" field.
+func (m *NanoHubPushCertificateMutation) SetApnsTopic(s string) {
+	m.apns_topic = &s
+}
+
+// ApnsTopic returns the value of the "apns_topic" field in the mutation.
+func (m *NanoHubPushCertificateMutation) ApnsTopic() (r string, exists bool) {
+	v := m.apns_topic
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldApnsTopic returns the old "apns_topic" field's value of the NanoHubPushCertificate entity.
+// If the NanoHubPushCertificate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubPushCertificateMutation) OldApnsTopic(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldApnsTopic is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldApnsTopic requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldApnsTopic: %w", err)
+	}
+	return oldValue.ApnsTopic, nil
+}
+
+// ClearApnsTopic clears the value of the "apns_topic" field.
+func (m *NanoHubPushCertificateMutation) ClearApnsTopic() {
+	m.apns_topic = nil
+	m.clearedFields[nanohubpushcertificate.FieldApnsTopic] = struct{}{}
+}
+
+// ApnsTopicCleared returns if the "apns_topic" field was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) ApnsTopicCleared() bool {
+	_, ok := m.clearedFields[nanohubpushcertificate.FieldApnsTopic]
+	return ok
+}
+
+// ResetApnsTopic resets all changes to the "apns_topic" field.
+func (m *NanoHubPushCertificateMutation) ResetApnsTopic() {
+	m.apns_topic = nil
+	delete(m.clearedFields, nanohubpushcertificate.FieldApnsTopic)
+}
+
+// SetExpiresAt sets the "expires_at" field.
+func (m *NanoHubPushCertificateMutation) SetExpiresAt(t time.Time) {
+	m.expires_at = &t
+}
+
+// ExpiresAt returns the value of the "expires_at" field in the mutation.
+func (m *NanoHubPushCertificateMutation) ExpiresAt() (r time.Time, exists bool) {
+	v := m.expires_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresAt returns the old "expires_at" field's value of the NanoHubPushCertificate entity.
+// If the NanoHubPushCertificate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubPushCertificateMutation) OldExpiresAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresAt: %w", err)
+	}
+	return oldValue.ExpiresAt, nil
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (m *NanoHubPushCertificateMutation) ClearExpiresAt() {
+	m.expires_at = nil
+	m.clearedFields[nanohubpushcertificate.FieldExpiresAt] = struct{}{}
+}
+
+// ExpiresAtCleared returns if the "expires_at" field was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) ExpiresAtCleared() bool {
+	_, ok := m.clearedFields[nanohubpushcertificate.FieldExpiresAt]
+	return ok
+}
+
+// ResetExpiresAt resets all changes to the "expires_at" field.
+func (m *NanoHubPushCertificateMutation) ResetExpiresAt() {
+	m.expires_at = nil
+	delete(m.clearedFields, nanohubpushcertificate.FieldExpiresAt)
+}
+
+// SetUploadedAt sets the "uploaded_at" field.
+func (m *NanoHubPushCertificateMutation) SetUploadedAt(t time.Time) {
+	m.uploaded_at = &t
+}
+
+// UploadedAt returns the value of the "uploaded_at" field in the mutation.
+func (m *NanoHubPushCertificateMutation) UploadedAt() (r time.Time, exists bool) {
+	v := m.uploaded_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUploadedAt returns the old "uploaded_at" field's value of the NanoHubPushCertificate entity.
+// If the NanoHubPushCertificate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubPushCertificateMutation) OldUploadedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUploadedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUploadedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUploadedAt: %w", err)
+	}
+	return oldValue.UploadedAt, nil
+}
+
+// ClearUploadedAt clears the value of the "uploaded_at" field.
+func (m *NanoHubPushCertificateMutation) ClearUploadedAt() {
+	m.uploaded_at = nil
+	m.clearedFields[nanohubpushcertificate.FieldUploadedAt] = struct{}{}
+}
+
+// UploadedAtCleared returns if the "uploaded_at" field was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) UploadedAtCleared() bool {
+	_, ok := m.clearedFields[nanohubpushcertificate.FieldUploadedAt]
+	return ok
+}
+
+// ResetUploadedAt resets all changes to the "uploaded_at" field.
+func (m *NanoHubPushCertificateMutation) ResetUploadedAt() {
+	m.uploaded_at = nil
+	delete(m.clearedFields, nanohubpushcertificate.FieldUploadedAt)
+}
+
+// AddTenantIDs adds the "tenant" edge to the Tenant entity by ids.
+func (m *NanoHubPushCertificateMutation) AddTenantIDs(ids ...int) {
+	if m.tenant == nil {
+		m.tenant = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.tenant[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (m *NanoHubPushCertificateMutation) ClearTenant() {
+	m.clearedtenant = true
+}
+
+// TenantCleared reports if the "tenant" edge to the Tenant entity was cleared.
+func (m *NanoHubPushCertificateMutation) TenantCleared() bool {
+	return m.clearedtenant
+}
+
+// RemoveTenantIDs removes the "tenant" edge to the Tenant entity by IDs.
+func (m *NanoHubPushCertificateMutation) RemoveTenantIDs(ids ...int) {
+	if m.removedtenant == nil {
+		m.removedtenant = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.tenant, ids[i])
+		m.removedtenant[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTenant returns the removed IDs of the "tenant" edge to the Tenant entity.
+func (m *NanoHubPushCertificateMutation) RemovedTenantIDs() (ids []int) {
+	for id := range m.removedtenant {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TenantIDs returns the "tenant" edge IDs in the mutation.
+func (m *NanoHubPushCertificateMutation) TenantIDs() (ids []int) {
+	for id := range m.tenant {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTenant resets all changes to the "tenant" edge.
+func (m *NanoHubPushCertificateMutation) ResetTenant() {
+	m.tenant = nil
+	m.clearedtenant = false
+	m.removedtenant = nil
+}
+
+// Where appends a list predicates to the NanoHubPushCertificateMutation builder.
+func (m *NanoHubPushCertificateMutation) Where(ps ...predicate.NanoHubPushCertificate) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NanoHubPushCertificateMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NanoHubPushCertificateMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NanoHubPushCertificate, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NanoHubPushCertificateMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NanoHubPushCertificateMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NanoHubPushCertificate).
+func (m *NanoHubPushCertificateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NanoHubPushCertificateMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.private_key_pem != nil {
+		fields = append(fields, nanohubpushcertificate.FieldPrivateKeyPem)
+	}
+	if m.csr_pem != nil {
+		fields = append(fields, nanohubpushcertificate.FieldCsrPem)
+	}
+	if m.certificate_pem != nil {
+		fields = append(fields, nanohubpushcertificate.FieldCertificatePem)
+	}
+	if m.apns_topic != nil {
+		fields = append(fields, nanohubpushcertificate.FieldApnsTopic)
+	}
+	if m.expires_at != nil {
+		fields = append(fields, nanohubpushcertificate.FieldExpiresAt)
+	}
+	if m.uploaded_at != nil {
+		fields = append(fields, nanohubpushcertificate.FieldUploadedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NanoHubPushCertificateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case nanohubpushcertificate.FieldPrivateKeyPem:
+		return m.PrivateKeyPem()
+	case nanohubpushcertificate.FieldCsrPem:
+		return m.CsrPem()
+	case nanohubpushcertificate.FieldCertificatePem:
+		return m.CertificatePem()
+	case nanohubpushcertificate.FieldApnsTopic:
+		return m.ApnsTopic()
+	case nanohubpushcertificate.FieldExpiresAt:
+		return m.ExpiresAt()
+	case nanohubpushcertificate.FieldUploadedAt:
+		return m.UploadedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NanoHubPushCertificateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case nanohubpushcertificate.FieldPrivateKeyPem:
+		return m.OldPrivateKeyPem(ctx)
+	case nanohubpushcertificate.FieldCsrPem:
+		return m.OldCsrPem(ctx)
+	case nanohubpushcertificate.FieldCertificatePem:
+		return m.OldCertificatePem(ctx)
+	case nanohubpushcertificate.FieldApnsTopic:
+		return m.OldApnsTopic(ctx)
+	case nanohubpushcertificate.FieldExpiresAt:
+		return m.OldExpiresAt(ctx)
+	case nanohubpushcertificate.FieldUploadedAt:
+		return m.OldUploadedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown NanoHubPushCertificate field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubPushCertificateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case nanohubpushcertificate.FieldPrivateKeyPem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrivateKeyPem(v)
+		return nil
+	case nanohubpushcertificate.FieldCsrPem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCsrPem(v)
+		return nil
+	case nanohubpushcertificate.FieldCertificatePem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCertificatePem(v)
+		return nil
+	case nanohubpushcertificate.FieldApnsTopic:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetApnsTopic(v)
+		return nil
+	case nanohubpushcertificate.FieldExpiresAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresAt(v)
+		return nil
+	case nanohubpushcertificate.FieldUploadedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUploadedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubPushCertificate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NanoHubPushCertificateMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NanoHubPushCertificateMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubPushCertificateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown NanoHubPushCertificate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NanoHubPushCertificateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(nanohubpushcertificate.FieldPrivateKeyPem) {
+		fields = append(fields, nanohubpushcertificate.FieldPrivateKeyPem)
+	}
+	if m.FieldCleared(nanohubpushcertificate.FieldCsrPem) {
+		fields = append(fields, nanohubpushcertificate.FieldCsrPem)
+	}
+	if m.FieldCleared(nanohubpushcertificate.FieldCertificatePem) {
+		fields = append(fields, nanohubpushcertificate.FieldCertificatePem)
+	}
+	if m.FieldCleared(nanohubpushcertificate.FieldApnsTopic) {
+		fields = append(fields, nanohubpushcertificate.FieldApnsTopic)
+	}
+	if m.FieldCleared(nanohubpushcertificate.FieldExpiresAt) {
+		fields = append(fields, nanohubpushcertificate.FieldExpiresAt)
+	}
+	if m.FieldCleared(nanohubpushcertificate.FieldUploadedAt) {
+		fields = append(fields, nanohubpushcertificate.FieldUploadedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NanoHubPushCertificateMutation) ClearField(name string) error {
+	switch name {
+	case nanohubpushcertificate.FieldPrivateKeyPem:
+		m.ClearPrivateKeyPem()
+		return nil
+	case nanohubpushcertificate.FieldCsrPem:
+		m.ClearCsrPem()
+		return nil
+	case nanohubpushcertificate.FieldCertificatePem:
+		m.ClearCertificatePem()
+		return nil
+	case nanohubpushcertificate.FieldApnsTopic:
+		m.ClearApnsTopic()
+		return nil
+	case nanohubpushcertificate.FieldExpiresAt:
+		m.ClearExpiresAt()
+		return nil
+	case nanohubpushcertificate.FieldUploadedAt:
+		m.ClearUploadedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubPushCertificate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NanoHubPushCertificateMutation) ResetField(name string) error {
+	switch name {
+	case nanohubpushcertificate.FieldPrivateKeyPem:
+		m.ResetPrivateKeyPem()
+		return nil
+	case nanohubpushcertificate.FieldCsrPem:
+		m.ResetCsrPem()
+		return nil
+	case nanohubpushcertificate.FieldCertificatePem:
+		m.ResetCertificatePem()
+		return nil
+	case nanohubpushcertificate.FieldApnsTopic:
+		m.ResetApnsTopic()
+		return nil
+	case nanohubpushcertificate.FieldExpiresAt:
+		m.ResetExpiresAt()
+		return nil
+	case nanohubpushcertificate.FieldUploadedAt:
+		m.ResetUploadedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubPushCertificate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NanoHubPushCertificateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.tenant != nil {
+		edges = append(edges, nanohubpushcertificate.EdgeTenant)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NanoHubPushCertificateMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case nanohubpushcertificate.EdgeTenant:
+		ids := make([]ent.Value, 0, len(m.tenant))
+		for id := range m.tenant {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NanoHubPushCertificateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedtenant != nil {
+		edges = append(edges, nanohubpushcertificate.EdgeTenant)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NanoHubPushCertificateMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case nanohubpushcertificate.EdgeTenant:
+		ids := make([]ent.Value, 0, len(m.removedtenant))
+		for id := range m.removedtenant {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedtenant {
+		edges = append(edges, nanohubpushcertificate.EdgeTenant)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NanoHubPushCertificateMutation) EdgeCleared(name string) bool {
+	switch name {
+	case nanohubpushcertificate.EdgeTenant:
+		return m.clearedtenant
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NanoHubPushCertificateMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown NanoHubPushCertificate unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NanoHubPushCertificateMutation) ResetEdge(name string) error {
+	switch name {
+	case nanohubpushcertificate.EdgeTenant:
+		m.ResetTenant()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubPushCertificate edge %s", name)
+}
+
+// NanoHubSettingsMutation represents an operation that mutates the NanoHubSettings nodes in the graph.
+type NanoHubSettingsMutation struct {
+	config
+	op                     Op
+	typ                    string
+	id                     *int
+	server_url             *string
+	username               *string
+	password               *string
+	ca_cer_file            *string
+	scep_url               *string
+	scep_challenge         *string
+	mdm_url                *string
+	vendor_private_key_pem *string
+	vendor_cert_pem        *string
+	enrollment_profile_id  *string
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*NanoHubSettings, error)
+	predicates             []predicate.NanoHubSettings
+}
+
+var _ ent.Mutation = (*NanoHubSettingsMutation)(nil)
+
+// nanohubsettingsOption allows management of the mutation configuration using functional options.
+type nanohubsettingsOption func(*NanoHubSettingsMutation)
+
+// newNanoHubSettingsMutation creates new mutation for the NanoHubSettings entity.
+func newNanoHubSettingsMutation(c config, op Op, opts ...nanohubsettingsOption) *NanoHubSettingsMutation {
+	m := &NanoHubSettingsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNanoHubSettings,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNanoHubSettingsID sets the ID field of the mutation.
+func withNanoHubSettingsID(id int) nanohubsettingsOption {
+	return func(m *NanoHubSettingsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NanoHubSettings
+		)
+		m.oldValue = func(ctx context.Context) (*NanoHubSettings, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NanoHubSettings.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNanoHubSettings sets the old NanoHubSettings of the mutation.
+func withNanoHubSettings(node *NanoHubSettings) nanohubsettingsOption {
+	return func(m *NanoHubSettingsMutation) {
+		m.oldValue = func(context.Context) (*NanoHubSettings, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NanoHubSettingsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NanoHubSettingsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NanoHubSettingsMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NanoHubSettingsMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NanoHubSettings.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetServerURL sets the "server_url" field.
+func (m *NanoHubSettingsMutation) SetServerURL(s string) {
+	m.server_url = &s
+}
+
+// ServerURL returns the value of the "server_url" field in the mutation.
+func (m *NanoHubSettingsMutation) ServerURL() (r string, exists bool) {
+	v := m.server_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldServerURL returns the old "server_url" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldServerURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldServerURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldServerURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldServerURL: %w", err)
+	}
+	return oldValue.ServerURL, nil
+}
+
+// ClearServerURL clears the value of the "server_url" field.
+func (m *NanoHubSettingsMutation) ClearServerURL() {
+	m.server_url = nil
+	m.clearedFields[nanohubsettings.FieldServerURL] = struct{}{}
+}
+
+// ServerURLCleared returns if the "server_url" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) ServerURLCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldServerURL]
+	return ok
+}
+
+// ResetServerURL resets all changes to the "server_url" field.
+func (m *NanoHubSettingsMutation) ResetServerURL() {
+	m.server_url = nil
+	delete(m.clearedFields, nanohubsettings.FieldServerURL)
+}
+
+// SetUsername sets the "username" field.
+func (m *NanoHubSettingsMutation) SetUsername(s string) {
+	m.username = &s
+}
+
+// Username returns the value of the "username" field in the mutation.
+func (m *NanoHubSettingsMutation) Username() (r string, exists bool) {
+	v := m.username
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsername returns the old "username" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldUsername(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUsername is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUsername requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsername: %w", err)
+	}
+	return oldValue.Username, nil
+}
+
+// ClearUsername clears the value of the "username" field.
+func (m *NanoHubSettingsMutation) ClearUsername() {
+	m.username = nil
+	m.clearedFields[nanohubsettings.FieldUsername] = struct{}{}
+}
+
+// UsernameCleared returns if the "username" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) UsernameCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldUsername]
+	return ok
+}
+
+// ResetUsername resets all changes to the "username" field.
+func (m *NanoHubSettingsMutation) ResetUsername() {
+	m.username = nil
+	delete(m.clearedFields, nanohubsettings.FieldUsername)
+}
+
+// SetPassword sets the "password" field.
+func (m *NanoHubSettingsMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the value of the "password" field in the mutation.
+func (m *NanoHubSettingsMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old "password" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ClearPassword clears the value of the "password" field.
+func (m *NanoHubSettingsMutation) ClearPassword() {
+	m.password = nil
+	m.clearedFields[nanohubsettings.FieldPassword] = struct{}{}
+}
+
+// PasswordCleared returns if the "password" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) PasswordCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldPassword]
+	return ok
+}
+
+// ResetPassword resets all changes to the "password" field.
+func (m *NanoHubSettingsMutation) ResetPassword() {
+	m.password = nil
+	delete(m.clearedFields, nanohubsettings.FieldPassword)
+}
+
+// SetCaCerFile sets the "ca_cer_file" field.
+func (m *NanoHubSettingsMutation) SetCaCerFile(s string) {
+	m.ca_cer_file = &s
+}
+
+// CaCerFile returns the value of the "ca_cer_file" field in the mutation.
+func (m *NanoHubSettingsMutation) CaCerFile() (r string, exists bool) {
+	v := m.ca_cer_file
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCaCerFile returns the old "ca_cer_file" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldCaCerFile(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCaCerFile is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCaCerFile requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCaCerFile: %w", err)
+	}
+	return oldValue.CaCerFile, nil
+}
+
+// ClearCaCerFile clears the value of the "ca_cer_file" field.
+func (m *NanoHubSettingsMutation) ClearCaCerFile() {
+	m.ca_cer_file = nil
+	m.clearedFields[nanohubsettings.FieldCaCerFile] = struct{}{}
+}
+
+// CaCerFileCleared returns if the "ca_cer_file" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) CaCerFileCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldCaCerFile]
+	return ok
+}
+
+// ResetCaCerFile resets all changes to the "ca_cer_file" field.
+func (m *NanoHubSettingsMutation) ResetCaCerFile() {
+	m.ca_cer_file = nil
+	delete(m.clearedFields, nanohubsettings.FieldCaCerFile)
+}
+
+// SetScepURL sets the "scep_url" field.
+func (m *NanoHubSettingsMutation) SetScepURL(s string) {
+	m.scep_url = &s
+}
+
+// ScepURL returns the value of the "scep_url" field in the mutation.
+func (m *NanoHubSettingsMutation) ScepURL() (r string, exists bool) {
+	v := m.scep_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldScepURL returns the old "scep_url" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldScepURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldScepURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldScepURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldScepURL: %w", err)
+	}
+	return oldValue.ScepURL, nil
+}
+
+// ClearScepURL clears the value of the "scep_url" field.
+func (m *NanoHubSettingsMutation) ClearScepURL() {
+	m.scep_url = nil
+	m.clearedFields[nanohubsettings.FieldScepURL] = struct{}{}
+}
+
+// ScepURLCleared returns if the "scep_url" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) ScepURLCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldScepURL]
+	return ok
+}
+
+// ResetScepURL resets all changes to the "scep_url" field.
+func (m *NanoHubSettingsMutation) ResetScepURL() {
+	m.scep_url = nil
+	delete(m.clearedFields, nanohubsettings.FieldScepURL)
+}
+
+// SetScepChallenge sets the "scep_challenge" field.
+func (m *NanoHubSettingsMutation) SetScepChallenge(s string) {
+	m.scep_challenge = &s
+}
+
+// ScepChallenge returns the value of the "scep_challenge" field in the mutation.
+func (m *NanoHubSettingsMutation) ScepChallenge() (r string, exists bool) {
+	v := m.scep_challenge
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldScepChallenge returns the old "scep_challenge" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldScepChallenge(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldScepChallenge is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldScepChallenge requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldScepChallenge: %w", err)
+	}
+	return oldValue.ScepChallenge, nil
+}
+
+// ClearScepChallenge clears the value of the "scep_challenge" field.
+func (m *NanoHubSettingsMutation) ClearScepChallenge() {
+	m.scep_challenge = nil
+	m.clearedFields[nanohubsettings.FieldScepChallenge] = struct{}{}
+}
+
+// ScepChallengeCleared returns if the "scep_challenge" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) ScepChallengeCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldScepChallenge]
+	return ok
+}
+
+// ResetScepChallenge resets all changes to the "scep_challenge" field.
+func (m *NanoHubSettingsMutation) ResetScepChallenge() {
+	m.scep_challenge = nil
+	delete(m.clearedFields, nanohubsettings.FieldScepChallenge)
+}
+
+// SetMdmURL sets the "mdm_url" field.
+func (m *NanoHubSettingsMutation) SetMdmURL(s string) {
+	m.mdm_url = &s
+}
+
+// MdmURL returns the value of the "mdm_url" field in the mutation.
+func (m *NanoHubSettingsMutation) MdmURL() (r string, exists bool) {
+	v := m.mdm_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMdmURL returns the old "mdm_url" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldMdmURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMdmURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMdmURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMdmURL: %w", err)
+	}
+	return oldValue.MdmURL, nil
+}
+
+// ClearMdmURL clears the value of the "mdm_url" field.
+func (m *NanoHubSettingsMutation) ClearMdmURL() {
+	m.mdm_url = nil
+	m.clearedFields[nanohubsettings.FieldMdmURL] = struct{}{}
+}
+
+// MdmURLCleared returns if the "mdm_url" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) MdmURLCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldMdmURL]
+	return ok
+}
+
+// ResetMdmURL resets all changes to the "mdm_url" field.
+func (m *NanoHubSettingsMutation) ResetMdmURL() {
+	m.mdm_url = nil
+	delete(m.clearedFields, nanohubsettings.FieldMdmURL)
+}
+
+// SetVendorPrivateKeyPem sets the "vendor_private_key_pem" field.
+func (m *NanoHubSettingsMutation) SetVendorPrivateKeyPem(s string) {
+	m.vendor_private_key_pem = &s
+}
+
+// VendorPrivateKeyPem returns the value of the "vendor_private_key_pem" field in the mutation.
+func (m *NanoHubSettingsMutation) VendorPrivateKeyPem() (r string, exists bool) {
+	v := m.vendor_private_key_pem
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVendorPrivateKeyPem returns the old "vendor_private_key_pem" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldVendorPrivateKeyPem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVendorPrivateKeyPem is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVendorPrivateKeyPem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVendorPrivateKeyPem: %w", err)
+	}
+	return oldValue.VendorPrivateKeyPem, nil
+}
+
+// ClearVendorPrivateKeyPem clears the value of the "vendor_private_key_pem" field.
+func (m *NanoHubSettingsMutation) ClearVendorPrivateKeyPem() {
+	m.vendor_private_key_pem = nil
+	m.clearedFields[nanohubsettings.FieldVendorPrivateKeyPem] = struct{}{}
+}
+
+// VendorPrivateKeyPemCleared returns if the "vendor_private_key_pem" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) VendorPrivateKeyPemCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldVendorPrivateKeyPem]
+	return ok
+}
+
+// ResetVendorPrivateKeyPem resets all changes to the "vendor_private_key_pem" field.
+func (m *NanoHubSettingsMutation) ResetVendorPrivateKeyPem() {
+	m.vendor_private_key_pem = nil
+	delete(m.clearedFields, nanohubsettings.FieldVendorPrivateKeyPem)
+}
+
+// SetVendorCertPem sets the "vendor_cert_pem" field.
+func (m *NanoHubSettingsMutation) SetVendorCertPem(s string) {
+	m.vendor_cert_pem = &s
+}
+
+// VendorCertPem returns the value of the "vendor_cert_pem" field in the mutation.
+func (m *NanoHubSettingsMutation) VendorCertPem() (r string, exists bool) {
+	v := m.vendor_cert_pem
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVendorCertPem returns the old "vendor_cert_pem" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldVendorCertPem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVendorCertPem is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVendorCertPem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVendorCertPem: %w", err)
+	}
+	return oldValue.VendorCertPem, nil
+}
+
+// ClearVendorCertPem clears the value of the "vendor_cert_pem" field.
+func (m *NanoHubSettingsMutation) ClearVendorCertPem() {
+	m.vendor_cert_pem = nil
+	m.clearedFields[nanohubsettings.FieldVendorCertPem] = struct{}{}
+}
+
+// VendorCertPemCleared returns if the "vendor_cert_pem" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) VendorCertPemCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldVendorCertPem]
+	return ok
+}
+
+// ResetVendorCertPem resets all changes to the "vendor_cert_pem" field.
+func (m *NanoHubSettingsMutation) ResetVendorCertPem() {
+	m.vendor_cert_pem = nil
+	delete(m.clearedFields, nanohubsettings.FieldVendorCertPem)
+}
+
+// SetEnrollmentProfileID sets the "enrollment_profile_id" field.
+func (m *NanoHubSettingsMutation) SetEnrollmentProfileID(s string) {
+	m.enrollment_profile_id = &s
+}
+
+// EnrollmentProfileID returns the value of the "enrollment_profile_id" field in the mutation.
+func (m *NanoHubSettingsMutation) EnrollmentProfileID() (r string, exists bool) {
+	v := m.enrollment_profile_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnrollmentProfileID returns the old "enrollment_profile_id" field's value of the NanoHubSettings entity.
+// If the NanoHubSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubSettingsMutation) OldEnrollmentProfileID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnrollmentProfileID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnrollmentProfileID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnrollmentProfileID: %w", err)
+	}
+	return oldValue.EnrollmentProfileID, nil
+}
+
+// ClearEnrollmentProfileID clears the value of the "enrollment_profile_id" field.
+func (m *NanoHubSettingsMutation) ClearEnrollmentProfileID() {
+	m.enrollment_profile_id = nil
+	m.clearedFields[nanohubsettings.FieldEnrollmentProfileID] = struct{}{}
+}
+
+// EnrollmentProfileIDCleared returns if the "enrollment_profile_id" field was cleared in this mutation.
+func (m *NanoHubSettingsMutation) EnrollmentProfileIDCleared() bool {
+	_, ok := m.clearedFields[nanohubsettings.FieldEnrollmentProfileID]
+	return ok
+}
+
+// ResetEnrollmentProfileID resets all changes to the "enrollment_profile_id" field.
+func (m *NanoHubSettingsMutation) ResetEnrollmentProfileID() {
+	m.enrollment_profile_id = nil
+	delete(m.clearedFields, nanohubsettings.FieldEnrollmentProfileID)
+}
+
+// Where appends a list predicates to the NanoHubSettingsMutation builder.
+func (m *NanoHubSettingsMutation) Where(ps ...predicate.NanoHubSettings) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NanoHubSettingsMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NanoHubSettingsMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NanoHubSettings, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NanoHubSettingsMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NanoHubSettingsMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NanoHubSettings).
+func (m *NanoHubSettingsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NanoHubSettingsMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.server_url != nil {
+		fields = append(fields, nanohubsettings.FieldServerURL)
+	}
+	if m.username != nil {
+		fields = append(fields, nanohubsettings.FieldUsername)
+	}
+	if m.password != nil {
+		fields = append(fields, nanohubsettings.FieldPassword)
+	}
+	if m.ca_cer_file != nil {
+		fields = append(fields, nanohubsettings.FieldCaCerFile)
+	}
+	if m.scep_url != nil {
+		fields = append(fields, nanohubsettings.FieldScepURL)
+	}
+	if m.scep_challenge != nil {
+		fields = append(fields, nanohubsettings.FieldScepChallenge)
+	}
+	if m.mdm_url != nil {
+		fields = append(fields, nanohubsettings.FieldMdmURL)
+	}
+	if m.vendor_private_key_pem != nil {
+		fields = append(fields, nanohubsettings.FieldVendorPrivateKeyPem)
+	}
+	if m.vendor_cert_pem != nil {
+		fields = append(fields, nanohubsettings.FieldVendorCertPem)
+	}
+	if m.enrollment_profile_id != nil {
+		fields = append(fields, nanohubsettings.FieldEnrollmentProfileID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NanoHubSettingsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case nanohubsettings.FieldServerURL:
+		return m.ServerURL()
+	case nanohubsettings.FieldUsername:
+		return m.Username()
+	case nanohubsettings.FieldPassword:
+		return m.Password()
+	case nanohubsettings.FieldCaCerFile:
+		return m.CaCerFile()
+	case nanohubsettings.FieldScepURL:
+		return m.ScepURL()
+	case nanohubsettings.FieldScepChallenge:
+		return m.ScepChallenge()
+	case nanohubsettings.FieldMdmURL:
+		return m.MdmURL()
+	case nanohubsettings.FieldVendorPrivateKeyPem:
+		return m.VendorPrivateKeyPem()
+	case nanohubsettings.FieldVendorCertPem:
+		return m.VendorCertPem()
+	case nanohubsettings.FieldEnrollmentProfileID:
+		return m.EnrollmentProfileID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NanoHubSettingsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case nanohubsettings.FieldServerURL:
+		return m.OldServerURL(ctx)
+	case nanohubsettings.FieldUsername:
+		return m.OldUsername(ctx)
+	case nanohubsettings.FieldPassword:
+		return m.OldPassword(ctx)
+	case nanohubsettings.FieldCaCerFile:
+		return m.OldCaCerFile(ctx)
+	case nanohubsettings.FieldScepURL:
+		return m.OldScepURL(ctx)
+	case nanohubsettings.FieldScepChallenge:
+		return m.OldScepChallenge(ctx)
+	case nanohubsettings.FieldMdmURL:
+		return m.OldMdmURL(ctx)
+	case nanohubsettings.FieldVendorPrivateKeyPem:
+		return m.OldVendorPrivateKeyPem(ctx)
+	case nanohubsettings.FieldVendorCertPem:
+		return m.OldVendorCertPem(ctx)
+	case nanohubsettings.FieldEnrollmentProfileID:
+		return m.OldEnrollmentProfileID(ctx)
+	}
+	return nil, fmt.Errorf("unknown NanoHubSettings field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubSettingsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case nanohubsettings.FieldServerURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetServerURL(v)
+		return nil
+	case nanohubsettings.FieldUsername:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsername(v)
+		return nil
+	case nanohubsettings.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
+		return nil
+	case nanohubsettings.FieldCaCerFile:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCaCerFile(v)
+		return nil
+	case nanohubsettings.FieldScepURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetScepURL(v)
+		return nil
+	case nanohubsettings.FieldScepChallenge:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetScepChallenge(v)
+		return nil
+	case nanohubsettings.FieldMdmURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMdmURL(v)
+		return nil
+	case nanohubsettings.FieldVendorPrivateKeyPem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVendorPrivateKeyPem(v)
+		return nil
+	case nanohubsettings.FieldVendorCertPem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVendorCertPem(v)
+		return nil
+	case nanohubsettings.FieldEnrollmentProfileID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnrollmentProfileID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubSettings field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NanoHubSettingsMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NanoHubSettingsMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubSettingsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown NanoHubSettings numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NanoHubSettingsMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(nanohubsettings.FieldServerURL) {
+		fields = append(fields, nanohubsettings.FieldServerURL)
+	}
+	if m.FieldCleared(nanohubsettings.FieldUsername) {
+		fields = append(fields, nanohubsettings.FieldUsername)
+	}
+	if m.FieldCleared(nanohubsettings.FieldPassword) {
+		fields = append(fields, nanohubsettings.FieldPassword)
+	}
+	if m.FieldCleared(nanohubsettings.FieldCaCerFile) {
+		fields = append(fields, nanohubsettings.FieldCaCerFile)
+	}
+	if m.FieldCleared(nanohubsettings.FieldScepURL) {
+		fields = append(fields, nanohubsettings.FieldScepURL)
+	}
+	if m.FieldCleared(nanohubsettings.FieldScepChallenge) {
+		fields = append(fields, nanohubsettings.FieldScepChallenge)
+	}
+	if m.FieldCleared(nanohubsettings.FieldMdmURL) {
+		fields = append(fields, nanohubsettings.FieldMdmURL)
+	}
+	if m.FieldCleared(nanohubsettings.FieldVendorPrivateKeyPem) {
+		fields = append(fields, nanohubsettings.FieldVendorPrivateKeyPem)
+	}
+	if m.FieldCleared(nanohubsettings.FieldVendorCertPem) {
+		fields = append(fields, nanohubsettings.FieldVendorCertPem)
+	}
+	if m.FieldCleared(nanohubsettings.FieldEnrollmentProfileID) {
+		fields = append(fields, nanohubsettings.FieldEnrollmentProfileID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NanoHubSettingsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NanoHubSettingsMutation) ClearField(name string) error {
+	switch name {
+	case nanohubsettings.FieldServerURL:
+		m.ClearServerURL()
+		return nil
+	case nanohubsettings.FieldUsername:
+		m.ClearUsername()
+		return nil
+	case nanohubsettings.FieldPassword:
+		m.ClearPassword()
+		return nil
+	case nanohubsettings.FieldCaCerFile:
+		m.ClearCaCerFile()
+		return nil
+	case nanohubsettings.FieldScepURL:
+		m.ClearScepURL()
+		return nil
+	case nanohubsettings.FieldScepChallenge:
+		m.ClearScepChallenge()
+		return nil
+	case nanohubsettings.FieldMdmURL:
+		m.ClearMdmURL()
+		return nil
+	case nanohubsettings.FieldVendorPrivateKeyPem:
+		m.ClearVendorPrivateKeyPem()
+		return nil
+	case nanohubsettings.FieldVendorCertPem:
+		m.ClearVendorCertPem()
+		return nil
+	case nanohubsettings.FieldEnrollmentProfileID:
+		m.ClearEnrollmentProfileID()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubSettings nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NanoHubSettingsMutation) ResetField(name string) error {
+	switch name {
+	case nanohubsettings.FieldServerURL:
+		m.ResetServerURL()
+		return nil
+	case nanohubsettings.FieldUsername:
+		m.ResetUsername()
+		return nil
+	case nanohubsettings.FieldPassword:
+		m.ResetPassword()
+		return nil
+	case nanohubsettings.FieldCaCerFile:
+		m.ResetCaCerFile()
+		return nil
+	case nanohubsettings.FieldScepURL:
+		m.ResetScepURL()
+		return nil
+	case nanohubsettings.FieldScepChallenge:
+		m.ResetScepChallenge()
+		return nil
+	case nanohubsettings.FieldMdmURL:
+		m.ResetMdmURL()
+		return nil
+	case nanohubsettings.FieldVendorPrivateKeyPem:
+		m.ResetVendorPrivateKeyPem()
+		return nil
+	case nanohubsettings.FieldVendorCertPem:
+		m.ResetVendorCertPem()
+		return nil
+	case nanohubsettings.FieldEnrollmentProfileID:
+		m.ResetEnrollmentProfileID()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubSettings field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NanoHubSettingsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NanoHubSettingsMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NanoHubSettingsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NanoHubSettingsMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NanoHubSettingsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NanoHubSettingsMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NanoHubSettingsMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown NanoHubSettings unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NanoHubSettingsMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown NanoHubSettings edge %s", name)
+}
+
+// NanoHubUserMutation represents an operation that mutates the NanoHubUser nodes in the graph.
+type NanoHubUserMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	data_quota       *int64
+	adddata_quota    *int64
+	data_used        *int64
+	adddata_used     *int64
+	has_data_to_sync *bool
+	has_secure_token *bool
+	is_logged_in     *bool
+	username         *string
+	fullname         *string
+	mobile_account   *bool
+	uid              *int64
+	adduid           *int64
+	user_guid        *string
+	clearedFields    map[string]struct{}
+	owner            *string
+	clearedowner     bool
+	done             bool
+	oldValue         func(context.Context) (*NanoHubUser, error)
+	predicates       []predicate.NanoHubUser
+}
+
+var _ ent.Mutation = (*NanoHubUserMutation)(nil)
+
+// nanohubuserOption allows management of the mutation configuration using functional options.
+type nanohubuserOption func(*NanoHubUserMutation)
+
+// newNanoHubUserMutation creates new mutation for the NanoHubUser entity.
+func newNanoHubUserMutation(c config, op Op, opts ...nanohubuserOption) *NanoHubUserMutation {
+	m := &NanoHubUserMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeNanoHubUser,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withNanoHubUserID sets the ID field of the mutation.
+func withNanoHubUserID(id int) nanohubuserOption {
+	return func(m *NanoHubUserMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *NanoHubUser
+		)
+		m.oldValue = func(ctx context.Context) (*NanoHubUser, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().NanoHubUser.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withNanoHubUser sets the old NanoHubUser of the mutation.
+func withNanoHubUser(node *NanoHubUser) nanohubuserOption {
+	return func(m *NanoHubUserMutation) {
+		m.oldValue = func(context.Context) (*NanoHubUser, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m NanoHubUserMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m NanoHubUserMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *NanoHubUserMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *NanoHubUserMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().NanoHubUser.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetDataQuota sets the "data_quota" field.
+func (m *NanoHubUserMutation) SetDataQuota(i int64) {
+	m.data_quota = &i
+	m.adddata_quota = nil
+}
+
+// DataQuota returns the value of the "data_quota" field in the mutation.
+func (m *NanoHubUserMutation) DataQuota() (r int64, exists bool) {
+	v := m.data_quota
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDataQuota returns the old "data_quota" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldDataQuota(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDataQuota is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDataQuota requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDataQuota: %w", err)
+	}
+	return oldValue.DataQuota, nil
+}
+
+// AddDataQuota adds i to the "data_quota" field.
+func (m *NanoHubUserMutation) AddDataQuota(i int64) {
+	if m.adddata_quota != nil {
+		*m.adddata_quota += i
+	} else {
+		m.adddata_quota = &i
+	}
+}
+
+// AddedDataQuota returns the value that was added to the "data_quota" field in this mutation.
+func (m *NanoHubUserMutation) AddedDataQuota() (r int64, exists bool) {
+	v := m.adddata_quota
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDataQuota clears the value of the "data_quota" field.
+func (m *NanoHubUserMutation) ClearDataQuota() {
+	m.data_quota = nil
+	m.adddata_quota = nil
+	m.clearedFields[nanohubuser.FieldDataQuota] = struct{}{}
+}
+
+// DataQuotaCleared returns if the "data_quota" field was cleared in this mutation.
+func (m *NanoHubUserMutation) DataQuotaCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldDataQuota]
+	return ok
+}
+
+// ResetDataQuota resets all changes to the "data_quota" field.
+func (m *NanoHubUserMutation) ResetDataQuota() {
+	m.data_quota = nil
+	m.adddata_quota = nil
+	delete(m.clearedFields, nanohubuser.FieldDataQuota)
+}
+
+// SetDataUsed sets the "data_used" field.
+func (m *NanoHubUserMutation) SetDataUsed(i int64) {
+	m.data_used = &i
+	m.adddata_used = nil
+}
+
+// DataUsed returns the value of the "data_used" field in the mutation.
+func (m *NanoHubUserMutation) DataUsed() (r int64, exists bool) {
+	v := m.data_used
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDataUsed returns the old "data_used" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldDataUsed(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDataUsed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDataUsed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDataUsed: %w", err)
+	}
+	return oldValue.DataUsed, nil
+}
+
+// AddDataUsed adds i to the "data_used" field.
+func (m *NanoHubUserMutation) AddDataUsed(i int64) {
+	if m.adddata_used != nil {
+		*m.adddata_used += i
+	} else {
+		m.adddata_used = &i
+	}
+}
+
+// AddedDataUsed returns the value that was added to the "data_used" field in this mutation.
+func (m *NanoHubUserMutation) AddedDataUsed() (r int64, exists bool) {
+	v := m.adddata_used
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDataUsed clears the value of the "data_used" field.
+func (m *NanoHubUserMutation) ClearDataUsed() {
+	m.data_used = nil
+	m.adddata_used = nil
+	m.clearedFields[nanohubuser.FieldDataUsed] = struct{}{}
+}
+
+// DataUsedCleared returns if the "data_used" field was cleared in this mutation.
+func (m *NanoHubUserMutation) DataUsedCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldDataUsed]
+	return ok
+}
+
+// ResetDataUsed resets all changes to the "data_used" field.
+func (m *NanoHubUserMutation) ResetDataUsed() {
+	m.data_used = nil
+	m.adddata_used = nil
+	delete(m.clearedFields, nanohubuser.FieldDataUsed)
+}
+
+// SetHasDataToSync sets the "has_data_to_sync" field.
+func (m *NanoHubUserMutation) SetHasDataToSync(b bool) {
+	m.has_data_to_sync = &b
+}
+
+// HasDataToSync returns the value of the "has_data_to_sync" field in the mutation.
+func (m *NanoHubUserMutation) HasDataToSync() (r bool, exists bool) {
+	v := m.has_data_to_sync
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHasDataToSync returns the old "has_data_to_sync" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldHasDataToSync(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHasDataToSync is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHasDataToSync requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHasDataToSync: %w", err)
+	}
+	return oldValue.HasDataToSync, nil
+}
+
+// ClearHasDataToSync clears the value of the "has_data_to_sync" field.
+func (m *NanoHubUserMutation) ClearHasDataToSync() {
+	m.has_data_to_sync = nil
+	m.clearedFields[nanohubuser.FieldHasDataToSync] = struct{}{}
+}
+
+// HasDataToSyncCleared returns if the "has_data_to_sync" field was cleared in this mutation.
+func (m *NanoHubUserMutation) HasDataToSyncCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldHasDataToSync]
+	return ok
+}
+
+// ResetHasDataToSync resets all changes to the "has_data_to_sync" field.
+func (m *NanoHubUserMutation) ResetHasDataToSync() {
+	m.has_data_to_sync = nil
+	delete(m.clearedFields, nanohubuser.FieldHasDataToSync)
+}
+
+// SetHasSecureToken sets the "has_secure_token" field.
+func (m *NanoHubUserMutation) SetHasSecureToken(b bool) {
+	m.has_secure_token = &b
+}
+
+// HasSecureToken returns the value of the "has_secure_token" field in the mutation.
+func (m *NanoHubUserMutation) HasSecureToken() (r bool, exists bool) {
+	v := m.has_secure_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHasSecureToken returns the old "has_secure_token" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldHasSecureToken(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHasSecureToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHasSecureToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHasSecureToken: %w", err)
+	}
+	return oldValue.HasSecureToken, nil
+}
+
+// ClearHasSecureToken clears the value of the "has_secure_token" field.
+func (m *NanoHubUserMutation) ClearHasSecureToken() {
+	m.has_secure_token = nil
+	m.clearedFields[nanohubuser.FieldHasSecureToken] = struct{}{}
+}
+
+// HasSecureTokenCleared returns if the "has_secure_token" field was cleared in this mutation.
+func (m *NanoHubUserMutation) HasSecureTokenCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldHasSecureToken]
+	return ok
+}
+
+// ResetHasSecureToken resets all changes to the "has_secure_token" field.
+func (m *NanoHubUserMutation) ResetHasSecureToken() {
+	m.has_secure_token = nil
+	delete(m.clearedFields, nanohubuser.FieldHasSecureToken)
+}
+
+// SetIsLoggedIn sets the "is_logged_in" field.
+func (m *NanoHubUserMutation) SetIsLoggedIn(b bool) {
+	m.is_logged_in = &b
+}
+
+// IsLoggedIn returns the value of the "is_logged_in" field in the mutation.
+func (m *NanoHubUserMutation) IsLoggedIn() (r bool, exists bool) {
+	v := m.is_logged_in
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsLoggedIn returns the old "is_logged_in" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldIsLoggedIn(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsLoggedIn is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsLoggedIn requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsLoggedIn: %w", err)
+	}
+	return oldValue.IsLoggedIn, nil
+}
+
+// ClearIsLoggedIn clears the value of the "is_logged_in" field.
+func (m *NanoHubUserMutation) ClearIsLoggedIn() {
+	m.is_logged_in = nil
+	m.clearedFields[nanohubuser.FieldIsLoggedIn] = struct{}{}
+}
+
+// IsLoggedInCleared returns if the "is_logged_in" field was cleared in this mutation.
+func (m *NanoHubUserMutation) IsLoggedInCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldIsLoggedIn]
+	return ok
+}
+
+// ResetIsLoggedIn resets all changes to the "is_logged_in" field.
+func (m *NanoHubUserMutation) ResetIsLoggedIn() {
+	m.is_logged_in = nil
+	delete(m.clearedFields, nanohubuser.FieldIsLoggedIn)
+}
+
+// SetUsername sets the "username" field.
+func (m *NanoHubUserMutation) SetUsername(s string) {
+	m.username = &s
+}
+
+// Username returns the value of the "username" field in the mutation.
+func (m *NanoHubUserMutation) Username() (r string, exists bool) {
+	v := m.username
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUsername returns the old "username" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldUsername(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUsername is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUsername requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUsername: %w", err)
+	}
+	return oldValue.Username, nil
+}
+
+// ClearUsername clears the value of the "username" field.
+func (m *NanoHubUserMutation) ClearUsername() {
+	m.username = nil
+	m.clearedFields[nanohubuser.FieldUsername] = struct{}{}
+}
+
+// UsernameCleared returns if the "username" field was cleared in this mutation.
+func (m *NanoHubUserMutation) UsernameCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldUsername]
+	return ok
+}
+
+// ResetUsername resets all changes to the "username" field.
+func (m *NanoHubUserMutation) ResetUsername() {
+	m.username = nil
+	delete(m.clearedFields, nanohubuser.FieldUsername)
+}
+
+// SetFullname sets the "fullname" field.
+func (m *NanoHubUserMutation) SetFullname(s string) {
+	m.fullname = &s
+}
+
+// Fullname returns the value of the "fullname" field in the mutation.
+func (m *NanoHubUserMutation) Fullname() (r string, exists bool) {
+	v := m.fullname
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFullname returns the old "fullname" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldFullname(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFullname is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFullname requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFullname: %w", err)
+	}
+	return oldValue.Fullname, nil
+}
+
+// ClearFullname clears the value of the "fullname" field.
+func (m *NanoHubUserMutation) ClearFullname() {
+	m.fullname = nil
+	m.clearedFields[nanohubuser.FieldFullname] = struct{}{}
+}
+
+// FullnameCleared returns if the "fullname" field was cleared in this mutation.
+func (m *NanoHubUserMutation) FullnameCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldFullname]
+	return ok
+}
+
+// ResetFullname resets all changes to the "fullname" field.
+func (m *NanoHubUserMutation) ResetFullname() {
+	m.fullname = nil
+	delete(m.clearedFields, nanohubuser.FieldFullname)
+}
+
+// SetMobileAccount sets the "mobile_account" field.
+func (m *NanoHubUserMutation) SetMobileAccount(b bool) {
+	m.mobile_account = &b
+}
+
+// MobileAccount returns the value of the "mobile_account" field in the mutation.
+func (m *NanoHubUserMutation) MobileAccount() (r bool, exists bool) {
+	v := m.mobile_account
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMobileAccount returns the old "mobile_account" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldMobileAccount(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMobileAccount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMobileAccount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMobileAccount: %w", err)
+	}
+	return oldValue.MobileAccount, nil
+}
+
+// ClearMobileAccount clears the value of the "mobile_account" field.
+func (m *NanoHubUserMutation) ClearMobileAccount() {
+	m.mobile_account = nil
+	m.clearedFields[nanohubuser.FieldMobileAccount] = struct{}{}
+}
+
+// MobileAccountCleared returns if the "mobile_account" field was cleared in this mutation.
+func (m *NanoHubUserMutation) MobileAccountCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldMobileAccount]
+	return ok
+}
+
+// ResetMobileAccount resets all changes to the "mobile_account" field.
+func (m *NanoHubUserMutation) ResetMobileAccount() {
+	m.mobile_account = nil
+	delete(m.clearedFields, nanohubuser.FieldMobileAccount)
+}
+
+// SetUID sets the "uid" field.
+func (m *NanoHubUserMutation) SetUID(i int64) {
+	m.uid = &i
+	m.adduid = nil
+}
+
+// UID returns the value of the "uid" field in the mutation.
+func (m *NanoHubUserMutation) UID() (r int64, exists bool) {
+	v := m.uid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUID returns the old "uid" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldUID(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUID: %w", err)
+	}
+	return oldValue.UID, nil
+}
+
+// AddUID adds i to the "uid" field.
+func (m *NanoHubUserMutation) AddUID(i int64) {
+	if m.adduid != nil {
+		*m.adduid += i
+	} else {
+		m.adduid = &i
+	}
+}
+
+// AddedUID returns the value that was added to the "uid" field in this mutation.
+func (m *NanoHubUserMutation) AddedUID() (r int64, exists bool) {
+	v := m.adduid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUID clears the value of the "uid" field.
+func (m *NanoHubUserMutation) ClearUID() {
+	m.uid = nil
+	m.adduid = nil
+	m.clearedFields[nanohubuser.FieldUID] = struct{}{}
+}
+
+// UIDCleared returns if the "uid" field was cleared in this mutation.
+func (m *NanoHubUserMutation) UIDCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldUID]
+	return ok
+}
+
+// ResetUID resets all changes to the "uid" field.
+func (m *NanoHubUserMutation) ResetUID() {
+	m.uid = nil
+	m.adduid = nil
+	delete(m.clearedFields, nanohubuser.FieldUID)
+}
+
+// SetUserGUID sets the "user_guid" field.
+func (m *NanoHubUserMutation) SetUserGUID(s string) {
+	m.user_guid = &s
+}
+
+// UserGUID returns the value of the "user_guid" field in the mutation.
+func (m *NanoHubUserMutation) UserGUID() (r string, exists bool) {
+	v := m.user_guid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserGUID returns the old "user_guid" field's value of the NanoHubUser entity.
+// If the NanoHubUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NanoHubUserMutation) OldUserGUID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserGUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserGUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserGUID: %w", err)
+	}
+	return oldValue.UserGUID, nil
+}
+
+// ClearUserGUID clears the value of the "user_guid" field.
+func (m *NanoHubUserMutation) ClearUserGUID() {
+	m.user_guid = nil
+	m.clearedFields[nanohubuser.FieldUserGUID] = struct{}{}
+}
+
+// UserGUIDCleared returns if the "user_guid" field was cleared in this mutation.
+func (m *NanoHubUserMutation) UserGUIDCleared() bool {
+	_, ok := m.clearedFields[nanohubuser.FieldUserGUID]
+	return ok
+}
+
+// ResetUserGUID resets all changes to the "user_guid" field.
+func (m *NanoHubUserMutation) ResetUserGUID() {
+	m.user_guid = nil
+	delete(m.clearedFields, nanohubuser.FieldUserGUID)
+}
+
+// SetOwnerID sets the "owner" edge to the Agent entity by id.
+func (m *NanoHubUserMutation) SetOwnerID(id string) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the Agent entity.
+func (m *NanoHubUserMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the Agent entity was cleared.
+func (m *NanoHubUserMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *NanoHubUserMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *NanoHubUserMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *NanoHubUserMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
+// Where appends a list predicates to the NanoHubUserMutation builder.
+func (m *NanoHubUserMutation) Where(ps ...predicate.NanoHubUser) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the NanoHubUserMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *NanoHubUserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.NanoHubUser, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *NanoHubUserMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *NanoHubUserMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (NanoHubUser).
+func (m *NanoHubUserMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *NanoHubUserMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.data_quota != nil {
+		fields = append(fields, nanohubuser.FieldDataQuota)
+	}
+	if m.data_used != nil {
+		fields = append(fields, nanohubuser.FieldDataUsed)
+	}
+	if m.has_data_to_sync != nil {
+		fields = append(fields, nanohubuser.FieldHasDataToSync)
+	}
+	if m.has_secure_token != nil {
+		fields = append(fields, nanohubuser.FieldHasSecureToken)
+	}
+	if m.is_logged_in != nil {
+		fields = append(fields, nanohubuser.FieldIsLoggedIn)
+	}
+	if m.username != nil {
+		fields = append(fields, nanohubuser.FieldUsername)
+	}
+	if m.fullname != nil {
+		fields = append(fields, nanohubuser.FieldFullname)
+	}
+	if m.mobile_account != nil {
+		fields = append(fields, nanohubuser.FieldMobileAccount)
+	}
+	if m.uid != nil {
+		fields = append(fields, nanohubuser.FieldUID)
+	}
+	if m.user_guid != nil {
+		fields = append(fields, nanohubuser.FieldUserGUID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *NanoHubUserMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		return m.DataQuota()
+	case nanohubuser.FieldDataUsed:
+		return m.DataUsed()
+	case nanohubuser.FieldHasDataToSync:
+		return m.HasDataToSync()
+	case nanohubuser.FieldHasSecureToken:
+		return m.HasSecureToken()
+	case nanohubuser.FieldIsLoggedIn:
+		return m.IsLoggedIn()
+	case nanohubuser.FieldUsername:
+		return m.Username()
+	case nanohubuser.FieldFullname:
+		return m.Fullname()
+	case nanohubuser.FieldMobileAccount:
+		return m.MobileAccount()
+	case nanohubuser.FieldUID:
+		return m.UID()
+	case nanohubuser.FieldUserGUID:
+		return m.UserGUID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *NanoHubUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		return m.OldDataQuota(ctx)
+	case nanohubuser.FieldDataUsed:
+		return m.OldDataUsed(ctx)
+	case nanohubuser.FieldHasDataToSync:
+		return m.OldHasDataToSync(ctx)
+	case nanohubuser.FieldHasSecureToken:
+		return m.OldHasSecureToken(ctx)
+	case nanohubuser.FieldIsLoggedIn:
+		return m.OldIsLoggedIn(ctx)
+	case nanohubuser.FieldUsername:
+		return m.OldUsername(ctx)
+	case nanohubuser.FieldFullname:
+		return m.OldFullname(ctx)
+	case nanohubuser.FieldMobileAccount:
+		return m.OldMobileAccount(ctx)
+	case nanohubuser.FieldUID:
+		return m.OldUID(ctx)
+	case nanohubuser.FieldUserGUID:
+		return m.OldUserGUID(ctx)
+	}
+	return nil, fmt.Errorf("unknown NanoHubUser field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubUserMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDataQuota(v)
+		return nil
+	case nanohubuser.FieldDataUsed:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDataUsed(v)
+		return nil
+	case nanohubuser.FieldHasDataToSync:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHasDataToSync(v)
+		return nil
+	case nanohubuser.FieldHasSecureToken:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHasSecureToken(v)
+		return nil
+	case nanohubuser.FieldIsLoggedIn:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsLoggedIn(v)
+		return nil
+	case nanohubuser.FieldUsername:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUsername(v)
+		return nil
+	case nanohubuser.FieldFullname:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFullname(v)
+		return nil
+	case nanohubuser.FieldMobileAccount:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMobileAccount(v)
+		return nil
+	case nanohubuser.FieldUID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUID(v)
+		return nil
+	case nanohubuser.FieldUserGUID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserGUID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubUser field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *NanoHubUserMutation) AddedFields() []string {
+	var fields []string
+	if m.adddata_quota != nil {
+		fields = append(fields, nanohubuser.FieldDataQuota)
+	}
+	if m.adddata_used != nil {
+		fields = append(fields, nanohubuser.FieldDataUsed)
+	}
+	if m.adduid != nil {
+		fields = append(fields, nanohubuser.FieldUID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *NanoHubUserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		return m.AddedDataQuota()
+	case nanohubuser.FieldDataUsed:
+		return m.AddedDataUsed()
+	case nanohubuser.FieldUID:
+		return m.AddedUID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *NanoHubUserMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDataQuota(v)
+		return nil
+	case nanohubuser.FieldDataUsed:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDataUsed(v)
+		return nil
+	case nanohubuser.FieldUID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubUser numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *NanoHubUserMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(nanohubuser.FieldDataQuota) {
+		fields = append(fields, nanohubuser.FieldDataQuota)
+	}
+	if m.FieldCleared(nanohubuser.FieldDataUsed) {
+		fields = append(fields, nanohubuser.FieldDataUsed)
+	}
+	if m.FieldCleared(nanohubuser.FieldHasDataToSync) {
+		fields = append(fields, nanohubuser.FieldHasDataToSync)
+	}
+	if m.FieldCleared(nanohubuser.FieldHasSecureToken) {
+		fields = append(fields, nanohubuser.FieldHasSecureToken)
+	}
+	if m.FieldCleared(nanohubuser.FieldIsLoggedIn) {
+		fields = append(fields, nanohubuser.FieldIsLoggedIn)
+	}
+	if m.FieldCleared(nanohubuser.FieldUsername) {
+		fields = append(fields, nanohubuser.FieldUsername)
+	}
+	if m.FieldCleared(nanohubuser.FieldFullname) {
+		fields = append(fields, nanohubuser.FieldFullname)
+	}
+	if m.FieldCleared(nanohubuser.FieldMobileAccount) {
+		fields = append(fields, nanohubuser.FieldMobileAccount)
+	}
+	if m.FieldCleared(nanohubuser.FieldUID) {
+		fields = append(fields, nanohubuser.FieldUID)
+	}
+	if m.FieldCleared(nanohubuser.FieldUserGUID) {
+		fields = append(fields, nanohubuser.FieldUserGUID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *NanoHubUserMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *NanoHubUserMutation) ClearField(name string) error {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		m.ClearDataQuota()
+		return nil
+	case nanohubuser.FieldDataUsed:
+		m.ClearDataUsed()
+		return nil
+	case nanohubuser.FieldHasDataToSync:
+		m.ClearHasDataToSync()
+		return nil
+	case nanohubuser.FieldHasSecureToken:
+		m.ClearHasSecureToken()
+		return nil
+	case nanohubuser.FieldIsLoggedIn:
+		m.ClearIsLoggedIn()
+		return nil
+	case nanohubuser.FieldUsername:
+		m.ClearUsername()
+		return nil
+	case nanohubuser.FieldFullname:
+		m.ClearFullname()
+		return nil
+	case nanohubuser.FieldMobileAccount:
+		m.ClearMobileAccount()
+		return nil
+	case nanohubuser.FieldUID:
+		m.ClearUID()
+		return nil
+	case nanohubuser.FieldUserGUID:
+		m.ClearUserGUID()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubUser nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *NanoHubUserMutation) ResetField(name string) error {
+	switch name {
+	case nanohubuser.FieldDataQuota:
+		m.ResetDataQuota()
+		return nil
+	case nanohubuser.FieldDataUsed:
+		m.ResetDataUsed()
+		return nil
+	case nanohubuser.FieldHasDataToSync:
+		m.ResetHasDataToSync()
+		return nil
+	case nanohubuser.FieldHasSecureToken:
+		m.ResetHasSecureToken()
+		return nil
+	case nanohubuser.FieldIsLoggedIn:
+		m.ResetIsLoggedIn()
+		return nil
+	case nanohubuser.FieldUsername:
+		m.ResetUsername()
+		return nil
+	case nanohubuser.FieldFullname:
+		m.ResetFullname()
+		return nil
+	case nanohubuser.FieldMobileAccount:
+		m.ResetMobileAccount()
+		return nil
+	case nanohubuser.FieldUID:
+		m.ResetUID()
+		return nil
+	case nanohubuser.FieldUserGUID:
+		m.ResetUserGUID()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubUser field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *NanoHubUserMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.owner != nil {
+		edges = append(edges, nanohubuser.EdgeOwner)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *NanoHubUserMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case nanohubuser.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *NanoHubUserMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *NanoHubUserMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *NanoHubUserMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedowner {
+		edges = append(edges, nanohubuser.EdgeOwner)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *NanoHubUserMutation) EdgeCleared(name string) bool {
+	switch name {
+	case nanohubuser.EdgeOwner:
+		return m.clearedowner
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *NanoHubUserMutation) ClearEdge(name string) error {
+	switch name {
+	case nanohubuser.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubUser unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *NanoHubUserMutation) ResetEdge(name string) error {
+	switch name {
+	case nanohubuser.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	}
+	return fmt.Errorf("unknown NanoHubUser edge %s", name)
 }
 
 // NetbirdMutation represents an operation that mutates the Netbird nodes in the graph.
@@ -38914,6 +45990,8 @@ type TenantMutation struct {
 	clearedrustdesk          bool
 	netbird                  *int
 	clearednetbird           bool
+	nanohub_push             *int
+	clearednanohub_push      bool
 	user_tenants             map[int]struct{}
 	removeduser_tenants      map[int]struct{}
 	cleareduser_tenants      bool
@@ -39611,6 +46689,45 @@ func (m *TenantMutation) ResetNetbird() {
 	m.clearednetbird = false
 }
 
+// SetNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by id.
+func (m *TenantMutation) SetNanohubPushID(id int) {
+	m.nanohub_push = &id
+}
+
+// ClearNanohubPush clears the "nanohub_push" edge to the NanoHubPushCertificate entity.
+func (m *TenantMutation) ClearNanohubPush() {
+	m.clearednanohub_push = true
+}
+
+// NanohubPushCleared reports if the "nanohub_push" edge to the NanoHubPushCertificate entity was cleared.
+func (m *TenantMutation) NanohubPushCleared() bool {
+	return m.clearednanohub_push
+}
+
+// NanohubPushID returns the "nanohub_push" edge ID in the mutation.
+func (m *TenantMutation) NanohubPushID() (id int, exists bool) {
+	if m.nanohub_push != nil {
+		return *m.nanohub_push, true
+	}
+	return
+}
+
+// NanohubPushIDs returns the "nanohub_push" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// NanohubPushID instead. It exists only for internal usage by the builders.
+func (m *TenantMutation) NanohubPushIDs() (ids []int) {
+	if id := m.nanohub_push; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetNanohubPush resets all changes to the "nanohub_push" edge.
+func (m *TenantMutation) ResetNanohubPush() {
+	m.nanohub_push = nil
+	m.clearednanohub_push = false
+}
+
 // AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by ids.
 func (m *TenantMutation) AddUserTenantIDs(ids ...int) {
 	if m.user_tenants == nil {
@@ -39976,7 +47093,7 @@ func (m *TenantMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TenantMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.sites != nil {
 		edges = append(edges, tenant.EdgeSites)
 	}
@@ -39994,6 +47111,9 @@ func (m *TenantMutation) AddedEdges() []string {
 	}
 	if m.netbird != nil {
 		edges = append(edges, tenant.EdgeNetbird)
+	}
+	if m.nanohub_push != nil {
+		edges = append(edges, tenant.EdgeNanohubPush)
 	}
 	if m.user_tenants != nil {
 		edges = append(edges, tenant.EdgeUserTenants)
@@ -40040,6 +47160,10 @@ func (m *TenantMutation) AddedIDs(name string) []ent.Value {
 		if id := m.netbird; id != nil {
 			return []ent.Value{*id}
 		}
+	case tenant.EdgeNanohubPush:
+		if id := m.nanohub_push; id != nil {
+			return []ent.Value{*id}
+		}
 	case tenant.EdgeUserTenants:
 		ids := make([]ent.Value, 0, len(m.user_tenants))
 		for id := range m.user_tenants {
@@ -40058,7 +47182,7 @@ func (m *TenantMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TenantMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.removedsites != nil {
 		edges = append(edges, tenant.EdgeSites)
 	}
@@ -40126,7 +47250,7 @@ func (m *TenantMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TenantMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.clearedsites {
 		edges = append(edges, tenant.EdgeSites)
 	}
@@ -40144,6 +47268,9 @@ func (m *TenantMutation) ClearedEdges() []string {
 	}
 	if m.clearednetbird {
 		edges = append(edges, tenant.EdgeNetbird)
+	}
+	if m.clearednanohub_push {
+		edges = append(edges, tenant.EdgeNanohubPush)
 	}
 	if m.cleareduser_tenants {
 		edges = append(edges, tenant.EdgeUserTenants)
@@ -40170,6 +47297,8 @@ func (m *TenantMutation) EdgeCleared(name string) bool {
 		return m.clearedrustdesk
 	case tenant.EdgeNetbird:
 		return m.clearednetbird
+	case tenant.EdgeNanohubPush:
+		return m.clearednanohub_push
 	case tenant.EdgeUserTenants:
 		return m.cleareduser_tenants
 	case tenant.EdgeEnrollmentTokens:
@@ -40187,6 +47316,9 @@ func (m *TenantMutation) ClearEdge(name string) error {
 		return nil
 	case tenant.EdgeNetbird:
 		m.ClearNetbird()
+		return nil
+	case tenant.EdgeNanohubPush:
+		m.ClearNanohubPush()
 		return nil
 	}
 	return fmt.Errorf("unknown Tenant unique edge %s", name)
@@ -40213,6 +47345,9 @@ func (m *TenantMutation) ResetEdge(name string) error {
 		return nil
 	case tenant.EdgeNetbird:
 		m.ResetNetbird()
+		return nil
+	case tenant.EdgeNanohubPush:
+		m.ResetNanohubPush()
 		return nil
 	case tenant.EdgeUserTenants:
 		m.ResetUserTenants()

@@ -117,6 +117,10 @@ const (
 	EdgePhysicaldisks = "physicaldisks"
 	// EdgeNetbird holds the string denoting the netbird edge name in mutations.
 	EdgeNetbird = "netbird"
+	// EdgeNanohubinfo holds the string denoting the nanohubinfo edge name in mutations.
+	EdgeNanohubinfo = "nanohubinfo"
+	// EdgeNanohubusers holds the string denoting the nanohubusers edge name in mutations.
+	EdgeNanohubusers = "nanohubusers"
 	// ComputerFieldID holds the string denoting the ID field of the Computer.
 	ComputerFieldID = "id"
 	// OperatingSystemFieldID holds the string denoting the ID field of the OperatingSystem.
@@ -159,6 +163,10 @@ const (
 	PhysicalDiskFieldID = "id"
 	// NetbirdFieldID holds the string denoting the ID field of the Netbird.
 	NetbirdFieldID = "id"
+	// NanoHubInfoFieldID holds the string denoting the ID field of the NanoHubInfo.
+	NanoHubInfoFieldID = "id"
+	// NanoHubUserFieldID holds the string denoting the ID field of the NanoHubUser.
+	NanoHubUserFieldID = "id"
 	// Table holds the table name of the agent in the database.
 	Table = "agents"
 	// ComputerTable is the table that holds the computer relation/edge.
@@ -304,6 +312,20 @@ const (
 	NetbirdInverseTable = "netbirds"
 	// NetbirdColumn is the table column denoting the netbird relation/edge.
 	NetbirdColumn = "agent_netbird"
+	// NanohubinfoTable is the table that holds the nanohubinfo relation/edge.
+	NanohubinfoTable = "nano_hub_infos"
+	// NanohubinfoInverseTable is the table name for the NanoHubInfo entity.
+	// It exists in this package in order to avoid circular dependency with the "nanohubinfo" package.
+	NanohubinfoInverseTable = "nano_hub_infos"
+	// NanohubinfoColumn is the table column denoting the nanohubinfo relation/edge.
+	NanohubinfoColumn = "agent_nanohubinfo"
+	// NanohubusersTable is the table that holds the nanohubusers relation/edge.
+	NanohubusersTable = "nano_hub_users"
+	// NanohubusersInverseTable is the table name for the NanoHubUser entity.
+	// It exists in this package in order to avoid circular dependency with the "nanohubuser" package.
+	NanohubusersInverseTable = "nano_hub_users"
+	// NanohubusersColumn is the table column denoting the nanohubusers relation/edge.
+	NanohubusersColumn = "agent_nanohubusers"
 )
 
 // Columns holds all SQL columns for agent fields.
@@ -467,6 +489,7 @@ const (
 	EndpointTypeVM        EndpointType = "VM"
 	EndpointTypeAllInOne  EndpointType = "AllInOne"
 	EndpointTypeOther     EndpointType = "Other"
+	EndpointTypeNanoHub   EndpointType = "NanoHub"
 )
 
 func (et EndpointType) String() string {
@@ -476,7 +499,7 @@ func (et EndpointType) String() string {
 // EndpointTypeValidator is a validator for the "endpoint_type" field enum values. It is called by the builders before save.
 func EndpointTypeValidator(et EndpointType) error {
 	switch et {
-	case EndpointTypeDesktopPC, EndpointTypeLaptop, EndpointTypeServer, EndpointTypeTablet, EndpointTypeVM, EndpointTypeAllInOne, EndpointTypeOther:
+	case EndpointTypeDesktopPC, EndpointTypeLaptop, EndpointTypeServer, EndpointTypeTablet, EndpointTypeVM, EndpointTypeAllInOne, EndpointTypeOther, EndpointTypeNanoHub:
 		return nil
 	default:
 		return fmt.Errorf("agent: invalid enum value for endpoint_type field: %q", et)
@@ -892,6 +915,27 @@ func ByNetbirdField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNetbirdStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByNanohubinfoField orders the results by nanohubinfo field.
+func ByNanohubinfoField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNanohubinfoStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByNanohubusersCount orders the results by nanohubusers count.
+func ByNanohubusersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newNanohubusersStep(), opts...)
+	}
+}
+
+// ByNanohubusers orders the results by nanohubusers terms.
+func ByNanohubusers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNanohubusersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newComputerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1037,5 +1081,19 @@ func newNetbirdStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NetbirdInverseTable, NetbirdFieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, NetbirdTable, NetbirdColumn),
+	)
+}
+func newNanohubinfoStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NanohubinfoInverseTable, NanoHubInfoFieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, NanohubinfoTable, NanohubinfoColumn),
+	)
+}
+func newNanohubusersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NanohubusersInverseTable, NanoHubUserFieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, NanohubusersTable, NanohubusersColumn),
 	)
 }

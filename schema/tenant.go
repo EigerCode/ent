@@ -41,6 +41,7 @@ func (Tenant) Edges() []ent.Edge {
 		edge.To("metadata", OrgMetadata.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("rustdesk", Rustdesk.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("netbird", NetbirdSettings.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("nanohub_push", NanoHubPushCertificate.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.From("user_tenants", UserTenant.Type).Ref("tenant"),
 		edge.To("enrollment_tokens", EnrollmentToken.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}

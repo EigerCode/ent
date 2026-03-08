@@ -2203,6 +2203,52 @@ func HasNetbirdWith(preds ...predicate.Netbird) predicate.Agent {
 	})
 }
 
+// HasNanohubinfo applies the HasEdge predicate on the "nanohubinfo" edge.
+func HasNanohubinfo() predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, NanohubinfoTable, NanohubinfoColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNanohubinfoWith applies the HasEdge predicate on the "nanohubinfo" edge with a given conditions (other predicates).
+func HasNanohubinfoWith(preds ...predicate.NanoHubInfo) predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := newNanohubinfoStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasNanohubusers applies the HasEdge predicate on the "nanohubusers" edge.
+func HasNanohubusers() predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, NanohubusersTable, NanohubusersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNanohubusersWith applies the HasEdge predicate on the "nanohubusers" edge with a given conditions (other predicates).
+func HasNanohubusersWith(preds ...predicate.NanoHubUser) predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := newNanohubusersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Agent) predicate.Agent {
 	return predicate.Agent(sql.AndPredicates(predicates...))

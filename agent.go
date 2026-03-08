@@ -12,6 +12,7 @@ import (
 	"github.com/open-uem/ent/agent"
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/computer"
+	"github.com/open-uem/ent/nanohubinfo"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/operatingsystem"
 	"github.com/open-uem/ent/release"
@@ -134,9 +135,13 @@ type AgentEdges struct {
 	Physicaldisks []*PhysicalDisk `json:"physicaldisks,omitempty"`
 	// Netbird holds the value of the netbird edge.
 	Netbird *Netbird `json:"netbird,omitempty"`
+	// Nanohubinfo holds the value of the nanohubinfo edge.
+	Nanohubinfo *NanoHubInfo `json:"nanohubinfo,omitempty"`
+	// Nanohubusers holds the value of the nanohubusers edge.
+	Nanohubusers []*NanoHubUser `json:"nanohubusers,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [21]bool
+	loadedTypes [23]bool
 }
 
 // ComputerOrErr returns the Computer value or an error if the edge
@@ -338,6 +343,26 @@ func (e AgentEdges) NetbirdOrErr() (*Netbird, error) {
 		return nil, &NotFoundError{label: netbird.Label}
 	}
 	return nil, &NotLoadedError{edge: "netbird"}
+}
+
+// NanohubinfoOrErr returns the Nanohubinfo value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AgentEdges) NanohubinfoOrErr() (*NanoHubInfo, error) {
+	if e.Nanohubinfo != nil {
+		return e.Nanohubinfo, nil
+	} else if e.loadedTypes[21] {
+		return nil, &NotFoundError{label: nanohubinfo.Label}
+	}
+	return nil, &NotLoadedError{edge: "nanohubinfo"}
+}
+
+// NanohubusersOrErr returns the Nanohubusers value or an error if the edge
+// was not loaded in eager-loading.
+func (e AgentEdges) NanohubusersOrErr() ([]*NanoHubUser, error) {
+	if e.loadedTypes[22] {
+		return e.Nanohubusers, nil
+	}
+	return nil, &NotLoadedError{edge: "nanohubusers"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -677,6 +702,16 @@ func (a *Agent) QueryPhysicaldisks() *PhysicalDiskQuery {
 // QueryNetbird queries the "netbird" edge of the Agent entity.
 func (a *Agent) QueryNetbird() *NetbirdQuery {
 	return NewAgentClient(a.config).QueryNetbird(a)
+}
+
+// QueryNanohubinfo queries the "nanohubinfo" edge of the Agent entity.
+func (a *Agent) QueryNanohubinfo() *NanoHubInfoQuery {
+	return NewAgentClient(a.config).QueryNanohubinfo(a)
+}
+
+// QueryNanohubusers queries the "nanohubusers" edge of the Agent entity.
+func (a *Agent) QueryNanohubusers() *NanoHubUserQuery {
+	return NewAgentClient(a.config).QueryNanohubusers(a)
 }
 
 // Update returns a builder for updating this Agent.

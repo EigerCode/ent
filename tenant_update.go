@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/enrollmenttoken"
+	"github.com/open-uem/ent/nanohubpushcertificate"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/predicate"
@@ -247,6 +248,25 @@ func (tu *TenantUpdate) SetNetbird(n *NetbirdSettings) *TenantUpdate {
 	return tu.SetNetbirdID(n.ID)
 }
 
+// SetNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by ID.
+func (tu *TenantUpdate) SetNanohubPushID(id int) *TenantUpdate {
+	tu.mutation.SetNanohubPushID(id)
+	return tu
+}
+
+// SetNillableNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by ID if the given value is not nil.
+func (tu *TenantUpdate) SetNillableNanohubPushID(id *int) *TenantUpdate {
+	if id != nil {
+		tu = tu.SetNanohubPushID(*id)
+	}
+	return tu
+}
+
+// SetNanohubPush sets the "nanohub_push" edge to the NanoHubPushCertificate entity.
+func (tu *TenantUpdate) SetNanohubPush(n *NanoHubPushCertificate) *TenantUpdate {
+	return tu.SetNanohubPushID(n.ID)
+}
+
 // AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
 func (tu *TenantUpdate) AddUserTenantIDs(ids ...int) *TenantUpdate {
 	tu.mutation.AddUserTenantIDs(ids...)
@@ -375,6 +395,12 @@ func (tu *TenantUpdate) RemoveRustdesk(r ...*Rustdesk) *TenantUpdate {
 // ClearNetbird clears the "netbird" edge to the NetbirdSettings entity.
 func (tu *TenantUpdate) ClearNetbird() *TenantUpdate {
 	tu.mutation.ClearNetbird()
+	return tu
+}
+
+// ClearNanohubPush clears the "nanohub_push" edge to the NanoHubPushCertificate entity.
+func (tu *TenantUpdate) ClearNanohubPush() *TenantUpdate {
+	tu.mutation.ClearNanohubPush()
 	return tu
 }
 
@@ -758,6 +784,35 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tu.mutation.NanohubPushCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NanohubPushTable,
+			Columns: []string{tenant.NanohubPushColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubpushcertificate.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.NanohubPushIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NanohubPushTable,
+			Columns: []string{tenant.NanohubPushColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubpushcertificate.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if tu.mutation.UserTenantsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1080,6 +1135,25 @@ func (tuo *TenantUpdateOne) SetNetbird(n *NetbirdSettings) *TenantUpdateOne {
 	return tuo.SetNetbirdID(n.ID)
 }
 
+// SetNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by ID.
+func (tuo *TenantUpdateOne) SetNanohubPushID(id int) *TenantUpdateOne {
+	tuo.mutation.SetNanohubPushID(id)
+	return tuo
+}
+
+// SetNillableNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by ID if the given value is not nil.
+func (tuo *TenantUpdateOne) SetNillableNanohubPushID(id *int) *TenantUpdateOne {
+	if id != nil {
+		tuo = tuo.SetNanohubPushID(*id)
+	}
+	return tuo
+}
+
+// SetNanohubPush sets the "nanohub_push" edge to the NanoHubPushCertificate entity.
+func (tuo *TenantUpdateOne) SetNanohubPush(n *NanoHubPushCertificate) *TenantUpdateOne {
+	return tuo.SetNanohubPushID(n.ID)
+}
+
 // AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
 func (tuo *TenantUpdateOne) AddUserTenantIDs(ids ...int) *TenantUpdateOne {
 	tuo.mutation.AddUserTenantIDs(ids...)
@@ -1208,6 +1282,12 @@ func (tuo *TenantUpdateOne) RemoveRustdesk(r ...*Rustdesk) *TenantUpdateOne {
 // ClearNetbird clears the "netbird" edge to the NetbirdSettings entity.
 func (tuo *TenantUpdateOne) ClearNetbird() *TenantUpdateOne {
 	tuo.mutation.ClearNetbird()
+	return tuo
+}
+
+// ClearNanohubPush clears the "nanohub_push" edge to the NanoHubPushCertificate entity.
+func (tuo *TenantUpdateOne) ClearNanohubPush() *TenantUpdateOne {
+	tuo.mutation.ClearNanohubPush()
 	return tuo
 }
 
@@ -1614,6 +1694,35 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(netbirdsettings.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.NanohubPushCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NanohubPushTable,
+			Columns: []string{tenant.NanohubPushColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubpushcertificate.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.NanohubPushIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NanohubPushTable,
+			Columns: []string{tenant.NanohubPushColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubpushcertificate.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -21,6 +21,8 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubuser"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
@@ -65,6 +67,8 @@ type AgentQuery struct {
 	withSite                *SiteQuery
 	withPhysicaldisks       *PhysicalDiskQuery
 	withNetbird             *NetbirdQuery
+	withNanohubinfo         *NanoHubInfoQuery
+	withNanohubusers        *NanoHubUserQuery
 	withFKs                 bool
 	modifiers               []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -565,6 +569,50 @@ func (aq *AgentQuery) QueryNetbird() *NetbirdQuery {
 	return query
 }
 
+// QueryNanohubinfo chains the current query on the "nanohubinfo" edge.
+func (aq *AgentQuery) QueryNanohubinfo() *NanoHubInfoQuery {
+	query := (&NanoHubInfoClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, selector),
+			sqlgraph.To(nanohubinfo.Table, nanohubinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, agent.NanohubinfoTable, agent.NanohubinfoColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryNanohubusers chains the current query on the "nanohubusers" edge.
+func (aq *AgentQuery) QueryNanohubusers() *NanoHubUserQuery {
+	query := (&NanoHubUserClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, selector),
+			sqlgraph.To(nanohubuser.Table, nanohubuser.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, agent.NanohubusersTable, agent.NanohubusersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Agent entity from the query.
 // Returns a *NotFoundError when no Agent was found.
 func (aq *AgentQuery) First(ctx context.Context) (*Agent, error) {
@@ -778,6 +826,8 @@ func (aq *AgentQuery) Clone() *AgentQuery {
 		withSite:                aq.withSite.Clone(),
 		withPhysicaldisks:       aq.withPhysicaldisks.Clone(),
 		withNetbird:             aq.withNetbird.Clone(),
+		withNanohubinfo:         aq.withNanohubinfo.Clone(),
+		withNanohubusers:        aq.withNanohubusers.Clone(),
 		// clone intermediate query.
 		sql:       aq.sql.Clone(),
 		path:      aq.path,
@@ -1016,6 +1066,28 @@ func (aq *AgentQuery) WithNetbird(opts ...func(*NetbirdQuery)) *AgentQuery {
 	return aq
 }
 
+// WithNanohubinfo tells the query-builder to eager-load the nodes that are connected to
+// the "nanohubinfo" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AgentQuery) WithNanohubinfo(opts ...func(*NanoHubInfoQuery)) *AgentQuery {
+	query := (&NanoHubInfoClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withNanohubinfo = query
+	return aq
+}
+
+// WithNanohubusers tells the query-builder to eager-load the nodes that are connected to
+// the "nanohubusers" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AgentQuery) WithNanohubusers(opts ...func(*NanoHubUserQuery)) *AgentQuery {
+	query := (&NanoHubUserClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withNanohubusers = query
+	return aq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1095,7 +1167,7 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 		nodes       = []*Agent{}
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
-		loadedTypes = [21]bool{
+		loadedTypes = [23]bool{
 			aq.withComputer != nil,
 			aq.withOperatingsystem != nil,
 			aq.withSystemupdate != nil,
@@ -1117,6 +1189,8 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 			aq.withSite != nil,
 			aq.withPhysicaldisks != nil,
 			aq.withNetbird != nil,
+			aq.withNanohubinfo != nil,
+			aq.withNanohubusers != nil,
 		}
 	)
 	if aq.withRelease != nil {
@@ -1286,6 +1360,19 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 	if query := aq.withNetbird; query != nil {
 		if err := aq.loadNetbird(ctx, query, nodes, nil,
 			func(n *Agent, e *Netbird) { n.Edges.Netbird = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withNanohubinfo; query != nil {
+		if err := aq.loadNanohubinfo(ctx, query, nodes, nil,
+			func(n *Agent, e *NanoHubInfo) { n.Edges.Nanohubinfo = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withNanohubusers; query != nil {
+		if err := aq.loadNanohubusers(ctx, query, nodes,
+			func(n *Agent) { n.Edges.Nanohubusers = []*NanoHubUser{} },
+			func(n *Agent, e *NanoHubUser) { n.Edges.Nanohubusers = append(n.Edges.Nanohubusers, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1984,6 +2071,65 @@ func (aq *AgentQuery) loadNetbird(ctx context.Context, query *NetbirdQuery, node
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "agent_netbird" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (aq *AgentQuery) loadNanohubinfo(ctx context.Context, query *NanoHubInfoQuery, nodes []*Agent, init func(*Agent), assign func(*Agent, *NanoHubInfo)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Agent)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.NanoHubInfo(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(agent.NanohubinfoColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.agent_nanohubinfo
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "agent_nanohubinfo" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "agent_nanohubinfo" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (aq *AgentQuery) loadNanohubusers(ctx context.Context, query *NanoHubUserQuery, nodes []*Agent, init func(*Agent), assign func(*Agent, *NanoHubUser)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Agent)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.NanoHubUser(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(agent.NanohubusersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.agent_nanohubusers
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "agent_nanohubusers" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "agent_nanohubusers" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

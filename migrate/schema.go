@@ -36,7 +36,7 @@ var (
 		{Name: "settings_modified", Type: field.TypeTime, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "nickname", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "endpoint_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"DesktopPC", "Laptop", "Server", "Tablet", "VM", "AllInOne", "Other"}, Default: "Other"},
+		{Name: "endpoint_type", Type: field.TypeEnum, Nullable: true, Enums: []string{"DesktopPC", "Laptop", "Server", "Tablet", "VM", "AllInOne", "Other", "NanoHub"}, Default: "Other"},
 		{Name: "has_rustdesk", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_wayland", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_flatpak_rustdesk", Type: field.TypeBool, Nullable: true, Default: false},
@@ -287,6 +287,19 @@ var (
 			},
 		},
 	}
+	// MdmCommandsColumns holds the columns for the "mdm_commands" table.
+	MdmCommandsColumns = []*schema.Column{
+		{Name: "uuid", Type: field.TypeString, Unique: true},
+		{Name: "when", Type: field.TypeTime, Nullable: true},
+		{Name: "type", Type: field.TypeString, Default: "DeviceInformation"},
+		{Name: "agent_id", Type: field.TypeString},
+	}
+	// MdmCommandsTable holds the schema information for the "mdm_commands" table.
+	MdmCommandsTable = &schema.Table{
+		Name:       "mdm_commands",
+		Columns:    MdmCommandsColumns,
+		PrimaryKey: []*schema.Column{MdmCommandsColumns[0]},
+	}
 	// MemorySlotsColumns holds the columns for the "memory_slots" table.
 	MemorySlotsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -366,6 +379,131 @@ var (
 			{
 				Symbol:     "monitors_agents_monitors",
 				Columns:    []*schema.Column{MonitorsColumns[6]},
+				RefColumns: []*schema.Column{AgentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// NanoHubInfosColumns holds the columns for the "nano_hub_infos" table.
+	NanoHubInfosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "available_device_capacity", Type: field.TypeFloat64, Nullable: true, Default: 0},
+		{Name: "awaiting_configuration", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "battery_level", Type: field.TypeFloat64, Nullable: true, Default: -1},
+		{Name: "bluetooth_mac", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "build_version", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "current_console_managed_user", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "device_capacity", Type: field.TypeFloat64, Nullable: true, Default: -1},
+		{Name: "device_name", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "eacs_preflight", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "ethernet_mac", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "wifi_mac", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "has_battery", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "hostname", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "is_activation_lock_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_activation_lock_supported", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_apple_silicon", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_supervised", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "localhostname", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "model", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "model_name", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "auto_check_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "automatic_app_installation_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "automatic_os_installation_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "automatic_security_updates_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "background_download_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "catalog_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "is_default_catalog", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "previous_scan_date", Type: field.TypeTime, Nullable: true},
+		{Name: "previous_scan_result", Type: field.TypeInt64, Nullable: true, Default: 0},
+		{Name: "os_version", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "pin_required_for_device_lock", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "pin_required_for_erase_device", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "product_name", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "provisioning_udid", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "serial_number", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "software_update_device_id", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "supplemental_build_version", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "supports_lom_device", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "supports_ios_app_installs", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "system_integrity_protection_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "udid", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "agent_nanohubinfo", Type: field.TypeString, Unique: true},
+	}
+	// NanoHubInfosTable holds the schema information for the "nano_hub_infos" table.
+	NanoHubInfosTable = &schema.Table{
+		Name:       "nano_hub_infos",
+		Columns:    NanoHubInfosColumns,
+		PrimaryKey: []*schema.Column{NanoHubInfosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "nano_hub_infos_agents_nanohubinfo",
+				Columns:    []*schema.Column{NanoHubInfosColumns[42]},
+				RefColumns: []*schema.Column{AgentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// NanoHubPushCertificatesColumns holds the columns for the "nano_hub_push_certificates" table.
+	NanoHubPushCertificatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "private_key_pem", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "csr_pem", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "certificate_pem", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "apns_topic", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "uploaded_at", Type: field.TypeTime, Nullable: true},
+	}
+	// NanoHubPushCertificatesTable holds the schema information for the "nano_hub_push_certificates" table.
+	NanoHubPushCertificatesTable = &schema.Table{
+		Name:       "nano_hub_push_certificates",
+		Columns:    NanoHubPushCertificatesColumns,
+		PrimaryKey: []*schema.Column{NanoHubPushCertificatesColumns[0]},
+	}
+	// NanoHubSettingsColumns holds the columns for the "nano_hub_settings" table.
+	NanoHubSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "server_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "username", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "password", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "ca_cer_file", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "scep_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "scep_challenge", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "mdm_url", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "vendor_private_key_pem", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "vendor_cert_pem", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "enrollment_profile_id", Type: field.TypeString, Nullable: true, Default: "com.openuem.mdm.enrollment"},
+	}
+	// NanoHubSettingsTable holds the schema information for the "nano_hub_settings" table.
+	NanoHubSettingsTable = &schema.Table{
+		Name:       "nano_hub_settings",
+		Columns:    NanoHubSettingsColumns,
+		PrimaryKey: []*schema.Column{NanoHubSettingsColumns[0]},
+	}
+	// NanoHubUsersColumns holds the columns for the "nano_hub_users" table.
+	NanoHubUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "data_quota", Type: field.TypeInt64, Nullable: true},
+		{Name: "data_used", Type: field.TypeInt64, Nullable: true},
+		{Name: "has_data_to_sync", Type: field.TypeBool, Nullable: true},
+		{Name: "has_secure_token", Type: field.TypeBool, Nullable: true},
+		{Name: "is_logged_in", Type: field.TypeBool, Nullable: true},
+		{Name: "username", Type: field.TypeString, Nullable: true},
+		{Name: "fullname", Type: field.TypeString, Nullable: true},
+		{Name: "mobile_account", Type: field.TypeBool, Nullable: true},
+		{Name: "uid", Type: field.TypeInt64, Nullable: true},
+		{Name: "user_guid", Type: field.TypeString, Nullable: true},
+		{Name: "agent_nanohubusers", Type: field.TypeString},
+	}
+	// NanoHubUsersTable holds the schema information for the "nano_hub_users" table.
+	NanoHubUsersTable = &schema.Table{
+		Name:       "nano_hub_users",
+		Columns:    NanoHubUsersColumns,
+		PrimaryKey: []*schema.Column{NanoHubUsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "nano_hub_users_agents_nanohubusers",
+				Columns:    []*schema.Column{NanoHubUsersColumns[11]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -1020,6 +1158,7 @@ var (
 		{Name: "created", Type: field.TypeTime, Nullable: true},
 		{Name: "modified", Type: field.TypeTime, Nullable: true},
 		{Name: "tenant_netbird", Type: field.TypeInt, Nullable: true},
+		{Name: "tenant_nanohub_push", Type: field.TypeInt, Nullable: true},
 	}
 	// TenantsTable holds the schema information for the "tenants" table.
 	TenantsTable = &schema.Table{
@@ -1031,6 +1170,12 @@ var (
 				Symbol:     "tenants_netbird_settings_netbird",
 				Columns:    []*schema.Column{TenantsColumns[7]},
 				RefColumns: []*schema.Column{NetbirdSettingsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "tenants_nano_hub_push_certificates_nanohub_push",
+				Columns:    []*schema.Column{TenantsColumns[8]},
+				RefColumns: []*schema.Column{NanoHubPushCertificatesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -1268,9 +1413,14 @@ var (
 		DeploymentsTable,
 		EnrollmentTokensTable,
 		LogicalDisksTable,
+		MdmCommandsTable,
 		MemorySlotsTable,
 		MetadataTable,
 		MonitorsTable,
+		NanoHubInfosTable,
+		NanoHubPushCertificatesTable,
+		NanoHubSettingsTable,
+		NanoHubUsersTable,
 		NetbirdsTable,
 		NetbirdSettingsTable,
 		NetworkAdaptersTable,
@@ -1318,6 +1468,8 @@ func init() {
 	MetadataTable.ForeignKeys[0].RefTable = AgentsTable
 	MetadataTable.ForeignKeys[1].RefTable = OrgMetadataTable
 	MonitorsTable.ForeignKeys[0].RefTable = AgentsTable
+	NanoHubInfosTable.ForeignKeys[0].RefTable = AgentsTable
+	NanoHubUsersTable.ForeignKeys[0].RefTable = AgentsTable
 	NetbirdsTable.ForeignKeys[0].RefTable = AgentsTable
 	NetworkAdaptersTable.ForeignKeys[0].RefTable = AgentsTable
 	OperatingSystemsTable.ForeignKeys[0].RefTable = AgentsTable
@@ -1339,6 +1491,7 @@ func init() {
 	TagsTable.ForeignKeys[2].RefTable = TenantsTable
 	TasksTable.ForeignKeys[0].RefTable = ProfilesTable
 	TenantsTable.ForeignKeys[0].RefTable = NetbirdSettingsTable
+	TenantsTable.ForeignKeys[1].RefTable = NanoHubPushCertificatesTable
 	UpdatesTable.ForeignKeys[0].RefTable = AgentsTable
 	UserTenantsTable.ForeignKeys[0].RefTable = UsersTable
 	UserTenantsTable.ForeignKeys[1].RefTable = TenantsTable

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/enrollmenttoken"
+	"github.com/open-uem/ent/nanohubpushcertificate"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/orgmetadata"
 	"github.com/open-uem/ent/rustdesk"
@@ -210,6 +211,25 @@ func (tc *TenantCreate) SetNillableNetbirdID(id *int) *TenantCreate {
 // SetNetbird sets the "netbird" edge to the NetbirdSettings entity.
 func (tc *TenantCreate) SetNetbird(n *NetbirdSettings) *TenantCreate {
 	return tc.SetNetbirdID(n.ID)
+}
+
+// SetNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by ID.
+func (tc *TenantCreate) SetNanohubPushID(id int) *TenantCreate {
+	tc.mutation.SetNanohubPushID(id)
+	return tc
+}
+
+// SetNillableNanohubPushID sets the "nanohub_push" edge to the NanoHubPushCertificate entity by ID if the given value is not nil.
+func (tc *TenantCreate) SetNillableNanohubPushID(id *int) *TenantCreate {
+	if id != nil {
+		tc = tc.SetNanohubPushID(*id)
+	}
+	return tc
+}
+
+// SetNanohubPush sets the "nanohub_push" edge to the NanoHubPushCertificate entity.
+func (tc *TenantCreate) SetNanohubPush(n *NanoHubPushCertificate) *TenantCreate {
+	return tc.SetNanohubPushID(n.ID)
 }
 
 // AddUserTenantIDs adds the "user_tenants" edge to the UserTenant entity by IDs.
@@ -444,6 +464,23 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.tenant_netbird = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.NanohubPushIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   tenant.NanohubPushTable,
+			Columns: []string{tenant.NanohubPushColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubpushcertificate.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.tenant_nanohub_push = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tc.mutation.UserTenantsIDs(); len(nodes) > 0 {

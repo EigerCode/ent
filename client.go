@@ -25,9 +25,14 @@ import (
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/enrollmenttoken"
 	"github.com/open-uem/ent/logicaldisk"
+	"github.com/open-uem/ent/mdmcommand"
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubpushcertificate"
+	"github.com/open-uem/ent/nanohubsettings"
+	"github.com/open-uem/ent/nanohubuser"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/netbirdsettings"
 	"github.com/open-uem/ent/networkadapter"
@@ -81,12 +86,22 @@ type Client struct {
 	EnrollmentToken *EnrollmentTokenClient
 	// LogicalDisk is the client for interacting with the LogicalDisk builders.
 	LogicalDisk *LogicalDiskClient
+	// MDMCommand is the client for interacting with the MDMCommand builders.
+	MDMCommand *MDMCommandClient
 	// MemorySlot is the client for interacting with the MemorySlot builders.
 	MemorySlot *MemorySlotClient
 	// Metadata is the client for interacting with the Metadata builders.
 	Metadata *MetadataClient
 	// Monitor is the client for interacting with the Monitor builders.
 	Monitor *MonitorClient
+	// NanoHubInfo is the client for interacting with the NanoHubInfo builders.
+	NanoHubInfo *NanoHubInfoClient
+	// NanoHubPushCertificate is the client for interacting with the NanoHubPushCertificate builders.
+	NanoHubPushCertificate *NanoHubPushCertificateClient
+	// NanoHubSettings is the client for interacting with the NanoHubSettings builders.
+	NanoHubSettings *NanoHubSettingsClient
+	// NanoHubUser is the client for interacting with the NanoHubUser builders.
+	NanoHubUser *NanoHubUserClient
 	// Netbird is the client for interacting with the Netbird builders.
 	Netbird *NetbirdClient
 	// NetbirdSettings is the client for interacting with the NetbirdSettings builders.
@@ -160,9 +175,14 @@ func (c *Client) init() {
 	c.Deployment = NewDeploymentClient(c.config)
 	c.EnrollmentToken = NewEnrollmentTokenClient(c.config)
 	c.LogicalDisk = NewLogicalDiskClient(c.config)
+	c.MDMCommand = NewMDMCommandClient(c.config)
 	c.MemorySlot = NewMemorySlotClient(c.config)
 	c.Metadata = NewMetadataClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
+	c.NanoHubInfo = NewNanoHubInfoClient(c.config)
+	c.NanoHubPushCertificate = NewNanoHubPushCertificateClient(c.config)
+	c.NanoHubSettings = NewNanoHubSettingsClient(c.config)
+	c.NanoHubUser = NewNanoHubUserClient(c.config)
 	c.Netbird = NewNetbirdClient(c.config)
 	c.NetbirdSettings = NewNetbirdSettingsClient(c.config)
 	c.NetworkAdapter = NewNetworkAdapterClient(c.config)
@@ -279,47 +299,52 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                   ctx,
-		config:                cfg,
-		Agent:                 NewAgentClient(cfg),
-		Antivirus:             NewAntivirusClient(cfg),
-		App:                   NewAppClient(cfg),
-		Authentication:        NewAuthenticationClient(cfg),
-		Branding:              NewBrandingClient(cfg),
-		Certificate:           NewCertificateClient(cfg),
-		Computer:              NewComputerClient(cfg),
-		Deployment:            NewDeploymentClient(cfg),
-		EnrollmentToken:       NewEnrollmentTokenClient(cfg),
-		LogicalDisk:           NewLogicalDiskClient(cfg),
-		MemorySlot:            NewMemorySlotClient(cfg),
-		Metadata:              NewMetadataClient(cfg),
-		Monitor:               NewMonitorClient(cfg),
-		Netbird:               NewNetbirdClient(cfg),
-		NetbirdSettings:       NewNetbirdSettingsClient(cfg),
-		NetworkAdapter:        NewNetworkAdapterClient(cfg),
-		OperatingSystem:       NewOperatingSystemClient(cfg),
-		OrgMetadata:           NewOrgMetadataClient(cfg),
-		PhysicalDisk:          NewPhysicalDiskClient(cfg),
-		Printer:               NewPrinterClient(cfg),
-		Profile:               NewProfileClient(cfg),
-		ProfileIssue:          NewProfileIssueClient(cfg),
-		RecoveryCode:          NewRecoveryCodeClient(cfg),
-		Release:               NewReleaseClient(cfg),
-		Revocation:            NewRevocationClient(cfg),
-		Rustdesk:              NewRustdeskClient(cfg),
-		Server:                NewServerClient(cfg),
-		Sessions:              NewSessionsClient(cfg),
-		Settings:              NewSettingsClient(cfg),
-		Share:                 NewShareClient(cfg),
-		Site:                  NewSiteClient(cfg),
-		SystemUpdate:          NewSystemUpdateClient(cfg),
-		Tag:                   NewTagClient(cfg),
-		Task:                  NewTaskClient(cfg),
-		Tenant:                NewTenantClient(cfg),
-		Update:                NewUpdateClient(cfg),
-		User:                  NewUserClient(cfg),
-		UserTenant:            NewUserTenantClient(cfg),
-		WingetConfigExclusion: NewWingetConfigExclusionClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		Agent:                  NewAgentClient(cfg),
+		Antivirus:              NewAntivirusClient(cfg),
+		App:                    NewAppClient(cfg),
+		Authentication:         NewAuthenticationClient(cfg),
+		Branding:               NewBrandingClient(cfg),
+		Certificate:            NewCertificateClient(cfg),
+		Computer:               NewComputerClient(cfg),
+		Deployment:             NewDeploymentClient(cfg),
+		EnrollmentToken:        NewEnrollmentTokenClient(cfg),
+		LogicalDisk:            NewLogicalDiskClient(cfg),
+		MDMCommand:             NewMDMCommandClient(cfg),
+		MemorySlot:             NewMemorySlotClient(cfg),
+		Metadata:               NewMetadataClient(cfg),
+		Monitor:                NewMonitorClient(cfg),
+		NanoHubInfo:            NewNanoHubInfoClient(cfg),
+		NanoHubPushCertificate: NewNanoHubPushCertificateClient(cfg),
+		NanoHubSettings:        NewNanoHubSettingsClient(cfg),
+		NanoHubUser:            NewNanoHubUserClient(cfg),
+		Netbird:                NewNetbirdClient(cfg),
+		NetbirdSettings:        NewNetbirdSettingsClient(cfg),
+		NetworkAdapter:         NewNetworkAdapterClient(cfg),
+		OperatingSystem:        NewOperatingSystemClient(cfg),
+		OrgMetadata:            NewOrgMetadataClient(cfg),
+		PhysicalDisk:           NewPhysicalDiskClient(cfg),
+		Printer:                NewPrinterClient(cfg),
+		Profile:                NewProfileClient(cfg),
+		ProfileIssue:           NewProfileIssueClient(cfg),
+		RecoveryCode:           NewRecoveryCodeClient(cfg),
+		Release:                NewReleaseClient(cfg),
+		Revocation:             NewRevocationClient(cfg),
+		Rustdesk:               NewRustdeskClient(cfg),
+		Server:                 NewServerClient(cfg),
+		Sessions:               NewSessionsClient(cfg),
+		Settings:               NewSettingsClient(cfg),
+		Share:                  NewShareClient(cfg),
+		Site:                   NewSiteClient(cfg),
+		SystemUpdate:           NewSystemUpdateClient(cfg),
+		Tag:                    NewTagClient(cfg),
+		Task:                   NewTaskClient(cfg),
+		Tenant:                 NewTenantClient(cfg),
+		Update:                 NewUpdateClient(cfg),
+		User:                   NewUserClient(cfg),
+		UserTenant:             NewUserTenantClient(cfg),
+		WingetConfigExclusion:  NewWingetConfigExclusionClient(cfg),
 	}, nil
 }
 
@@ -337,47 +362,52 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                   ctx,
-		config:                cfg,
-		Agent:                 NewAgentClient(cfg),
-		Antivirus:             NewAntivirusClient(cfg),
-		App:                   NewAppClient(cfg),
-		Authentication:        NewAuthenticationClient(cfg),
-		Branding:              NewBrandingClient(cfg),
-		Certificate:           NewCertificateClient(cfg),
-		Computer:              NewComputerClient(cfg),
-		Deployment:            NewDeploymentClient(cfg),
-		EnrollmentToken:       NewEnrollmentTokenClient(cfg),
-		LogicalDisk:           NewLogicalDiskClient(cfg),
-		MemorySlot:            NewMemorySlotClient(cfg),
-		Metadata:              NewMetadataClient(cfg),
-		Monitor:               NewMonitorClient(cfg),
-		Netbird:               NewNetbirdClient(cfg),
-		NetbirdSettings:       NewNetbirdSettingsClient(cfg),
-		NetworkAdapter:        NewNetworkAdapterClient(cfg),
-		OperatingSystem:       NewOperatingSystemClient(cfg),
-		OrgMetadata:           NewOrgMetadataClient(cfg),
-		PhysicalDisk:          NewPhysicalDiskClient(cfg),
-		Printer:               NewPrinterClient(cfg),
-		Profile:               NewProfileClient(cfg),
-		ProfileIssue:          NewProfileIssueClient(cfg),
-		RecoveryCode:          NewRecoveryCodeClient(cfg),
-		Release:               NewReleaseClient(cfg),
-		Revocation:            NewRevocationClient(cfg),
-		Rustdesk:              NewRustdeskClient(cfg),
-		Server:                NewServerClient(cfg),
-		Sessions:              NewSessionsClient(cfg),
-		Settings:              NewSettingsClient(cfg),
-		Share:                 NewShareClient(cfg),
-		Site:                  NewSiteClient(cfg),
-		SystemUpdate:          NewSystemUpdateClient(cfg),
-		Tag:                   NewTagClient(cfg),
-		Task:                  NewTaskClient(cfg),
-		Tenant:                NewTenantClient(cfg),
-		Update:                NewUpdateClient(cfg),
-		User:                  NewUserClient(cfg),
-		UserTenant:            NewUserTenantClient(cfg),
-		WingetConfigExclusion: NewWingetConfigExclusionClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		Agent:                  NewAgentClient(cfg),
+		Antivirus:              NewAntivirusClient(cfg),
+		App:                    NewAppClient(cfg),
+		Authentication:         NewAuthenticationClient(cfg),
+		Branding:               NewBrandingClient(cfg),
+		Certificate:            NewCertificateClient(cfg),
+		Computer:               NewComputerClient(cfg),
+		Deployment:             NewDeploymentClient(cfg),
+		EnrollmentToken:        NewEnrollmentTokenClient(cfg),
+		LogicalDisk:            NewLogicalDiskClient(cfg),
+		MDMCommand:             NewMDMCommandClient(cfg),
+		MemorySlot:             NewMemorySlotClient(cfg),
+		Metadata:               NewMetadataClient(cfg),
+		Monitor:                NewMonitorClient(cfg),
+		NanoHubInfo:            NewNanoHubInfoClient(cfg),
+		NanoHubPushCertificate: NewNanoHubPushCertificateClient(cfg),
+		NanoHubSettings:        NewNanoHubSettingsClient(cfg),
+		NanoHubUser:            NewNanoHubUserClient(cfg),
+		Netbird:                NewNetbirdClient(cfg),
+		NetbirdSettings:        NewNetbirdSettingsClient(cfg),
+		NetworkAdapter:         NewNetworkAdapterClient(cfg),
+		OperatingSystem:        NewOperatingSystemClient(cfg),
+		OrgMetadata:            NewOrgMetadataClient(cfg),
+		PhysicalDisk:           NewPhysicalDiskClient(cfg),
+		Printer:                NewPrinterClient(cfg),
+		Profile:                NewProfileClient(cfg),
+		ProfileIssue:           NewProfileIssueClient(cfg),
+		RecoveryCode:           NewRecoveryCodeClient(cfg),
+		Release:                NewReleaseClient(cfg),
+		Revocation:             NewRevocationClient(cfg),
+		Rustdesk:               NewRustdeskClient(cfg),
+		Server:                 NewServerClient(cfg),
+		Sessions:               NewSessionsClient(cfg),
+		Settings:               NewSettingsClient(cfg),
+		Share:                  NewShareClient(cfg),
+		Site:                   NewSiteClient(cfg),
+		SystemUpdate:           NewSystemUpdateClient(cfg),
+		Tag:                    NewTagClient(cfg),
+		Task:                   NewTaskClient(cfg),
+		Tenant:                 NewTenantClient(cfg),
+		Update:                 NewUpdateClient(cfg),
+		User:                   NewUserClient(cfg),
+		UserTenant:             NewUserTenantClient(cfg),
+		WingetConfigExclusion:  NewWingetConfigExclusionClient(cfg),
 	}, nil
 }
 
@@ -408,12 +438,13 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
-		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
-		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
-		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
-		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
+		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MDMCommand,
+		c.MemorySlot, c.Metadata, c.Monitor, c.NanoHubInfo, c.NanoHubPushCertificate,
+		c.NanoHubSettings, c.NanoHubUser, c.Netbird, c.NetbirdSettings,
+		c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer,
+		c.Profile, c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
+		c.Server, c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag,
+		c.Task, c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -424,12 +455,13 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
-		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
-		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
-		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
-		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
+		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MDMCommand,
+		c.MemorySlot, c.Metadata, c.Monitor, c.NanoHubInfo, c.NanoHubPushCertificate,
+		c.NanoHubSettings, c.NanoHubUser, c.Netbird, c.NetbirdSettings,
+		c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer,
+		c.Profile, c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
+		c.Server, c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag,
+		c.Task, c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -458,12 +490,22 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.EnrollmentToken.mutate(ctx, m)
 	case *LogicalDiskMutation:
 		return c.LogicalDisk.mutate(ctx, m)
+	case *MDMCommandMutation:
+		return c.MDMCommand.mutate(ctx, m)
 	case *MemorySlotMutation:
 		return c.MemorySlot.mutate(ctx, m)
 	case *MetadataMutation:
 		return c.Metadata.mutate(ctx, m)
 	case *MonitorMutation:
 		return c.Monitor.mutate(ctx, m)
+	case *NanoHubInfoMutation:
+		return c.NanoHubInfo.mutate(ctx, m)
+	case *NanoHubPushCertificateMutation:
+		return c.NanoHubPushCertificate.mutate(ctx, m)
+	case *NanoHubSettingsMutation:
+		return c.NanoHubSettings.mutate(ctx, m)
+	case *NanoHubUserMutation:
+		return c.NanoHubUser.mutate(ctx, m)
 	case *NetbirdMutation:
 		return c.Netbird.mutate(ctx, m)
 	case *NetbirdSettingsMutation:
@@ -958,6 +1000,38 @@ func (c *AgentClient) QueryNetbird(a *Agent) *NetbirdQuery {
 			sqlgraph.From(agent.Table, agent.FieldID, id),
 			sqlgraph.To(netbird.Table, netbird.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, agent.NetbirdTable, agent.NetbirdColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNanohubinfo queries the nanohubinfo edge of a Agent.
+func (c *AgentClient) QueryNanohubinfo(a *Agent) *NanoHubInfoQuery {
+	query := (&NanoHubInfoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, id),
+			sqlgraph.To(nanohubinfo.Table, nanohubinfo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, agent.NanohubinfoTable, agent.NanohubinfoColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryNanohubusers queries the nanohubusers edge of a Agent.
+func (c *AgentClient) QueryNanohubusers(a *Agent) *NanoHubUserQuery {
+	query := (&NanoHubUserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, id),
+			sqlgraph.To(nanohubuser.Table, nanohubuser.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, agent.NanohubusersTable, agent.NanohubusersColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -2315,6 +2389,139 @@ func (c *LogicalDiskClient) mutate(ctx context.Context, m *LogicalDiskMutation) 
 	}
 }
 
+// MDMCommandClient is a client for the MDMCommand schema.
+type MDMCommandClient struct {
+	config
+}
+
+// NewMDMCommandClient returns a client for the MDMCommand from the given config.
+func NewMDMCommandClient(c config) *MDMCommandClient {
+	return &MDMCommandClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `mdmcommand.Hooks(f(g(h())))`.
+func (c *MDMCommandClient) Use(hooks ...Hook) {
+	c.hooks.MDMCommand = append(c.hooks.MDMCommand, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `mdmcommand.Intercept(f(g(h())))`.
+func (c *MDMCommandClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MDMCommand = append(c.inters.MDMCommand, interceptors...)
+}
+
+// Create returns a builder for creating a MDMCommand entity.
+func (c *MDMCommandClient) Create() *MDMCommandCreate {
+	mutation := newMDMCommandMutation(c.config, OpCreate)
+	return &MDMCommandCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MDMCommand entities.
+func (c *MDMCommandClient) CreateBulk(builders ...*MDMCommandCreate) *MDMCommandCreateBulk {
+	return &MDMCommandCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MDMCommandClient) MapCreateBulk(slice any, setFunc func(*MDMCommandCreate, int)) *MDMCommandCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MDMCommandCreateBulk{err: fmt.Errorf("calling to MDMCommandClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MDMCommandCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MDMCommandCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MDMCommand.
+func (c *MDMCommandClient) Update() *MDMCommandUpdate {
+	mutation := newMDMCommandMutation(c.config, OpUpdate)
+	return &MDMCommandUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MDMCommandClient) UpdateOne(mc *MDMCommand) *MDMCommandUpdateOne {
+	mutation := newMDMCommandMutation(c.config, OpUpdateOne, withMDMCommand(mc))
+	return &MDMCommandUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MDMCommandClient) UpdateOneID(id string) *MDMCommandUpdateOne {
+	mutation := newMDMCommandMutation(c.config, OpUpdateOne, withMDMCommandID(id))
+	return &MDMCommandUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MDMCommand.
+func (c *MDMCommandClient) Delete() *MDMCommandDelete {
+	mutation := newMDMCommandMutation(c.config, OpDelete)
+	return &MDMCommandDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MDMCommandClient) DeleteOne(mc *MDMCommand) *MDMCommandDeleteOne {
+	return c.DeleteOneID(mc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MDMCommandClient) DeleteOneID(id string) *MDMCommandDeleteOne {
+	builder := c.Delete().Where(mdmcommand.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MDMCommandDeleteOne{builder}
+}
+
+// Query returns a query builder for MDMCommand.
+func (c *MDMCommandClient) Query() *MDMCommandQuery {
+	return &MDMCommandQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMDMCommand},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MDMCommand entity by its id.
+func (c *MDMCommandClient) Get(ctx context.Context, id string) (*MDMCommand, error) {
+	return c.Query().Where(mdmcommand.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MDMCommandClient) GetX(ctx context.Context, id string) *MDMCommand {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MDMCommandClient) Hooks() []Hook {
+	return c.hooks.MDMCommand
+}
+
+// Interceptors returns the client interceptors.
+func (c *MDMCommandClient) Interceptors() []Interceptor {
+	return c.inters.MDMCommand
+}
+
+func (c *MDMCommandClient) mutate(ctx context.Context, m *MDMCommandMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MDMCommandCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MDMCommandUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MDMCommandUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MDMCommandDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MDMCommand mutation op: %q", m.Op())
+	}
+}
+
 // MemorySlotClient is a client for the MemorySlot schema.
 type MemorySlotClient struct {
 	config
@@ -2775,6 +2982,586 @@ func (c *MonitorClient) mutate(ctx context.Context, m *MonitorMutation) (Value, 
 		return (&MonitorDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Monitor mutation op: %q", m.Op())
+	}
+}
+
+// NanoHubInfoClient is a client for the NanoHubInfo schema.
+type NanoHubInfoClient struct {
+	config
+}
+
+// NewNanoHubInfoClient returns a client for the NanoHubInfo from the given config.
+func NewNanoHubInfoClient(c config) *NanoHubInfoClient {
+	return &NanoHubInfoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `nanohubinfo.Hooks(f(g(h())))`.
+func (c *NanoHubInfoClient) Use(hooks ...Hook) {
+	c.hooks.NanoHubInfo = append(c.hooks.NanoHubInfo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `nanohubinfo.Intercept(f(g(h())))`.
+func (c *NanoHubInfoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NanoHubInfo = append(c.inters.NanoHubInfo, interceptors...)
+}
+
+// Create returns a builder for creating a NanoHubInfo entity.
+func (c *NanoHubInfoClient) Create() *NanoHubInfoCreate {
+	mutation := newNanoHubInfoMutation(c.config, OpCreate)
+	return &NanoHubInfoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NanoHubInfo entities.
+func (c *NanoHubInfoClient) CreateBulk(builders ...*NanoHubInfoCreate) *NanoHubInfoCreateBulk {
+	return &NanoHubInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NanoHubInfoClient) MapCreateBulk(slice any, setFunc func(*NanoHubInfoCreate, int)) *NanoHubInfoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NanoHubInfoCreateBulk{err: fmt.Errorf("calling to NanoHubInfoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NanoHubInfoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NanoHubInfoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NanoHubInfo.
+func (c *NanoHubInfoClient) Update() *NanoHubInfoUpdate {
+	mutation := newNanoHubInfoMutation(c.config, OpUpdate)
+	return &NanoHubInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NanoHubInfoClient) UpdateOne(nhi *NanoHubInfo) *NanoHubInfoUpdateOne {
+	mutation := newNanoHubInfoMutation(c.config, OpUpdateOne, withNanoHubInfo(nhi))
+	return &NanoHubInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NanoHubInfoClient) UpdateOneID(id int) *NanoHubInfoUpdateOne {
+	mutation := newNanoHubInfoMutation(c.config, OpUpdateOne, withNanoHubInfoID(id))
+	return &NanoHubInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NanoHubInfo.
+func (c *NanoHubInfoClient) Delete() *NanoHubInfoDelete {
+	mutation := newNanoHubInfoMutation(c.config, OpDelete)
+	return &NanoHubInfoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NanoHubInfoClient) DeleteOne(nhi *NanoHubInfo) *NanoHubInfoDeleteOne {
+	return c.DeleteOneID(nhi.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NanoHubInfoClient) DeleteOneID(id int) *NanoHubInfoDeleteOne {
+	builder := c.Delete().Where(nanohubinfo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NanoHubInfoDeleteOne{builder}
+}
+
+// Query returns a query builder for NanoHubInfo.
+func (c *NanoHubInfoClient) Query() *NanoHubInfoQuery {
+	return &NanoHubInfoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNanoHubInfo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NanoHubInfo entity by its id.
+func (c *NanoHubInfoClient) Get(ctx context.Context, id int) (*NanoHubInfo, error) {
+	return c.Query().Where(nanohubinfo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NanoHubInfoClient) GetX(ctx context.Context, id int) *NanoHubInfo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a NanoHubInfo.
+func (c *NanoHubInfoClient) QueryOwner(nhi *NanoHubInfo) *AgentQuery {
+	query := (&AgentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := nhi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(nanohubinfo.Table, nanohubinfo.FieldID, id),
+			sqlgraph.To(agent.Table, agent.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, nanohubinfo.OwnerTable, nanohubinfo.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(nhi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NanoHubInfoClient) Hooks() []Hook {
+	return c.hooks.NanoHubInfo
+}
+
+// Interceptors returns the client interceptors.
+func (c *NanoHubInfoClient) Interceptors() []Interceptor {
+	return c.inters.NanoHubInfo
+}
+
+func (c *NanoHubInfoClient) mutate(ctx context.Context, m *NanoHubInfoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NanoHubInfoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NanoHubInfoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NanoHubInfoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NanoHubInfoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NanoHubInfo mutation op: %q", m.Op())
+	}
+}
+
+// NanoHubPushCertificateClient is a client for the NanoHubPushCertificate schema.
+type NanoHubPushCertificateClient struct {
+	config
+}
+
+// NewNanoHubPushCertificateClient returns a client for the NanoHubPushCertificate from the given config.
+func NewNanoHubPushCertificateClient(c config) *NanoHubPushCertificateClient {
+	return &NanoHubPushCertificateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `nanohubpushcertificate.Hooks(f(g(h())))`.
+func (c *NanoHubPushCertificateClient) Use(hooks ...Hook) {
+	c.hooks.NanoHubPushCertificate = append(c.hooks.NanoHubPushCertificate, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `nanohubpushcertificate.Intercept(f(g(h())))`.
+func (c *NanoHubPushCertificateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NanoHubPushCertificate = append(c.inters.NanoHubPushCertificate, interceptors...)
+}
+
+// Create returns a builder for creating a NanoHubPushCertificate entity.
+func (c *NanoHubPushCertificateClient) Create() *NanoHubPushCertificateCreate {
+	mutation := newNanoHubPushCertificateMutation(c.config, OpCreate)
+	return &NanoHubPushCertificateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NanoHubPushCertificate entities.
+func (c *NanoHubPushCertificateClient) CreateBulk(builders ...*NanoHubPushCertificateCreate) *NanoHubPushCertificateCreateBulk {
+	return &NanoHubPushCertificateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NanoHubPushCertificateClient) MapCreateBulk(slice any, setFunc func(*NanoHubPushCertificateCreate, int)) *NanoHubPushCertificateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NanoHubPushCertificateCreateBulk{err: fmt.Errorf("calling to NanoHubPushCertificateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NanoHubPushCertificateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NanoHubPushCertificateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NanoHubPushCertificate.
+func (c *NanoHubPushCertificateClient) Update() *NanoHubPushCertificateUpdate {
+	mutation := newNanoHubPushCertificateMutation(c.config, OpUpdate)
+	return &NanoHubPushCertificateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NanoHubPushCertificateClient) UpdateOne(nhpc *NanoHubPushCertificate) *NanoHubPushCertificateUpdateOne {
+	mutation := newNanoHubPushCertificateMutation(c.config, OpUpdateOne, withNanoHubPushCertificate(nhpc))
+	return &NanoHubPushCertificateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NanoHubPushCertificateClient) UpdateOneID(id int) *NanoHubPushCertificateUpdateOne {
+	mutation := newNanoHubPushCertificateMutation(c.config, OpUpdateOne, withNanoHubPushCertificateID(id))
+	return &NanoHubPushCertificateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NanoHubPushCertificate.
+func (c *NanoHubPushCertificateClient) Delete() *NanoHubPushCertificateDelete {
+	mutation := newNanoHubPushCertificateMutation(c.config, OpDelete)
+	return &NanoHubPushCertificateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NanoHubPushCertificateClient) DeleteOne(nhpc *NanoHubPushCertificate) *NanoHubPushCertificateDeleteOne {
+	return c.DeleteOneID(nhpc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NanoHubPushCertificateClient) DeleteOneID(id int) *NanoHubPushCertificateDeleteOne {
+	builder := c.Delete().Where(nanohubpushcertificate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NanoHubPushCertificateDeleteOne{builder}
+}
+
+// Query returns a query builder for NanoHubPushCertificate.
+func (c *NanoHubPushCertificateClient) Query() *NanoHubPushCertificateQuery {
+	return &NanoHubPushCertificateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNanoHubPushCertificate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NanoHubPushCertificate entity by its id.
+func (c *NanoHubPushCertificateClient) Get(ctx context.Context, id int) (*NanoHubPushCertificate, error) {
+	return c.Query().Where(nanohubpushcertificate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NanoHubPushCertificateClient) GetX(ctx context.Context, id int) *NanoHubPushCertificate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTenant queries the tenant edge of a NanoHubPushCertificate.
+func (c *NanoHubPushCertificateClient) QueryTenant(nhpc *NanoHubPushCertificate) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := nhpc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(nanohubpushcertificate.Table, nanohubpushcertificate.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, nanohubpushcertificate.TenantTable, nanohubpushcertificate.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(nhpc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NanoHubPushCertificateClient) Hooks() []Hook {
+	return c.hooks.NanoHubPushCertificate
+}
+
+// Interceptors returns the client interceptors.
+func (c *NanoHubPushCertificateClient) Interceptors() []Interceptor {
+	return c.inters.NanoHubPushCertificate
+}
+
+func (c *NanoHubPushCertificateClient) mutate(ctx context.Context, m *NanoHubPushCertificateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NanoHubPushCertificateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NanoHubPushCertificateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NanoHubPushCertificateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NanoHubPushCertificateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NanoHubPushCertificate mutation op: %q", m.Op())
+	}
+}
+
+// NanoHubSettingsClient is a client for the NanoHubSettings schema.
+type NanoHubSettingsClient struct {
+	config
+}
+
+// NewNanoHubSettingsClient returns a client for the NanoHubSettings from the given config.
+func NewNanoHubSettingsClient(c config) *NanoHubSettingsClient {
+	return &NanoHubSettingsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `nanohubsettings.Hooks(f(g(h())))`.
+func (c *NanoHubSettingsClient) Use(hooks ...Hook) {
+	c.hooks.NanoHubSettings = append(c.hooks.NanoHubSettings, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `nanohubsettings.Intercept(f(g(h())))`.
+func (c *NanoHubSettingsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NanoHubSettings = append(c.inters.NanoHubSettings, interceptors...)
+}
+
+// Create returns a builder for creating a NanoHubSettings entity.
+func (c *NanoHubSettingsClient) Create() *NanoHubSettingsCreate {
+	mutation := newNanoHubSettingsMutation(c.config, OpCreate)
+	return &NanoHubSettingsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NanoHubSettings entities.
+func (c *NanoHubSettingsClient) CreateBulk(builders ...*NanoHubSettingsCreate) *NanoHubSettingsCreateBulk {
+	return &NanoHubSettingsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NanoHubSettingsClient) MapCreateBulk(slice any, setFunc func(*NanoHubSettingsCreate, int)) *NanoHubSettingsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NanoHubSettingsCreateBulk{err: fmt.Errorf("calling to NanoHubSettingsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NanoHubSettingsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NanoHubSettingsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NanoHubSettings.
+func (c *NanoHubSettingsClient) Update() *NanoHubSettingsUpdate {
+	mutation := newNanoHubSettingsMutation(c.config, OpUpdate)
+	return &NanoHubSettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NanoHubSettingsClient) UpdateOne(nhs *NanoHubSettings) *NanoHubSettingsUpdateOne {
+	mutation := newNanoHubSettingsMutation(c.config, OpUpdateOne, withNanoHubSettings(nhs))
+	return &NanoHubSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NanoHubSettingsClient) UpdateOneID(id int) *NanoHubSettingsUpdateOne {
+	mutation := newNanoHubSettingsMutation(c.config, OpUpdateOne, withNanoHubSettingsID(id))
+	return &NanoHubSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NanoHubSettings.
+func (c *NanoHubSettingsClient) Delete() *NanoHubSettingsDelete {
+	mutation := newNanoHubSettingsMutation(c.config, OpDelete)
+	return &NanoHubSettingsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NanoHubSettingsClient) DeleteOne(nhs *NanoHubSettings) *NanoHubSettingsDeleteOne {
+	return c.DeleteOneID(nhs.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NanoHubSettingsClient) DeleteOneID(id int) *NanoHubSettingsDeleteOne {
+	builder := c.Delete().Where(nanohubsettings.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NanoHubSettingsDeleteOne{builder}
+}
+
+// Query returns a query builder for NanoHubSettings.
+func (c *NanoHubSettingsClient) Query() *NanoHubSettingsQuery {
+	return &NanoHubSettingsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNanoHubSettings},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NanoHubSettings entity by its id.
+func (c *NanoHubSettingsClient) Get(ctx context.Context, id int) (*NanoHubSettings, error) {
+	return c.Query().Where(nanohubsettings.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NanoHubSettingsClient) GetX(ctx context.Context, id int) *NanoHubSettings {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *NanoHubSettingsClient) Hooks() []Hook {
+	return c.hooks.NanoHubSettings
+}
+
+// Interceptors returns the client interceptors.
+func (c *NanoHubSettingsClient) Interceptors() []Interceptor {
+	return c.inters.NanoHubSettings
+}
+
+func (c *NanoHubSettingsClient) mutate(ctx context.Context, m *NanoHubSettingsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NanoHubSettingsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NanoHubSettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NanoHubSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NanoHubSettingsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NanoHubSettings mutation op: %q", m.Op())
+	}
+}
+
+// NanoHubUserClient is a client for the NanoHubUser schema.
+type NanoHubUserClient struct {
+	config
+}
+
+// NewNanoHubUserClient returns a client for the NanoHubUser from the given config.
+func NewNanoHubUserClient(c config) *NanoHubUserClient {
+	return &NanoHubUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `nanohubuser.Hooks(f(g(h())))`.
+func (c *NanoHubUserClient) Use(hooks ...Hook) {
+	c.hooks.NanoHubUser = append(c.hooks.NanoHubUser, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `nanohubuser.Intercept(f(g(h())))`.
+func (c *NanoHubUserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.NanoHubUser = append(c.inters.NanoHubUser, interceptors...)
+}
+
+// Create returns a builder for creating a NanoHubUser entity.
+func (c *NanoHubUserClient) Create() *NanoHubUserCreate {
+	mutation := newNanoHubUserMutation(c.config, OpCreate)
+	return &NanoHubUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of NanoHubUser entities.
+func (c *NanoHubUserClient) CreateBulk(builders ...*NanoHubUserCreate) *NanoHubUserCreateBulk {
+	return &NanoHubUserCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *NanoHubUserClient) MapCreateBulk(slice any, setFunc func(*NanoHubUserCreate, int)) *NanoHubUserCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &NanoHubUserCreateBulk{err: fmt.Errorf("calling to NanoHubUserClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*NanoHubUserCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &NanoHubUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for NanoHubUser.
+func (c *NanoHubUserClient) Update() *NanoHubUserUpdate {
+	mutation := newNanoHubUserMutation(c.config, OpUpdate)
+	return &NanoHubUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *NanoHubUserClient) UpdateOne(nhu *NanoHubUser) *NanoHubUserUpdateOne {
+	mutation := newNanoHubUserMutation(c.config, OpUpdateOne, withNanoHubUser(nhu))
+	return &NanoHubUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *NanoHubUserClient) UpdateOneID(id int) *NanoHubUserUpdateOne {
+	mutation := newNanoHubUserMutation(c.config, OpUpdateOne, withNanoHubUserID(id))
+	return &NanoHubUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for NanoHubUser.
+func (c *NanoHubUserClient) Delete() *NanoHubUserDelete {
+	mutation := newNanoHubUserMutation(c.config, OpDelete)
+	return &NanoHubUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *NanoHubUserClient) DeleteOne(nhu *NanoHubUser) *NanoHubUserDeleteOne {
+	return c.DeleteOneID(nhu.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *NanoHubUserClient) DeleteOneID(id int) *NanoHubUserDeleteOne {
+	builder := c.Delete().Where(nanohubuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &NanoHubUserDeleteOne{builder}
+}
+
+// Query returns a query builder for NanoHubUser.
+func (c *NanoHubUserClient) Query() *NanoHubUserQuery {
+	return &NanoHubUserQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeNanoHubUser},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a NanoHubUser entity by its id.
+func (c *NanoHubUserClient) Get(ctx context.Context, id int) (*NanoHubUser, error) {
+	return c.Query().Where(nanohubuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *NanoHubUserClient) GetX(ctx context.Context, id int) *NanoHubUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a NanoHubUser.
+func (c *NanoHubUserClient) QueryOwner(nhu *NanoHubUser) *AgentQuery {
+	query := (&AgentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := nhu.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(nanohubuser.Table, nanohubuser.FieldID, id),
+			sqlgraph.To(agent.Table, agent.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, nanohubuser.OwnerTable, nanohubuser.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(nhu.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *NanoHubUserClient) Hooks() []Hook {
+	return c.hooks.NanoHubUser
+}
+
+// Interceptors returns the client interceptors.
+func (c *NanoHubUserClient) Interceptors() []Interceptor {
+	return c.inters.NanoHubUser
+}
+
+func (c *NanoHubUserClient) mutate(ctx context.Context, m *NanoHubUserMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&NanoHubUserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&NanoHubUserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&NanoHubUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&NanoHubUserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown NanoHubUser mutation op: %q", m.Op())
 	}
 }
 
@@ -6303,6 +7090,22 @@ func (c *TenantClient) QueryNetbird(t *Tenant) *NetbirdSettingsQuery {
 	return query
 }
 
+// QueryNanohubPush queries the nanohub_push edge of a Tenant.
+func (c *TenantClient) QueryNanohubPush(t *Tenant) *NanoHubPushCertificateQuery {
+	query := (&NanoHubPushCertificateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(nanohubpushcertificate.Table, nanohubpushcertificate.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, tenant.NanohubPushTable, tenant.NanohubPushColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserTenants queries the user_tenants edge of a Tenant.
 func (c *TenantClient) QueryUserTenants(t *Tenant) *UserTenantQuery {
 	query := (&UserTenantClient{config: c.config}).Query()
@@ -7008,7 +7811,8 @@ func (c *WingetConfigExclusionClient) mutate(ctx context.Context, m *WingetConfi
 type (
 	hooks struct {
 		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
-		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
+		Deployment, EnrollmentToken, LogicalDisk, MDMCommand, MemorySlot, Metadata,
+		Monitor, NanoHubInfo, NanoHubPushCertificate, NanoHubSettings, NanoHubUser,
 		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
 		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
 		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,
@@ -7016,7 +7820,8 @@ type (
 	}
 	inters struct {
 		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
-		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
+		Deployment, EnrollmentToken, LogicalDisk, MDMCommand, MemorySlot, Metadata,
+		Monitor, NanoHubInfo, NanoHubPushCertificate, NanoHubSettings, NanoHubUser,
 		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
 		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
 		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,

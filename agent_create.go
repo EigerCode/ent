@@ -21,6 +21,8 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubuser"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
@@ -793,6 +795,40 @@ func (ac *AgentCreate) SetNetbird(n *Netbird) *AgentCreate {
 	return ac.SetNetbirdID(n.ID)
 }
 
+// SetNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by ID.
+func (ac *AgentCreate) SetNanohubinfoID(id int) *AgentCreate {
+	ac.mutation.SetNanohubinfoID(id)
+	return ac
+}
+
+// SetNillableNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by ID if the given value is not nil.
+func (ac *AgentCreate) SetNillableNanohubinfoID(id *int) *AgentCreate {
+	if id != nil {
+		ac = ac.SetNanohubinfoID(*id)
+	}
+	return ac
+}
+
+// SetNanohubinfo sets the "nanohubinfo" edge to the NanoHubInfo entity.
+func (ac *AgentCreate) SetNanohubinfo(n *NanoHubInfo) *AgentCreate {
+	return ac.SetNanohubinfoID(n.ID)
+}
+
+// AddNanohubuserIDs adds the "nanohubusers" edge to the NanoHubUser entity by IDs.
+func (ac *AgentCreate) AddNanohubuserIDs(ids ...int) *AgentCreate {
+	ac.mutation.AddNanohubuserIDs(ids...)
+	return ac
+}
+
+// AddNanohubusers adds the "nanohubusers" edges to the NanoHubUser entity.
+func (ac *AgentCreate) AddNanohubusers(n ...*NanoHubUser) *AgentCreate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return ac.AddNanohubuserIDs(ids...)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (ac *AgentCreate) Mutation() *AgentMutation {
 	return ac.mutation
@@ -1454,6 +1490,38 @@ func (ac *AgentCreate) createSpec() (*Agent, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.NanohubinfoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NanohubinfoTable,
+			Columns: []string{agent.NanohubinfoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubinfo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.NanohubusersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

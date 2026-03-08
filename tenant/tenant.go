@@ -39,6 +39,8 @@ const (
 	EdgeRustdesk = "rustdesk"
 	// EdgeNetbird holds the string denoting the netbird edge name in mutations.
 	EdgeNetbird = "netbird"
+	// EdgeNanohubPush holds the string denoting the nanohub_push edge name in mutations.
+	EdgeNanohubPush = "nanohub_push"
 	// EdgeUserTenants holds the string denoting the user_tenants edge name in mutations.
 	EdgeUserTenants = "user_tenants"
 	// EdgeEnrollmentTokens holds the string denoting the enrollment_tokens edge name in mutations.
@@ -85,6 +87,13 @@ const (
 	NetbirdInverseTable = "netbird_settings"
 	// NetbirdColumn is the table column denoting the netbird relation/edge.
 	NetbirdColumn = "tenant_netbird"
+	// NanohubPushTable is the table that holds the nanohub_push relation/edge.
+	NanohubPushTable = "tenants"
+	// NanohubPushInverseTable is the table name for the NanoHubPushCertificate entity.
+	// It exists in this package in order to avoid circular dependency with the "nanohubpushcertificate" package.
+	NanohubPushInverseTable = "nano_hub_push_certificates"
+	// NanohubPushColumn is the table column denoting the nanohub_push relation/edge.
+	NanohubPushColumn = "tenant_nanohub_push"
 	// UserTenantsTable is the table that holds the user_tenants relation/edge.
 	UserTenantsTable = "user_tenants"
 	// UserTenantsInverseTable is the table name for the UserTenant entity.
@@ -116,6 +125,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"tenant_netbird",
+	"tenant_nanohub_push",
 }
 
 var (
@@ -283,6 +293,13 @@ func ByNetbirdField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByNanohubPushField orders the results by nanohub_push field.
+func ByNanohubPushField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newNanohubPushStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByUserTenantsCount orders the results by user_tenants count.
 func ByUserTenantsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -350,6 +367,13 @@ func newNetbirdStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NetbirdInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, NetbirdTable, NetbirdColumn),
+	)
+}
+func newNanohubPushStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(NanohubPushInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, NanohubPushTable, NanohubPushColumn),
 	)
 }
 func newUserTenantsStep() *sqlgraph.Step {

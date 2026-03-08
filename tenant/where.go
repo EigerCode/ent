@@ -518,6 +518,29 @@ func HasNetbirdWith(preds ...predicate.NetbirdSettings) predicate.Tenant {
 	})
 }
 
+// HasNanohubPush applies the HasEdge predicate on the "nanohub_push" edge.
+func HasNanohubPush() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, NanohubPushTable, NanohubPushColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNanohubPushWith applies the HasEdge predicate on the "nanohub_push" edge with a given conditions (other predicates).
+func HasNanohubPushWith(preds ...predicate.NanoHubPushCertificate) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newNanohubPushStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserTenants applies the HasEdge predicate on the "user_tenants" edge.
 func HasUserTenants() predicate.Tenant {
 	return predicate.Tenant(func(s *sql.Selector) {

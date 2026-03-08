@@ -44,7 +44,7 @@ func (Agent) Fields() []ent.Field {
 		field.Time("settings_modified").Optional().Default(time.Now),
 		field.String("description").Optional().Default(""),
 		field.String("nickname").Optional().Default(""),
-		field.Enum("endpoint_type").Values("DesktopPC", "Laptop", "Server", "Tablet", "VM", "AllInOne", "Other").Optional().Default("Other"),
+		field.Enum("endpoint_type").Values("DesktopPC", "Laptop", "Server", "Tablet", "VM", "AllInOne", "Other", "NanoHub").Optional().Default("Other"),
 		field.Bool("has_rustdesk").Optional().Default(false),
 		field.Bool("is_wayland").Optional().Default(false),
 		field.Bool("is_flatpak_rustdesk").Optional().Default(false),
@@ -76,6 +76,8 @@ func (Agent) Edges() []ent.Edge {
 		edge.From("site", Site.Type).Ref("agents"),
 		edge.To("physicaldisks", PhysicalDisk.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("netbird", Netbird.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("nanohubinfo", NanoHubInfo.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("nanohubusers", NanoHubUser.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }
 

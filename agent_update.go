@@ -20,6 +20,8 @@ import (
 	"github.com/open-uem/ent/memoryslot"
 	"github.com/open-uem/ent/metadata"
 	"github.com/open-uem/ent/monitor"
+	"github.com/open-uem/ent/nanohubinfo"
+	"github.com/open-uem/ent/nanohubuser"
 	"github.com/open-uem/ent/netbird"
 	"github.com/open-uem/ent/networkadapter"
 	"github.com/open-uem/ent/operatingsystem"
@@ -959,6 +961,40 @@ func (au *AgentUpdate) SetNetbird(n *Netbird) *AgentUpdate {
 	return au.SetNetbirdID(n.ID)
 }
 
+// SetNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by ID.
+func (au *AgentUpdate) SetNanohubinfoID(id int) *AgentUpdate {
+	au.mutation.SetNanohubinfoID(id)
+	return au
+}
+
+// SetNillableNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by ID if the given value is not nil.
+func (au *AgentUpdate) SetNillableNanohubinfoID(id *int) *AgentUpdate {
+	if id != nil {
+		au = au.SetNanohubinfoID(*id)
+	}
+	return au
+}
+
+// SetNanohubinfo sets the "nanohubinfo" edge to the NanoHubInfo entity.
+func (au *AgentUpdate) SetNanohubinfo(n *NanoHubInfo) *AgentUpdate {
+	return au.SetNanohubinfoID(n.ID)
+}
+
+// AddNanohubuserIDs adds the "nanohubusers" edge to the NanoHubUser entity by IDs.
+func (au *AgentUpdate) AddNanohubuserIDs(ids ...int) *AgentUpdate {
+	au.mutation.AddNanohubuserIDs(ids...)
+	return au
+}
+
+// AddNanohubusers adds the "nanohubusers" edges to the NanoHubUser entity.
+func (au *AgentUpdate) AddNanohubusers(n ...*NanoHubUser) *AgentUpdate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return au.AddNanohubuserIDs(ids...)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (au *AgentUpdate) Mutation() *AgentMutation {
 	return au.mutation
@@ -1313,6 +1349,33 @@ func (au *AgentUpdate) RemovePhysicaldisks(p ...*PhysicalDisk) *AgentUpdate {
 func (au *AgentUpdate) ClearNetbird() *AgentUpdate {
 	au.mutation.ClearNetbird()
 	return au
+}
+
+// ClearNanohubinfo clears the "nanohubinfo" edge to the NanoHubInfo entity.
+func (au *AgentUpdate) ClearNanohubinfo() *AgentUpdate {
+	au.mutation.ClearNanohubinfo()
+	return au
+}
+
+// ClearNanohubusers clears all "nanohubusers" edges to the NanoHubUser entity.
+func (au *AgentUpdate) ClearNanohubusers() *AgentUpdate {
+	au.mutation.ClearNanohubusers()
+	return au
+}
+
+// RemoveNanohubuserIDs removes the "nanohubusers" edge to NanoHubUser entities by IDs.
+func (au *AgentUpdate) RemoveNanohubuserIDs(ids ...int) *AgentUpdate {
+	au.mutation.RemoveNanohubuserIDs(ids...)
+	return au
+}
+
+// RemoveNanohubusers removes "nanohubusers" edges to NanoHubUser entities.
+func (au *AgentUpdate) RemoveNanohubusers(n ...*NanoHubUser) *AgentUpdate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return au.RemoveNanohubuserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2399,6 +2462,80 @@ func (au *AgentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if au.mutation.NanohubinfoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NanohubinfoTable,
+			Columns: []string{agent.NanohubinfoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubinfo.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.NanohubinfoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NanohubinfoTable,
+			Columns: []string{agent.NanohubinfoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubinfo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.NanohubusersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RemovedNanohubusersIDs(); len(nodes) > 0 && !au.mutation.NanohubusersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.NanohubusersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(au.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -3330,6 +3467,40 @@ func (auo *AgentUpdateOne) SetNetbird(n *Netbird) *AgentUpdateOne {
 	return auo.SetNetbirdID(n.ID)
 }
 
+// SetNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by ID.
+func (auo *AgentUpdateOne) SetNanohubinfoID(id int) *AgentUpdateOne {
+	auo.mutation.SetNanohubinfoID(id)
+	return auo
+}
+
+// SetNillableNanohubinfoID sets the "nanohubinfo" edge to the NanoHubInfo entity by ID if the given value is not nil.
+func (auo *AgentUpdateOne) SetNillableNanohubinfoID(id *int) *AgentUpdateOne {
+	if id != nil {
+		auo = auo.SetNanohubinfoID(*id)
+	}
+	return auo
+}
+
+// SetNanohubinfo sets the "nanohubinfo" edge to the NanoHubInfo entity.
+func (auo *AgentUpdateOne) SetNanohubinfo(n *NanoHubInfo) *AgentUpdateOne {
+	return auo.SetNanohubinfoID(n.ID)
+}
+
+// AddNanohubuserIDs adds the "nanohubusers" edge to the NanoHubUser entity by IDs.
+func (auo *AgentUpdateOne) AddNanohubuserIDs(ids ...int) *AgentUpdateOne {
+	auo.mutation.AddNanohubuserIDs(ids...)
+	return auo
+}
+
+// AddNanohubusers adds the "nanohubusers" edges to the NanoHubUser entity.
+func (auo *AgentUpdateOne) AddNanohubusers(n ...*NanoHubUser) *AgentUpdateOne {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return auo.AddNanohubuserIDs(ids...)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (auo *AgentUpdateOne) Mutation() *AgentMutation {
 	return auo.mutation
@@ -3684,6 +3855,33 @@ func (auo *AgentUpdateOne) RemovePhysicaldisks(p ...*PhysicalDisk) *AgentUpdateO
 func (auo *AgentUpdateOne) ClearNetbird() *AgentUpdateOne {
 	auo.mutation.ClearNetbird()
 	return auo
+}
+
+// ClearNanohubinfo clears the "nanohubinfo" edge to the NanoHubInfo entity.
+func (auo *AgentUpdateOne) ClearNanohubinfo() *AgentUpdateOne {
+	auo.mutation.ClearNanohubinfo()
+	return auo
+}
+
+// ClearNanohubusers clears all "nanohubusers" edges to the NanoHubUser entity.
+func (auo *AgentUpdateOne) ClearNanohubusers() *AgentUpdateOne {
+	auo.mutation.ClearNanohubusers()
+	return auo
+}
+
+// RemoveNanohubuserIDs removes the "nanohubusers" edge to NanoHubUser entities by IDs.
+func (auo *AgentUpdateOne) RemoveNanohubuserIDs(ids ...int) *AgentUpdateOne {
+	auo.mutation.RemoveNanohubuserIDs(ids...)
+	return auo
+}
+
+// RemoveNanohubusers removes "nanohubusers" edges to NanoHubUser entities.
+func (auo *AgentUpdateOne) RemoveNanohubusers(n ...*NanoHubUser) *AgentUpdateOne {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return auo.RemoveNanohubuserIDs(ids...)
 }
 
 // Where appends a list predicates to the AgentUpdate builder.
@@ -4793,6 +4991,80 @@ func (auo *AgentUpdateOne) sqlSave(ctx context.Context) (_node *Agent, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.NanohubinfoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NanohubinfoTable,
+			Columns: []string{agent.NanohubinfoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubinfo.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.NanohubinfoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   agent.NanohubinfoTable,
+			Columns: []string{agent.NanohubinfoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubinfo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.NanohubusersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RemovedNanohubusersIDs(); len(nodes) > 0 && !auo.mutation.NanohubusersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.NanohubusersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.NanohubusersTable,
+			Columns: []string{agent.NanohubusersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(nanohubuser.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
