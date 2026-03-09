@@ -43,6 +43,14 @@ const (
 	EdgeUserTenants = "user_tenants"
 	// EdgeEnrollmentTokens holds the string denoting the enrollment_tokens edge name in mutations.
 	EdgeEnrollmentTokens = "enrollment_tokens"
+	// EdgeSoftwareRepos holds the string denoting the software_repos edge name in mutations.
+	EdgeSoftwareRepos = "software_repos"
+	// EdgeSoftwarePackages holds the string denoting the software_packages edge name in mutations.
+	EdgeSoftwarePackages = "software_packages"
+	// EdgeSoftwareCatalogs holds the string denoting the software_catalogs edge name in mutations.
+	EdgeSoftwareCatalogs = "software_catalogs"
+	// EdgeSoftwareAssignments holds the string denoting the software_assignments edge name in mutations.
+	EdgeSoftwareAssignments = "software_assignments"
 	// Table holds the table name of the tenant in the database.
 	Table = "tenants"
 	// SitesTable is the table that holds the sites relation/edge.
@@ -99,6 +107,34 @@ const (
 	EnrollmentTokensInverseTable = "enrollment_tokens"
 	// EnrollmentTokensColumn is the table column denoting the enrollment_tokens relation/edge.
 	EnrollmentTokensColumn = "tenant_enrollment_tokens"
+	// SoftwareReposTable is the table that holds the software_repos relation/edge.
+	SoftwareReposTable = "software_repos"
+	// SoftwareReposInverseTable is the table name for the SoftwareRepo entity.
+	// It exists in this package in order to avoid circular dependency with the "softwarerepo" package.
+	SoftwareReposInverseTable = "software_repos"
+	// SoftwareReposColumn is the table column denoting the software_repos relation/edge.
+	SoftwareReposColumn = "tenant_software_repos"
+	// SoftwarePackagesTable is the table that holds the software_packages relation/edge.
+	SoftwarePackagesTable = "software_packages"
+	// SoftwarePackagesInverseTable is the table name for the SoftwarePackage entity.
+	// It exists in this package in order to avoid circular dependency with the "softwarepackage" package.
+	SoftwarePackagesInverseTable = "software_packages"
+	// SoftwarePackagesColumn is the table column denoting the software_packages relation/edge.
+	SoftwarePackagesColumn = "tenant_software_packages"
+	// SoftwareCatalogsTable is the table that holds the software_catalogs relation/edge.
+	SoftwareCatalogsTable = "software_catalogs"
+	// SoftwareCatalogsInverseTable is the table name for the SoftwareCatalog entity.
+	// It exists in this package in order to avoid circular dependency with the "softwarecatalog" package.
+	SoftwareCatalogsInverseTable = "software_catalogs"
+	// SoftwareCatalogsColumn is the table column denoting the software_catalogs relation/edge.
+	SoftwareCatalogsColumn = "tenant_software_catalogs"
+	// SoftwareAssignmentsTable is the table that holds the software_assignments relation/edge.
+	SoftwareAssignmentsTable = "software_assignments"
+	// SoftwareAssignmentsInverseTable is the table name for the SoftwareAssignment entity.
+	// It exists in this package in order to avoid circular dependency with the "softwareassignment" package.
+	SoftwareAssignmentsInverseTable = "software_assignments"
+	// SoftwareAssignmentsColumn is the table column denoting the software_assignments relation/edge.
+	SoftwareAssignmentsColumn = "tenant_software_assignments"
 )
 
 // Columns holds all SQL columns for tenant fields.
@@ -310,6 +346,62 @@ func ByEnrollmentTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption 
 		sqlgraph.OrderByNeighborTerms(s, newEnrollmentTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// BySoftwareReposCount orders the results by software_repos count.
+func BySoftwareReposCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSoftwareReposStep(), opts...)
+	}
+}
+
+// BySoftwareRepos orders the results by software_repos terms.
+func BySoftwareRepos(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSoftwareReposStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// BySoftwarePackagesCount orders the results by software_packages count.
+func BySoftwarePackagesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSoftwarePackagesStep(), opts...)
+	}
+}
+
+// BySoftwarePackages orders the results by software_packages terms.
+func BySoftwarePackages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSoftwarePackagesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// BySoftwareCatalogsCount orders the results by software_catalogs count.
+func BySoftwareCatalogsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSoftwareCatalogsStep(), opts...)
+	}
+}
+
+// BySoftwareCatalogs orders the results by software_catalogs terms.
+func BySoftwareCatalogs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSoftwareCatalogsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// BySoftwareAssignmentsCount orders the results by software_assignments count.
+func BySoftwareAssignmentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSoftwareAssignmentsStep(), opts...)
+	}
+}
+
+// BySoftwareAssignments orders the results by software_assignments terms.
+func BySoftwareAssignments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSoftwareAssignmentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newSitesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -364,5 +456,33 @@ func newEnrollmentTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EnrollmentTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EnrollmentTokensTable, EnrollmentTokensColumn),
+	)
+}
+func newSoftwareReposStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SoftwareReposInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SoftwareReposTable, SoftwareReposColumn),
+	)
+}
+func newSoftwarePackagesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SoftwarePackagesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SoftwarePackagesTable, SoftwarePackagesColumn),
+	)
+}
+func newSoftwareCatalogsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SoftwareCatalogsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SoftwareCatalogsTable, SoftwareCatalogsColumn),
+	)
+}
+func newSoftwareAssignmentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SoftwareAssignmentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SoftwareAssignmentsTable, SoftwareAssignmentsColumn),
 	)
 }

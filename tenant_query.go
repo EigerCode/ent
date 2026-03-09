@@ -19,6 +19,10 @@ import (
 	"github.com/open-uem/ent/rustdesk"
 	"github.com/open-uem/ent/settings"
 	"github.com/open-uem/ent/site"
+	"github.com/open-uem/ent/softwareassignment"
+	"github.com/open-uem/ent/softwarecatalog"
+	"github.com/open-uem/ent/softwarepackage"
+	"github.com/open-uem/ent/softwarerepo"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/tenant"
 	"github.com/open-uem/ent/usertenant"
@@ -27,20 +31,24 @@ import (
 // TenantQuery is the builder for querying Tenant entities.
 type TenantQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []tenant.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.Tenant
-	withSites            *SiteQuery
-	withSettings         *SettingsQuery
-	withTags             *TagQuery
-	withMetadata         *OrgMetadataQuery
-	withRustdesk         *RustdeskQuery
-	withNetbird          *NetbirdSettingsQuery
-	withUserTenants      *UserTenantQuery
-	withEnrollmentTokens *EnrollmentTokenQuery
-	withFKs              bool
-	modifiers            []func(*sql.Selector)
+	ctx                     *QueryContext
+	order                   []tenant.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.Tenant
+	withSites               *SiteQuery
+	withSettings            *SettingsQuery
+	withTags                *TagQuery
+	withMetadata            *OrgMetadataQuery
+	withRustdesk            *RustdeskQuery
+	withNetbird             *NetbirdSettingsQuery
+	withUserTenants         *UserTenantQuery
+	withEnrollmentTokens    *EnrollmentTokenQuery
+	withSoftwareRepos       *SoftwareRepoQuery
+	withSoftwarePackages    *SoftwarePackageQuery
+	withSoftwareCatalogs    *SoftwareCatalogQuery
+	withSoftwareAssignments *SoftwareAssignmentQuery
+	withFKs                 bool
+	modifiers               []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -253,6 +261,94 @@ func (tq *TenantQuery) QueryEnrollmentTokens() *EnrollmentTokenQuery {
 	return query
 }
 
+// QuerySoftwareRepos chains the current query on the "software_repos" edge.
+func (tq *TenantQuery) QuerySoftwareRepos() *SoftwareRepoQuery {
+	query := (&SoftwareRepoClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(softwarerepo.Table, softwarerepo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwareReposTable, tenant.SoftwareReposColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySoftwarePackages chains the current query on the "software_packages" edge.
+func (tq *TenantQuery) QuerySoftwarePackages() *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwarePackagesTable, tenant.SoftwarePackagesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySoftwareCatalogs chains the current query on the "software_catalogs" edge.
+func (tq *TenantQuery) QuerySoftwareCatalogs() *SoftwareCatalogQuery {
+	query := (&SoftwareCatalogClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(softwarecatalog.Table, softwarecatalog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwareCatalogsTable, tenant.SoftwareCatalogsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySoftwareAssignments chains the current query on the "software_assignments" edge.
+func (tq *TenantQuery) QuerySoftwareAssignments() *SoftwareAssignmentQuery {
+	query := (&SoftwareAssignmentClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
+			sqlgraph.To(softwareassignment.Table, softwareassignment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwareAssignmentsTable, tenant.SoftwareAssignmentsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Tenant entity from the query.
 // Returns a *NotFoundError when no Tenant was found.
 func (tq *TenantQuery) First(ctx context.Context) (*Tenant, error) {
@@ -440,19 +536,23 @@ func (tq *TenantQuery) Clone() *TenantQuery {
 		return nil
 	}
 	return &TenantQuery{
-		config:               tq.config,
-		ctx:                  tq.ctx.Clone(),
-		order:                append([]tenant.OrderOption{}, tq.order...),
-		inters:               append([]Interceptor{}, tq.inters...),
-		predicates:           append([]predicate.Tenant{}, tq.predicates...),
-		withSites:            tq.withSites.Clone(),
-		withSettings:         tq.withSettings.Clone(),
-		withTags:             tq.withTags.Clone(),
-		withMetadata:         tq.withMetadata.Clone(),
-		withRustdesk:         tq.withRustdesk.Clone(),
-		withNetbird:          tq.withNetbird.Clone(),
-		withUserTenants:      tq.withUserTenants.Clone(),
-		withEnrollmentTokens: tq.withEnrollmentTokens.Clone(),
+		config:                  tq.config,
+		ctx:                     tq.ctx.Clone(),
+		order:                   append([]tenant.OrderOption{}, tq.order...),
+		inters:                  append([]Interceptor{}, tq.inters...),
+		predicates:              append([]predicate.Tenant{}, tq.predicates...),
+		withSites:               tq.withSites.Clone(),
+		withSettings:            tq.withSettings.Clone(),
+		withTags:                tq.withTags.Clone(),
+		withMetadata:            tq.withMetadata.Clone(),
+		withRustdesk:            tq.withRustdesk.Clone(),
+		withNetbird:             tq.withNetbird.Clone(),
+		withUserTenants:         tq.withUserTenants.Clone(),
+		withEnrollmentTokens:    tq.withEnrollmentTokens.Clone(),
+		withSoftwareRepos:       tq.withSoftwareRepos.Clone(),
+		withSoftwarePackages:    tq.withSoftwarePackages.Clone(),
+		withSoftwareCatalogs:    tq.withSoftwareCatalogs.Clone(),
+		withSoftwareAssignments: tq.withSoftwareAssignments.Clone(),
 		// clone intermediate query.
 		sql:       tq.sql.Clone(),
 		path:      tq.path,
@@ -548,6 +648,50 @@ func (tq *TenantQuery) WithEnrollmentTokens(opts ...func(*EnrollmentTokenQuery))
 	return tq
 }
 
+// WithSoftwareRepos tells the query-builder to eager-load the nodes that are connected to
+// the "software_repos" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TenantQuery) WithSoftwareRepos(opts ...func(*SoftwareRepoQuery)) *TenantQuery {
+	query := (&SoftwareRepoClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withSoftwareRepos = query
+	return tq
+}
+
+// WithSoftwarePackages tells the query-builder to eager-load the nodes that are connected to
+// the "software_packages" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TenantQuery) WithSoftwarePackages(opts ...func(*SoftwarePackageQuery)) *TenantQuery {
+	query := (&SoftwarePackageClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withSoftwarePackages = query
+	return tq
+}
+
+// WithSoftwareCatalogs tells the query-builder to eager-load the nodes that are connected to
+// the "software_catalogs" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TenantQuery) WithSoftwareCatalogs(opts ...func(*SoftwareCatalogQuery)) *TenantQuery {
+	query := (&SoftwareCatalogClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withSoftwareCatalogs = query
+	return tq
+}
+
+// WithSoftwareAssignments tells the query-builder to eager-load the nodes that are connected to
+// the "software_assignments" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TenantQuery) WithSoftwareAssignments(opts ...func(*SoftwareAssignmentQuery)) *TenantQuery {
+	query := (&SoftwareAssignmentClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withSoftwareAssignments = query
+	return tq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -627,7 +771,7 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 		nodes       = []*Tenant{}
 		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [12]bool{
 			tq.withSites != nil,
 			tq.withSettings != nil,
 			tq.withTags != nil,
@@ -636,6 +780,10 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 			tq.withNetbird != nil,
 			tq.withUserTenants != nil,
 			tq.withEnrollmentTokens != nil,
+			tq.withSoftwareRepos != nil,
+			tq.withSoftwarePackages != nil,
+			tq.withSoftwareCatalogs != nil,
+			tq.withSoftwareAssignments != nil,
 		}
 	)
 	if tq.withNetbird != nil {
@@ -716,6 +864,36 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 		if err := tq.loadEnrollmentTokens(ctx, query, nodes,
 			func(n *Tenant) { n.Edges.EnrollmentTokens = []*EnrollmentToken{} },
 			func(n *Tenant, e *EnrollmentToken) { n.Edges.EnrollmentTokens = append(n.Edges.EnrollmentTokens, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withSoftwareRepos; query != nil {
+		if err := tq.loadSoftwareRepos(ctx, query, nodes,
+			func(n *Tenant) { n.Edges.SoftwareRepos = []*SoftwareRepo{} },
+			func(n *Tenant, e *SoftwareRepo) { n.Edges.SoftwareRepos = append(n.Edges.SoftwareRepos, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withSoftwarePackages; query != nil {
+		if err := tq.loadSoftwarePackages(ctx, query, nodes,
+			func(n *Tenant) { n.Edges.SoftwarePackages = []*SoftwarePackage{} },
+			func(n *Tenant, e *SoftwarePackage) { n.Edges.SoftwarePackages = append(n.Edges.SoftwarePackages, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withSoftwareCatalogs; query != nil {
+		if err := tq.loadSoftwareCatalogs(ctx, query, nodes,
+			func(n *Tenant) { n.Edges.SoftwareCatalogs = []*SoftwareCatalog{} },
+			func(n *Tenant, e *SoftwareCatalog) { n.Edges.SoftwareCatalogs = append(n.Edges.SoftwareCatalogs, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withSoftwareAssignments; query != nil {
+		if err := tq.loadSoftwareAssignments(ctx, query, nodes,
+			func(n *Tenant) { n.Edges.SoftwareAssignments = []*SoftwareAssignment{} },
+			func(n *Tenant, e *SoftwareAssignment) {
+				n.Edges.SoftwareAssignments = append(n.Edges.SoftwareAssignments, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -992,6 +1170,130 @@ func (tq *TenantQuery) loadEnrollmentTokens(ctx context.Context, query *Enrollme
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "tenant_enrollment_tokens" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (tq *TenantQuery) loadSoftwareRepos(ctx context.Context, query *SoftwareRepoQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *SoftwareRepo)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Tenant)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.SoftwareRepo(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(tenant.SoftwareReposColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.tenant_software_repos
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "tenant_software_repos" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "tenant_software_repos" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (tq *TenantQuery) loadSoftwarePackages(ctx context.Context, query *SoftwarePackageQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *SoftwarePackage)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Tenant)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.SoftwarePackage(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(tenant.SoftwarePackagesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.tenant_software_packages
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "tenant_software_packages" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "tenant_software_packages" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (tq *TenantQuery) loadSoftwareCatalogs(ctx context.Context, query *SoftwareCatalogQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *SoftwareCatalog)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Tenant)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.SoftwareCatalog(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(tenant.SoftwareCatalogsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.tenant_software_catalogs
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "tenant_software_catalogs" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "tenant_software_catalogs" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (tq *TenantQuery) loadSoftwareAssignments(ctx context.Context, query *SoftwareAssignmentQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *SoftwareAssignment)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Tenant)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.SoftwareAssignment(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(tenant.SoftwareAssignmentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.tenant_software_assignments
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "tenant_software_assignments" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "tenant_software_assignments" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -56,9 +56,17 @@ type TenantEdges struct {
 	UserTenants []*UserTenant `json:"user_tenants,omitempty"`
 	// EnrollmentTokens holds the value of the enrollment_tokens edge.
 	EnrollmentTokens []*EnrollmentToken `json:"enrollment_tokens,omitempty"`
+	// SoftwareRepos holds the value of the software_repos edge.
+	SoftwareRepos []*SoftwareRepo `json:"software_repos,omitempty"`
+	// SoftwarePackages holds the value of the software_packages edge.
+	SoftwarePackages []*SoftwarePackage `json:"software_packages,omitempty"`
+	// SoftwareCatalogs holds the value of the software_catalogs edge.
+	SoftwareCatalogs []*SoftwareCatalog `json:"software_catalogs,omitempty"`
+	// SoftwareAssignments holds the value of the software_assignments edge.
+	SoftwareAssignments []*SoftwareAssignment `json:"software_assignments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [12]bool
 }
 
 // SitesOrErr returns the Sites value or an error if the edge
@@ -135,6 +143,42 @@ func (e TenantEdges) EnrollmentTokensOrErr() ([]*EnrollmentToken, error) {
 		return e.EnrollmentTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "enrollment_tokens"}
+}
+
+// SoftwareReposOrErr returns the SoftwareRepos value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) SoftwareReposOrErr() ([]*SoftwareRepo, error) {
+	if e.loadedTypes[8] {
+		return e.SoftwareRepos, nil
+	}
+	return nil, &NotLoadedError{edge: "software_repos"}
+}
+
+// SoftwarePackagesOrErr returns the SoftwarePackages value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) SoftwarePackagesOrErr() ([]*SoftwarePackage, error) {
+	if e.loadedTypes[9] {
+		return e.SoftwarePackages, nil
+	}
+	return nil, &NotLoadedError{edge: "software_packages"}
+}
+
+// SoftwareCatalogsOrErr returns the SoftwareCatalogs value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) SoftwareCatalogsOrErr() ([]*SoftwareCatalog, error) {
+	if e.loadedTypes[10] {
+		return e.SoftwareCatalogs, nil
+	}
+	return nil, &NotLoadedError{edge: "software_catalogs"}
+}
+
+// SoftwareAssignmentsOrErr returns the SoftwareAssignments value or an error if the edge
+// was not loaded in eager-loading.
+func (e TenantEdges) SoftwareAssignmentsOrErr() ([]*SoftwareAssignment, error) {
+	if e.loadedTypes[11] {
+		return e.SoftwareAssignments, nil
+	}
+	return nil, &NotLoadedError{edge: "software_assignments"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -267,6 +311,26 @@ func (t *Tenant) QueryUserTenants() *UserTenantQuery {
 // QueryEnrollmentTokens queries the "enrollment_tokens" edge of the Tenant entity.
 func (t *Tenant) QueryEnrollmentTokens() *EnrollmentTokenQuery {
 	return NewTenantClient(t.config).QueryEnrollmentTokens(t)
+}
+
+// QuerySoftwareRepos queries the "software_repos" edge of the Tenant entity.
+func (t *Tenant) QuerySoftwareRepos() *SoftwareRepoQuery {
+	return NewTenantClient(t.config).QuerySoftwareRepos(t)
+}
+
+// QuerySoftwarePackages queries the "software_packages" edge of the Tenant entity.
+func (t *Tenant) QuerySoftwarePackages() *SoftwarePackageQuery {
+	return NewTenantClient(t.config).QuerySoftwarePackages(t)
+}
+
+// QuerySoftwareCatalogs queries the "software_catalogs" edge of the Tenant entity.
+func (t *Tenant) QuerySoftwareCatalogs() *SoftwareCatalogQuery {
+	return NewTenantClient(t.config).QuerySoftwareCatalogs(t)
+}
+
+// QuerySoftwareAssignments queries the "software_assignments" edge of the Tenant entity.
+func (t *Tenant) QuerySoftwareAssignments() *SoftwareAssignmentQuery {
+	return NewTenantClient(t.config).QuerySoftwareAssignments(t)
 }
 
 // Update returns a builder for updating this Tenant.

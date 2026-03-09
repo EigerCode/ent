@@ -117,6 +117,8 @@ const (
 	EdgePhysicaldisks = "physicaldisks"
 	// EdgeNetbird holds the string denoting the netbird edge name in mutations.
 	EdgeNetbird = "netbird"
+	// EdgeSoftwareInstallLogs holds the string denoting the software_install_logs edge name in mutations.
+	EdgeSoftwareInstallLogs = "software_install_logs"
 	// ComputerFieldID holds the string denoting the ID field of the Computer.
 	ComputerFieldID = "id"
 	// OperatingSystemFieldID holds the string denoting the ID field of the OperatingSystem.
@@ -159,6 +161,8 @@ const (
 	PhysicalDiskFieldID = "id"
 	// NetbirdFieldID holds the string denoting the ID field of the Netbird.
 	NetbirdFieldID = "id"
+	// SoftwareInstallLogFieldID holds the string denoting the ID field of the SoftwareInstallLog.
+	SoftwareInstallLogFieldID = "id"
 	// Table holds the table name of the agent in the database.
 	Table = "agents"
 	// ComputerTable is the table that holds the computer relation/edge.
@@ -304,6 +308,13 @@ const (
 	NetbirdInverseTable = "netbirds"
 	// NetbirdColumn is the table column denoting the netbird relation/edge.
 	NetbirdColumn = "agent_netbird"
+	// SoftwareInstallLogsTable is the table that holds the software_install_logs relation/edge.
+	SoftwareInstallLogsTable = "software_install_logs"
+	// SoftwareInstallLogsInverseTable is the table name for the SoftwareInstallLog entity.
+	// It exists in this package in order to avoid circular dependency with the "softwareinstalllog" package.
+	SoftwareInstallLogsInverseTable = "software_install_logs"
+	// SoftwareInstallLogsColumn is the table column denoting the software_install_logs relation/edge.
+	SoftwareInstallLogsColumn = "agent_software_install_logs"
 )
 
 // Columns holds all SQL columns for agent fields.
@@ -892,6 +903,20 @@ func ByNetbirdField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNetbirdStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// BySoftwareInstallLogsCount orders the results by software_install_logs count.
+func BySoftwareInstallLogsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSoftwareInstallLogsStep(), opts...)
+	}
+}
+
+// BySoftwareInstallLogs orders the results by software_install_logs terms.
+func BySoftwareInstallLogs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSoftwareInstallLogsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newComputerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1037,5 +1062,12 @@ func newNetbirdStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NetbirdInverseTable, NetbirdFieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, NetbirdTable, NetbirdColumn),
+	)
+}
+func newSoftwareInstallLogsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SoftwareInstallLogsInverseTable, SoftwareInstallLogFieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SoftwareInstallLogsTable, SoftwareInstallLogsColumn),
 	)
 }

@@ -134,9 +134,11 @@ type AgentEdges struct {
 	Physicaldisks []*PhysicalDisk `json:"physicaldisks,omitempty"`
 	// Netbird holds the value of the netbird edge.
 	Netbird *Netbird `json:"netbird,omitempty"`
+	// SoftwareInstallLogs holds the value of the software_install_logs edge.
+	SoftwareInstallLogs []*SoftwareInstallLog `json:"software_install_logs,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [21]bool
+	loadedTypes [22]bool
 }
 
 // ComputerOrErr returns the Computer value or an error if the edge
@@ -338,6 +340,15 @@ func (e AgentEdges) NetbirdOrErr() (*Netbird, error) {
 		return nil, &NotFoundError{label: netbird.Label}
 	}
 	return nil, &NotLoadedError{edge: "netbird"}
+}
+
+// SoftwareInstallLogsOrErr returns the SoftwareInstallLogs value or an error if the edge
+// was not loaded in eager-loading.
+func (e AgentEdges) SoftwareInstallLogsOrErr() ([]*SoftwareInstallLog, error) {
+	if e.loadedTypes[21] {
+		return e.SoftwareInstallLogs, nil
+	}
+	return nil, &NotLoadedError{edge: "software_install_logs"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -677,6 +688,11 @@ func (a *Agent) QueryPhysicaldisks() *PhysicalDiskQuery {
 // QueryNetbird queries the "netbird" edge of the Agent entity.
 func (a *Agent) QueryNetbird() *NetbirdQuery {
 	return NewAgentClient(a.config).QueryNetbird(a)
+}
+
+// QuerySoftwareInstallLogs queries the "software_install_logs" edge of the Agent entity.
+func (a *Agent) QuerySoftwareInstallLogs() *SoftwareInstallLogQuery {
+	return NewAgentClient(a.config).QuerySoftwareInstallLogs(a)
 }
 
 // Update returns a builder for updating this Agent.

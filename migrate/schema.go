@@ -844,6 +844,206 @@ var (
 			},
 		},
 	}
+	// SoftwareAssignmentsColumns holds the columns for the "software_assignments" table.
+	SoftwareAssignmentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "assignment_type", Type: field.TypeEnum, Enums: []string{"managed_install", "managed_uninstall", "optional_install", "managed_update"}},
+		{Name: "target_type", Type: field.TypeEnum, Enums: []string{"site", "tag", "agent"}},
+		{Name: "target_id", Type: field.TypeString},
+		{Name: "priority", Type: field.TypeInt, Nullable: true, Default: 0},
+		{Name: "condition_predicate", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "active", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "software_package_assignments", Type: field.TypeInt},
+		{Name: "tenant_software_assignments", Type: field.TypeInt, Nullable: true},
+	}
+	// SoftwareAssignmentsTable holds the schema information for the "software_assignments" table.
+	SoftwareAssignmentsTable = &schema.Table{
+		Name:       "software_assignments",
+		Columns:    SoftwareAssignmentsColumns,
+		PrimaryKey: []*schema.Column{SoftwareAssignmentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_assignments_software_packages_assignments",
+				Columns:    []*schema.Column{SoftwareAssignmentsColumns[9]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "software_assignments_tenants_software_assignments",
+				Columns:    []*schema.Column{SoftwareAssignmentsColumns[10]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "softwareassignment_target_type_target_id",
+				Unique:  false,
+				Columns: []*schema.Column{SoftwareAssignmentsColumns[2], SoftwareAssignmentsColumns[3]},
+			},
+		},
+	}
+	// SoftwareCatalogsColumns holds the columns for the "software_catalogs" table.
+	SoftwareCatalogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "ring_order", Type: field.TypeInt},
+		{Name: "is_default", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_software_catalogs", Type: field.TypeInt, Nullable: true},
+	}
+	// SoftwareCatalogsTable holds the schema information for the "software_catalogs" table.
+	SoftwareCatalogsTable = &schema.Table{
+		Name:       "software_catalogs",
+		Columns:    SoftwareCatalogsColumns,
+		PrimaryKey: []*schema.Column{SoftwareCatalogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_catalogs_tenants_software_catalogs",
+				Columns:    []*schema.Column{SoftwareCatalogsColumns[7]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// SoftwareInstallLogsColumns holds the columns for the "software_install_logs" table.
+	SoftwareInstallLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "action", Type: field.TypeEnum, Enums: []string{"install", "update", "uninstall"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "downloading", "installing", "success", "failed"}},
+		{Name: "error_message", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "installed_version", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "started_at", Type: field.TypeTime, Nullable: true},
+		{Name: "completed_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "agent_software_install_logs", Type: field.TypeString},
+		{Name: "software_package_install_logs", Type: field.TypeInt, Nullable: true},
+	}
+	// SoftwareInstallLogsTable holds the schema information for the "software_install_logs" table.
+	SoftwareInstallLogsTable = &schema.Table{
+		Name:       "software_install_logs",
+		Columns:    SoftwareInstallLogsColumns,
+		PrimaryKey: []*schema.Column{SoftwareInstallLogsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_install_logs_agents_software_install_logs",
+				Columns:    []*schema.Column{SoftwareInstallLogsColumns[8]},
+				RefColumns: []*schema.Column{AgentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "software_install_logs_software_packages_install_logs",
+				Columns:    []*schema.Column{SoftwareInstallLogsColumns[9]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "softwareinstalllog_status",
+				Unique:  false,
+				Columns: []*schema.Column{SoftwareInstallLogsColumns[2]},
+			},
+		},
+	}
+	// SoftwarePackagesColumns holds the columns for the "software_packages" table.
+	SoftwarePackagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "display_name", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "version", Type: field.TypeString},
+		{Name: "platform", Type: field.TypeEnum, Enums: []string{"darwin", "windows"}},
+		{Name: "installer_type", Type: field.TypeEnum, Enums: []string{"pkg", "dmg", "msi", "exe", "msix"}},
+		{Name: "installer_path", Type: field.TypeString},
+		{Name: "checksum_sha256", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "size_bytes", Type: field.TypeInt64, Nullable: true, Default: 0},
+		{Name: "icon_name", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "description", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "category", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "developer", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "pkginfo_data", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "pre_install_script", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "post_install_script", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "uninstall_method", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "installs_items", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "receipts", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "blocking_apps", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "restart_action", Type: field.TypeEnum, Nullable: true, Enums: []string{"none", "RequireRestart", "RequireLogout", "RecommendRestart"}, Default: "none"},
+		{Name: "min_os_version", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "max_os_version", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "supported_architectures", Type: field.TypeString, Nullable: true, Size: 2147483647, Default: ""},
+		{Name: "force_install_date", Type: field.TypeTime, Nullable: true},
+		{Name: "unattended_install", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "unattended_uninstall", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "source", Type: field.TypeEnum, Nullable: true, Enums: []string{"upload", "global"}, Default: "upload"},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "software_repo_packages", Type: field.TypeInt, Nullable: true},
+		{Name: "tenant_software_packages", Type: field.TypeInt, Nullable: true},
+	}
+	// SoftwarePackagesTable holds the schema information for the "software_packages" table.
+	SoftwarePackagesTable = &schema.Table{
+		Name:       "software_packages",
+		Columns:    SoftwarePackagesColumns,
+		PrimaryKey: []*schema.Column{SoftwarePackagesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_packages_software_repos_packages",
+				Columns:    []*schema.Column{SoftwarePackagesColumns[30]},
+				RefColumns: []*schema.Column{SoftwareReposColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "software_packages_tenants_software_packages",
+				Columns:    []*schema.Column{SoftwarePackagesColumns[31]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "softwarepackage_name_version_platform",
+				Unique:  false,
+				Columns: []*schema.Column{SoftwarePackagesColumns[1], SoftwarePackagesColumns[3], SoftwarePackagesColumns[4]},
+			},
+		},
+	}
+	// SoftwareReposColumns holds the columns for the "software_repos" table.
+	SoftwareReposColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "repo_type", Type: field.TypeEnum, Enums: []string{"global", "tenant"}},
+		{Name: "endpoint", Type: field.TypeString},
+		{Name: "bucket", Type: field.TypeString},
+		{Name: "region", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "access_key", Type: field.TypeString, Nullable: true},
+		{Name: "secret_key", Type: field.TypeString, Nullable: true},
+		{Name: "base_path", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "use_presigned", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "presign_ttl_seconds", Type: field.TypeInt, Nullable: true, Default: 14400},
+		{Name: "is_default", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "created", Type: field.TypeTime, Nullable: true},
+		{Name: "modified", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_software_repos", Type: field.TypeInt, Nullable: true},
+	}
+	// SoftwareReposTable holds the schema information for the "software_repos" table.
+	SoftwareReposTable = &schema.Table{
+		Name:       "software_repos",
+		Columns:    SoftwareReposColumns,
+		PrimaryKey: []*schema.Column{SoftwareReposColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_repos_tenants_software_repos",
+				Columns:    []*schema.Column{SoftwareReposColumns[14]},
+				RefColumns: []*schema.Column{TenantsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// SystemUpdatesColumns holds the columns for the "system_updates" table.
 	SystemUpdatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1231,6 +1431,81 @@ var (
 			},
 		},
 	}
+	// SoftwareCatalogPackagesColumns holds the columns for the "software_catalog_packages" table.
+	SoftwareCatalogPackagesColumns = []*schema.Column{
+		{Name: "software_catalog_id", Type: field.TypeInt},
+		{Name: "software_package_id", Type: field.TypeInt},
+	}
+	// SoftwareCatalogPackagesTable holds the schema information for the "software_catalog_packages" table.
+	SoftwareCatalogPackagesTable = &schema.Table{
+		Name:       "software_catalog_packages",
+		Columns:    SoftwareCatalogPackagesColumns,
+		PrimaryKey: []*schema.Column{SoftwareCatalogPackagesColumns[0], SoftwareCatalogPackagesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_catalog_packages_software_catalog_id",
+				Columns:    []*schema.Column{SoftwareCatalogPackagesColumns[0]},
+				RefColumns: []*schema.Column{SoftwareCatalogsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "software_catalog_packages_software_package_id",
+				Columns:    []*schema.Column{SoftwareCatalogPackagesColumns[1]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// SoftwarePackageRequiresColumns holds the columns for the "software_package_requires" table.
+	SoftwarePackageRequiresColumns = []*schema.Column{
+		{Name: "software_package_id", Type: field.TypeInt},
+		{Name: "require_id", Type: field.TypeInt},
+	}
+	// SoftwarePackageRequiresTable holds the schema information for the "software_package_requires" table.
+	SoftwarePackageRequiresTable = &schema.Table{
+		Name:       "software_package_requires",
+		Columns:    SoftwarePackageRequiresColumns,
+		PrimaryKey: []*schema.Column{SoftwarePackageRequiresColumns[0], SoftwarePackageRequiresColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_package_requires_software_package_id",
+				Columns:    []*schema.Column{SoftwarePackageRequiresColumns[0]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "software_package_requires_require_id",
+				Columns:    []*schema.Column{SoftwarePackageRequiresColumns[1]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// SoftwarePackageUpdateForColumns holds the columns for the "software_package_update_for" table.
+	SoftwarePackageUpdateForColumns = []*schema.Column{
+		{Name: "software_package_id", Type: field.TypeInt},
+		{Name: "update_for_id", Type: field.TypeInt},
+	}
+	// SoftwarePackageUpdateForTable holds the schema information for the "software_package_update_for" table.
+	SoftwarePackageUpdateForTable = &schema.Table{
+		Name:       "software_package_update_for",
+		Columns:    SoftwarePackageUpdateForColumns,
+		PrimaryKey: []*schema.Column{SoftwarePackageUpdateForColumns[0], SoftwarePackageUpdateForColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "software_package_update_for_software_package_id",
+				Columns:    []*schema.Column{SoftwarePackageUpdateForColumns[0]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "software_package_update_for_update_for_id",
+				Columns:    []*schema.Column{SoftwarePackageUpdateForColumns[1]},
+				RefColumns: []*schema.Column{SoftwarePackagesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// TenantRustdeskColumns holds the columns for the "tenant_rustdesk" table.
 	TenantRustdeskColumns = []*schema.Column{
 		{Name: "tenant_id", Type: field.TypeInt},
@@ -1289,6 +1564,11 @@ var (
 		SettingsTable,
 		SharesTable,
 		SitesTable,
+		SoftwareAssignmentsTable,
+		SoftwareCatalogsTable,
+		SoftwareInstallLogsTable,
+		SoftwarePackagesTable,
+		SoftwareReposTable,
 		SystemUpdatesTable,
 		TagsTable,
 		TasksTable,
@@ -1300,6 +1580,9 @@ var (
 		AgentTagsTable,
 		ProfileTagsTable,
 		SiteAgentsTable,
+		SoftwareCatalogPackagesTable,
+		SoftwarePackageRequiresTable,
+		SoftwarePackageUpdateForTable,
 		TenantRustdeskTable,
 	}
 )
@@ -1333,6 +1616,14 @@ func init() {
 	SettingsTable.ForeignKeys[1].RefTable = TenantsTable
 	SharesTable.ForeignKeys[0].RefTable = AgentsTable
 	SitesTable.ForeignKeys[0].RefTable = TenantsTable
+	SoftwareAssignmentsTable.ForeignKeys[0].RefTable = SoftwarePackagesTable
+	SoftwareAssignmentsTable.ForeignKeys[1].RefTable = TenantsTable
+	SoftwareCatalogsTable.ForeignKeys[0].RefTable = TenantsTable
+	SoftwareInstallLogsTable.ForeignKeys[0].RefTable = AgentsTable
+	SoftwareInstallLogsTable.ForeignKeys[1].RefTable = SoftwarePackagesTable
+	SoftwarePackagesTable.ForeignKeys[0].RefTable = SoftwareReposTable
+	SoftwarePackagesTable.ForeignKeys[1].RefTable = TenantsTable
+	SoftwareReposTable.ForeignKeys[0].RefTable = TenantsTable
 	SystemUpdatesTable.ForeignKeys[0].RefTable = AgentsTable
 	TagsTable.ForeignKeys[0].RefTable = TagsTable
 	TagsTable.ForeignKeys[1].RefTable = TasksTable
@@ -1349,6 +1640,12 @@ func init() {
 	ProfileTagsTable.ForeignKeys[1].RefTable = TagsTable
 	SiteAgentsTable.ForeignKeys[0].RefTable = SitesTable
 	SiteAgentsTable.ForeignKeys[1].RefTable = AgentsTable
+	SoftwareCatalogPackagesTable.ForeignKeys[0].RefTable = SoftwareCatalogsTable
+	SoftwareCatalogPackagesTable.ForeignKeys[1].RefTable = SoftwarePackagesTable
+	SoftwarePackageRequiresTable.ForeignKeys[0].RefTable = SoftwarePackagesTable
+	SoftwarePackageRequiresTable.ForeignKeys[1].RefTable = SoftwarePackagesTable
+	SoftwarePackageUpdateForTable.ForeignKeys[0].RefTable = SoftwarePackagesTable
+	SoftwarePackageUpdateForTable.ForeignKeys[1].RefTable = SoftwarePackagesTable
 	TenantRustdeskTable.ForeignKeys[0].RefTable = TenantsTable
 	TenantRustdeskTable.ForeignKeys[1].RefTable = RustdesksTable
 }

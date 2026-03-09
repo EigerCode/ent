@@ -17,6 +17,10 @@ import (
 	"github.com/open-uem/ent/rustdesk"
 	"github.com/open-uem/ent/settings"
 	"github.com/open-uem/ent/site"
+	"github.com/open-uem/ent/softwareassignment"
+	"github.com/open-uem/ent/softwarecatalog"
+	"github.com/open-uem/ent/softwarepackage"
+	"github.com/open-uem/ent/softwarerepo"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/tenant"
 	"github.com/open-uem/ent/usertenant"
@@ -240,6 +244,66 @@ func (tc *TenantCreate) AddEnrollmentTokens(e ...*EnrollmentToken) *TenantCreate
 		ids[i] = e[i].ID
 	}
 	return tc.AddEnrollmentTokenIDs(ids...)
+}
+
+// AddSoftwareRepoIDs adds the "software_repos" edge to the SoftwareRepo entity by IDs.
+func (tc *TenantCreate) AddSoftwareRepoIDs(ids ...int) *TenantCreate {
+	tc.mutation.AddSoftwareRepoIDs(ids...)
+	return tc
+}
+
+// AddSoftwareRepos adds the "software_repos" edges to the SoftwareRepo entity.
+func (tc *TenantCreate) AddSoftwareRepos(s ...*SoftwareRepo) *TenantCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tc.AddSoftwareRepoIDs(ids...)
+}
+
+// AddSoftwarePackageIDs adds the "software_packages" edge to the SoftwarePackage entity by IDs.
+func (tc *TenantCreate) AddSoftwarePackageIDs(ids ...int) *TenantCreate {
+	tc.mutation.AddSoftwarePackageIDs(ids...)
+	return tc
+}
+
+// AddSoftwarePackages adds the "software_packages" edges to the SoftwarePackage entity.
+func (tc *TenantCreate) AddSoftwarePackages(s ...*SoftwarePackage) *TenantCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tc.AddSoftwarePackageIDs(ids...)
+}
+
+// AddSoftwareCatalogIDs adds the "software_catalogs" edge to the SoftwareCatalog entity by IDs.
+func (tc *TenantCreate) AddSoftwareCatalogIDs(ids ...int) *TenantCreate {
+	tc.mutation.AddSoftwareCatalogIDs(ids...)
+	return tc
+}
+
+// AddSoftwareCatalogs adds the "software_catalogs" edges to the SoftwareCatalog entity.
+func (tc *TenantCreate) AddSoftwareCatalogs(s ...*SoftwareCatalog) *TenantCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tc.AddSoftwareCatalogIDs(ids...)
+}
+
+// AddSoftwareAssignmentIDs adds the "software_assignments" edge to the SoftwareAssignment entity by IDs.
+func (tc *TenantCreate) AddSoftwareAssignmentIDs(ids ...int) *TenantCreate {
+	tc.mutation.AddSoftwareAssignmentIDs(ids...)
+	return tc
+}
+
+// AddSoftwareAssignments adds the "software_assignments" edges to the SoftwareAssignment entity.
+func (tc *TenantCreate) AddSoftwareAssignments(s ...*SoftwareAssignment) *TenantCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tc.AddSoftwareAssignmentIDs(ids...)
 }
 
 // Mutation returns the TenantMutation object of the builder.
@@ -471,6 +535,70 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.SoftwareReposIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.SoftwarePackagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.SoftwareCatalogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.SoftwareAssignmentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

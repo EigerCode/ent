@@ -2203,6 +2203,29 @@ func HasNetbirdWith(preds ...predicate.Netbird) predicate.Agent {
 	})
 }
 
+// HasSoftwareInstallLogs applies the HasEdge predicate on the "software_install_logs" edge.
+func HasSoftwareInstallLogs() predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SoftwareInstallLogsTable, SoftwareInstallLogsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSoftwareInstallLogsWith applies the HasEdge predicate on the "software_install_logs" edge with a given conditions (other predicates).
+func HasSoftwareInstallLogsWith(preds ...predicate.SoftwareInstallLog) predicate.Agent {
+	return predicate.Agent(func(s *sql.Selector) {
+		step := newSoftwareInstallLogsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Agent) predicate.Agent {
 	return predicate.Agent(sql.AndPredicates(predicates...))

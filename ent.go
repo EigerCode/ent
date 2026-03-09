@@ -43,6 +43,11 @@ import (
 	"github.com/open-uem/ent/settings"
 	"github.com/open-uem/ent/share"
 	"github.com/open-uem/ent/site"
+	"github.com/open-uem/ent/softwareassignment"
+	"github.com/open-uem/ent/softwarecatalog"
+	"github.com/open-uem/ent/softwareinstalllog"
+	"github.com/open-uem/ent/softwarepackage"
+	"github.com/open-uem/ent/softwarerepo"
 	"github.com/open-uem/ent/systemupdate"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/task"
@@ -142,6 +147,11 @@ func checkColumn(table, column string) error {
 			settings.Table:              settings.ValidColumn,
 			share.Table:                 share.ValidColumn,
 			site.Table:                  site.ValidColumn,
+			softwareassignment.Table:    softwareassignment.ValidColumn,
+			softwarecatalog.Table:       softwarecatalog.ValidColumn,
+			softwareinstalllog.Table:    softwareinstalllog.ValidColumn,
+			softwarepackage.Table:       softwarepackage.ValidColumn,
+			softwarerepo.Table:          softwarerepo.ValidColumn,
 			systemupdate.Table:          systemupdate.ValidColumn,
 			tag.Table:                   tag.ValidColumn,
 			task.Table:                  task.ValidColumn,
