@@ -18,6 +18,10 @@ import (
 	"github.com/EigerCode/ent/rustdesk"
 	"github.com/EigerCode/ent/settings"
 	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/softwareassignment"
+	"github.com/EigerCode/ent/softwarecatalog"
+	"github.com/EigerCode/ent/softwarepackage"
+	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/tenant"
 	"github.com/EigerCode/ent/usertenant"
@@ -277,6 +281,66 @@ func (tu *TenantUpdate) AddEnrollmentTokens(e ...*EnrollmentToken) *TenantUpdate
 	return tu.AddEnrollmentTokenIDs(ids...)
 }
 
+// AddSoftwareRepoIDs adds the "software_repos" edge to the SoftwareRepo entity by IDs.
+func (tu *TenantUpdate) AddSoftwareRepoIDs(ids ...int) *TenantUpdate {
+	tu.mutation.AddSoftwareRepoIDs(ids...)
+	return tu
+}
+
+// AddSoftwareRepos adds the "software_repos" edges to the SoftwareRepo entity.
+func (tu *TenantUpdate) AddSoftwareRepos(s ...*SoftwareRepo) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.AddSoftwareRepoIDs(ids...)
+}
+
+// AddSoftwarePackageIDs adds the "software_packages" edge to the SoftwarePackage entity by IDs.
+func (tu *TenantUpdate) AddSoftwarePackageIDs(ids ...int) *TenantUpdate {
+	tu.mutation.AddSoftwarePackageIDs(ids...)
+	return tu
+}
+
+// AddSoftwarePackages adds the "software_packages" edges to the SoftwarePackage entity.
+func (tu *TenantUpdate) AddSoftwarePackages(s ...*SoftwarePackage) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.AddSoftwarePackageIDs(ids...)
+}
+
+// AddSoftwareCatalogIDs adds the "software_catalogs" edge to the SoftwareCatalog entity by IDs.
+func (tu *TenantUpdate) AddSoftwareCatalogIDs(ids ...int) *TenantUpdate {
+	tu.mutation.AddSoftwareCatalogIDs(ids...)
+	return tu
+}
+
+// AddSoftwareCatalogs adds the "software_catalogs" edges to the SoftwareCatalog entity.
+func (tu *TenantUpdate) AddSoftwareCatalogs(s ...*SoftwareCatalog) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.AddSoftwareCatalogIDs(ids...)
+}
+
+// AddSoftwareAssignmentIDs adds the "software_assignments" edge to the SoftwareAssignment entity by IDs.
+func (tu *TenantUpdate) AddSoftwareAssignmentIDs(ids ...int) *TenantUpdate {
+	tu.mutation.AddSoftwareAssignmentIDs(ids...)
+	return tu
+}
+
+// AddSoftwareAssignments adds the "software_assignments" edges to the SoftwareAssignment entity.
+func (tu *TenantUpdate) AddSoftwareAssignments(s ...*SoftwareAssignment) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.AddSoftwareAssignmentIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tu *TenantUpdate) Mutation() *TenantMutation {
 	return tu.mutation
@@ -418,6 +482,90 @@ func (tu *TenantUpdate) RemoveEnrollmentTokens(e ...*EnrollmentToken) *TenantUpd
 		ids[i] = e[i].ID
 	}
 	return tu.RemoveEnrollmentTokenIDs(ids...)
+}
+
+// ClearSoftwareRepos clears all "software_repos" edges to the SoftwareRepo entity.
+func (tu *TenantUpdate) ClearSoftwareRepos() *TenantUpdate {
+	tu.mutation.ClearSoftwareRepos()
+	return tu
+}
+
+// RemoveSoftwareRepoIDs removes the "software_repos" edge to SoftwareRepo entities by IDs.
+func (tu *TenantUpdate) RemoveSoftwareRepoIDs(ids ...int) *TenantUpdate {
+	tu.mutation.RemoveSoftwareRepoIDs(ids...)
+	return tu
+}
+
+// RemoveSoftwareRepos removes "software_repos" edges to SoftwareRepo entities.
+func (tu *TenantUpdate) RemoveSoftwareRepos(s ...*SoftwareRepo) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.RemoveSoftwareRepoIDs(ids...)
+}
+
+// ClearSoftwarePackages clears all "software_packages" edges to the SoftwarePackage entity.
+func (tu *TenantUpdate) ClearSoftwarePackages() *TenantUpdate {
+	tu.mutation.ClearSoftwarePackages()
+	return tu
+}
+
+// RemoveSoftwarePackageIDs removes the "software_packages" edge to SoftwarePackage entities by IDs.
+func (tu *TenantUpdate) RemoveSoftwarePackageIDs(ids ...int) *TenantUpdate {
+	tu.mutation.RemoveSoftwarePackageIDs(ids...)
+	return tu
+}
+
+// RemoveSoftwarePackages removes "software_packages" edges to SoftwarePackage entities.
+func (tu *TenantUpdate) RemoveSoftwarePackages(s ...*SoftwarePackage) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.RemoveSoftwarePackageIDs(ids...)
+}
+
+// ClearSoftwareCatalogs clears all "software_catalogs" edges to the SoftwareCatalog entity.
+func (tu *TenantUpdate) ClearSoftwareCatalogs() *TenantUpdate {
+	tu.mutation.ClearSoftwareCatalogs()
+	return tu
+}
+
+// RemoveSoftwareCatalogIDs removes the "software_catalogs" edge to SoftwareCatalog entities by IDs.
+func (tu *TenantUpdate) RemoveSoftwareCatalogIDs(ids ...int) *TenantUpdate {
+	tu.mutation.RemoveSoftwareCatalogIDs(ids...)
+	return tu
+}
+
+// RemoveSoftwareCatalogs removes "software_catalogs" edges to SoftwareCatalog entities.
+func (tu *TenantUpdate) RemoveSoftwareCatalogs(s ...*SoftwareCatalog) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.RemoveSoftwareCatalogIDs(ids...)
+}
+
+// ClearSoftwareAssignments clears all "software_assignments" edges to the SoftwareAssignment entity.
+func (tu *TenantUpdate) ClearSoftwareAssignments() *TenantUpdate {
+	tu.mutation.ClearSoftwareAssignments()
+	return tu
+}
+
+// RemoveSoftwareAssignmentIDs removes the "software_assignments" edge to SoftwareAssignment entities by IDs.
+func (tu *TenantUpdate) RemoveSoftwareAssignmentIDs(ids ...int) *TenantUpdate {
+	tu.mutation.RemoveSoftwareAssignmentIDs(ids...)
+	return tu
+}
+
+// RemoveSoftwareAssignments removes "software_assignments" edges to SoftwareAssignment entities.
+func (tu *TenantUpdate) RemoveSoftwareAssignments(s ...*SoftwareAssignment) *TenantUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.RemoveSoftwareAssignmentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -848,6 +996,186 @@ func (tu *TenantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if tu.mutation.SoftwareReposCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedSoftwareReposIDs(); len(nodes) > 0 && !tu.mutation.SoftwareReposCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.SoftwareReposIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.SoftwarePackagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedSoftwarePackagesIDs(); len(nodes) > 0 && !tu.mutation.SoftwarePackagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.SoftwarePackagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.SoftwareCatalogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedSoftwareCatalogsIDs(); len(nodes) > 0 && !tu.mutation.SoftwareCatalogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.SoftwareCatalogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.SoftwareAssignmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedSoftwareAssignmentsIDs(); len(nodes) > 0 && !tu.mutation.SoftwareAssignmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.SoftwareAssignmentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(tu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1110,6 +1438,66 @@ func (tuo *TenantUpdateOne) AddEnrollmentTokens(e ...*EnrollmentToken) *TenantUp
 	return tuo.AddEnrollmentTokenIDs(ids...)
 }
 
+// AddSoftwareRepoIDs adds the "software_repos" edge to the SoftwareRepo entity by IDs.
+func (tuo *TenantUpdateOne) AddSoftwareRepoIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.AddSoftwareRepoIDs(ids...)
+	return tuo
+}
+
+// AddSoftwareRepos adds the "software_repos" edges to the SoftwareRepo entity.
+func (tuo *TenantUpdateOne) AddSoftwareRepos(s ...*SoftwareRepo) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.AddSoftwareRepoIDs(ids...)
+}
+
+// AddSoftwarePackageIDs adds the "software_packages" edge to the SoftwarePackage entity by IDs.
+func (tuo *TenantUpdateOne) AddSoftwarePackageIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.AddSoftwarePackageIDs(ids...)
+	return tuo
+}
+
+// AddSoftwarePackages adds the "software_packages" edges to the SoftwarePackage entity.
+func (tuo *TenantUpdateOne) AddSoftwarePackages(s ...*SoftwarePackage) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.AddSoftwarePackageIDs(ids...)
+}
+
+// AddSoftwareCatalogIDs adds the "software_catalogs" edge to the SoftwareCatalog entity by IDs.
+func (tuo *TenantUpdateOne) AddSoftwareCatalogIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.AddSoftwareCatalogIDs(ids...)
+	return tuo
+}
+
+// AddSoftwareCatalogs adds the "software_catalogs" edges to the SoftwareCatalog entity.
+func (tuo *TenantUpdateOne) AddSoftwareCatalogs(s ...*SoftwareCatalog) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.AddSoftwareCatalogIDs(ids...)
+}
+
+// AddSoftwareAssignmentIDs adds the "software_assignments" edge to the SoftwareAssignment entity by IDs.
+func (tuo *TenantUpdateOne) AddSoftwareAssignmentIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.AddSoftwareAssignmentIDs(ids...)
+	return tuo
+}
+
+// AddSoftwareAssignments adds the "software_assignments" edges to the SoftwareAssignment entity.
+func (tuo *TenantUpdateOne) AddSoftwareAssignments(s ...*SoftwareAssignment) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.AddSoftwareAssignmentIDs(ids...)
+}
+
 // Mutation returns the TenantMutation object of the builder.
 func (tuo *TenantUpdateOne) Mutation() *TenantMutation {
 	return tuo.mutation
@@ -1251,6 +1639,90 @@ func (tuo *TenantUpdateOne) RemoveEnrollmentTokens(e ...*EnrollmentToken) *Tenan
 		ids[i] = e[i].ID
 	}
 	return tuo.RemoveEnrollmentTokenIDs(ids...)
+}
+
+// ClearSoftwareRepos clears all "software_repos" edges to the SoftwareRepo entity.
+func (tuo *TenantUpdateOne) ClearSoftwareRepos() *TenantUpdateOne {
+	tuo.mutation.ClearSoftwareRepos()
+	return tuo
+}
+
+// RemoveSoftwareRepoIDs removes the "software_repos" edge to SoftwareRepo entities by IDs.
+func (tuo *TenantUpdateOne) RemoveSoftwareRepoIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.RemoveSoftwareRepoIDs(ids...)
+	return tuo
+}
+
+// RemoveSoftwareRepos removes "software_repos" edges to SoftwareRepo entities.
+func (tuo *TenantUpdateOne) RemoveSoftwareRepos(s ...*SoftwareRepo) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.RemoveSoftwareRepoIDs(ids...)
+}
+
+// ClearSoftwarePackages clears all "software_packages" edges to the SoftwarePackage entity.
+func (tuo *TenantUpdateOne) ClearSoftwarePackages() *TenantUpdateOne {
+	tuo.mutation.ClearSoftwarePackages()
+	return tuo
+}
+
+// RemoveSoftwarePackageIDs removes the "software_packages" edge to SoftwarePackage entities by IDs.
+func (tuo *TenantUpdateOne) RemoveSoftwarePackageIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.RemoveSoftwarePackageIDs(ids...)
+	return tuo
+}
+
+// RemoveSoftwarePackages removes "software_packages" edges to SoftwarePackage entities.
+func (tuo *TenantUpdateOne) RemoveSoftwarePackages(s ...*SoftwarePackage) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.RemoveSoftwarePackageIDs(ids...)
+}
+
+// ClearSoftwareCatalogs clears all "software_catalogs" edges to the SoftwareCatalog entity.
+func (tuo *TenantUpdateOne) ClearSoftwareCatalogs() *TenantUpdateOne {
+	tuo.mutation.ClearSoftwareCatalogs()
+	return tuo
+}
+
+// RemoveSoftwareCatalogIDs removes the "software_catalogs" edge to SoftwareCatalog entities by IDs.
+func (tuo *TenantUpdateOne) RemoveSoftwareCatalogIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.RemoveSoftwareCatalogIDs(ids...)
+	return tuo
+}
+
+// RemoveSoftwareCatalogs removes "software_catalogs" edges to SoftwareCatalog entities.
+func (tuo *TenantUpdateOne) RemoveSoftwareCatalogs(s ...*SoftwareCatalog) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.RemoveSoftwareCatalogIDs(ids...)
+}
+
+// ClearSoftwareAssignments clears all "software_assignments" edges to the SoftwareAssignment entity.
+func (tuo *TenantUpdateOne) ClearSoftwareAssignments() *TenantUpdateOne {
+	tuo.mutation.ClearSoftwareAssignments()
+	return tuo
+}
+
+// RemoveSoftwareAssignmentIDs removes the "software_assignments" edge to SoftwareAssignment entities by IDs.
+func (tuo *TenantUpdateOne) RemoveSoftwareAssignmentIDs(ids ...int) *TenantUpdateOne {
+	tuo.mutation.RemoveSoftwareAssignmentIDs(ids...)
+	return tuo
+}
+
+// RemoveSoftwareAssignments removes "software_assignments" edges to SoftwareAssignment entities.
+func (tuo *TenantUpdateOne) RemoveSoftwareAssignments(s ...*SoftwareAssignment) *TenantUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.RemoveSoftwareAssignmentIDs(ids...)
 }
 
 // Where appends a list predicates to the TenantUpdate builder.
@@ -1704,6 +2176,186 @@ func (tuo *TenantUpdateOne) sqlSave(ctx context.Context) (_node *Tenant, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(enrollmenttoken.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.SoftwareReposCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedSoftwareReposIDs(); len(nodes) > 0 && !tuo.mutation.SoftwareReposCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.SoftwareReposIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareReposTable,
+			Columns: []string{tenant.SoftwareReposColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.SoftwarePackagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedSoftwarePackagesIDs(); len(nodes) > 0 && !tuo.mutation.SoftwarePackagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.SoftwarePackagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwarePackagesTable,
+			Columns: []string{tenant.SoftwarePackagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.SoftwareCatalogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedSoftwareCatalogsIDs(); len(nodes) > 0 && !tuo.mutation.SoftwareCatalogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.SoftwareCatalogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareCatalogsTable,
+			Columns: []string{tenant.SoftwareCatalogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.SoftwareAssignmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedSoftwareAssignmentsIDs(); len(nodes) > 0 && !tuo.mutation.SoftwareAssignmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.SoftwareAssignmentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   tenant.SoftwareAssignmentsTable,
+			Columns: []string{tenant.SoftwareAssignmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

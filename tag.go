@@ -23,6 +23,8 @@ type Tag struct {
 	Description string `json:"description,omitempty"`
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
+	// Rollout ring for agents with this tag (test/first/fast/broad)
+	CatalogRing *string `json:"catalog_ring,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TagQuery when eager-loading is set.
 	Edges        TagEdges `json:"edges"`
@@ -105,7 +107,7 @@ func (*Tag) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case tag.FieldID:
 			values[i] = new(sql.NullInt64)
-		case tag.FieldTag, tag.FieldDescription, tag.FieldColor:
+		case tag.FieldTag, tag.FieldDescription, tag.FieldColor, tag.FieldCatalogRing:
 			values[i] = new(sql.NullString)
 		case tag.ForeignKeys[0]: // tag_children
 			values[i] = new(sql.NullInt64)
@@ -151,6 +153,13 @@ func (t *Tag) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
 				t.Color = value.String
+			}
+		case tag.FieldCatalogRing:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field catalog_ring", values[i])
+			} else if value.Valid {
+				t.CatalogRing = new(string)
+				*t.CatalogRing = value.String
 			}
 		case tag.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -242,6 +251,11 @@ func (t *Tag) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("color=")
 	builder.WriteString(t.Color)
+	builder.WriteString(", ")
+	if v := t.CatalogRing; v != nil {
+		builder.WriteString("catalog_ring=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

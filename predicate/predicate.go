@@ -99,6 +99,21 @@ type Share func(*sql.Selector)
 // Site is the predicate function for site builders.
 type Site func(*sql.Selector)
 
+// SoftwareAssignment is the predicate function for softwareassignment builders.
+type SoftwareAssignment func(*sql.Selector)
+
+// SoftwareCatalog is the predicate function for softwarecatalog builders.
+type SoftwareCatalog func(*sql.Selector)
+
+// SoftwareInstallLog is the predicate function for softwareinstalllog builders.
+type SoftwareInstallLog func(*sql.Selector)
+
+// SoftwarePackage is the predicate function for softwarepackage builders.
+type SoftwarePackage func(*sql.Selector)
+
+// SoftwareRepo is the predicate function for softwarerepo builders.
+type SoftwareRepo func(*sql.Selector)
+
 // SystemUpdate is the predicate function for systemupdate builders.
 type SystemUpdate func(*sql.Selector)
 
@@ -107,6 +122,9 @@ type Tag func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
+
+// TaskReport is the predicate function for taskreport builders.
+type TaskReport func(*sql.Selector)
 
 // Tenant is the predicate function for tenant builders.
 type Tenant func(*sql.Selector)

@@ -28,6 +28,8 @@ type Site struct {
 	Created time.Time `json:"created,omitempty"`
 	// Modified holds the value of the "modified" field.
 	Modified time.Time `json:"modified,omitempty"`
+	// Default rollout ring for agents in this site (test/first/fast/broad)
+	CatalogRing *string `json:"catalog_ring,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SiteQuery when eager-loading is set.
 	Edges        SiteEdges `json:"edges"`
@@ -97,7 +99,7 @@ func (*Site) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case site.FieldID:
 			values[i] = new(sql.NullInt64)
-		case site.FieldDescription, site.FieldDomain:
+		case site.FieldDescription, site.FieldDomain, site.FieldCatalogRing:
 			values[i] = new(sql.NullString)
 		case site.FieldCreated, site.FieldModified:
 			values[i] = new(sql.NullTime)
@@ -153,6 +155,13 @@ func (s *Site) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field modified", values[i])
 			} else if value.Valid {
 				s.Modified = value.Time
+			}
+		case site.FieldCatalogRing:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field catalog_ring", values[i])
+			} else if value.Valid {
+				s.CatalogRing = new(string)
+				*s.CatalogRing = value.String
 			}
 		case site.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -231,6 +240,11 @@ func (s *Site) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("modified=")
 	builder.WriteString(s.Modified.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := s.CatalogRing; v != nil {
+		builder.WriteString("catalog_ring=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -24,6 +24,8 @@ const (
 	FieldCreated = "created"
 	// FieldModified holds the string denoting the modified field in the database.
 	FieldModified = "modified"
+	// FieldCatalogRing holds the string denoting the catalog_ring field in the database.
+	FieldCatalogRing = "catalog_ring"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
 	EdgeTenant = "tenant"
 	// EdgeAgents holds the string denoting the agents edge name in mutations.
@@ -72,6 +74,7 @@ var Columns = []string{
 	FieldDomain,
 	FieldCreated,
 	FieldModified,
+	FieldCatalogRing,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "sites"
@@ -141,6 +144,11 @@ func ByCreated(opts ...sql.OrderTermOption) OrderOption {
 // ByModified orders the results by the modified field.
 func ByModified(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldModified, opts...).ToFunc()
+}
+
+// ByCatalogRing orders the results by the catalog_ring field.
+func ByCatalogRing(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCatalogRing, opts...).ToFunc()
 }
 
 // ByTenantField orders the results by tenant field.

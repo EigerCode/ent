@@ -30,6 +30,7 @@ import (
 	"github.com/EigerCode/ent/release"
 	"github.com/EigerCode/ent/share"
 	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/softwareinstalllog"
 	"github.com/EigerCode/ent/systemupdate"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/update"
@@ -620,6 +621,26 @@ func (au *AgentUpdate) SetNillableWan(s *string) *AgentUpdate {
 	return au
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (au *AgentUpdate) SetCatalogRing(s string) *AgentUpdate {
+	au.mutation.SetCatalogRing(s)
+	return au
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (au *AgentUpdate) SetNillableCatalogRing(s *string) *AgentUpdate {
+	if s != nil {
+		au.SetCatalogRing(*s)
+	}
+	return au
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (au *AgentUpdate) ClearCatalogRing() *AgentUpdate {
+	au.mutation.ClearCatalogRing()
+	return au
+}
+
 // SetComputerID sets the "computer" edge to the Computer entity by ID.
 func (au *AgentUpdate) SetComputerID(id int) *AgentUpdate {
 	au.mutation.SetComputerID(id)
@@ -957,6 +978,21 @@ func (au *AgentUpdate) SetNillableNetbirdID(id *int) *AgentUpdate {
 // SetNetbird sets the "netbird" edge to the Netbird entity.
 func (au *AgentUpdate) SetNetbird(n *Netbird) *AgentUpdate {
 	return au.SetNetbirdID(n.ID)
+}
+
+// AddSoftwareInstallLogIDs adds the "software_install_logs" edge to the SoftwareInstallLog entity by IDs.
+func (au *AgentUpdate) AddSoftwareInstallLogIDs(ids ...int) *AgentUpdate {
+	au.mutation.AddSoftwareInstallLogIDs(ids...)
+	return au
+}
+
+// AddSoftwareInstallLogs adds the "software_install_logs" edges to the SoftwareInstallLog entity.
+func (au *AgentUpdate) AddSoftwareInstallLogs(s ...*SoftwareInstallLog) *AgentUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return au.AddSoftwareInstallLogIDs(ids...)
 }
 
 // Mutation returns the AgentMutation object of the builder.
@@ -1315,6 +1351,27 @@ func (au *AgentUpdate) ClearNetbird() *AgentUpdate {
 	return au
 }
 
+// ClearSoftwareInstallLogs clears all "software_install_logs" edges to the SoftwareInstallLog entity.
+func (au *AgentUpdate) ClearSoftwareInstallLogs() *AgentUpdate {
+	au.mutation.ClearSoftwareInstallLogs()
+	return au
+}
+
+// RemoveSoftwareInstallLogIDs removes the "software_install_logs" edge to SoftwareInstallLog entities by IDs.
+func (au *AgentUpdate) RemoveSoftwareInstallLogIDs(ids ...int) *AgentUpdate {
+	au.mutation.RemoveSoftwareInstallLogIDs(ids...)
+	return au
+}
+
+// RemoveSoftwareInstallLogs removes "software_install_logs" edges to SoftwareInstallLog entities.
+func (au *AgentUpdate) RemoveSoftwareInstallLogs(s ...*SoftwareInstallLog) *AgentUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return au.RemoveSoftwareInstallLogIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (au *AgentUpdate) Save(ctx context.Context) (int, error) {
 	return withHooks(ctx, au.sqlSave, au.mutation, au.hooks)
@@ -1549,6 +1606,12 @@ func (au *AgentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Wan(); ok {
 		_spec.SetField(agent.FieldWan, field.TypeString, value)
+	}
+	if value, ok := au.mutation.CatalogRing(); ok {
+		_spec.SetField(agent.FieldCatalogRing, field.TypeString, value)
+	}
+	if au.mutation.CatalogRingCleared() {
+		_spec.ClearField(agent.FieldCatalogRing, field.TypeString)
 	}
 	if au.mutation.ComputerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2399,6 +2462,51 @@ func (au *AgentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if au.mutation.SoftwareInstallLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RemovedSoftwareInstallLogsIDs(); len(nodes) > 0 && !au.mutation.SoftwareInstallLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.SoftwareInstallLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(au.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -2991,6 +3099,26 @@ func (auo *AgentUpdateOne) SetNillableWan(s *string) *AgentUpdateOne {
 	return auo
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (auo *AgentUpdateOne) SetCatalogRing(s string) *AgentUpdateOne {
+	auo.mutation.SetCatalogRing(s)
+	return auo
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (auo *AgentUpdateOne) SetNillableCatalogRing(s *string) *AgentUpdateOne {
+	if s != nil {
+		auo.SetCatalogRing(*s)
+	}
+	return auo
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (auo *AgentUpdateOne) ClearCatalogRing() *AgentUpdateOne {
+	auo.mutation.ClearCatalogRing()
+	return auo
+}
+
 // SetComputerID sets the "computer" edge to the Computer entity by ID.
 func (auo *AgentUpdateOne) SetComputerID(id int) *AgentUpdateOne {
 	auo.mutation.SetComputerID(id)
@@ -3328,6 +3456,21 @@ func (auo *AgentUpdateOne) SetNillableNetbirdID(id *int) *AgentUpdateOne {
 // SetNetbird sets the "netbird" edge to the Netbird entity.
 func (auo *AgentUpdateOne) SetNetbird(n *Netbird) *AgentUpdateOne {
 	return auo.SetNetbirdID(n.ID)
+}
+
+// AddSoftwareInstallLogIDs adds the "software_install_logs" edge to the SoftwareInstallLog entity by IDs.
+func (auo *AgentUpdateOne) AddSoftwareInstallLogIDs(ids ...int) *AgentUpdateOne {
+	auo.mutation.AddSoftwareInstallLogIDs(ids...)
+	return auo
+}
+
+// AddSoftwareInstallLogs adds the "software_install_logs" edges to the SoftwareInstallLog entity.
+func (auo *AgentUpdateOne) AddSoftwareInstallLogs(s ...*SoftwareInstallLog) *AgentUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return auo.AddSoftwareInstallLogIDs(ids...)
 }
 
 // Mutation returns the AgentMutation object of the builder.
@@ -3686,6 +3829,27 @@ func (auo *AgentUpdateOne) ClearNetbird() *AgentUpdateOne {
 	return auo
 }
 
+// ClearSoftwareInstallLogs clears all "software_install_logs" edges to the SoftwareInstallLog entity.
+func (auo *AgentUpdateOne) ClearSoftwareInstallLogs() *AgentUpdateOne {
+	auo.mutation.ClearSoftwareInstallLogs()
+	return auo
+}
+
+// RemoveSoftwareInstallLogIDs removes the "software_install_logs" edge to SoftwareInstallLog entities by IDs.
+func (auo *AgentUpdateOne) RemoveSoftwareInstallLogIDs(ids ...int) *AgentUpdateOne {
+	auo.mutation.RemoveSoftwareInstallLogIDs(ids...)
+	return auo
+}
+
+// RemoveSoftwareInstallLogs removes "software_install_logs" edges to SoftwareInstallLog entities.
+func (auo *AgentUpdateOne) RemoveSoftwareInstallLogs(s ...*SoftwareInstallLog) *AgentUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return auo.RemoveSoftwareInstallLogIDs(ids...)
+}
+
 // Where appends a list predicates to the AgentUpdate builder.
 func (auo *AgentUpdateOne) Where(ps ...predicate.Agent) *AgentUpdateOne {
 	auo.mutation.Where(ps...)
@@ -3950,6 +4114,12 @@ func (auo *AgentUpdateOne) sqlSave(ctx context.Context) (_node *Agent, err error
 	}
 	if value, ok := auo.mutation.Wan(); ok {
 		_spec.SetField(agent.FieldWan, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.CatalogRing(); ok {
+		_spec.SetField(agent.FieldCatalogRing, field.TypeString, value)
+	}
+	if auo.mutation.CatalogRingCleared() {
+		_spec.ClearField(agent.FieldCatalogRing, field.TypeString)
 	}
 	if auo.mutation.ComputerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4793,6 +4963,51 @@ func (auo *AgentUpdateOne) sqlSave(ctx context.Context) (_node *Agent, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.SoftwareInstallLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RemovedSoftwareInstallLogsIDs(); len(nodes) > 0 && !auo.mutation.SoftwareInstallLogsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.SoftwareInstallLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

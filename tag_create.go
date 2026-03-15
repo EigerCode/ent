@@ -50,6 +50,20 @@ func (tc *TagCreate) SetColor(s string) *TagCreate {
 	return tc
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (tc *TagCreate) SetCatalogRing(s string) *TagCreate {
+	tc.mutation.SetCatalogRing(s)
+	return tc
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (tc *TagCreate) SetNillableCatalogRing(s *string) *TagCreate {
+	if s != nil {
+		tc.SetCatalogRing(*s)
+	}
+	return tc
+}
+
 // AddOwnerIDs adds the "owner" edge to the Agent entity by IDs.
 func (tc *TagCreate) AddOwnerIDs(ids ...string) *TagCreate {
 	tc.mutation.AddOwnerIDs(ids...)
@@ -216,6 +230,10 @@ func (tc *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
 		_node.Color = value
+	}
+	if value, ok := tc.mutation.CatalogRing(); ok {
+		_spec.SetField(tag.FieldCatalogRing, field.TypeString, value)
+		_node.CatalogRing = &value
 	}
 	if nodes := tc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -393,6 +411,24 @@ func (u *TagUpsert) UpdateColor() *TagUpsert {
 	return u
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *TagUpsert) SetCatalogRing(v string) *TagUpsert {
+	u.Set(tag.FieldCatalogRing, v)
+	return u
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *TagUpsert) UpdateCatalogRing() *TagUpsert {
+	u.SetExcluded(tag.FieldCatalogRing)
+	return u
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *TagUpsert) ClearCatalogRing() *TagUpsert {
+	u.SetNull(tag.FieldCatalogRing)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -479,6 +515,27 @@ func (u *TagUpsertOne) SetColor(v string) *TagUpsertOne {
 func (u *TagUpsertOne) UpdateColor() *TagUpsertOne {
 	return u.Update(func(s *TagUpsert) {
 		s.UpdateColor()
+	})
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *TagUpsertOne) SetCatalogRing(v string) *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.SetCatalogRing(v)
+	})
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *TagUpsertOne) UpdateCatalogRing() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateCatalogRing()
+	})
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *TagUpsertOne) ClearCatalogRing() *TagUpsertOne {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearCatalogRing()
 	})
 }
 
@@ -731,6 +788,27 @@ func (u *TagUpsertBulk) SetColor(v string) *TagUpsertBulk {
 func (u *TagUpsertBulk) UpdateColor() *TagUpsertBulk {
 	return u.Update(func(s *TagUpsert) {
 		s.UpdateColor()
+	})
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *TagUpsertBulk) SetCatalogRing(v string) *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.SetCatalogRing(v)
+	})
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *TagUpsertBulk) UpdateCatalogRing() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.UpdateCatalogRing()
+	})
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *TagUpsertBulk) ClearCatalogRing() *TagUpsertBulk {
+	return u.Update(func(s *TagUpsert) {
+		s.ClearCatalogRing()
 	})
 }
 

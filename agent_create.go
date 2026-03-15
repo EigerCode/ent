@@ -30,6 +30,7 @@ import (
 	"github.com/EigerCode/ent/release"
 	"github.com/EigerCode/ent/share"
 	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/softwareinstalllog"
 	"github.com/EigerCode/ent/systemupdate"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/update"
@@ -448,6 +449,20 @@ func (ac *AgentCreate) SetNillableWan(s *string) *AgentCreate {
 	return ac
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (ac *AgentCreate) SetCatalogRing(s string) *AgentCreate {
+	ac.mutation.SetCatalogRing(s)
+	return ac
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (ac *AgentCreate) SetNillableCatalogRing(s *string) *AgentCreate {
+	if s != nil {
+		ac.SetCatalogRing(*s)
+	}
+	return ac
+}
+
 // SetID sets the "id" field.
 func (ac *AgentCreate) SetID(s string) *AgentCreate {
 	ac.mutation.SetID(s)
@@ -793,6 +808,21 @@ func (ac *AgentCreate) SetNetbird(n *Netbird) *AgentCreate {
 	return ac.SetNetbirdID(n.ID)
 }
 
+// AddSoftwareInstallLogIDs adds the "software_install_logs" edge to the SoftwareInstallLog entity by IDs.
+func (ac *AgentCreate) AddSoftwareInstallLogIDs(ids ...int) *AgentCreate {
+	ac.mutation.AddSoftwareInstallLogIDs(ids...)
+	return ac
+}
+
+// AddSoftwareInstallLogs adds the "software_install_logs" edges to the SoftwareInstallLog entity.
+func (ac *AgentCreate) AddSoftwareInstallLogs(s ...*SoftwareInstallLog) *AgentCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return ac.AddSoftwareInstallLogIDs(ids...)
+}
+
 // Mutation returns the AgentMutation object of the builder.
 func (ac *AgentCreate) Mutation() *AgentMutation {
 	return ac.mutation
@@ -1124,6 +1154,10 @@ func (ac *AgentCreate) createSpec() (*Agent, *sqlgraph.CreateSpec) {
 		_spec.SetField(agent.FieldWan, field.TypeString, value)
 		_node.Wan = value
 	}
+	if value, ok := ac.mutation.CatalogRing(); ok {
+		_spec.SetField(agent.FieldCatalogRing, field.TypeString, value)
+		_node.CatalogRing = &value
+	}
 	if nodes := ac.mutation.ComputerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -1454,6 +1488,22 @@ func (ac *AgentCreate) createSpec() (*Agent, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(netbird.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.SoftwareInstallLogsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   agent.SoftwareInstallLogsTable,
+			Columns: []string{agent.SoftwareInstallLogsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -2020,6 +2070,24 @@ func (u *AgentUpsert) SetWan(v string) *AgentUpsert {
 // UpdateWan sets the "wan" field to the value that was provided on create.
 func (u *AgentUpsert) UpdateWan() *AgentUpsert {
 	u.SetExcluded(agent.FieldWan)
+	return u
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *AgentUpsert) SetCatalogRing(v string) *AgentUpsert {
+	u.Set(agent.FieldCatalogRing, v)
+	return u
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *AgentUpsert) UpdateCatalogRing() *AgentUpsert {
+	u.SetExcluded(agent.FieldCatalogRing)
+	return u
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *AgentUpsert) ClearCatalogRing() *AgentUpsert {
+	u.SetNull(agent.FieldCatalogRing)
 	return u
 }
 
@@ -2663,6 +2731,27 @@ func (u *AgentUpsertOne) SetWan(v string) *AgentUpsertOne {
 func (u *AgentUpsertOne) UpdateWan() *AgentUpsertOne {
 	return u.Update(func(s *AgentUpsert) {
 		s.UpdateWan()
+	})
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *AgentUpsertOne) SetCatalogRing(v string) *AgentUpsertOne {
+	return u.Update(func(s *AgentUpsert) {
+		s.SetCatalogRing(v)
+	})
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *AgentUpsertOne) UpdateCatalogRing() *AgentUpsertOne {
+	return u.Update(func(s *AgentUpsert) {
+		s.UpdateCatalogRing()
+	})
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *AgentUpsertOne) ClearCatalogRing() *AgentUpsertOne {
+	return u.Update(func(s *AgentUpsert) {
+		s.ClearCatalogRing()
 	})
 }
 
@@ -3473,6 +3562,27 @@ func (u *AgentUpsertBulk) SetWan(v string) *AgentUpsertBulk {
 func (u *AgentUpsertBulk) UpdateWan() *AgentUpsertBulk {
 	return u.Update(func(s *AgentUpsert) {
 		s.UpdateWan()
+	})
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *AgentUpsertBulk) SetCatalogRing(v string) *AgentUpsertBulk {
+	return u.Update(func(s *AgentUpsert) {
+		s.SetCatalogRing(v)
+	})
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *AgentUpsertBulk) UpdateCatalogRing() *AgentUpsertBulk {
+	return u.Update(func(s *AgentUpsert) {
+		s.UpdateCatalogRing()
+	})
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *AgentUpsertBulk) ClearCatalogRing() *AgentUpsertBulk {
+	return u.Update(func(s *AgentUpsert) {
+		s.ClearCatalogRing()
 	})
 }
 

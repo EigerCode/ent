@@ -18,6 +18,8 @@ const (
 	FieldDescription = "description"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
+	// FieldCatalogRing holds the string denoting the catalog_ring field in the database.
+	FieldCatalogRing = "catalog_ring"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldTag,
 	FieldDescription,
 	FieldColor,
+	FieldCatalogRing,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tags"
@@ -125,6 +128,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByColor orders the results by the color field.
 func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
+}
+
+// ByCatalogRing orders the results by the catalog_ring field.
+func ByCatalogRing(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCatalogRing, opts...).ToFunc()
 }
 
 // ByOwnerCount orders the results by owner count.

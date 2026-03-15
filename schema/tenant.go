@@ -43,5 +43,9 @@ func (Tenant) Edges() []ent.Edge {
 		edge.To("netbird", NetbirdSettings.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.From("user_tenants", UserTenant.Type).Ref("tenant"),
 		edge.To("enrollment_tokens", EnrollmentToken.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("software_repos", SoftwareRepo.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("software_packages", SoftwarePackage.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("software_catalogs", SoftwareCatalog.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("software_assignments", SoftwareAssignment.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }

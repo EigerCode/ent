@@ -125,6 +125,26 @@ func (su *SiteUpdate) ClearModified() *SiteUpdate {
 	return su
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (su *SiteUpdate) SetCatalogRing(s string) *SiteUpdate {
+	su.mutation.SetCatalogRing(s)
+	return su
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (su *SiteUpdate) SetNillableCatalogRing(s *string) *SiteUpdate {
+	if s != nil {
+		su.SetCatalogRing(*s)
+	}
+	return su
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (su *SiteUpdate) ClearCatalogRing() *SiteUpdate {
+	su.mutation.ClearCatalogRing()
+	return su
+}
+
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (su *SiteUpdate) SetTenantID(id int) *SiteUpdate {
 	su.mutation.SetTenantID(id)
@@ -343,6 +363,12 @@ func (su *SiteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if su.mutation.ModifiedCleared() {
 		_spec.ClearField(site.FieldModified, field.TypeTime)
+	}
+	if value, ok := su.mutation.CatalogRing(); ok {
+		_spec.SetField(site.FieldCatalogRing, field.TypeString, value)
+	}
+	if su.mutation.CatalogRingCleared() {
+		_spec.ClearField(site.FieldCatalogRing, field.TypeString)
 	}
 	if su.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -622,6 +648,26 @@ func (suo *SiteUpdateOne) ClearModified() *SiteUpdateOne {
 	return suo
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (suo *SiteUpdateOne) SetCatalogRing(s string) *SiteUpdateOne {
+	suo.mutation.SetCatalogRing(s)
+	return suo
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (suo *SiteUpdateOne) SetNillableCatalogRing(s *string) *SiteUpdateOne {
+	if s != nil {
+		suo.SetCatalogRing(*s)
+	}
+	return suo
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (suo *SiteUpdateOne) ClearCatalogRing() *SiteUpdateOne {
+	suo.mutation.ClearCatalogRing()
+	return suo
+}
+
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (suo *SiteUpdateOne) SetTenantID(id int) *SiteUpdateOne {
 	suo.mutation.SetTenantID(id)
@@ -870,6 +916,12 @@ func (suo *SiteUpdateOne) sqlSave(ctx context.Context) (_node *Site, err error) 
 	}
 	if suo.mutation.ModifiedCleared() {
 		_spec.ClearField(site.FieldModified, field.TypeTime)
+	}
+	if value, ok := suo.mutation.CatalogRing(); ok {
+		_spec.SetField(site.FieldCatalogRing, field.TypeString, value)
+	}
+	if suo.mutation.CatalogRingCleared() {
+		_spec.ClearField(site.FieldCatalogRing, field.TypeString)
 	}
 	if suo.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{

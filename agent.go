@@ -83,6 +83,8 @@ type Agent struct {
 	IsFlatpakRustdesk bool `json:"is_flatpak_rustdesk,omitempty"`
 	// Wan holds the value of the "wan" field.
 	Wan string `json:"wan,omitempty"`
+	// Override: Rollout-Ring for this agent (test/first/fast/broad)
+	CatalogRing *string `json:"catalog_ring,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AgentQuery when eager-loading is set.
 	Edges          AgentEdges `json:"edges"`
@@ -134,9 +136,11 @@ type AgentEdges struct {
 	Physicaldisks []*PhysicalDisk `json:"physicaldisks,omitempty"`
 	// Netbird holds the value of the netbird edge.
 	Netbird *Netbird `json:"netbird,omitempty"`
+	// SoftwareInstallLogs holds the value of the software_install_logs edge.
+	SoftwareInstallLogs []*SoftwareInstallLog `json:"software_install_logs,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [21]bool
+	loadedTypes [22]bool
 }
 
 // ComputerOrErr returns the Computer value or an error if the edge
@@ -340,6 +344,15 @@ func (e AgentEdges) NetbirdOrErr() (*Netbird, error) {
 	return nil, &NotLoadedError{edge: "netbird"}
 }
 
+// SoftwareInstallLogsOrErr returns the SoftwareInstallLogs value or an error if the edge
+// was not loaded in eager-loading.
+func (e AgentEdges) SoftwareInstallLogsOrErr() ([]*SoftwareInstallLog, error) {
+	if e.loadedTypes[21] {
+		return e.SoftwareInstallLogs, nil
+	}
+	return nil, &NotLoadedError{edge: "software_install_logs"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Agent) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -347,7 +360,7 @@ func (*Agent) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case agent.FieldCertificateReady, agent.FieldRestartRequired, agent.FieldIsRemote, agent.FieldDebugMode, agent.FieldSftpService, agent.FieldRemoteAssistance, agent.FieldHasRustdesk, agent.FieldIsWayland, agent.FieldIsFlatpakRustdesk:
 			values[i] = new(sql.NullBool)
-		case agent.FieldID, agent.FieldOs, agent.FieldHostname, agent.FieldIP, agent.FieldMAC, agent.FieldVnc, agent.FieldNotes, agent.FieldUpdateTaskStatus, agent.FieldUpdateTaskDescription, agent.FieldUpdateTaskResult, agent.FieldUpdateTaskVersion, agent.FieldVncProxyPort, agent.FieldSftpPort, agent.FieldAgentStatus, agent.FieldDescription, agent.FieldNickname, agent.FieldEndpointType, agent.FieldWan:
+		case agent.FieldID, agent.FieldOs, agent.FieldHostname, agent.FieldIP, agent.FieldMAC, agent.FieldVnc, agent.FieldNotes, agent.FieldUpdateTaskStatus, agent.FieldUpdateTaskDescription, agent.FieldUpdateTaskResult, agent.FieldUpdateTaskVersion, agent.FieldVncProxyPort, agent.FieldSftpPort, agent.FieldAgentStatus, agent.FieldDescription, agent.FieldNickname, agent.FieldEndpointType, agent.FieldWan, agent.FieldCatalogRing:
 			values[i] = new(sql.NullString)
 		case agent.FieldFirstContact, agent.FieldLastContact, agent.FieldUpdateTaskExecution, agent.FieldSettingsModified:
 			values[i] = new(sql.NullTime)
@@ -554,6 +567,13 @@ func (a *Agent) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Wan = value.String
 			}
+		case agent.FieldCatalogRing:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field catalog_ring", values[i])
+			} else if value.Valid {
+				a.CatalogRing = new(string)
+				*a.CatalogRing = value.String
+			}
 		case agent.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field release_agents", value)
@@ -679,6 +699,11 @@ func (a *Agent) QueryNetbird() *NetbirdQuery {
 	return NewAgentClient(a.config).QueryNetbird(a)
 }
 
+// QuerySoftwareInstallLogs queries the "software_install_logs" edge of the Agent entity.
+func (a *Agent) QuerySoftwareInstallLogs() *SoftwareInstallLogQuery {
+	return NewAgentClient(a.config).QuerySoftwareInstallLogs(a)
+}
+
 // Update returns a builder for updating this Agent.
 // Note that you need to call Agent.Unwrap() before calling this method if this Agent
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -791,6 +816,11 @@ func (a *Agent) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("wan=")
 	builder.WriteString(a.Wan)
+	builder.WriteString(", ")
+	if v := a.CatalogRing; v != nil {
+		builder.WriteString("catalog_ring=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

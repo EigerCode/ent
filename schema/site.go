@@ -22,6 +22,8 @@ func (Site) Fields() []ent.Field {
 		field.String("domain").Optional(),
 		field.Time("created").Optional().Default(time.Now),
 		field.Time("modified").Optional().Default(time.Now).UpdateDefault(time.Now),
+		field.String("catalog_ring").Optional().Nillable().
+			Comment("Default rollout ring for agents in this site (test/first/fast/broad)"),
 	}
 }
 

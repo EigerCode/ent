@@ -32,6 +32,8 @@ type Deployment struct {
 	Failed bool `json:"failed,omitempty"`
 	// ByProfile holds the value of the "by_profile" field.
 	ByProfile bool `json:"by_profile,omitempty"`
+	// MoreInfo holds the value of the "more_info" field.
+	MoreInfo string `json:"more_info,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeploymentQuery when eager-loading is set.
 	Edges             DeploymentEdges `json:"edges"`
@@ -68,7 +70,7 @@ func (*Deployment) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case deployment.FieldID:
 			values[i] = new(sql.NullInt64)
-		case deployment.FieldPackageID, deployment.FieldName, deployment.FieldVersion:
+		case deployment.FieldPackageID, deployment.FieldName, deployment.FieldVersion, deployment.FieldMoreInfo:
 			values[i] = new(sql.NullString)
 		case deployment.FieldInstalled, deployment.FieldUpdated:
 			values[i] = new(sql.NullTime)
@@ -136,6 +138,12 @@ func (d *Deployment) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field by_profile", values[i])
 			} else if value.Valid {
 				d.ByProfile = value.Bool
+			}
+		case deployment.FieldMoreInfo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field more_info", values[i])
+			} else if value.Valid {
+				d.MoreInfo = value.String
 			}
 		case deployment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -205,6 +213,9 @@ func (d *Deployment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("by_profile=")
 	builder.WriteString(fmt.Sprintf("%v", d.ByProfile))
+	builder.WriteString(", ")
+	builder.WriteString("more_info=")
+	builder.WriteString(d.MoreInfo)
 	builder.WriteByte(')')
 	return builder.String()
 }

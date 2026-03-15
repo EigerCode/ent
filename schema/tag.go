@@ -17,6 +17,8 @@ func (Tag) Fields() []ent.Field {
 		field.String("tag").NotEmpty().Unique(),
 		field.String("description").Optional(),
 		field.String("color"),
+		field.String("catalog_ring").Optional().Nillable().
+			Comment("Rollout ring for agents with this tag (test/first/fast/broad)"),
 	}
 }
 

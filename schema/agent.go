@@ -49,6 +49,8 @@ func (Agent) Fields() []ent.Field {
 		field.Bool("is_wayland").Optional().Default(false),
 		field.Bool("is_flatpak_rustdesk").Optional().Default(false),
 		field.String("wan").Default(""),
+		field.String("catalog_ring").Optional().Nillable().
+			Comment("Override: Rollout-Ring for this agent (test/first/fast/broad)"),
 	}
 }
 
@@ -76,6 +78,7 @@ func (Agent) Edges() []ent.Edge {
 		edge.From("site", Site.Type).Ref("agents"),
 		edge.To("physicaldisks", PhysicalDisk.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("netbird", Netbird.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("software_install_logs", SoftwareInstallLog.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }
 

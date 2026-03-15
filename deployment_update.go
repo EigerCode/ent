@@ -150,6 +150,26 @@ func (du *DeploymentUpdate) ClearByProfile() *DeploymentUpdate {
 	return du
 }
 
+// SetMoreInfo sets the "more_info" field.
+func (du *DeploymentUpdate) SetMoreInfo(s string) *DeploymentUpdate {
+	du.mutation.SetMoreInfo(s)
+	return du
+}
+
+// SetNillableMoreInfo sets the "more_info" field if the given value is not nil.
+func (du *DeploymentUpdate) SetNillableMoreInfo(s *string) *DeploymentUpdate {
+	if s != nil {
+		du.SetMoreInfo(*s)
+	}
+	return du
+}
+
+// ClearMoreInfo clears the value of the "more_info" field.
+func (du *DeploymentUpdate) ClearMoreInfo() *DeploymentUpdate {
+	du.mutation.ClearMoreInfo()
+	return du
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (du *DeploymentUpdate) SetOwnerID(id string) *DeploymentUpdate {
 	du.mutation.SetOwnerID(id)
@@ -269,6 +289,12 @@ func (du *DeploymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if du.mutation.ByProfileCleared() {
 		_spec.ClearField(deployment.FieldByProfile, field.TypeBool)
+	}
+	if value, ok := du.mutation.MoreInfo(); ok {
+		_spec.SetField(deployment.FieldMoreInfo, field.TypeString, value)
+	}
+	if du.mutation.MoreInfoCleared() {
+		_spec.ClearField(deployment.FieldMoreInfo, field.TypeString)
 	}
 	if du.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -441,6 +467,26 @@ func (duo *DeploymentUpdateOne) ClearByProfile() *DeploymentUpdateOne {
 	return duo
 }
 
+// SetMoreInfo sets the "more_info" field.
+func (duo *DeploymentUpdateOne) SetMoreInfo(s string) *DeploymentUpdateOne {
+	duo.mutation.SetMoreInfo(s)
+	return duo
+}
+
+// SetNillableMoreInfo sets the "more_info" field if the given value is not nil.
+func (duo *DeploymentUpdateOne) SetNillableMoreInfo(s *string) *DeploymentUpdateOne {
+	if s != nil {
+		duo.SetMoreInfo(*s)
+	}
+	return duo
+}
+
+// ClearMoreInfo clears the value of the "more_info" field.
+func (duo *DeploymentUpdateOne) ClearMoreInfo() *DeploymentUpdateOne {
+	duo.mutation.ClearMoreInfo()
+	return duo
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (duo *DeploymentUpdateOne) SetOwnerID(id string) *DeploymentUpdateOne {
 	duo.mutation.SetOwnerID(id)
@@ -590,6 +636,12 @@ func (duo *DeploymentUpdateOne) sqlSave(ctx context.Context) (_node *Deployment,
 	}
 	if duo.mutation.ByProfileCleared() {
 		_spec.ClearField(deployment.FieldByProfile, field.TypeBool)
+	}
+	if value, ok := duo.mutation.MoreInfo(); ok {
+		_spec.SetField(deployment.FieldMoreInfo, field.TypeString, value)
+	}
+	if duo.mutation.MoreInfoCleared() {
+		_spec.ClearField(deployment.FieldMoreInfo, field.TypeString)
 	}
 	if duo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

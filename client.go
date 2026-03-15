@@ -46,9 +46,15 @@ import (
 	"github.com/EigerCode/ent/settings"
 	"github.com/EigerCode/ent/share"
 	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/softwareassignment"
+	"github.com/EigerCode/ent/softwarecatalog"
+	"github.com/EigerCode/ent/softwareinstalllog"
+	"github.com/EigerCode/ent/softwarepackage"
+	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/systemupdate"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/task"
+	"github.com/EigerCode/ent/taskreport"
 	"github.com/EigerCode/ent/tenant"
 	"github.com/EigerCode/ent/update"
 	"github.com/EigerCode/ent/user"
@@ -123,12 +129,24 @@ type Client struct {
 	Share *ShareClient
 	// Site is the client for interacting with the Site builders.
 	Site *SiteClient
+	// SoftwareAssignment is the client for interacting with the SoftwareAssignment builders.
+	SoftwareAssignment *SoftwareAssignmentClient
+	// SoftwareCatalog is the client for interacting with the SoftwareCatalog builders.
+	SoftwareCatalog *SoftwareCatalogClient
+	// SoftwareInstallLog is the client for interacting with the SoftwareInstallLog builders.
+	SoftwareInstallLog *SoftwareInstallLogClient
+	// SoftwarePackage is the client for interacting with the SoftwarePackage builders.
+	SoftwarePackage *SoftwarePackageClient
+	// SoftwareRepo is the client for interacting with the SoftwareRepo builders.
+	SoftwareRepo *SoftwareRepoClient
 	// SystemUpdate is the client for interacting with the SystemUpdate builders.
 	SystemUpdate *SystemUpdateClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TaskReport is the client for interacting with the TaskReport builders.
+	TaskReport *TaskReportClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
 	// Update is the client for interacting with the Update builders.
@@ -181,9 +199,15 @@ func (c *Client) init() {
 	c.Settings = NewSettingsClient(c.config)
 	c.Share = NewShareClient(c.config)
 	c.Site = NewSiteClient(c.config)
+	c.SoftwareAssignment = NewSoftwareAssignmentClient(c.config)
+	c.SoftwareCatalog = NewSoftwareCatalogClient(c.config)
+	c.SoftwareInstallLog = NewSoftwareInstallLogClient(c.config)
+	c.SoftwarePackage = NewSoftwarePackageClient(c.config)
+	c.SoftwareRepo = NewSoftwareRepoClient(c.config)
 	c.SystemUpdate = NewSystemUpdateClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.Task = NewTaskClient(c.config)
+	c.TaskReport = NewTaskReportClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
 	c.Update = NewUpdateClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -312,9 +336,15 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Settings:              NewSettingsClient(cfg),
 		Share:                 NewShareClient(cfg),
 		Site:                  NewSiteClient(cfg),
+		SoftwareAssignment:    NewSoftwareAssignmentClient(cfg),
+		SoftwareCatalog:       NewSoftwareCatalogClient(cfg),
+		SoftwareInstallLog:    NewSoftwareInstallLogClient(cfg),
+		SoftwarePackage:       NewSoftwarePackageClient(cfg),
+		SoftwareRepo:          NewSoftwareRepoClient(cfg),
 		SystemUpdate:          NewSystemUpdateClient(cfg),
 		Tag:                   NewTagClient(cfg),
 		Task:                  NewTaskClient(cfg),
+		TaskReport:            NewTaskReportClient(cfg),
 		Tenant:                NewTenantClient(cfg),
 		Update:                NewUpdateClient(cfg),
 		User:                  NewUserClient(cfg),
@@ -370,9 +400,15 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Settings:              NewSettingsClient(cfg),
 		Share:                 NewShareClient(cfg),
 		Site:                  NewSiteClient(cfg),
+		SoftwareAssignment:    NewSoftwareAssignmentClient(cfg),
+		SoftwareCatalog:       NewSoftwareCatalogClient(cfg),
+		SoftwareInstallLog:    NewSoftwareInstallLogClient(cfg),
+		SoftwarePackage:       NewSoftwarePackageClient(cfg),
+		SoftwareRepo:          NewSoftwareRepoClient(cfg),
 		SystemUpdate:          NewSystemUpdateClient(cfg),
 		Tag:                   NewTagClient(cfg),
 		Task:                  NewTaskClient(cfg),
+		TaskReport:            NewTaskReportClient(cfg),
 		Tenant:                NewTenantClient(cfg),
 		Update:                NewUpdateClient(cfg),
 		User:                  NewUserClient(cfg),
@@ -412,8 +448,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
 		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
 		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
-		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwareAssignment,
+		c.SoftwareCatalog, c.SoftwareInstallLog, c.SoftwarePackage, c.SoftwareRepo,
+		c.SystemUpdate, c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
+		c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -428,8 +466,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
 		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
 		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SystemUpdate, c.Tag, c.Task,
-		c.Tenant, c.Update, c.User, c.UserTenant, c.WingetConfigExclusion,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwareAssignment,
+		c.SoftwareCatalog, c.SoftwareInstallLog, c.SoftwarePackage, c.SoftwareRepo,
+		c.SystemUpdate, c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
+		c.UserTenant, c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -500,12 +540,24 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Share.mutate(ctx, m)
 	case *SiteMutation:
 		return c.Site.mutate(ctx, m)
+	case *SoftwareAssignmentMutation:
+		return c.SoftwareAssignment.mutate(ctx, m)
+	case *SoftwareCatalogMutation:
+		return c.SoftwareCatalog.mutate(ctx, m)
+	case *SoftwareInstallLogMutation:
+		return c.SoftwareInstallLog.mutate(ctx, m)
+	case *SoftwarePackageMutation:
+		return c.SoftwarePackage.mutate(ctx, m)
+	case *SoftwareRepoMutation:
+		return c.SoftwareRepo.mutate(ctx, m)
 	case *SystemUpdateMutation:
 		return c.SystemUpdate.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
+	case *TaskReportMutation:
+		return c.TaskReport.mutate(ctx, m)
 	case *TenantMutation:
 		return c.Tenant.mutate(ctx, m)
 	case *UpdateMutation:
@@ -958,6 +1010,22 @@ func (c *AgentClient) QueryNetbird(a *Agent) *NetbirdQuery {
 			sqlgraph.From(agent.Table, agent.FieldID, id),
 			sqlgraph.To(netbird.Table, netbird.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, agent.NetbirdTable, agent.NetbirdColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySoftwareInstallLogs queries the software_install_logs edge of a Agent.
+func (c *AgentClient) QuerySoftwareInstallLogs(a *Agent) *SoftwareInstallLogQuery {
+	query := (&SoftwareInstallLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, id),
+			sqlgraph.To(softwareinstalllog.Table, softwareinstalllog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, agent.SoftwareInstallLogsTable, agent.SoftwareInstallLogsColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -4174,6 +4242,22 @@ func (c *ProfileIssueClient) QueryAgents(pi *ProfileIssue) *AgentQuery {
 	return query
 }
 
+// QueryTasksreports queries the tasksreports edge of a ProfileIssue.
+func (c *ProfileIssueClient) QueryTasksreports(pi *ProfileIssue) *TaskReportQuery {
+	query := (&TaskReportClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profileissue.Table, profileissue.FieldID, id),
+			sqlgraph.To(taskreport.Table, taskreport.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profileissue.TasksreportsTable, profileissue.TasksreportsColumn),
+		)
+		fromV = sqlgraph.Neighbors(pi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ProfileIssueClient) Hooks() []Hook {
 	return c.hooks.ProfileIssue
@@ -5572,6 +5656,911 @@ func (c *SiteClient) mutate(ctx context.Context, m *SiteMutation) (Value, error)
 	}
 }
 
+// SoftwareAssignmentClient is a client for the SoftwareAssignment schema.
+type SoftwareAssignmentClient struct {
+	config
+}
+
+// NewSoftwareAssignmentClient returns a client for the SoftwareAssignment from the given config.
+func NewSoftwareAssignmentClient(c config) *SoftwareAssignmentClient {
+	return &SoftwareAssignmentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `softwareassignment.Hooks(f(g(h())))`.
+func (c *SoftwareAssignmentClient) Use(hooks ...Hook) {
+	c.hooks.SoftwareAssignment = append(c.hooks.SoftwareAssignment, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `softwareassignment.Intercept(f(g(h())))`.
+func (c *SoftwareAssignmentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SoftwareAssignment = append(c.inters.SoftwareAssignment, interceptors...)
+}
+
+// Create returns a builder for creating a SoftwareAssignment entity.
+func (c *SoftwareAssignmentClient) Create() *SoftwareAssignmentCreate {
+	mutation := newSoftwareAssignmentMutation(c.config, OpCreate)
+	return &SoftwareAssignmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SoftwareAssignment entities.
+func (c *SoftwareAssignmentClient) CreateBulk(builders ...*SoftwareAssignmentCreate) *SoftwareAssignmentCreateBulk {
+	return &SoftwareAssignmentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SoftwareAssignmentClient) MapCreateBulk(slice any, setFunc func(*SoftwareAssignmentCreate, int)) *SoftwareAssignmentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SoftwareAssignmentCreateBulk{err: fmt.Errorf("calling to SoftwareAssignmentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SoftwareAssignmentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SoftwareAssignmentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SoftwareAssignment.
+func (c *SoftwareAssignmentClient) Update() *SoftwareAssignmentUpdate {
+	mutation := newSoftwareAssignmentMutation(c.config, OpUpdate)
+	return &SoftwareAssignmentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SoftwareAssignmentClient) UpdateOne(sa *SoftwareAssignment) *SoftwareAssignmentUpdateOne {
+	mutation := newSoftwareAssignmentMutation(c.config, OpUpdateOne, withSoftwareAssignment(sa))
+	return &SoftwareAssignmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SoftwareAssignmentClient) UpdateOneID(id int) *SoftwareAssignmentUpdateOne {
+	mutation := newSoftwareAssignmentMutation(c.config, OpUpdateOne, withSoftwareAssignmentID(id))
+	return &SoftwareAssignmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SoftwareAssignment.
+func (c *SoftwareAssignmentClient) Delete() *SoftwareAssignmentDelete {
+	mutation := newSoftwareAssignmentMutation(c.config, OpDelete)
+	return &SoftwareAssignmentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SoftwareAssignmentClient) DeleteOne(sa *SoftwareAssignment) *SoftwareAssignmentDeleteOne {
+	return c.DeleteOneID(sa.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SoftwareAssignmentClient) DeleteOneID(id int) *SoftwareAssignmentDeleteOne {
+	builder := c.Delete().Where(softwareassignment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SoftwareAssignmentDeleteOne{builder}
+}
+
+// Query returns a query builder for SoftwareAssignment.
+func (c *SoftwareAssignmentClient) Query() *SoftwareAssignmentQuery {
+	return &SoftwareAssignmentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSoftwareAssignment},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SoftwareAssignment entity by its id.
+func (c *SoftwareAssignmentClient) Get(ctx context.Context, id int) (*SoftwareAssignment, error) {
+	return c.Query().Where(softwareassignment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SoftwareAssignmentClient) GetX(ctx context.Context, id int) *SoftwareAssignment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTenant queries the tenant edge of a SoftwareAssignment.
+func (c *SoftwareAssignmentClient) QueryTenant(sa *SoftwareAssignment) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sa.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwareassignment.Table, softwareassignment.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwareassignment.TenantTable, softwareassignment.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(sa.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SoftwareAssignmentClient) Hooks() []Hook {
+	return c.hooks.SoftwareAssignment
+}
+
+// Interceptors returns the client interceptors.
+func (c *SoftwareAssignmentClient) Interceptors() []Interceptor {
+	return c.inters.SoftwareAssignment
+}
+
+func (c *SoftwareAssignmentClient) mutate(ctx context.Context, m *SoftwareAssignmentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SoftwareAssignmentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SoftwareAssignmentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SoftwareAssignmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SoftwareAssignmentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SoftwareAssignment mutation op: %q", m.Op())
+	}
+}
+
+// SoftwareCatalogClient is a client for the SoftwareCatalog schema.
+type SoftwareCatalogClient struct {
+	config
+}
+
+// NewSoftwareCatalogClient returns a client for the SoftwareCatalog from the given config.
+func NewSoftwareCatalogClient(c config) *SoftwareCatalogClient {
+	return &SoftwareCatalogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `softwarecatalog.Hooks(f(g(h())))`.
+func (c *SoftwareCatalogClient) Use(hooks ...Hook) {
+	c.hooks.SoftwareCatalog = append(c.hooks.SoftwareCatalog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `softwarecatalog.Intercept(f(g(h())))`.
+func (c *SoftwareCatalogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SoftwareCatalog = append(c.inters.SoftwareCatalog, interceptors...)
+}
+
+// Create returns a builder for creating a SoftwareCatalog entity.
+func (c *SoftwareCatalogClient) Create() *SoftwareCatalogCreate {
+	mutation := newSoftwareCatalogMutation(c.config, OpCreate)
+	return &SoftwareCatalogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SoftwareCatalog entities.
+func (c *SoftwareCatalogClient) CreateBulk(builders ...*SoftwareCatalogCreate) *SoftwareCatalogCreateBulk {
+	return &SoftwareCatalogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SoftwareCatalogClient) MapCreateBulk(slice any, setFunc func(*SoftwareCatalogCreate, int)) *SoftwareCatalogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SoftwareCatalogCreateBulk{err: fmt.Errorf("calling to SoftwareCatalogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SoftwareCatalogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SoftwareCatalogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SoftwareCatalog.
+func (c *SoftwareCatalogClient) Update() *SoftwareCatalogUpdate {
+	mutation := newSoftwareCatalogMutation(c.config, OpUpdate)
+	return &SoftwareCatalogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SoftwareCatalogClient) UpdateOne(sc *SoftwareCatalog) *SoftwareCatalogUpdateOne {
+	mutation := newSoftwareCatalogMutation(c.config, OpUpdateOne, withSoftwareCatalog(sc))
+	return &SoftwareCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SoftwareCatalogClient) UpdateOneID(id int) *SoftwareCatalogUpdateOne {
+	mutation := newSoftwareCatalogMutation(c.config, OpUpdateOne, withSoftwareCatalogID(id))
+	return &SoftwareCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SoftwareCatalog.
+func (c *SoftwareCatalogClient) Delete() *SoftwareCatalogDelete {
+	mutation := newSoftwareCatalogMutation(c.config, OpDelete)
+	return &SoftwareCatalogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SoftwareCatalogClient) DeleteOne(sc *SoftwareCatalog) *SoftwareCatalogDeleteOne {
+	return c.DeleteOneID(sc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SoftwareCatalogClient) DeleteOneID(id int) *SoftwareCatalogDeleteOne {
+	builder := c.Delete().Where(softwarecatalog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SoftwareCatalogDeleteOne{builder}
+}
+
+// Query returns a query builder for SoftwareCatalog.
+func (c *SoftwareCatalogClient) Query() *SoftwareCatalogQuery {
+	return &SoftwareCatalogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSoftwareCatalog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SoftwareCatalog entity by its id.
+func (c *SoftwareCatalogClient) Get(ctx context.Context, id int) (*SoftwareCatalog, error) {
+	return c.Query().Where(softwarecatalog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SoftwareCatalogClient) GetX(ctx context.Context, id int) *SoftwareCatalog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTenant queries the tenant edge of a SoftwareCatalog.
+func (c *SoftwareCatalogClient) QueryTenant(sc *SoftwareCatalog) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarecatalog.Table, softwarecatalog.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwarecatalog.TenantTable, softwarecatalog.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(sc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPackages queries the packages edge of a SoftwareCatalog.
+func (c *SoftwareCatalogClient) QueryPackages(sc *SoftwareCatalog) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarecatalog.Table, softwarecatalog.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, softwarecatalog.PackagesTable, softwarecatalog.PackagesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(sc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SoftwareCatalogClient) Hooks() []Hook {
+	return c.hooks.SoftwareCatalog
+}
+
+// Interceptors returns the client interceptors.
+func (c *SoftwareCatalogClient) Interceptors() []Interceptor {
+	return c.inters.SoftwareCatalog
+}
+
+func (c *SoftwareCatalogClient) mutate(ctx context.Context, m *SoftwareCatalogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SoftwareCatalogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SoftwareCatalogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SoftwareCatalogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SoftwareCatalogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SoftwareCatalog mutation op: %q", m.Op())
+	}
+}
+
+// SoftwareInstallLogClient is a client for the SoftwareInstallLog schema.
+type SoftwareInstallLogClient struct {
+	config
+}
+
+// NewSoftwareInstallLogClient returns a client for the SoftwareInstallLog from the given config.
+func NewSoftwareInstallLogClient(c config) *SoftwareInstallLogClient {
+	return &SoftwareInstallLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `softwareinstalllog.Hooks(f(g(h())))`.
+func (c *SoftwareInstallLogClient) Use(hooks ...Hook) {
+	c.hooks.SoftwareInstallLog = append(c.hooks.SoftwareInstallLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `softwareinstalllog.Intercept(f(g(h())))`.
+func (c *SoftwareInstallLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SoftwareInstallLog = append(c.inters.SoftwareInstallLog, interceptors...)
+}
+
+// Create returns a builder for creating a SoftwareInstallLog entity.
+func (c *SoftwareInstallLogClient) Create() *SoftwareInstallLogCreate {
+	mutation := newSoftwareInstallLogMutation(c.config, OpCreate)
+	return &SoftwareInstallLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SoftwareInstallLog entities.
+func (c *SoftwareInstallLogClient) CreateBulk(builders ...*SoftwareInstallLogCreate) *SoftwareInstallLogCreateBulk {
+	return &SoftwareInstallLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SoftwareInstallLogClient) MapCreateBulk(slice any, setFunc func(*SoftwareInstallLogCreate, int)) *SoftwareInstallLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SoftwareInstallLogCreateBulk{err: fmt.Errorf("calling to SoftwareInstallLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SoftwareInstallLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SoftwareInstallLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SoftwareInstallLog.
+func (c *SoftwareInstallLogClient) Update() *SoftwareInstallLogUpdate {
+	mutation := newSoftwareInstallLogMutation(c.config, OpUpdate)
+	return &SoftwareInstallLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SoftwareInstallLogClient) UpdateOne(sil *SoftwareInstallLog) *SoftwareInstallLogUpdateOne {
+	mutation := newSoftwareInstallLogMutation(c.config, OpUpdateOne, withSoftwareInstallLog(sil))
+	return &SoftwareInstallLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SoftwareInstallLogClient) UpdateOneID(id int) *SoftwareInstallLogUpdateOne {
+	mutation := newSoftwareInstallLogMutation(c.config, OpUpdateOne, withSoftwareInstallLogID(id))
+	return &SoftwareInstallLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SoftwareInstallLog.
+func (c *SoftwareInstallLogClient) Delete() *SoftwareInstallLogDelete {
+	mutation := newSoftwareInstallLogMutation(c.config, OpDelete)
+	return &SoftwareInstallLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SoftwareInstallLogClient) DeleteOne(sil *SoftwareInstallLog) *SoftwareInstallLogDeleteOne {
+	return c.DeleteOneID(sil.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SoftwareInstallLogClient) DeleteOneID(id int) *SoftwareInstallLogDeleteOne {
+	builder := c.Delete().Where(softwareinstalllog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SoftwareInstallLogDeleteOne{builder}
+}
+
+// Query returns a query builder for SoftwareInstallLog.
+func (c *SoftwareInstallLogClient) Query() *SoftwareInstallLogQuery {
+	return &SoftwareInstallLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSoftwareInstallLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SoftwareInstallLog entity by its id.
+func (c *SoftwareInstallLogClient) Get(ctx context.Context, id int) (*SoftwareInstallLog, error) {
+	return c.Query().Where(softwareinstalllog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SoftwareInstallLogClient) GetX(ctx context.Context, id int) *SoftwareInstallLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAgent queries the agent edge of a SoftwareInstallLog.
+func (c *SoftwareInstallLogClient) QueryAgent(sil *SoftwareInstallLog) *AgentQuery {
+	query := (&AgentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sil.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwareinstalllog.Table, softwareinstalllog.FieldID, id),
+			sqlgraph.To(agent.Table, agent.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwareinstalllog.AgentTable, softwareinstalllog.AgentColumn),
+		)
+		fromV = sqlgraph.Neighbors(sil.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPackage queries the package edge of a SoftwareInstallLog.
+func (c *SoftwareInstallLogClient) QueryPackage(sil *SoftwareInstallLog) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sil.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwareinstalllog.Table, softwareinstalllog.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwareinstalllog.PackageTable, softwareinstalllog.PackageColumn),
+		)
+		fromV = sqlgraph.Neighbors(sil.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SoftwareInstallLogClient) Hooks() []Hook {
+	return c.hooks.SoftwareInstallLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *SoftwareInstallLogClient) Interceptors() []Interceptor {
+	return c.inters.SoftwareInstallLog
+}
+
+func (c *SoftwareInstallLogClient) mutate(ctx context.Context, m *SoftwareInstallLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SoftwareInstallLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SoftwareInstallLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SoftwareInstallLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SoftwareInstallLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SoftwareInstallLog mutation op: %q", m.Op())
+	}
+}
+
+// SoftwarePackageClient is a client for the SoftwarePackage schema.
+type SoftwarePackageClient struct {
+	config
+}
+
+// NewSoftwarePackageClient returns a client for the SoftwarePackage from the given config.
+func NewSoftwarePackageClient(c config) *SoftwarePackageClient {
+	return &SoftwarePackageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `softwarepackage.Hooks(f(g(h())))`.
+func (c *SoftwarePackageClient) Use(hooks ...Hook) {
+	c.hooks.SoftwarePackage = append(c.hooks.SoftwarePackage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `softwarepackage.Intercept(f(g(h())))`.
+func (c *SoftwarePackageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SoftwarePackage = append(c.inters.SoftwarePackage, interceptors...)
+}
+
+// Create returns a builder for creating a SoftwarePackage entity.
+func (c *SoftwarePackageClient) Create() *SoftwarePackageCreate {
+	mutation := newSoftwarePackageMutation(c.config, OpCreate)
+	return &SoftwarePackageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SoftwarePackage entities.
+func (c *SoftwarePackageClient) CreateBulk(builders ...*SoftwarePackageCreate) *SoftwarePackageCreateBulk {
+	return &SoftwarePackageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SoftwarePackageClient) MapCreateBulk(slice any, setFunc func(*SoftwarePackageCreate, int)) *SoftwarePackageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SoftwarePackageCreateBulk{err: fmt.Errorf("calling to SoftwarePackageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SoftwarePackageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SoftwarePackageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SoftwarePackage.
+func (c *SoftwarePackageClient) Update() *SoftwarePackageUpdate {
+	mutation := newSoftwarePackageMutation(c.config, OpUpdate)
+	return &SoftwarePackageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SoftwarePackageClient) UpdateOne(sp *SoftwarePackage) *SoftwarePackageUpdateOne {
+	mutation := newSoftwarePackageMutation(c.config, OpUpdateOne, withSoftwarePackage(sp))
+	return &SoftwarePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SoftwarePackageClient) UpdateOneID(id int) *SoftwarePackageUpdateOne {
+	mutation := newSoftwarePackageMutation(c.config, OpUpdateOne, withSoftwarePackageID(id))
+	return &SoftwarePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SoftwarePackage.
+func (c *SoftwarePackageClient) Delete() *SoftwarePackageDelete {
+	mutation := newSoftwarePackageMutation(c.config, OpDelete)
+	return &SoftwarePackageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SoftwarePackageClient) DeleteOne(sp *SoftwarePackage) *SoftwarePackageDeleteOne {
+	return c.DeleteOneID(sp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SoftwarePackageClient) DeleteOneID(id int) *SoftwarePackageDeleteOne {
+	builder := c.Delete().Where(softwarepackage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SoftwarePackageDeleteOne{builder}
+}
+
+// Query returns a query builder for SoftwarePackage.
+func (c *SoftwarePackageClient) Query() *SoftwarePackageQuery {
+	return &SoftwarePackageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSoftwarePackage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SoftwarePackage entity by its id.
+func (c *SoftwarePackageClient) Get(ctx context.Context, id int) (*SoftwarePackage, error) {
+	return c.Query().Where(softwarepackage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SoftwarePackageClient) GetX(ctx context.Context, id int) *SoftwarePackage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRepo queries the repo edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryRepo(sp *SoftwarePackage) *SoftwareRepoQuery {
+	query := (&SoftwareRepoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarerepo.Table, softwarerepo.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.RepoTable, softwarepackage.RepoColumn),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCatalogs queries the catalogs edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryCatalogs(sp *SoftwarePackage) *SoftwareCatalogQuery {
+	query := (&SoftwareCatalogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarecatalog.Table, softwarecatalog.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, softwarepackage.CatalogsTable, softwarepackage.CatalogsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTenant queries the tenant edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryTenant(sp *SoftwarePackage) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.TenantTable, softwarepackage.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstallLogs queries the install_logs edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryInstallLogs(sp *SoftwarePackage) *SoftwareInstallLogQuery {
+	query := (&SoftwareInstallLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwareinstalllog.Table, softwareinstalllog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.InstallLogsTable, softwarepackage.InstallLogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRequires queries the requires edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryRequires(sp *SoftwarePackage) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.RequiresTable, softwarepackage.RequiresPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUpdateFor queries the update_for edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryUpdateFor(sp *SoftwarePackage) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.UpdateForTable, softwarepackage.UpdateForPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGlobalRef queries the global_ref edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryGlobalRef(sp *SoftwarePackage) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.GlobalRefTable, softwarepackage.GlobalRefColumn),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySubscribers queries the subscribers edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QuerySubscribers(sp *SoftwarePackage) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.SubscribersTable, softwarepackage.SubscribersColumn),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SoftwarePackageClient) Hooks() []Hook {
+	return c.hooks.SoftwarePackage
+}
+
+// Interceptors returns the client interceptors.
+func (c *SoftwarePackageClient) Interceptors() []Interceptor {
+	return c.inters.SoftwarePackage
+}
+
+func (c *SoftwarePackageClient) mutate(ctx context.Context, m *SoftwarePackageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SoftwarePackageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SoftwarePackageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SoftwarePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SoftwarePackageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SoftwarePackage mutation op: %q", m.Op())
+	}
+}
+
+// SoftwareRepoClient is a client for the SoftwareRepo schema.
+type SoftwareRepoClient struct {
+	config
+}
+
+// NewSoftwareRepoClient returns a client for the SoftwareRepo from the given config.
+func NewSoftwareRepoClient(c config) *SoftwareRepoClient {
+	return &SoftwareRepoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `softwarerepo.Hooks(f(g(h())))`.
+func (c *SoftwareRepoClient) Use(hooks ...Hook) {
+	c.hooks.SoftwareRepo = append(c.hooks.SoftwareRepo, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `softwarerepo.Intercept(f(g(h())))`.
+func (c *SoftwareRepoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SoftwareRepo = append(c.inters.SoftwareRepo, interceptors...)
+}
+
+// Create returns a builder for creating a SoftwareRepo entity.
+func (c *SoftwareRepoClient) Create() *SoftwareRepoCreate {
+	mutation := newSoftwareRepoMutation(c.config, OpCreate)
+	return &SoftwareRepoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SoftwareRepo entities.
+func (c *SoftwareRepoClient) CreateBulk(builders ...*SoftwareRepoCreate) *SoftwareRepoCreateBulk {
+	return &SoftwareRepoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SoftwareRepoClient) MapCreateBulk(slice any, setFunc func(*SoftwareRepoCreate, int)) *SoftwareRepoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SoftwareRepoCreateBulk{err: fmt.Errorf("calling to SoftwareRepoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SoftwareRepoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SoftwareRepoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SoftwareRepo.
+func (c *SoftwareRepoClient) Update() *SoftwareRepoUpdate {
+	mutation := newSoftwareRepoMutation(c.config, OpUpdate)
+	return &SoftwareRepoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SoftwareRepoClient) UpdateOne(sr *SoftwareRepo) *SoftwareRepoUpdateOne {
+	mutation := newSoftwareRepoMutation(c.config, OpUpdateOne, withSoftwareRepo(sr))
+	return &SoftwareRepoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SoftwareRepoClient) UpdateOneID(id int) *SoftwareRepoUpdateOne {
+	mutation := newSoftwareRepoMutation(c.config, OpUpdateOne, withSoftwareRepoID(id))
+	return &SoftwareRepoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SoftwareRepo.
+func (c *SoftwareRepoClient) Delete() *SoftwareRepoDelete {
+	mutation := newSoftwareRepoMutation(c.config, OpDelete)
+	return &SoftwareRepoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SoftwareRepoClient) DeleteOne(sr *SoftwareRepo) *SoftwareRepoDeleteOne {
+	return c.DeleteOneID(sr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SoftwareRepoClient) DeleteOneID(id int) *SoftwareRepoDeleteOne {
+	builder := c.Delete().Where(softwarerepo.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SoftwareRepoDeleteOne{builder}
+}
+
+// Query returns a query builder for SoftwareRepo.
+func (c *SoftwareRepoClient) Query() *SoftwareRepoQuery {
+	return &SoftwareRepoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSoftwareRepo},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SoftwareRepo entity by its id.
+func (c *SoftwareRepoClient) Get(ctx context.Context, id int) (*SoftwareRepo, error) {
+	return c.Query().Where(softwarerepo.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SoftwareRepoClient) GetX(ctx context.Context, id int) *SoftwareRepo {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTenant queries the tenant edge of a SoftwareRepo.
+func (c *SoftwareRepoClient) QueryTenant(sr *SoftwareRepo) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarerepo.Table, softwarerepo.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwarerepo.TenantTable, softwarerepo.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPackages queries the packages edge of a SoftwareRepo.
+func (c *SoftwareRepoClient) QueryPackages(sr *SoftwareRepo) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarerepo.Table, softwarerepo.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, softwarerepo.PackagesTable, softwarerepo.PackagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SoftwareRepoClient) Hooks() []Hook {
+	return c.hooks.SoftwareRepo
+}
+
+// Interceptors returns the client interceptors.
+func (c *SoftwareRepoClient) Interceptors() []Interceptor {
+	return c.inters.SoftwareRepo
+}
+
+func (c *SoftwareRepoClient) mutate(ctx context.Context, m *SoftwareRepoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SoftwareRepoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SoftwareRepoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SoftwareRepoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SoftwareRepoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SoftwareRepo mutation op: %q", m.Op())
+	}
+}
+
 // SystemUpdateClient is a client for the SystemUpdate schema.
 type SystemUpdateClient struct {
 	config
@@ -6074,6 +7063,22 @@ func (c *TaskClient) QueryProfile(t *Task) *ProfileQuery {
 	return query
 }
 
+// QueryReports queries the reports edge of a Task.
+func (c *TaskClient) QueryReports(t *Task) *TaskReportQuery {
+	query := (&TaskReportClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(task.Table, task.FieldID, id),
+			sqlgraph.To(taskreport.Table, taskreport.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, task.ReportsTable, task.ReportsColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TaskClient) Hooks() []Hook {
 	return c.hooks.Task
@@ -6096,6 +7101,171 @@ func (c *TaskClient) mutate(ctx context.Context, m *TaskMutation) (Value, error)
 		return (&TaskDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Task mutation op: %q", m.Op())
+	}
+}
+
+// TaskReportClient is a client for the TaskReport schema.
+type TaskReportClient struct {
+	config
+}
+
+// NewTaskReportClient returns a client for the TaskReport from the given config.
+func NewTaskReportClient(c config) *TaskReportClient {
+	return &TaskReportClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `taskreport.Hooks(f(g(h())))`.
+func (c *TaskReportClient) Use(hooks ...Hook) {
+	c.hooks.TaskReport = append(c.hooks.TaskReport, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `taskreport.Intercept(f(g(h())))`.
+func (c *TaskReportClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TaskReport = append(c.inters.TaskReport, interceptors...)
+}
+
+// Create returns a builder for creating a TaskReport entity.
+func (c *TaskReportClient) Create() *TaskReportCreate {
+	mutation := newTaskReportMutation(c.config, OpCreate)
+	return &TaskReportCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TaskReport entities.
+func (c *TaskReportClient) CreateBulk(builders ...*TaskReportCreate) *TaskReportCreateBulk {
+	return &TaskReportCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TaskReportClient) MapCreateBulk(slice any, setFunc func(*TaskReportCreate, int)) *TaskReportCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TaskReportCreateBulk{err: fmt.Errorf("calling to TaskReportClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TaskReportCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TaskReportCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TaskReport.
+func (c *TaskReportClient) Update() *TaskReportUpdate {
+	mutation := newTaskReportMutation(c.config, OpUpdate)
+	return &TaskReportUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TaskReportClient) UpdateOne(tr *TaskReport) *TaskReportUpdateOne {
+	mutation := newTaskReportMutation(c.config, OpUpdateOne, withTaskReport(tr))
+	return &TaskReportUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TaskReportClient) UpdateOneID(id int) *TaskReportUpdateOne {
+	mutation := newTaskReportMutation(c.config, OpUpdateOne, withTaskReportID(id))
+	return &TaskReportUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TaskReport.
+func (c *TaskReportClient) Delete() *TaskReportDelete {
+	mutation := newTaskReportMutation(c.config, OpDelete)
+	return &TaskReportDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TaskReportClient) DeleteOne(tr *TaskReport) *TaskReportDeleteOne {
+	return c.DeleteOneID(tr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TaskReportClient) DeleteOneID(id int) *TaskReportDeleteOne {
+	builder := c.Delete().Where(taskreport.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TaskReportDeleteOne{builder}
+}
+
+// Query returns a query builder for TaskReport.
+func (c *TaskReportClient) Query() *TaskReportQuery {
+	return &TaskReportQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTaskReport},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TaskReport entity by its id.
+func (c *TaskReportClient) Get(ctx context.Context, id int) (*TaskReport, error) {
+	return c.Query().Where(taskreport.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TaskReportClient) GetX(ctx context.Context, id int) *TaskReport {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProfileissue queries the profileissue edge of a TaskReport.
+func (c *TaskReportClient) QueryProfileissue(tr *TaskReport) *ProfileIssueQuery {
+	query := (&ProfileIssueClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := tr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(taskreport.Table, taskreport.FieldID, id),
+			sqlgraph.To(profileissue.Table, profileissue.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, taskreport.ProfileissueTable, taskreport.ProfileissueColumn),
+		)
+		fromV = sqlgraph.Neighbors(tr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTask queries the task edge of a TaskReport.
+func (c *TaskReportClient) QueryTask(tr *TaskReport) *TaskQuery {
+	query := (&TaskClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := tr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(taskreport.Table, taskreport.FieldID, id),
+			sqlgraph.To(task.Table, task.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, taskreport.TaskTable, taskreport.TaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(tr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TaskReportClient) Hooks() []Hook {
+	return c.hooks.TaskReport
+}
+
+// Interceptors returns the client interceptors.
+func (c *TaskReportClient) Interceptors() []Interceptor {
+	return c.inters.TaskReport
+}
+
+func (c *TaskReportClient) mutate(ctx context.Context, m *TaskReportMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TaskReportCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TaskReportUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TaskReportUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TaskReportDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TaskReport mutation op: %q", m.Op())
 	}
 }
 
@@ -6328,6 +7498,70 @@ func (c *TenantClient) QueryEnrollmentTokens(t *Tenant) *EnrollmentTokenQuery {
 			sqlgraph.From(tenant.Table, tenant.FieldID, id),
 			sqlgraph.To(enrollmenttoken.Table, enrollmenttoken.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, tenant.EnrollmentTokensTable, tenant.EnrollmentTokensColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySoftwareRepos queries the software_repos edge of a Tenant.
+func (c *TenantClient) QuerySoftwareRepos(t *Tenant) *SoftwareRepoQuery {
+	query := (&SoftwareRepoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(softwarerepo.Table, softwarerepo.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwareReposTable, tenant.SoftwareReposColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySoftwarePackages queries the software_packages edge of a Tenant.
+func (c *TenantClient) QuerySoftwarePackages(t *Tenant) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwarePackagesTable, tenant.SoftwarePackagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySoftwareCatalogs queries the software_catalogs edge of a Tenant.
+func (c *TenantClient) QuerySoftwareCatalogs(t *Tenant) *SoftwareCatalogQuery {
+	query := (&SoftwareCatalogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(softwarecatalog.Table, softwarecatalog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwareCatalogsTable, tenant.SoftwareCatalogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySoftwareAssignments queries the software_assignments edge of a Tenant.
+func (c *TenantClient) QuerySoftwareAssignments(t *Tenant) *SoftwareAssignmentQuery {
+	query := (&SoftwareAssignmentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tenant.Table, tenant.FieldID, id),
+			sqlgraph.To(softwareassignment.Table, softwareassignment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwareAssignmentsTable, tenant.SoftwareAssignmentsColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -7011,16 +8245,19 @@ type (
 		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
 		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
 		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
-		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,
-		Tag, Task, Tenant, Update, User, UserTenant, WingetConfigExclusion []ent.Hook
+		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
+		SoftwareAssignment, SoftwareCatalog, SoftwareInstallLog, SoftwarePackage,
+		SoftwareRepo, SystemUpdate, Tag, Task, TaskReport, Tenant, Update, User,
+		UserTenant, WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
 		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
 		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
 		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
 		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
-		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site, SystemUpdate,
-		Tag, Task, Tenant, Update, User, UserTenant,
-		WingetConfigExclusion []ent.Interceptor
+		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
+		SoftwareAssignment, SoftwareCatalog, SoftwareInstallLog, SoftwarePackage,
+		SoftwareRepo, SystemUpdate, Tag, Task, TaskReport, Tenant, Update, User,
+		UserTenant, WingetConfigExclusion []ent.Interceptor
 	}
 )

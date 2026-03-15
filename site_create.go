@@ -96,6 +96,20 @@ func (sc *SiteCreate) SetNillableModified(t *time.Time) *SiteCreate {
 	return sc
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (sc *SiteCreate) SetCatalogRing(s string) *SiteCreate {
+	sc.mutation.SetCatalogRing(s)
+	return sc
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (sc *SiteCreate) SetNillableCatalogRing(s *string) *SiteCreate {
+	if s != nil {
+		sc.SetCatalogRing(*s)
+	}
+	return sc
+}
+
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (sc *SiteCreate) SetTenantID(id int) *SiteCreate {
 	sc.mutation.SetTenantID(id)
@@ -253,6 +267,10 @@ func (sc *SiteCreate) createSpec() (*Site, *sqlgraph.CreateSpec) {
 	if value, ok := sc.mutation.Modified(); ok {
 		_spec.SetField(site.FieldModified, field.TypeTime, value)
 		_node.Modified = value
+	}
+	if value, ok := sc.mutation.CatalogRing(); ok {
+		_spec.SetField(site.FieldCatalogRing, field.TypeString, value)
+		_node.CatalogRing = &value
 	}
 	if nodes := sc.mutation.TenantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -461,6 +479,24 @@ func (u *SiteUpsert) ClearModified() *SiteUpsert {
 	return u
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *SiteUpsert) SetCatalogRing(v string) *SiteUpsert {
+	u.Set(site.FieldCatalogRing, v)
+	return u
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *SiteUpsert) UpdateCatalogRing() *SiteUpsert {
+	u.SetExcluded(site.FieldCatalogRing)
+	return u
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *SiteUpsert) ClearCatalogRing() *SiteUpsert {
+	u.SetNull(site.FieldCatalogRing)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -603,6 +639,27 @@ func (u *SiteUpsertOne) UpdateModified() *SiteUpsertOne {
 func (u *SiteUpsertOne) ClearModified() *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.ClearModified()
+	})
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *SiteUpsertOne) SetCatalogRing(v string) *SiteUpsertOne {
+	return u.Update(func(s *SiteUpsert) {
+		s.SetCatalogRing(v)
+	})
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *SiteUpsertOne) UpdateCatalogRing() *SiteUpsertOne {
+	return u.Update(func(s *SiteUpsert) {
+		s.UpdateCatalogRing()
+	})
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *SiteUpsertOne) ClearCatalogRing() *SiteUpsertOne {
+	return u.Update(func(s *SiteUpsert) {
+		s.ClearCatalogRing()
 	})
 }
 
@@ -912,6 +969,27 @@ func (u *SiteUpsertBulk) UpdateModified() *SiteUpsertBulk {
 func (u *SiteUpsertBulk) ClearModified() *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.ClearModified()
+	})
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (u *SiteUpsertBulk) SetCatalogRing(v string) *SiteUpsertBulk {
+	return u.Update(func(s *SiteUpsert) {
+		s.SetCatalogRing(v)
+	})
+}
+
+// UpdateCatalogRing sets the "catalog_ring" field to the value that was provided on create.
+func (u *SiteUpsertBulk) UpdateCatalogRing() *SiteUpsertBulk {
+	return u.Update(func(s *SiteUpsert) {
+		s.UpdateCatalogRing()
+	})
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (u *SiteUpsertBulk) ClearCatalogRing() *SiteUpsertBulk {
+	return u.Update(func(s *SiteUpsert) {
+		s.ClearCatalogRing()
 	})
 }
 

@@ -31,6 +31,7 @@ import (
 	"github.com/EigerCode/ent/release"
 	"github.com/EigerCode/ent/share"
 	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/softwareinstalllog"
 	"github.com/EigerCode/ent/systemupdate"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/update"
@@ -65,6 +66,7 @@ type AgentQuery struct {
 	withSite                *SiteQuery
 	withPhysicaldisks       *PhysicalDiskQuery
 	withNetbird             *NetbirdQuery
+	withSoftwareInstallLogs *SoftwareInstallLogQuery
 	withFKs                 bool
 	modifiers               []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -565,6 +567,28 @@ func (aq *AgentQuery) QueryNetbird() *NetbirdQuery {
 	return query
 }
 
+// QuerySoftwareInstallLogs chains the current query on the "software_install_logs" edge.
+func (aq *AgentQuery) QuerySoftwareInstallLogs() *SoftwareInstallLogQuery {
+	query := (&SoftwareInstallLogClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(agent.Table, agent.FieldID, selector),
+			sqlgraph.To(softwareinstalllog.Table, softwareinstalllog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, agent.SoftwareInstallLogsTable, agent.SoftwareInstallLogsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Agent entity from the query.
 // Returns a *NotFoundError when no Agent was found.
 func (aq *AgentQuery) First(ctx context.Context) (*Agent, error) {
@@ -778,6 +802,7 @@ func (aq *AgentQuery) Clone() *AgentQuery {
 		withSite:                aq.withSite.Clone(),
 		withPhysicaldisks:       aq.withPhysicaldisks.Clone(),
 		withNetbird:             aq.withNetbird.Clone(),
+		withSoftwareInstallLogs: aq.withSoftwareInstallLogs.Clone(),
 		// clone intermediate query.
 		sql:       aq.sql.Clone(),
 		path:      aq.path,
@@ -1016,6 +1041,17 @@ func (aq *AgentQuery) WithNetbird(opts ...func(*NetbirdQuery)) *AgentQuery {
 	return aq
 }
 
+// WithSoftwareInstallLogs tells the query-builder to eager-load the nodes that are connected to
+// the "software_install_logs" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AgentQuery) WithSoftwareInstallLogs(opts ...func(*SoftwareInstallLogQuery)) *AgentQuery {
+	query := (&SoftwareInstallLogClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withSoftwareInstallLogs = query
+	return aq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -1095,7 +1131,7 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 		nodes       = []*Agent{}
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
-		loadedTypes = [21]bool{
+		loadedTypes = [22]bool{
 			aq.withComputer != nil,
 			aq.withOperatingsystem != nil,
 			aq.withSystemupdate != nil,
@@ -1117,6 +1153,7 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 			aq.withSite != nil,
 			aq.withPhysicaldisks != nil,
 			aq.withNetbird != nil,
+			aq.withSoftwareInstallLogs != nil,
 		}
 	)
 	if aq.withRelease != nil {
@@ -1286,6 +1323,15 @@ func (aq *AgentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Agent,
 	if query := aq.withNetbird; query != nil {
 		if err := aq.loadNetbird(ctx, query, nodes, nil,
 			func(n *Agent, e *Netbird) { n.Edges.Netbird = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withSoftwareInstallLogs; query != nil {
+		if err := aq.loadSoftwareInstallLogs(ctx, query, nodes,
+			func(n *Agent) { n.Edges.SoftwareInstallLogs = []*SoftwareInstallLog{} },
+			func(n *Agent, e *SoftwareInstallLog) {
+				n.Edges.SoftwareInstallLogs = append(n.Edges.SoftwareInstallLogs, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -1984,6 +2030,37 @@ func (aq *AgentQuery) loadNetbird(ctx context.Context, query *NetbirdQuery, node
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "agent_netbird" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (aq *AgentQuery) loadSoftwareInstallLogs(ctx context.Context, query *SoftwareInstallLogQuery, nodes []*Agent, init func(*Agent), assign func(*Agent, *SoftwareInstallLog)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Agent)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.SoftwareInstallLog(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(agent.SoftwareInstallLogsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.agent_software_install_logs
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "agent_software_install_logs" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "agent_software_install_logs" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -144,6 +145,9 @@ func (Task) Fields() []ent.Field {
 		field.Int("tenant").Optional(),
 		field.String("netbird_groups").Optional().Default(""),
 		field.Bool("netbird_allow_extra_dns_labels").Optional().Default(false),
+		field.Bool("ignore_errors").Optional().Default(false),
+		field.Bool("disabled").Default(false),
+		field.Int("order").Optional().Default(0),
 	}
 }
 
@@ -152,5 +156,6 @@ func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("tags", Tag.Type),
 		edge.From("profile", Profile.Type).Unique().Ref("tasks"),
+		edge.To("reports", TaskReport.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }

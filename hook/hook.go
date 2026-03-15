@@ -381,6 +381,66 @@ func (f SiteFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SiteMutation", m)
 }
 
+// The SoftwareAssignmentFunc type is an adapter to allow the use of ordinary
+// function as SoftwareAssignment mutator.
+type SoftwareAssignmentFunc func(context.Context, *ent.SoftwareAssignmentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SoftwareAssignmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SoftwareAssignmentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SoftwareAssignmentMutation", m)
+}
+
+// The SoftwareCatalogFunc type is an adapter to allow the use of ordinary
+// function as SoftwareCatalog mutator.
+type SoftwareCatalogFunc func(context.Context, *ent.SoftwareCatalogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SoftwareCatalogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SoftwareCatalogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SoftwareCatalogMutation", m)
+}
+
+// The SoftwareInstallLogFunc type is an adapter to allow the use of ordinary
+// function as SoftwareInstallLog mutator.
+type SoftwareInstallLogFunc func(context.Context, *ent.SoftwareInstallLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SoftwareInstallLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SoftwareInstallLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SoftwareInstallLogMutation", m)
+}
+
+// The SoftwarePackageFunc type is an adapter to allow the use of ordinary
+// function as SoftwarePackage mutator.
+type SoftwarePackageFunc func(context.Context, *ent.SoftwarePackageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SoftwarePackageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SoftwarePackageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SoftwarePackageMutation", m)
+}
+
+// The SoftwareRepoFunc type is an adapter to allow the use of ordinary
+// function as SoftwareRepo mutator.
+type SoftwareRepoFunc func(context.Context, *ent.SoftwareRepoMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SoftwareRepoFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SoftwareRepoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SoftwareRepoMutation", m)
+}
+
 // The SystemUpdateFunc type is an adapter to allow the use of ordinary
 // function as SystemUpdate mutator.
 type SystemUpdateFunc func(context.Context, *ent.SystemUpdateMutation) (ent.Value, error)
@@ -415,6 +475,18 @@ func (f TaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskMutation", m)
+}
+
+// The TaskReportFunc type is an adapter to allow the use of ordinary
+// function as TaskReport mutator.
+type TaskReportFunc func(context.Context, *ent.TaskReportMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TaskReportFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TaskReportMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskReportMutation", m)
 }
 
 // The TenantFunc type is an adapter to allow the use of ordinary

@@ -74,12 +74,24 @@ type Tx struct {
 	Share *ShareClient
 	// Site is the client for interacting with the Site builders.
 	Site *SiteClient
+	// SoftwareAssignment is the client for interacting with the SoftwareAssignment builders.
+	SoftwareAssignment *SoftwareAssignmentClient
+	// SoftwareCatalog is the client for interacting with the SoftwareCatalog builders.
+	SoftwareCatalog *SoftwareCatalogClient
+	// SoftwareInstallLog is the client for interacting with the SoftwareInstallLog builders.
+	SoftwareInstallLog *SoftwareInstallLogClient
+	// SoftwarePackage is the client for interacting with the SoftwarePackage builders.
+	SoftwarePackage *SoftwarePackageClient
+	// SoftwareRepo is the client for interacting with the SoftwareRepo builders.
+	SoftwareRepo *SoftwareRepoClient
 	// SystemUpdate is the client for interacting with the SystemUpdate builders.
 	SystemUpdate *SystemUpdateClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TaskReport is the client for interacting with the TaskReport builders.
+	TaskReport *TaskReportClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
 	// Update is the client for interacting with the Update builders.
@@ -252,9 +264,15 @@ func (tx *Tx) init() {
 	tx.Settings = NewSettingsClient(tx.config)
 	tx.Share = NewShareClient(tx.config)
 	tx.Site = NewSiteClient(tx.config)
+	tx.SoftwareAssignment = NewSoftwareAssignmentClient(tx.config)
+	tx.SoftwareCatalog = NewSoftwareCatalogClient(tx.config)
+	tx.SoftwareInstallLog = NewSoftwareInstallLogClient(tx.config)
+	tx.SoftwarePackage = NewSoftwarePackageClient(tx.config)
+	tx.SoftwareRepo = NewSoftwareRepoClient(tx.config)
 	tx.SystemUpdate = NewSystemUpdateClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
+	tx.TaskReport = NewTaskReportClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.Update = NewUpdateClient(tx.config)
 	tx.User = NewUserClient(tx.config)

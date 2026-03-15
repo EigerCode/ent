@@ -105,6 +105,20 @@ func (dc *DeploymentCreate) SetNillableByProfile(b *bool) *DeploymentCreate {
 	return dc
 }
 
+// SetMoreInfo sets the "more_info" field.
+func (dc *DeploymentCreate) SetMoreInfo(s string) *DeploymentCreate {
+	dc.mutation.SetMoreInfo(s)
+	return dc
+}
+
+// SetNillableMoreInfo sets the "more_info" field if the given value is not nil.
+func (dc *DeploymentCreate) SetNillableMoreInfo(s *string) *DeploymentCreate {
+	if s != nil {
+		dc.SetMoreInfo(*s)
+	}
+	return dc
+}
+
 // SetOwnerID sets the "owner" edge to the Agent entity by ID.
 func (dc *DeploymentCreate) SetOwnerID(id string) *DeploymentCreate {
 	dc.mutation.SetOwnerID(id)
@@ -234,6 +248,10 @@ func (dc *DeploymentCreate) createSpec() (*Deployment, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.ByProfile(); ok {
 		_spec.SetField(deployment.FieldByProfile, field.TypeBool, value)
 		_node.ByProfile = value
+	}
+	if value, ok := dc.mutation.MoreInfo(); ok {
+		_spec.SetField(deployment.FieldMoreInfo, field.TypeString, value)
+		_node.MoreInfo = value
 	}
 	if nodes := dc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -418,6 +436,24 @@ func (u *DeploymentUpsert) ClearByProfile() *DeploymentUpsert {
 	return u
 }
 
+// SetMoreInfo sets the "more_info" field.
+func (u *DeploymentUpsert) SetMoreInfo(v string) *DeploymentUpsert {
+	u.Set(deployment.FieldMoreInfo, v)
+	return u
+}
+
+// UpdateMoreInfo sets the "more_info" field to the value that was provided on create.
+func (u *DeploymentUpsert) UpdateMoreInfo() *DeploymentUpsert {
+	u.SetExcluded(deployment.FieldMoreInfo)
+	return u
+}
+
+// ClearMoreInfo clears the value of the "more_info" field.
+func (u *DeploymentUpsert) ClearMoreInfo() *DeploymentUpsert {
+	u.SetNull(deployment.FieldMoreInfo)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -588,6 +624,27 @@ func (u *DeploymentUpsertOne) UpdateByProfile() *DeploymentUpsertOne {
 func (u *DeploymentUpsertOne) ClearByProfile() *DeploymentUpsertOne {
 	return u.Update(func(s *DeploymentUpsert) {
 		s.ClearByProfile()
+	})
+}
+
+// SetMoreInfo sets the "more_info" field.
+func (u *DeploymentUpsertOne) SetMoreInfo(v string) *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetMoreInfo(v)
+	})
+}
+
+// UpdateMoreInfo sets the "more_info" field to the value that was provided on create.
+func (u *DeploymentUpsertOne) UpdateMoreInfo() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateMoreInfo()
+	})
+}
+
+// ClearMoreInfo clears the value of the "more_info" field.
+func (u *DeploymentUpsertOne) ClearMoreInfo() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearMoreInfo()
 	})
 }
 
@@ -925,6 +982,27 @@ func (u *DeploymentUpsertBulk) UpdateByProfile() *DeploymentUpsertBulk {
 func (u *DeploymentUpsertBulk) ClearByProfile() *DeploymentUpsertBulk {
 	return u.Update(func(s *DeploymentUpsert) {
 		s.ClearByProfile()
+	})
+}
+
+// SetMoreInfo sets the "more_info" field.
+func (u *DeploymentUpsertBulk) SetMoreInfo(v string) *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetMoreInfo(v)
+	})
+}
+
+// UpdateMoreInfo sets the "more_info" field to the value that was provided on create.
+func (u *DeploymentUpsertBulk) UpdateMoreInfo() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateMoreInfo()
+	})
+}
+
+// ClearMoreInfo clears the value of the "more_info" field.
+func (u *DeploymentUpsertBulk) ClearMoreInfo() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearMoreInfo()
 	})
 }
 

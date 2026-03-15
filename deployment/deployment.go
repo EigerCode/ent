@@ -28,6 +28,8 @@ const (
 	FieldFailed = "failed"
 	// FieldByProfile holds the string denoting the by_profile field in the database.
 	FieldByProfile = "by_profile"
+	// FieldMoreInfo holds the string denoting the more_info field in the database.
+	FieldMoreInfo = "more_info"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// AgentFieldID holds the string denoting the ID field of the Agent.
@@ -53,6 +55,7 @@ var Columns = []string{
 	FieldUpdated,
 	FieldFailed,
 	FieldByProfile,
+	FieldMoreInfo,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "deployments"
@@ -130,6 +133,11 @@ func ByFailed(opts ...sql.OrderTermOption) OrderOption {
 // ByByProfile orders the results by the by_profile field.
 func ByByProfile(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldByProfile, opts...).ToFunc()
+}
+
+// ByMoreInfo orders the results by the more_info field.
+func ByMoreInfo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMoreInfo, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

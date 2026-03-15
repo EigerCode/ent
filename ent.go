@@ -43,9 +43,15 @@ import (
 	"github.com/EigerCode/ent/settings"
 	"github.com/EigerCode/ent/share"
 	"github.com/EigerCode/ent/site"
+	"github.com/EigerCode/ent/softwareassignment"
+	"github.com/EigerCode/ent/softwarecatalog"
+	"github.com/EigerCode/ent/softwareinstalllog"
+	"github.com/EigerCode/ent/softwarepackage"
+	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/systemupdate"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/task"
+	"github.com/EigerCode/ent/taskreport"
 	"github.com/EigerCode/ent/tenant"
 	"github.com/EigerCode/ent/update"
 	"github.com/EigerCode/ent/user"
@@ -142,9 +148,15 @@ func checkColumn(table, column string) error {
 			settings.Table:              settings.ValidColumn,
 			share.Table:                 share.ValidColumn,
 			site.Table:                  site.ValidColumn,
+			softwareassignment.Table:    softwareassignment.ValidColumn,
+			softwarecatalog.Table:       softwarecatalog.ValidColumn,
+			softwareinstalllog.Table:    softwareinstalllog.ValidColumn,
+			softwarepackage.Table:       softwarepackage.ValidColumn,
+			softwarerepo.Table:          softwarerepo.ValidColumn,
 			systemupdate.Table:          systemupdate.ValidColumn,
 			tag.Table:                   tag.ValidColumn,
 			task.Table:                  task.ValidColumn,
+			taskreport.Table:            taskreport.ValidColumn,
 			tenant.Table:                tenant.ValidColumn,
 			update.Table:                update.ValidColumn,
 			user.Table:                  user.ValidColumn,

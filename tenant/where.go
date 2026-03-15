@@ -564,6 +564,98 @@ func HasEnrollmentTokensWith(preds ...predicate.EnrollmentToken) predicate.Tenan
 	})
 }
 
+// HasSoftwareRepos applies the HasEdge predicate on the "software_repos" edge.
+func HasSoftwareRepos() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SoftwareReposTable, SoftwareReposColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSoftwareReposWith applies the HasEdge predicate on the "software_repos" edge with a given conditions (other predicates).
+func HasSoftwareReposWith(preds ...predicate.SoftwareRepo) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newSoftwareReposStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSoftwarePackages applies the HasEdge predicate on the "software_packages" edge.
+func HasSoftwarePackages() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SoftwarePackagesTable, SoftwarePackagesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSoftwarePackagesWith applies the HasEdge predicate on the "software_packages" edge with a given conditions (other predicates).
+func HasSoftwarePackagesWith(preds ...predicate.SoftwarePackage) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newSoftwarePackagesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSoftwareCatalogs applies the HasEdge predicate on the "software_catalogs" edge.
+func HasSoftwareCatalogs() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SoftwareCatalogsTable, SoftwareCatalogsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSoftwareCatalogsWith applies the HasEdge predicate on the "software_catalogs" edge with a given conditions (other predicates).
+func HasSoftwareCatalogsWith(preds ...predicate.SoftwareCatalog) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newSoftwareCatalogsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSoftwareAssignments applies the HasEdge predicate on the "software_assignments" edge.
+func HasSoftwareAssignments() predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SoftwareAssignmentsTable, SoftwareAssignmentsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSoftwareAssignmentsWith applies the HasEdge predicate on the "software_assignments" edge with a given conditions (other predicates).
+func HasSoftwareAssignmentsWith(preds ...predicate.SoftwareAssignment) predicate.Tenant {
+	return predicate.Tenant(func(s *sql.Selector) {
+		step := newSoftwareAssignmentsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Tenant) predicate.Tenant {
 	return predicate.Tenant(sql.AndPredicates(predicates...))
