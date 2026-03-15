@@ -23,8 +23,6 @@ const (
 	FieldVersion = "version"
 	// FieldPlatform holds the string denoting the platform field in the database.
 	FieldPlatform = "platform"
-	// FieldInstallerType holds the string denoting the installer_type field in the database.
-	FieldInstallerType = "installer_type"
 	// FieldInstallerPath holds the string denoting the installer_path field in the database.
 	FieldInstallerPath = "installer_path"
 	// FieldChecksumSha256 holds the string denoting the checksum_sha256 field in the database.
@@ -67,6 +65,8 @@ const (
 	FieldUnattendedInstall = "unattended_install"
 	// FieldUnattendedUninstall holds the string denoting the unattended_uninstall field in the database.
 	FieldUnattendedUninstall = "unattended_uninstall"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldSource holds the string denoting the source field in the database.
 	FieldSource = "source"
 	// FieldCreated holds the string denoting the created field in the database.
@@ -79,14 +79,16 @@ const (
 	EdgeCatalogs = "catalogs"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
 	EdgeTenant = "tenant"
-	// EdgeAssignments holds the string denoting the assignments edge name in mutations.
-	EdgeAssignments = "assignments"
 	// EdgeInstallLogs holds the string denoting the install_logs edge name in mutations.
 	EdgeInstallLogs = "install_logs"
 	// EdgeRequires holds the string denoting the requires edge name in mutations.
 	EdgeRequires = "requires"
 	// EdgeUpdateFor holds the string denoting the update_for edge name in mutations.
 	EdgeUpdateFor = "update_for"
+	// EdgeGlobalRef holds the string denoting the global_ref edge name in mutations.
+	EdgeGlobalRef = "global_ref"
+	// EdgeSubscribers holds the string denoting the subscribers edge name in mutations.
+	EdgeSubscribers = "subscribers"
 	// Table holds the table name of the softwarepackage in the database.
 	Table = "software_packages"
 	// RepoTable is the table that holds the repo relation/edge.
@@ -108,13 +110,6 @@ const (
 	TenantInverseTable = "tenants"
 	// TenantColumn is the table column denoting the tenant relation/edge.
 	TenantColumn = "tenant_software_packages"
-	// AssignmentsTable is the table that holds the assignments relation/edge.
-	AssignmentsTable = "software_assignments"
-	// AssignmentsInverseTable is the table name for the SoftwareAssignment entity.
-	// It exists in this package in order to avoid circular dependency with the "softwareassignment" package.
-	AssignmentsInverseTable = "software_assignments"
-	// AssignmentsColumn is the table column denoting the assignments relation/edge.
-	AssignmentsColumn = "software_package_assignments"
 	// InstallLogsTable is the table that holds the install_logs relation/edge.
 	InstallLogsTable = "software_install_logs"
 	// InstallLogsInverseTable is the table name for the SoftwareInstallLog entity.
@@ -126,6 +121,14 @@ const (
 	RequiresTable = "software_package_requires"
 	// UpdateForTable is the table that holds the update_for relation/edge. The primary key declared below.
 	UpdateForTable = "software_package_update_for"
+	// GlobalRefTable is the table that holds the global_ref relation/edge.
+	GlobalRefTable = "software_packages"
+	// GlobalRefColumn is the table column denoting the global_ref relation/edge.
+	GlobalRefColumn = "software_package_subscribers"
+	// SubscribersTable is the table that holds the subscribers relation/edge.
+	SubscribersTable = "software_packages"
+	// SubscribersColumn is the table column denoting the subscribers relation/edge.
+	SubscribersColumn = "software_package_subscribers"
 )
 
 // Columns holds all SQL columns for softwarepackage fields.
@@ -135,7 +138,6 @@ var Columns = []string{
 	FieldDisplayName,
 	FieldVersion,
 	FieldPlatform,
-	FieldInstallerType,
 	FieldInstallerPath,
 	FieldChecksumSha256,
 	FieldSizeBytes,
@@ -157,6 +159,7 @@ var Columns = []string{
 	FieldForceInstallDate,
 	FieldUnattendedInstall,
 	FieldUnattendedUninstall,
+	FieldStatus,
 	FieldSource,
 	FieldCreated,
 	FieldModified,
@@ -165,6 +168,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "software_packages"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"software_package_subscribers",
 	"software_repo_packages",
 	"tenant_software_packages",
 }
@@ -272,32 +276,6 @@ func PlatformValidator(pl Platform) error {
 	}
 }
 
-// InstallerType defines the type for the "installer_type" enum field.
-type InstallerType string
-
-// InstallerType values.
-const (
-	InstallerTypePkg  InstallerType = "pkg"
-	InstallerTypeDmg  InstallerType = "dmg"
-	InstallerTypeMsi  InstallerType = "msi"
-	InstallerTypeExe  InstallerType = "exe"
-	InstallerTypeMsix InstallerType = "msix"
-)
-
-func (it InstallerType) String() string {
-	return string(it)
-}
-
-// InstallerTypeValidator is a validator for the "installer_type" field enum values. It is called by the builders before save.
-func InstallerTypeValidator(it InstallerType) error {
-	switch it {
-	case InstallerTypePkg, InstallerTypeDmg, InstallerTypeMsi, InstallerTypeExe, InstallerTypeMsix:
-		return nil
-	default:
-		return fmt.Errorf("softwarepackage: invalid enum value for installer_type field: %q", it)
-	}
-}
-
 // RestartAction defines the type for the "restart_action" enum field.
 type RestartAction string
 
@@ -326,6 +304,33 @@ func RestartActionValidator(ra RestartAction) error {
 	}
 }
 
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusReady is the default value of the Status enum.
+const DefaultStatus = StatusReady
+
+// Status values.
+const (
+	StatusUploading Status = "uploading"
+	StatusReady     Status = "ready"
+	StatusError     Status = "error"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusUploading, StatusReady, StatusError:
+		return nil
+	default:
+		return fmt.Errorf("softwarepackage: invalid enum value for status field: %q", s)
+	}
+}
+
 // Source defines the type for the "source" enum field.
 type Source string
 
@@ -334,8 +339,9 @@ const DefaultSource = SourceUpload
 
 // Source values.
 const (
-	SourceUpload Source = "upload"
-	SourceGlobal Source = "global"
+	SourceUpload             Source = "upload"
+	SourceGlobal             Source = "global"
+	SourceGlobalSubscription Source = "global_subscription"
 )
 
 func (s Source) String() string {
@@ -345,7 +351,7 @@ func (s Source) String() string {
 // SourceValidator is a validator for the "source" field enum values. It is called by the builders before save.
 func SourceValidator(s Source) error {
 	switch s {
-	case SourceUpload, SourceGlobal:
+	case SourceUpload, SourceGlobal, SourceGlobalSubscription:
 		return nil
 	default:
 		return fmt.Errorf("softwarepackage: invalid enum value for source field: %q", s)
@@ -378,11 +384,6 @@ func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 // ByPlatform orders the results by the platform field.
 func ByPlatform(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPlatform, opts...).ToFunc()
-}
-
-// ByInstallerType orders the results by the installer_type field.
-func ByInstallerType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldInstallerType, opts...).ToFunc()
 }
 
 // ByInstallerPath orders the results by the installer_path field.
@@ -490,6 +491,11 @@ func ByUnattendedUninstall(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUnattendedUninstall, opts...).ToFunc()
 }
 
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
 // BySource orders the results by the source field.
 func BySource(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSource, opts...).ToFunc()
@@ -530,20 +536,6 @@ func ByCatalogs(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 func ByTenantField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newTenantStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByAssignmentsCount orders the results by assignments count.
-func ByAssignmentsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAssignmentsStep(), opts...)
-	}
-}
-
-// ByAssignments orders the results by assignments terms.
-func ByAssignments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAssignmentsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -588,6 +580,27 @@ func ByUpdateFor(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUpdateForStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByGlobalRefField orders the results by global_ref field.
+func ByGlobalRefField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGlobalRefStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// BySubscribersCount orders the results by subscribers count.
+func BySubscribersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSubscribersStep(), opts...)
+	}
+}
+
+// BySubscribers orders the results by subscribers terms.
+func BySubscribers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSubscribersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newRepoStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -609,13 +622,6 @@ func newTenantStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, TenantTable, TenantColumn),
 	)
 }
-func newAssignmentsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AssignmentsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, AssignmentsTable, AssignmentsColumn),
-	)
-}
 func newInstallLogsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -635,5 +641,19 @@ func newUpdateForStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, UpdateForTable, UpdateForPrimaryKey...),
+	)
+}
+func newGlobalRefStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, GlobalRefTable, GlobalRefColumn),
+	)
+}
+func newSubscribersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SubscribersTable, SubscribersColumn),
 	)
 }

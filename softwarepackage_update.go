@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/predicate"
-	"github.com/open-uem/ent/softwareassignment"
 	"github.com/open-uem/ent/softwarecatalog"
 	"github.com/open-uem/ent/softwareinstalllog"
 	"github.com/open-uem/ent/softwarepackage"
@@ -92,20 +91,6 @@ func (spu *SoftwarePackageUpdate) SetPlatform(s softwarepackage.Platform) *Softw
 func (spu *SoftwarePackageUpdate) SetNillablePlatform(s *softwarepackage.Platform) *SoftwarePackageUpdate {
 	if s != nil {
 		spu.SetPlatform(*s)
-	}
-	return spu
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (spu *SoftwarePackageUpdate) SetInstallerType(st softwarepackage.InstallerType) *SoftwarePackageUpdate {
-	spu.mutation.SetInstallerType(st)
-	return spu
-}
-
-// SetNillableInstallerType sets the "installer_type" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableInstallerType(st *softwarepackage.InstallerType) *SoftwarePackageUpdate {
-	if st != nil {
-		spu.SetInstallerType(*st)
 	}
 	return spu
 }
@@ -531,6 +516,26 @@ func (spu *SoftwarePackageUpdate) ClearUnattendedUninstall() *SoftwarePackageUpd
 	return spu
 }
 
+// SetStatus sets the "status" field.
+func (spu *SoftwarePackageUpdate) SetStatus(s softwarepackage.Status) *SoftwarePackageUpdate {
+	spu.mutation.SetStatus(s)
+	return spu
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillableStatus(s *softwarepackage.Status) *SoftwarePackageUpdate {
+	if s != nil {
+		spu.SetStatus(*s)
+	}
+	return spu
+}
+
+// ClearStatus clears the value of the "status" field.
+func (spu *SoftwarePackageUpdate) ClearStatus() *SoftwarePackageUpdate {
+	spu.mutation.ClearStatus()
+	return spu
+}
+
 // SetSource sets the "source" field.
 func (spu *SoftwarePackageUpdate) SetSource(s softwarepackage.Source) *SoftwarePackageUpdate {
 	spu.mutation.SetSource(s)
@@ -636,21 +641,6 @@ func (spu *SoftwarePackageUpdate) SetTenant(t *Tenant) *SoftwarePackageUpdate {
 	return spu.SetTenantID(t.ID)
 }
 
-// AddAssignmentIDs adds the "assignments" edge to the SoftwareAssignment entity by IDs.
-func (spu *SoftwarePackageUpdate) AddAssignmentIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.AddAssignmentIDs(ids...)
-	return spu
-}
-
-// AddAssignments adds the "assignments" edges to the SoftwareAssignment entity.
-func (spu *SoftwarePackageUpdate) AddAssignments(s ...*SoftwareAssignment) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.AddAssignmentIDs(ids...)
-}
-
 // AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by IDs.
 func (spu *SoftwarePackageUpdate) AddInstallLogIDs(ids ...int) *SoftwarePackageUpdate {
 	spu.mutation.AddInstallLogIDs(ids...)
@@ -696,6 +686,40 @@ func (spu *SoftwarePackageUpdate) AddUpdateFor(s ...*SoftwarePackage) *SoftwareP
 	return spu.AddUpdateForIDs(ids...)
 }
 
+// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID.
+func (spu *SoftwarePackageUpdate) SetGlobalRefID(id int) *SoftwarePackageUpdate {
+	spu.mutation.SetGlobalRefID(id)
+	return spu
+}
+
+// SetNillableGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillableGlobalRefID(id *int) *SoftwarePackageUpdate {
+	if id != nil {
+		spu = spu.SetGlobalRefID(*id)
+	}
+	return spu
+}
+
+// SetGlobalRef sets the "global_ref" edge to the SoftwarePackage entity.
+func (spu *SoftwarePackageUpdate) SetGlobalRef(s *SoftwarePackage) *SoftwarePackageUpdate {
+	return spu.SetGlobalRefID(s.ID)
+}
+
+// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by IDs.
+func (spu *SoftwarePackageUpdate) AddSubscriberIDs(ids ...int) *SoftwarePackageUpdate {
+	spu.mutation.AddSubscriberIDs(ids...)
+	return spu
+}
+
+// AddSubscribers adds the "subscribers" edges to the SoftwarePackage entity.
+func (spu *SoftwarePackageUpdate) AddSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return spu.AddSubscriberIDs(ids...)
+}
+
 // Mutation returns the SoftwarePackageMutation object of the builder.
 func (spu *SoftwarePackageUpdate) Mutation() *SoftwarePackageMutation {
 	return spu.mutation
@@ -732,27 +756,6 @@ func (spu *SoftwarePackageUpdate) RemoveCatalogs(s ...*SoftwareCatalog) *Softwar
 func (spu *SoftwarePackageUpdate) ClearTenant() *SoftwarePackageUpdate {
 	spu.mutation.ClearTenant()
 	return spu
-}
-
-// ClearAssignments clears all "assignments" edges to the SoftwareAssignment entity.
-func (spu *SoftwarePackageUpdate) ClearAssignments() *SoftwarePackageUpdate {
-	spu.mutation.ClearAssignments()
-	return spu
-}
-
-// RemoveAssignmentIDs removes the "assignments" edge to SoftwareAssignment entities by IDs.
-func (spu *SoftwarePackageUpdate) RemoveAssignmentIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.RemoveAssignmentIDs(ids...)
-	return spu
-}
-
-// RemoveAssignments removes "assignments" edges to SoftwareAssignment entities.
-func (spu *SoftwarePackageUpdate) RemoveAssignments(s ...*SoftwareAssignment) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.RemoveAssignmentIDs(ids...)
 }
 
 // ClearInstallLogs clears all "install_logs" edges to the SoftwareInstallLog entity.
@@ -818,6 +821,33 @@ func (spu *SoftwarePackageUpdate) RemoveUpdateFor(s ...*SoftwarePackage) *Softwa
 	return spu.RemoveUpdateForIDs(ids...)
 }
 
+// ClearGlobalRef clears the "global_ref" edge to the SoftwarePackage entity.
+func (spu *SoftwarePackageUpdate) ClearGlobalRef() *SoftwarePackageUpdate {
+	spu.mutation.ClearGlobalRef()
+	return spu
+}
+
+// ClearSubscribers clears all "subscribers" edges to the SoftwarePackage entity.
+func (spu *SoftwarePackageUpdate) ClearSubscribers() *SoftwarePackageUpdate {
+	spu.mutation.ClearSubscribers()
+	return spu
+}
+
+// RemoveSubscriberIDs removes the "subscribers" edge to SoftwarePackage entities by IDs.
+func (spu *SoftwarePackageUpdate) RemoveSubscriberIDs(ids ...int) *SoftwarePackageUpdate {
+	spu.mutation.RemoveSubscriberIDs(ids...)
+	return spu
+}
+
+// RemoveSubscribers removes "subscribers" edges to SoftwarePackage entities.
+func (spu *SoftwarePackageUpdate) RemoveSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return spu.RemoveSubscriberIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (spu *SoftwarePackageUpdate) Save(ctx context.Context) (int, error) {
 	spu.defaults()
@@ -871,11 +901,6 @@ func (spu *SoftwarePackageUpdate) check() error {
 			return &ValidationError{Name: "platform", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.platform": %w`, err)}
 		}
 	}
-	if v, ok := spu.mutation.InstallerType(); ok {
-		if err := softwarepackage.InstallerTypeValidator(v); err != nil {
-			return &ValidationError{Name: "installer_type", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_type": %w`, err)}
-		}
-	}
 	if v, ok := spu.mutation.InstallerPath(); ok {
 		if err := softwarepackage.InstallerPathValidator(v); err != nil {
 			return &ValidationError{Name: "installer_path", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_path": %w`, err)}
@@ -884,6 +909,11 @@ func (spu *SoftwarePackageUpdate) check() error {
 	if v, ok := spu.mutation.RestartAction(); ok {
 		if err := softwarepackage.RestartActionValidator(v); err != nil {
 			return &ValidationError{Name: "restart_action", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.restart_action": %w`, err)}
+		}
+	}
+	if v, ok := spu.mutation.Status(); ok {
+		if err := softwarepackage.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.status": %w`, err)}
 		}
 	}
 	if v, ok := spu.mutation.Source(); ok {
@@ -926,9 +956,6 @@ func (spu *SoftwarePackageUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := spu.mutation.Platform(); ok {
 		_spec.SetField(softwarepackage.FieldPlatform, field.TypeEnum, value)
-	}
-	if value, ok := spu.mutation.InstallerType(); ok {
-		_spec.SetField(softwarepackage.FieldInstallerType, field.TypeEnum, value)
 	}
 	if value, ok := spu.mutation.InstallerPath(); ok {
 		_spec.SetField(softwarepackage.FieldInstallerPath, field.TypeString, value)
@@ -1056,6 +1083,12 @@ func (spu *SoftwarePackageUpdate) sqlSave(ctx context.Context) (n int, err error
 	if spu.mutation.UnattendedUninstallCleared() {
 		_spec.ClearField(softwarepackage.FieldUnattendedUninstall, field.TypeBool)
 	}
+	if value, ok := spu.mutation.Status(); ok {
+		_spec.SetField(softwarepackage.FieldStatus, field.TypeEnum, value)
+	}
+	if spu.mutation.StatusCleared() {
+		_spec.ClearField(softwarepackage.FieldStatus, field.TypeEnum)
+	}
 	if value, ok := spu.mutation.Source(); ok {
 		_spec.SetField(softwarepackage.FieldSource, field.TypeEnum, value)
 	}
@@ -1170,51 +1203,6 @@ func (spu *SoftwarePackageUpdate) sqlSave(ctx context.Context) (n int, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.AssignmentsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RemovedAssignmentsIDs(); len(nodes) > 0 && !spu.mutation.AssignmentsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.AssignmentsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1357,6 +1345,80 @@ func (spu *SoftwarePackageUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if spu.mutation.GlobalRefCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   softwarepackage.GlobalRefTable,
+			Columns: []string{softwarepackage.GlobalRefColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := spu.mutation.GlobalRefIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   softwarepackage.GlobalRefTable,
+			Columns: []string{softwarepackage.GlobalRefColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if spu.mutation.SubscribersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := spu.mutation.RemovedSubscribersIDs(); len(nodes) > 0 && !spu.mutation.SubscribersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := spu.mutation.SubscribersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(spu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, spu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -1437,20 +1499,6 @@ func (spuo *SoftwarePackageUpdateOne) SetPlatform(s softwarepackage.Platform) *S
 func (spuo *SoftwarePackageUpdateOne) SetNillablePlatform(s *softwarepackage.Platform) *SoftwarePackageUpdateOne {
 	if s != nil {
 		spuo.SetPlatform(*s)
-	}
-	return spuo
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (spuo *SoftwarePackageUpdateOne) SetInstallerType(st softwarepackage.InstallerType) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetInstallerType(st)
-	return spuo
-}
-
-// SetNillableInstallerType sets the "installer_type" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableInstallerType(st *softwarepackage.InstallerType) *SoftwarePackageUpdateOne {
-	if st != nil {
-		spuo.SetInstallerType(*st)
 	}
 	return spuo
 }
@@ -1876,6 +1924,26 @@ func (spuo *SoftwarePackageUpdateOne) ClearUnattendedUninstall() *SoftwarePackag
 	return spuo
 }
 
+// SetStatus sets the "status" field.
+func (spuo *SoftwarePackageUpdateOne) SetStatus(s softwarepackage.Status) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetStatus(s)
+	return spuo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillableStatus(s *softwarepackage.Status) *SoftwarePackageUpdateOne {
+	if s != nil {
+		spuo.SetStatus(*s)
+	}
+	return spuo
+}
+
+// ClearStatus clears the value of the "status" field.
+func (spuo *SoftwarePackageUpdateOne) ClearStatus() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearStatus()
+	return spuo
+}
+
 // SetSource sets the "source" field.
 func (spuo *SoftwarePackageUpdateOne) SetSource(s softwarepackage.Source) *SoftwarePackageUpdateOne {
 	spuo.mutation.SetSource(s)
@@ -1981,21 +2049,6 @@ func (spuo *SoftwarePackageUpdateOne) SetTenant(t *Tenant) *SoftwarePackageUpdat
 	return spuo.SetTenantID(t.ID)
 }
 
-// AddAssignmentIDs adds the "assignments" edge to the SoftwareAssignment entity by IDs.
-func (spuo *SoftwarePackageUpdateOne) AddAssignmentIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddAssignmentIDs(ids...)
-	return spuo
-}
-
-// AddAssignments adds the "assignments" edges to the SoftwareAssignment entity.
-func (spuo *SoftwarePackageUpdateOne) AddAssignments(s ...*SoftwareAssignment) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.AddAssignmentIDs(ids...)
-}
-
 // AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by IDs.
 func (spuo *SoftwarePackageUpdateOne) AddInstallLogIDs(ids ...int) *SoftwarePackageUpdateOne {
 	spuo.mutation.AddInstallLogIDs(ids...)
@@ -2041,6 +2094,40 @@ func (spuo *SoftwarePackageUpdateOne) AddUpdateFor(s ...*SoftwarePackage) *Softw
 	return spuo.AddUpdateForIDs(ids...)
 }
 
+// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID.
+func (spuo *SoftwarePackageUpdateOne) SetGlobalRefID(id int) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetGlobalRefID(id)
+	return spuo
+}
+
+// SetNillableGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillableGlobalRefID(id *int) *SoftwarePackageUpdateOne {
+	if id != nil {
+		spuo = spuo.SetGlobalRefID(*id)
+	}
+	return spuo
+}
+
+// SetGlobalRef sets the "global_ref" edge to the SoftwarePackage entity.
+func (spuo *SoftwarePackageUpdateOne) SetGlobalRef(s *SoftwarePackage) *SoftwarePackageUpdateOne {
+	return spuo.SetGlobalRefID(s.ID)
+}
+
+// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by IDs.
+func (spuo *SoftwarePackageUpdateOne) AddSubscriberIDs(ids ...int) *SoftwarePackageUpdateOne {
+	spuo.mutation.AddSubscriberIDs(ids...)
+	return spuo
+}
+
+// AddSubscribers adds the "subscribers" edges to the SoftwarePackage entity.
+func (spuo *SoftwarePackageUpdateOne) AddSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return spuo.AddSubscriberIDs(ids...)
+}
+
 // Mutation returns the SoftwarePackageMutation object of the builder.
 func (spuo *SoftwarePackageUpdateOne) Mutation() *SoftwarePackageMutation {
 	return spuo.mutation
@@ -2077,27 +2164,6 @@ func (spuo *SoftwarePackageUpdateOne) RemoveCatalogs(s ...*SoftwareCatalog) *Sof
 func (spuo *SoftwarePackageUpdateOne) ClearTenant() *SoftwarePackageUpdateOne {
 	spuo.mutation.ClearTenant()
 	return spuo
-}
-
-// ClearAssignments clears all "assignments" edges to the SoftwareAssignment entity.
-func (spuo *SoftwarePackageUpdateOne) ClearAssignments() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearAssignments()
-	return spuo
-}
-
-// RemoveAssignmentIDs removes the "assignments" edge to SoftwareAssignment entities by IDs.
-func (spuo *SoftwarePackageUpdateOne) RemoveAssignmentIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.RemoveAssignmentIDs(ids...)
-	return spuo
-}
-
-// RemoveAssignments removes "assignments" edges to SoftwareAssignment entities.
-func (spuo *SoftwarePackageUpdateOne) RemoveAssignments(s ...*SoftwareAssignment) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.RemoveAssignmentIDs(ids...)
 }
 
 // ClearInstallLogs clears all "install_logs" edges to the SoftwareInstallLog entity.
@@ -2161,6 +2227,33 @@ func (spuo *SoftwarePackageUpdateOne) RemoveUpdateFor(s ...*SoftwarePackage) *So
 		ids[i] = s[i].ID
 	}
 	return spuo.RemoveUpdateForIDs(ids...)
+}
+
+// ClearGlobalRef clears the "global_ref" edge to the SoftwarePackage entity.
+func (spuo *SoftwarePackageUpdateOne) ClearGlobalRef() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearGlobalRef()
+	return spuo
+}
+
+// ClearSubscribers clears all "subscribers" edges to the SoftwarePackage entity.
+func (spuo *SoftwarePackageUpdateOne) ClearSubscribers() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearSubscribers()
+	return spuo
+}
+
+// RemoveSubscriberIDs removes the "subscribers" edge to SoftwarePackage entities by IDs.
+func (spuo *SoftwarePackageUpdateOne) RemoveSubscriberIDs(ids ...int) *SoftwarePackageUpdateOne {
+	spuo.mutation.RemoveSubscriberIDs(ids...)
+	return spuo
+}
+
+// RemoveSubscribers removes "subscribers" edges to SoftwarePackage entities.
+func (spuo *SoftwarePackageUpdateOne) RemoveSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return spuo.RemoveSubscriberIDs(ids...)
 }
 
 // Where appends a list predicates to the SoftwarePackageUpdate builder.
@@ -2229,11 +2322,6 @@ func (spuo *SoftwarePackageUpdateOne) check() error {
 			return &ValidationError{Name: "platform", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.platform": %w`, err)}
 		}
 	}
-	if v, ok := spuo.mutation.InstallerType(); ok {
-		if err := softwarepackage.InstallerTypeValidator(v); err != nil {
-			return &ValidationError{Name: "installer_type", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_type": %w`, err)}
-		}
-	}
 	if v, ok := spuo.mutation.InstallerPath(); ok {
 		if err := softwarepackage.InstallerPathValidator(v); err != nil {
 			return &ValidationError{Name: "installer_path", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_path": %w`, err)}
@@ -2242,6 +2330,11 @@ func (spuo *SoftwarePackageUpdateOne) check() error {
 	if v, ok := spuo.mutation.RestartAction(); ok {
 		if err := softwarepackage.RestartActionValidator(v); err != nil {
 			return &ValidationError{Name: "restart_action", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.restart_action": %w`, err)}
+		}
+	}
+	if v, ok := spuo.mutation.Status(); ok {
+		if err := softwarepackage.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.status": %w`, err)}
 		}
 	}
 	if v, ok := spuo.mutation.Source(); ok {
@@ -2301,9 +2394,6 @@ func (spuo *SoftwarePackageUpdateOne) sqlSave(ctx context.Context) (_node *Softw
 	}
 	if value, ok := spuo.mutation.Platform(); ok {
 		_spec.SetField(softwarepackage.FieldPlatform, field.TypeEnum, value)
-	}
-	if value, ok := spuo.mutation.InstallerType(); ok {
-		_spec.SetField(softwarepackage.FieldInstallerType, field.TypeEnum, value)
 	}
 	if value, ok := spuo.mutation.InstallerPath(); ok {
 		_spec.SetField(softwarepackage.FieldInstallerPath, field.TypeString, value)
@@ -2431,6 +2521,12 @@ func (spuo *SoftwarePackageUpdateOne) sqlSave(ctx context.Context) (_node *Softw
 	if spuo.mutation.UnattendedUninstallCleared() {
 		_spec.ClearField(softwarepackage.FieldUnattendedUninstall, field.TypeBool)
 	}
+	if value, ok := spuo.mutation.Status(); ok {
+		_spec.SetField(softwarepackage.FieldStatus, field.TypeEnum, value)
+	}
+	if spuo.mutation.StatusCleared() {
+		_spec.ClearField(softwarepackage.FieldStatus, field.TypeEnum)
+	}
 	if value, ok := spuo.mutation.Source(); ok {
 		_spec.SetField(softwarepackage.FieldSource, field.TypeEnum, value)
 	}
@@ -2545,51 +2641,6 @@ func (spuo *SoftwarePackageUpdateOne) sqlSave(ctx context.Context) (_node *Softw
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.AssignmentsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RemovedAssignmentsIDs(); len(nodes) > 0 && !spuo.mutation.AssignmentsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.AssignmentsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -2723,6 +2774,80 @@ func (spuo *SoftwarePackageUpdateOne) sqlSave(ctx context.Context) (_node *Softw
 			Table:   softwarepackage.UpdateForTable,
 			Columns: softwarepackage.UpdateForPrimaryKey,
 			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if spuo.mutation.GlobalRefCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   softwarepackage.GlobalRefTable,
+			Columns: []string{softwarepackage.GlobalRefColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := spuo.mutation.GlobalRefIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   softwarepackage.GlobalRefTable,
+			Columns: []string{softwarepackage.GlobalRefColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if spuo.mutation.SubscribersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := spuo.mutation.RemovedSubscribersIDs(); len(nodes) > 0 && !spuo.mutation.SubscribersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := spuo.mutation.SubscribersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
 			},

@@ -21,7 +21,6 @@ func (SoftwarePackage) Fields() []ent.Field {
 		field.String("display_name").Optional().Default(""),
 		field.String("version").NotEmpty(),
 		field.Enum("platform").Values("darwin", "windows"),
-		field.Enum("installer_type").Values("pkg", "dmg", "msi", "exe", "msix"),
 		field.String("installer_path").NotEmpty().
 			Comment("Path within the S3 bucket, e.g. darwin/Firefox-130.0.pkg"),
 		field.String("checksum_sha256").Optional().Default(""),
@@ -48,10 +47,12 @@ func (SoftwarePackage) Fields() []ent.Field {
 		field.Text("supported_architectures").Optional().Default("").
 			Comment("JSON array, e.g. [\"x86_64\", \"arm64\"]"),
 		field.Time("force_install_date").Optional().Nillable(),
-		field.Bool("unattended_install").Optional().Default(true),
-		field.Bool("unattended_uninstall").Optional().Default(true),
-		field.Enum("source").Values("upload", "global").Optional().Default("upload").
-			Comment("Where this package came from: direct upload or global repo reference"),
+		field.Bool("unattended_install").Optional().Default(false),
+		field.Bool("unattended_uninstall").Optional().Default(false),
+		field.Enum("status").Values("uploading", "ready", "error").Optional().Default("ready").
+			Comment("Upload status: uploading = S3 transfer in progress, ready = available, error = upload failed"),
+		field.Enum("source").Values("upload", "global", "global_subscription").Optional().Default("upload").
+			Comment("upload = own package, global = legacy import copy, global_subscription = subscribed to global package"),
 		field.Time("created").Optional().Default(time.Now),
 		field.Time("modified").Optional().Default(time.Now).UpdateDefault(time.Now),
 	}
@@ -63,12 +64,14 @@ func (SoftwarePackage) Edges() []ent.Edge {
 		edge.From("repo", SoftwareRepo.Type).Unique().Ref("packages"),
 		edge.From("catalogs", SoftwareCatalog.Type).Ref("packages"),
 		edge.From("tenant", Tenant.Type).Unique().Ref("software_packages"),
-		edge.To("assignments", SoftwareAssignment.Type),
 		edge.To("install_logs", SoftwareInstallLog.Type),
 		edge.To("requires", SoftwarePackage.Type).
 			Comment("Dependencies: packages that must be installed first"),
 		edge.To("update_for", SoftwarePackage.Type).
 			Comment("This package is an update for the referenced packages"),
+		edge.To("subscribers", SoftwarePackage.Type).
+			From("global_ref").Unique().
+			Comment("Reference to the global package this subscription points to"),
 	}
 }
 
@@ -76,5 +79,7 @@ func (SoftwarePackage) Edges() []ent.Edge {
 func (SoftwarePackage) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("name", "version", "platform"),
+		index.Fields("status"),
+		index.Fields("platform"),
 	}
 }

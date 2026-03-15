@@ -405,26 +405,6 @@ func PlatformNotIn(vs ...Platform) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldNotIn(FieldPlatform, vs...))
 }
 
-// InstallerTypeEQ applies the EQ predicate on the "installer_type" field.
-func InstallerTypeEQ(v InstallerType) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldInstallerType, v))
-}
-
-// InstallerTypeNEQ applies the NEQ predicate on the "installer_type" field.
-func InstallerTypeNEQ(v InstallerType) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldInstallerType, v))
-}
-
-// InstallerTypeIn applies the In predicate on the "installer_type" field.
-func InstallerTypeIn(vs ...InstallerType) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldInstallerType, vs...))
-}
-
-// InstallerTypeNotIn applies the NotIn predicate on the "installer_type" field.
-func InstallerTypeNotIn(vs ...InstallerType) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldInstallerType, vs...))
-}
-
 // InstallerPathEQ applies the EQ predicate on the "installer_path" field.
 func InstallerPathEQ(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldInstallerPath, v))
@@ -1785,6 +1765,36 @@ func UnattendedUninstallNotNil() predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldNotNull(FieldUnattendedUninstall))
 }
 
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v Status) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v Status) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...Status) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...Status) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotNull(FieldStatus))
+}
+
 // SourceEQ applies the EQ predicate on the "source" field.
 func SourceEQ(v Source) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldSource, v))
@@ -1984,29 +1994,6 @@ func HasTenantWith(preds ...predicate.Tenant) predicate.SoftwarePackage {
 	})
 }
 
-// HasAssignments applies the HasEdge predicate on the "assignments" edge.
-func HasAssignments() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, AssignmentsTable, AssignmentsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasAssignmentsWith applies the HasEdge predicate on the "assignments" edge with a given conditions (other predicates).
-func HasAssignmentsWith(preds ...predicate.SoftwareAssignment) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newAssignmentsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasInstallLogs applies the HasEdge predicate on the "install_logs" edge.
 func HasInstallLogs() predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(func(s *sql.Selector) {
@@ -2068,6 +2055,52 @@ func HasUpdateFor() predicate.SoftwarePackage {
 func HasUpdateForWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(func(s *sql.Selector) {
 		step := newUpdateForStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasGlobalRef applies the HasEdge predicate on the "global_ref" edge.
+func HasGlobalRef() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GlobalRefTable, GlobalRefColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGlobalRefWith applies the HasEdge predicate on the "global_ref" edge with a given conditions (other predicates).
+func HasGlobalRefWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(func(s *sql.Selector) {
+		step := newGlobalRefStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSubscribers applies the HasEdge predicate on the "subscribers" edge.
+func HasSubscribers() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SubscribersTable, SubscribersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSubscribersWith applies the HasEdge predicate on the "subscribers" edge with a given conditions (other predicates).
+func HasSubscribersWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(func(s *sql.Selector) {
+		step := newSubscribersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

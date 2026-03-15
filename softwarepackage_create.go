@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/open-uem/ent/softwareassignment"
 	"github.com/open-uem/ent/softwarecatalog"
 	"github.com/open-uem/ent/softwareinstalllog"
 	"github.com/open-uem/ent/softwarepackage"
@@ -56,12 +55,6 @@ func (spc *SoftwarePackageCreate) SetVersion(s string) *SoftwarePackageCreate {
 // SetPlatform sets the "platform" field.
 func (spc *SoftwarePackageCreate) SetPlatform(s softwarepackage.Platform) *SoftwarePackageCreate {
 	spc.mutation.SetPlatform(s)
-	return spc
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (spc *SoftwarePackageCreate) SetInstallerType(st softwarepackage.InstallerType) *SoftwarePackageCreate {
-	spc.mutation.SetInstallerType(st)
 	return spc
 }
 
@@ -351,6 +344,20 @@ func (spc *SoftwarePackageCreate) SetNillableUnattendedUninstall(b *bool) *Softw
 	return spc
 }
 
+// SetStatus sets the "status" field.
+func (spc *SoftwarePackageCreate) SetStatus(s softwarepackage.Status) *SoftwarePackageCreate {
+	spc.mutation.SetStatus(s)
+	return spc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableStatus(s *softwarepackage.Status) *SoftwarePackageCreate {
+	if s != nil {
+		spc.SetStatus(*s)
+	}
+	return spc
+}
+
 // SetSource sets the "source" field.
 func (spc *SoftwarePackageCreate) SetSource(s softwarepackage.Source) *SoftwarePackageCreate {
 	spc.mutation.SetSource(s)
@@ -446,21 +453,6 @@ func (spc *SoftwarePackageCreate) SetTenant(t *Tenant) *SoftwarePackageCreate {
 	return spc.SetTenantID(t.ID)
 }
 
-// AddAssignmentIDs adds the "assignments" edge to the SoftwareAssignment entity by IDs.
-func (spc *SoftwarePackageCreate) AddAssignmentIDs(ids ...int) *SoftwarePackageCreate {
-	spc.mutation.AddAssignmentIDs(ids...)
-	return spc
-}
-
-// AddAssignments adds the "assignments" edges to the SoftwareAssignment entity.
-func (spc *SoftwarePackageCreate) AddAssignments(s ...*SoftwareAssignment) *SoftwarePackageCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spc.AddAssignmentIDs(ids...)
-}
-
 // AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by IDs.
 func (spc *SoftwarePackageCreate) AddInstallLogIDs(ids ...int) *SoftwarePackageCreate {
 	spc.mutation.AddInstallLogIDs(ids...)
@@ -504,6 +496,40 @@ func (spc *SoftwarePackageCreate) AddUpdateFor(s ...*SoftwarePackage) *SoftwareP
 		ids[i] = s[i].ID
 	}
 	return spc.AddUpdateForIDs(ids...)
+}
+
+// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID.
+func (spc *SoftwarePackageCreate) SetGlobalRefID(id int) *SoftwarePackageCreate {
+	spc.mutation.SetGlobalRefID(id)
+	return spc
+}
+
+// SetNillableGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableGlobalRefID(id *int) *SoftwarePackageCreate {
+	if id != nil {
+		spc = spc.SetGlobalRefID(*id)
+	}
+	return spc
+}
+
+// SetGlobalRef sets the "global_ref" edge to the SoftwarePackage entity.
+func (spc *SoftwarePackageCreate) SetGlobalRef(s *SoftwarePackage) *SoftwarePackageCreate {
+	return spc.SetGlobalRefID(s.ID)
+}
+
+// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by IDs.
+func (spc *SoftwarePackageCreate) AddSubscriberIDs(ids ...int) *SoftwarePackageCreate {
+	spc.mutation.AddSubscriberIDs(ids...)
+	return spc
+}
+
+// AddSubscribers adds the "subscribers" edges to the SoftwarePackage entity.
+func (spc *SoftwarePackageCreate) AddSubscribers(s ...*SoftwarePackage) *SoftwarePackageCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return spc.AddSubscriberIDs(ids...)
 }
 
 // Mutation returns the SoftwarePackageMutation object of the builder.
@@ -621,6 +647,10 @@ func (spc *SoftwarePackageCreate) defaults() {
 		v := softwarepackage.DefaultUnattendedUninstall
 		spc.mutation.SetUnattendedUninstall(v)
 	}
+	if _, ok := spc.mutation.Status(); !ok {
+		v := softwarepackage.DefaultStatus
+		spc.mutation.SetStatus(v)
+	}
 	if _, ok := spc.mutation.Source(); !ok {
 		v := softwarepackage.DefaultSource
 		spc.mutation.SetSource(v)
@@ -661,14 +691,6 @@ func (spc *SoftwarePackageCreate) check() error {
 			return &ValidationError{Name: "platform", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.platform": %w`, err)}
 		}
 	}
-	if _, ok := spc.mutation.InstallerType(); !ok {
-		return &ValidationError{Name: "installer_type", err: errors.New(`ent: missing required field "SoftwarePackage.installer_type"`)}
-	}
-	if v, ok := spc.mutation.InstallerType(); ok {
-		if err := softwarepackage.InstallerTypeValidator(v); err != nil {
-			return &ValidationError{Name: "installer_type", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_type": %w`, err)}
-		}
-	}
 	if _, ok := spc.mutation.InstallerPath(); !ok {
 		return &ValidationError{Name: "installer_path", err: errors.New(`ent: missing required field "SoftwarePackage.installer_path"`)}
 	}
@@ -680,6 +702,11 @@ func (spc *SoftwarePackageCreate) check() error {
 	if v, ok := spc.mutation.RestartAction(); ok {
 		if err := softwarepackage.RestartActionValidator(v); err != nil {
 			return &ValidationError{Name: "restart_action", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.restart_action": %w`, err)}
+		}
+	}
+	if v, ok := spc.mutation.Status(); ok {
+		if err := softwarepackage.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.status": %w`, err)}
 		}
 	}
 	if v, ok := spc.mutation.Source(); ok {
@@ -729,10 +756,6 @@ func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.Crea
 	if value, ok := spc.mutation.Platform(); ok {
 		_spec.SetField(softwarepackage.FieldPlatform, field.TypeEnum, value)
 		_node.Platform = value
-	}
-	if value, ok := spc.mutation.InstallerType(); ok {
-		_spec.SetField(softwarepackage.FieldInstallerType, field.TypeEnum, value)
-		_node.InstallerType = value
 	}
 	if value, ok := spc.mutation.InstallerPath(); ok {
 		_spec.SetField(softwarepackage.FieldInstallerPath, field.TypeString, value)
@@ -818,6 +841,10 @@ func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.Crea
 		_spec.SetField(softwarepackage.FieldUnattendedUninstall, field.TypeBool, value)
 		_node.UnattendedUninstall = value
 	}
+	if value, ok := spc.mutation.Status(); ok {
+		_spec.SetField(softwarepackage.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
+	}
 	if value, ok := spc.mutation.Source(); ok {
 		_spec.SetField(softwarepackage.FieldSource, field.TypeEnum, value)
 		_node.Source = value
@@ -880,22 +907,6 @@ func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.Crea
 		_node.tenant_software_packages = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := spc.mutation.AssignmentsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.AssignmentsTable,
-			Columns: []string{softwarepackage.AssignmentsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := spc.mutation.InstallLogsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -935,6 +946,39 @@ func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.Crea
 			Table:   softwarepackage.UpdateForTable,
 			Columns: softwarepackage.UpdateForPrimaryKey,
 			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := spc.mutation.GlobalRefIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   softwarepackage.GlobalRefTable,
+			Columns: []string{softwarepackage.GlobalRefColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.software_package_subscribers = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := spc.mutation.SubscribersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   softwarepackage.SubscribersTable,
+			Columns: []string{softwarepackage.SubscribersColumn},
+			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
 			},
@@ -1047,18 +1091,6 @@ func (u *SoftwarePackageUpsert) SetPlatform(v softwarepackage.Platform) *Softwar
 // UpdatePlatform sets the "platform" field to the value that was provided on create.
 func (u *SoftwarePackageUpsert) UpdatePlatform() *SoftwarePackageUpsert {
 	u.SetExcluded(softwarepackage.FieldPlatform)
-	return u
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (u *SoftwarePackageUpsert) SetInstallerType(v softwarepackage.InstallerType) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldInstallerType, v)
-	return u
-}
-
-// UpdateInstallerType sets the "installer_type" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateInstallerType() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldInstallerType)
 	return u
 }
 
@@ -1440,6 +1472,24 @@ func (u *SoftwarePackageUpsert) ClearUnattendedUninstall() *SoftwarePackageUpser
 	return u
 }
 
+// SetStatus sets the "status" field.
+func (u *SoftwarePackageUpsert) SetStatus(v softwarepackage.Status) *SoftwarePackageUpsert {
+	u.Set(softwarepackage.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *SoftwarePackageUpsert) UpdateStatus() *SoftwarePackageUpsert {
+	u.SetExcluded(softwarepackage.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *SoftwarePackageUpsert) ClearStatus() *SoftwarePackageUpsert {
+	u.SetNull(softwarepackage.FieldStatus)
+	return u
+}
+
 // SetSource sets the "source" field.
 func (u *SoftwarePackageUpsert) SetSource(v softwarepackage.Source) *SoftwarePackageUpsert {
 	u.Set(softwarepackage.FieldSource, v)
@@ -1594,20 +1644,6 @@ func (u *SoftwarePackageUpsertOne) SetPlatform(v softwarepackage.Platform) *Soft
 func (u *SoftwarePackageUpsertOne) UpdatePlatform() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.UpdatePlatform()
-	})
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (u *SoftwarePackageUpsertOne) SetInstallerType(v softwarepackage.InstallerType) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetInstallerType(v)
-	})
-}
-
-// UpdateInstallerType sets the "installer_type" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateInstallerType() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateInstallerType()
 	})
 }
 
@@ -2052,6 +2088,27 @@ func (u *SoftwarePackageUpsertOne) ClearUnattendedUninstall() *SoftwarePackageUp
 	})
 }
 
+// SetStatus sets the "status" field.
+func (u *SoftwarePackageUpsertOne) SetStatus(v softwarepackage.Status) *SoftwarePackageUpsertOne {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertOne) UpdateStatus() *SoftwarePackageUpsertOne {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *SoftwarePackageUpsertOne) ClearStatus() *SoftwarePackageUpsertOne {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.ClearStatus()
+	})
+}
+
 // SetSource sets the "source" field.
 func (u *SoftwarePackageUpsertOne) SetSource(v softwarepackage.Source) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
@@ -2379,20 +2436,6 @@ func (u *SoftwarePackageUpsertBulk) SetPlatform(v softwarepackage.Platform) *Sof
 func (u *SoftwarePackageUpsertBulk) UpdatePlatform() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.UpdatePlatform()
-	})
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (u *SoftwarePackageUpsertBulk) SetInstallerType(v softwarepackage.InstallerType) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetInstallerType(v)
-	})
-}
-
-// UpdateInstallerType sets the "installer_type" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateInstallerType() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateInstallerType()
 	})
 }
 
@@ -2834,6 +2877,27 @@ func (u *SoftwarePackageUpsertBulk) UpdateUnattendedUninstall() *SoftwarePackage
 func (u *SoftwarePackageUpsertBulk) ClearUnattendedUninstall() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.ClearUnattendedUninstall()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *SoftwarePackageUpsertBulk) SetStatus(v softwarepackage.Status) *SoftwarePackageUpsertBulk {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertBulk) UpdateStatus() *SoftwarePackageUpsertBulk {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *SoftwarePackageUpsertBulk) ClearStatus() *SoftwarePackageUpsertBulk {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.ClearStatus()
 	})
 }
 

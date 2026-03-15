@@ -27,8 +27,6 @@ type SoftwarePackage struct {
 	Version string `json:"version,omitempty"`
 	// Platform holds the value of the "platform" field.
 	Platform softwarepackage.Platform `json:"platform,omitempty"`
-	// InstallerType holds the value of the "installer_type" field.
-	InstallerType softwarepackage.InstallerType `json:"installer_type,omitempty"`
 	// Path within the S3 bucket, e.g. darwin/Firefox-130.0.pkg
 	InstallerPath string `json:"installer_path,omitempty"`
 	// ChecksumSha256 holds the value of the "checksum_sha256" field.
@@ -71,7 +69,9 @@ type SoftwarePackage struct {
 	UnattendedInstall bool `json:"unattended_install,omitempty"`
 	// UnattendedUninstall holds the value of the "unattended_uninstall" field.
 	UnattendedUninstall bool `json:"unattended_uninstall,omitempty"`
-	// Where this package came from: direct upload or global repo reference
+	// Upload status: uploading = S3 transfer in progress, ready = available, error = upload failed
+	Status softwarepackage.Status `json:"status,omitempty"`
+	// upload = own package, global = legacy import copy, global_subscription = subscribed to global package
 	Source softwarepackage.Source `json:"source,omitempty"`
 	// Created holds the value of the "created" field.
 	Created time.Time `json:"created,omitempty"`
@@ -79,10 +79,11 @@ type SoftwarePackage struct {
 	Modified time.Time `json:"modified,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SoftwarePackageQuery when eager-loading is set.
-	Edges                    SoftwarePackageEdges `json:"edges"`
-	software_repo_packages   *int
-	tenant_software_packages *int
-	selectValues             sql.SelectValues
+	Edges                        SoftwarePackageEdges `json:"edges"`
+	software_package_subscribers *int
+	software_repo_packages       *int
+	tenant_software_packages     *int
+	selectValues                 sql.SelectValues
 }
 
 // SoftwarePackageEdges holds the relations/edges for other nodes in the graph.
@@ -93,17 +94,19 @@ type SoftwarePackageEdges struct {
 	Catalogs []*SoftwareCatalog `json:"catalogs,omitempty"`
 	// Tenant holds the value of the tenant edge.
 	Tenant *Tenant `json:"tenant,omitempty"`
-	// Assignments holds the value of the assignments edge.
-	Assignments []*SoftwareAssignment `json:"assignments,omitempty"`
 	// InstallLogs holds the value of the install_logs edge.
 	InstallLogs []*SoftwareInstallLog `json:"install_logs,omitempty"`
 	// Dependencies: packages that must be installed first
 	Requires []*SoftwarePackage `json:"requires,omitempty"`
 	// This package is an update for the referenced packages
 	UpdateFor []*SoftwarePackage `json:"update_for,omitempty"`
+	// Reference to the global package this subscription points to
+	GlobalRef *SoftwarePackage `json:"global_ref,omitempty"`
+	// Subscribers holds the value of the subscribers edge.
+	Subscribers []*SoftwarePackage `json:"subscribers,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // RepoOrErr returns the Repo value or an error if the edge
@@ -137,19 +140,10 @@ func (e SoftwarePackageEdges) TenantOrErr() (*Tenant, error) {
 	return nil, &NotLoadedError{edge: "tenant"}
 }
 
-// AssignmentsOrErr returns the Assignments value or an error if the edge
-// was not loaded in eager-loading.
-func (e SoftwarePackageEdges) AssignmentsOrErr() ([]*SoftwareAssignment, error) {
-	if e.loadedTypes[3] {
-		return e.Assignments, nil
-	}
-	return nil, &NotLoadedError{edge: "assignments"}
-}
-
 // InstallLogsOrErr returns the InstallLogs value or an error if the edge
 // was not loaded in eager-loading.
 func (e SoftwarePackageEdges) InstallLogsOrErr() ([]*SoftwareInstallLog, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.InstallLogs, nil
 	}
 	return nil, &NotLoadedError{edge: "install_logs"}
@@ -158,7 +152,7 @@ func (e SoftwarePackageEdges) InstallLogsOrErr() ([]*SoftwareInstallLog, error) 
 // RequiresOrErr returns the Requires value or an error if the edge
 // was not loaded in eager-loading.
 func (e SoftwarePackageEdges) RequiresOrErr() ([]*SoftwarePackage, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.Requires, nil
 	}
 	return nil, &NotLoadedError{edge: "requires"}
@@ -167,10 +161,30 @@ func (e SoftwarePackageEdges) RequiresOrErr() ([]*SoftwarePackage, error) {
 // UpdateForOrErr returns the UpdateFor value or an error if the edge
 // was not loaded in eager-loading.
 func (e SoftwarePackageEdges) UpdateForOrErr() ([]*SoftwarePackage, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		return e.UpdateFor, nil
 	}
 	return nil, &NotLoadedError{edge: "update_for"}
+}
+
+// GlobalRefOrErr returns the GlobalRef value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e SoftwarePackageEdges) GlobalRefOrErr() (*SoftwarePackage, error) {
+	if e.GlobalRef != nil {
+		return e.GlobalRef, nil
+	} else if e.loadedTypes[6] {
+		return nil, &NotFoundError{label: softwarepackage.Label}
+	}
+	return nil, &NotLoadedError{edge: "global_ref"}
+}
+
+// SubscribersOrErr returns the Subscribers value or an error if the edge
+// was not loaded in eager-loading.
+func (e SoftwarePackageEdges) SubscribersOrErr() ([]*SoftwarePackage, error) {
+	if e.loadedTypes[7] {
+		return e.Subscribers, nil
+	}
+	return nil, &NotLoadedError{edge: "subscribers"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -182,13 +196,15 @@ func (*SoftwarePackage) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case softwarepackage.FieldID, softwarepackage.FieldSizeBytes:
 			values[i] = new(sql.NullInt64)
-		case softwarepackage.FieldName, softwarepackage.FieldDisplayName, softwarepackage.FieldVersion, softwarepackage.FieldPlatform, softwarepackage.FieldInstallerType, softwarepackage.FieldInstallerPath, softwarepackage.FieldChecksumSha256, softwarepackage.FieldIconName, softwarepackage.FieldDescription, softwarepackage.FieldCategory, softwarepackage.FieldDeveloper, softwarepackage.FieldPkginfoData, softwarepackage.FieldPreInstallScript, softwarepackage.FieldPostInstallScript, softwarepackage.FieldUninstallMethod, softwarepackage.FieldInstallsItems, softwarepackage.FieldReceipts, softwarepackage.FieldBlockingApps, softwarepackage.FieldRestartAction, softwarepackage.FieldMinOsVersion, softwarepackage.FieldMaxOsVersion, softwarepackage.FieldSupportedArchitectures, softwarepackage.FieldSource:
+		case softwarepackage.FieldName, softwarepackage.FieldDisplayName, softwarepackage.FieldVersion, softwarepackage.FieldPlatform, softwarepackage.FieldInstallerPath, softwarepackage.FieldChecksumSha256, softwarepackage.FieldIconName, softwarepackage.FieldDescription, softwarepackage.FieldCategory, softwarepackage.FieldDeveloper, softwarepackage.FieldPkginfoData, softwarepackage.FieldPreInstallScript, softwarepackage.FieldPostInstallScript, softwarepackage.FieldUninstallMethod, softwarepackage.FieldInstallsItems, softwarepackage.FieldReceipts, softwarepackage.FieldBlockingApps, softwarepackage.FieldRestartAction, softwarepackage.FieldMinOsVersion, softwarepackage.FieldMaxOsVersion, softwarepackage.FieldSupportedArchitectures, softwarepackage.FieldStatus, softwarepackage.FieldSource:
 			values[i] = new(sql.NullString)
 		case softwarepackage.FieldForceInstallDate, softwarepackage.FieldCreated, softwarepackage.FieldModified:
 			values[i] = new(sql.NullTime)
-		case softwarepackage.ForeignKeys[0]: // software_repo_packages
+		case softwarepackage.ForeignKeys[0]: // software_package_subscribers
 			values[i] = new(sql.NullInt64)
-		case softwarepackage.ForeignKeys[1]: // tenant_software_packages
+		case softwarepackage.ForeignKeys[1]: // software_repo_packages
+			values[i] = new(sql.NullInt64)
+		case softwarepackage.ForeignKeys[2]: // tenant_software_packages
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -234,12 +250,6 @@ func (sp *SoftwarePackage) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field platform", values[i])
 			} else if value.Valid {
 				sp.Platform = softwarepackage.Platform(value.String)
-			}
-		case softwarepackage.FieldInstallerType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field installer_type", values[i])
-			} else if value.Valid {
-				sp.InstallerType = softwarepackage.InstallerType(value.String)
 			}
 		case softwarepackage.FieldInstallerPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -368,6 +378,12 @@ func (sp *SoftwarePackage) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				sp.UnattendedUninstall = value.Bool
 			}
+		case softwarepackage.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				sp.Status = softwarepackage.Status(value.String)
+			}
 		case softwarepackage.FieldSource:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field source", values[i])
@@ -388,12 +404,19 @@ func (sp *SoftwarePackage) assignValues(columns []string, values []any) error {
 			}
 		case softwarepackage.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field software_package_subscribers", value)
+			} else if value.Valid {
+				sp.software_package_subscribers = new(int)
+				*sp.software_package_subscribers = int(value.Int64)
+			}
+		case softwarepackage.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field software_repo_packages", value)
 			} else if value.Valid {
 				sp.software_repo_packages = new(int)
 				*sp.software_repo_packages = int(value.Int64)
 			}
-		case softwarepackage.ForeignKeys[1]:
+		case softwarepackage.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field tenant_software_packages", value)
 			} else if value.Valid {
@@ -428,11 +451,6 @@ func (sp *SoftwarePackage) QueryTenant() *TenantQuery {
 	return NewSoftwarePackageClient(sp.config).QueryTenant(sp)
 }
 
-// QueryAssignments queries the "assignments" edge of the SoftwarePackage entity.
-func (sp *SoftwarePackage) QueryAssignments() *SoftwareAssignmentQuery {
-	return NewSoftwarePackageClient(sp.config).QueryAssignments(sp)
-}
-
 // QueryInstallLogs queries the "install_logs" edge of the SoftwarePackage entity.
 func (sp *SoftwarePackage) QueryInstallLogs() *SoftwareInstallLogQuery {
 	return NewSoftwarePackageClient(sp.config).QueryInstallLogs(sp)
@@ -446,6 +464,16 @@ func (sp *SoftwarePackage) QueryRequires() *SoftwarePackageQuery {
 // QueryUpdateFor queries the "update_for" edge of the SoftwarePackage entity.
 func (sp *SoftwarePackage) QueryUpdateFor() *SoftwarePackageQuery {
 	return NewSoftwarePackageClient(sp.config).QueryUpdateFor(sp)
+}
+
+// QueryGlobalRef queries the "global_ref" edge of the SoftwarePackage entity.
+func (sp *SoftwarePackage) QueryGlobalRef() *SoftwarePackageQuery {
+	return NewSoftwarePackageClient(sp.config).QueryGlobalRef(sp)
+}
+
+// QuerySubscribers queries the "subscribers" edge of the SoftwarePackage entity.
+func (sp *SoftwarePackage) QuerySubscribers() *SoftwarePackageQuery {
+	return NewSoftwarePackageClient(sp.config).QuerySubscribers(sp)
 }
 
 // Update returns a builder for updating this SoftwarePackage.
@@ -482,9 +510,6 @@ func (sp *SoftwarePackage) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("platform=")
 	builder.WriteString(fmt.Sprintf("%v", sp.Platform))
-	builder.WriteString(", ")
-	builder.WriteString("installer_type=")
-	builder.WriteString(fmt.Sprintf("%v", sp.InstallerType))
 	builder.WriteString(", ")
 	builder.WriteString("installer_path=")
 	builder.WriteString(sp.InstallerPath)
@@ -550,6 +575,9 @@ func (sp *SoftwarePackage) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("unattended_uninstall=")
 	builder.WriteString(fmt.Sprintf("%v", sp.UnattendedUninstall))
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", sp.Status))
 	builder.WriteString(", ")
 	builder.WriteString("source=")
 	builder.WriteString(fmt.Sprintf("%v", sp.Source))

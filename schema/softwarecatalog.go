@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // SoftwareCatalog holds the schema definition for the SoftwareCatalog entity.
@@ -34,5 +35,13 @@ func (SoftwareCatalog) Edges() []ent.Edge {
 		edge.From("tenant", Tenant.Type).Unique().Ref("software_catalogs"),
 		edge.To("packages", SoftwarePackage.Type).
 			Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+	}
+}
+
+// Indexes of the SoftwareCatalog.
+func (SoftwareCatalog) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("name"),
+		index.Fields("ring_order"),
 	}
 }

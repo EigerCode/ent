@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // SoftwareRepo holds the schema definition for the SoftwareRepo entity.
@@ -39,5 +40,12 @@ func (SoftwareRepo) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tenant", Tenant.Type).Unique().Ref("software_repos"),
 		edge.To("packages", SoftwarePackage.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+	}
+}
+
+// Indexes of the SoftwareRepo.
+func (SoftwareRepo) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("is_default"),
 	}
 }
