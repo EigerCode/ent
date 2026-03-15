@@ -90,6 +90,11 @@ func ByProfile(v bool) predicate.Deployment {
 	return predicate.Deployment(sql.FieldEQ(FieldByProfile, v))
 }
 
+// MoreInfo applies equality check predicate on the "more_info" field. It's identical to MoreInfoEQ.
+func MoreInfo(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldMoreInfo, v))
+}
+
 // PackageIDEQ applies the EQ predicate on the "package_id" field.
 func PackageIDEQ(v string) predicate.Deployment {
 	return predicate.Deployment(sql.FieldEQ(FieldPackageID, v))
@@ -433,6 +438,81 @@ func ByProfileIsNil() predicate.Deployment {
 // ByProfileNotNil applies the NotNil predicate on the "by_profile" field.
 func ByProfileNotNil() predicate.Deployment {
 	return predicate.Deployment(sql.FieldNotNull(FieldByProfile))
+}
+
+// MoreInfoEQ applies the EQ predicate on the "more_info" field.
+func MoreInfoEQ(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldMoreInfo, v))
+}
+
+// MoreInfoNEQ applies the NEQ predicate on the "more_info" field.
+func MoreInfoNEQ(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNEQ(FieldMoreInfo, v))
+}
+
+// MoreInfoIn applies the In predicate on the "more_info" field.
+func MoreInfoIn(vs ...string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldIn(FieldMoreInfo, vs...))
+}
+
+// MoreInfoNotIn applies the NotIn predicate on the "more_info" field.
+func MoreInfoNotIn(vs ...string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotIn(FieldMoreInfo, vs...))
+}
+
+// MoreInfoGT applies the GT predicate on the "more_info" field.
+func MoreInfoGT(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldGT(FieldMoreInfo, v))
+}
+
+// MoreInfoGTE applies the GTE predicate on the "more_info" field.
+func MoreInfoGTE(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldGTE(FieldMoreInfo, v))
+}
+
+// MoreInfoLT applies the LT predicate on the "more_info" field.
+func MoreInfoLT(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldLT(FieldMoreInfo, v))
+}
+
+// MoreInfoLTE applies the LTE predicate on the "more_info" field.
+func MoreInfoLTE(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldLTE(FieldMoreInfo, v))
+}
+
+// MoreInfoContains applies the Contains predicate on the "more_info" field.
+func MoreInfoContains(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldContains(FieldMoreInfo, v))
+}
+
+// MoreInfoHasPrefix applies the HasPrefix predicate on the "more_info" field.
+func MoreInfoHasPrefix(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldHasPrefix(FieldMoreInfo, v))
+}
+
+// MoreInfoHasSuffix applies the HasSuffix predicate on the "more_info" field.
+func MoreInfoHasSuffix(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldHasSuffix(FieldMoreInfo, v))
+}
+
+// MoreInfoIsNil applies the IsNil predicate on the "more_info" field.
+func MoreInfoIsNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldIsNull(FieldMoreInfo))
+}
+
+// MoreInfoNotNil applies the NotNil predicate on the "more_info" field.
+func MoreInfoNotNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotNull(FieldMoreInfo))
+}
+
+// MoreInfoEqualFold applies the EqualFold predicate on the "more_info" field.
+func MoreInfoEqualFold(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEqualFold(FieldMoreInfo, v))
+}
+
+// MoreInfoContainsFold applies the ContainsFold predicate on the "more_info" field.
+func MoreInfoContainsFold(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldContainsFold(FieldMoreInfo, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

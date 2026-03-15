@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -15,19 +16,21 @@ import (
 	"github.com/open-uem/ent/predicate"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/profileissue"
+	"github.com/open-uem/ent/taskreport"
 )
 
 // ProfileIssueQuery is the builder for querying ProfileIssue entities.
 type ProfileIssueQuery struct {
 	config
-	ctx         *QueryContext
-	order       []profileissue.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.ProfileIssue
-	withProfile *ProfileQuery
-	withAgents  *AgentQuery
-	withFKs     bool
-	modifiers   []func(*sql.Selector)
+	ctx              *QueryContext
+	order            []profileissue.OrderOption
+	inters           []Interceptor
+	predicates       []predicate.ProfileIssue
+	withProfile      *ProfileQuery
+	withAgents       *AgentQuery
+	withTasksreports *TaskReportQuery
+	withFKs          bool
+	modifiers        []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -101,6 +104,28 @@ func (piq *ProfileIssueQuery) QueryAgents() *AgentQuery {
 			sqlgraph.From(profileissue.Table, profileissue.FieldID, selector),
 			sqlgraph.To(agent.Table, agent.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, profileissue.AgentsTable, profileissue.AgentsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(piq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTasksreports chains the current query on the "tasksreports" edge.
+func (piq *ProfileIssueQuery) QueryTasksreports() *TaskReportQuery {
+	query := (&TaskReportClient{config: piq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := piq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := piq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profileissue.Table, profileissue.FieldID, selector),
+			sqlgraph.To(taskreport.Table, taskreport.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profileissue.TasksreportsTable, profileissue.TasksreportsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(piq.driver.Dialect(), step)
 		return fromU, nil
@@ -295,13 +320,14 @@ func (piq *ProfileIssueQuery) Clone() *ProfileIssueQuery {
 		return nil
 	}
 	return &ProfileIssueQuery{
-		config:      piq.config,
-		ctx:         piq.ctx.Clone(),
-		order:       append([]profileissue.OrderOption{}, piq.order...),
-		inters:      append([]Interceptor{}, piq.inters...),
-		predicates:  append([]predicate.ProfileIssue{}, piq.predicates...),
-		withProfile: piq.withProfile.Clone(),
-		withAgents:  piq.withAgents.Clone(),
+		config:           piq.config,
+		ctx:              piq.ctx.Clone(),
+		order:            append([]profileissue.OrderOption{}, piq.order...),
+		inters:           append([]Interceptor{}, piq.inters...),
+		predicates:       append([]predicate.ProfileIssue{}, piq.predicates...),
+		withProfile:      piq.withProfile.Clone(),
+		withAgents:       piq.withAgents.Clone(),
+		withTasksreports: piq.withTasksreports.Clone(),
 		// clone intermediate query.
 		sql:       piq.sql.Clone(),
 		path:      piq.path,
@@ -328,6 +354,17 @@ func (piq *ProfileIssueQuery) WithAgents(opts ...func(*AgentQuery)) *ProfileIssu
 		opt(query)
 	}
 	piq.withAgents = query
+	return piq
+}
+
+// WithTasksreports tells the query-builder to eager-load the nodes that are connected to
+// the "tasksreports" edge. The optional arguments are used to configure the query builder of the edge.
+func (piq *ProfileIssueQuery) WithTasksreports(opts ...func(*TaskReportQuery)) *ProfileIssueQuery {
+	query := (&TaskReportClient{config: piq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	piq.withTasksreports = query
 	return piq
 }
 
@@ -410,9 +447,10 @@ func (piq *ProfileIssueQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 		nodes       = []*ProfileIssue{}
 		withFKs     = piq.withFKs
 		_spec       = piq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			piq.withProfile != nil,
 			piq.withAgents != nil,
+			piq.withTasksreports != nil,
 		}
 	)
 	if piq.withProfile != nil || piq.withAgents != nil {
@@ -451,6 +489,13 @@ func (piq *ProfileIssueQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if query := piq.withAgents; query != nil {
 		if err := piq.loadAgents(ctx, query, nodes, nil,
 			func(n *ProfileIssue, e *Agent) { n.Edges.Agents = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := piq.withTasksreports; query != nil {
+		if err := piq.loadTasksreports(ctx, query, nodes,
+			func(n *ProfileIssue) { n.Edges.Tasksreports = []*TaskReport{} },
+			func(n *ProfileIssue, e *TaskReport) { n.Edges.Tasksreports = append(n.Edges.Tasksreports, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -518,6 +563,37 @@ func (piq *ProfileIssueQuery) loadAgents(ctx context.Context, query *AgentQuery,
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (piq *ProfileIssueQuery) loadTasksreports(ctx context.Context, query *TaskReportQuery, nodes []*ProfileIssue, init func(*ProfileIssue), assign func(*ProfileIssue, *TaskReport)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*ProfileIssue)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.TaskReport(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profileissue.TasksreportsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.profile_issue_tasksreports
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "profile_issue_tasksreports" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_issue_tasksreports" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

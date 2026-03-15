@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -26,5 +27,6 @@ func (ProfileIssue) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("profile", Profile.Type).Unique().Ref("issues"),
 		edge.To("agents", Agent.Type).Unique(),
+		edge.To("tasksreports", TaskReport.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }

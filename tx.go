@@ -90,6 +90,8 @@ type Tx struct {
 	Tag *TagClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TaskReport is the client for interacting with the TaskReport builders.
+	TaskReport *TaskReportClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
 	// Update is the client for interacting with the Update builders.
@@ -270,6 +272,7 @@ func (tx *Tx) init() {
 	tx.SystemUpdate = NewSystemUpdateClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
+	tx.TaskReport = NewTaskReportClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.Update = NewUpdateClient(tx.config)
 	tx.User = NewUserClient(tx.config)

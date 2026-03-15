@@ -212,6 +212,7 @@ var (
 		{Name: "updated", Type: field.TypeTime, Nullable: true},
 		{Name: "failed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "by_profile", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "more_info", Type: field.TypeString, Nullable: true},
 		{Name: "agent_deployments", Type: field.TypeString},
 	}
 	// DeploymentsTable holds the schema information for the "deployments" table.
@@ -222,7 +223,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "deployments_agents_deployments",
-				Columns:    []*schema.Column{DeploymentsColumns[8]},
+				Columns:    []*schema.Column{DeploymentsColumns[9]},
 				RefColumns: []*schema.Column{AgentsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -1238,6 +1239,9 @@ var (
 		{Name: "tenant", Type: field.TypeInt, Nullable: true},
 		{Name: "netbird_groups", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "netbird_allow_extra_dns_labels", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "ignore_errors", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "disabled", Type: field.TypeBool, Default: false},
+		{Name: "order", Type: field.TypeInt, Nullable: true, Default: 0},
 		{Name: "profile_tasks", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
@@ -1248,8 +1252,38 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_profiles_tasks",
-				Columns:    []*schema.Column{TasksColumns[89]},
+				Columns:    []*schema.Column{TasksColumns[92]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// TaskReportsColumns holds the columns for the "task_reports" table.
+	TaskReportsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "std_output", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "std_error", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "failed", Type: field.TypeBool, Default: false},
+		{Name: "end", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "profile_issue_tasksreports", Type: field.TypeInt, Nullable: true},
+		{Name: "task_reports", Type: field.TypeInt, Nullable: true},
+	}
+	// TaskReportsTable holds the schema information for the "task_reports" table.
+	TaskReportsTable = &schema.Table{
+		Name:       "task_reports",
+		Columns:    TaskReportsColumns,
+		PrimaryKey: []*schema.Column{TaskReportsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "task_reports_profile_issues_tasksreports",
+				Columns:    []*schema.Column{TaskReportsColumns[5]},
+				RefColumns: []*schema.Column{ProfileIssuesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "task_reports_tasks_reports",
+				Columns:    []*schema.Column{TaskReportsColumns[6]},
+				RefColumns: []*schema.Column{TasksColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -1616,6 +1650,7 @@ var (
 		SystemUpdatesTable,
 		TagsTable,
 		TasksTable,
+		TaskReportsTable,
 		TenantsTable,
 		UpdatesTable,
 		UsersTable,
@@ -1673,6 +1708,8 @@ func init() {
 	TagsTable.ForeignKeys[1].RefTable = TasksTable
 	TagsTable.ForeignKeys[2].RefTable = TenantsTable
 	TasksTable.ForeignKeys[0].RefTable = ProfilesTable
+	TaskReportsTable.ForeignKeys[0].RefTable = ProfileIssuesTable
+	TaskReportsTable.ForeignKeys[1].RefTable = TasksTable
 	TenantsTable.ForeignKeys[0].RefTable = NetbirdSettingsTable
 	UpdatesTable.ForeignKeys[0].RefTable = AgentsTable
 	UserTenantsTable.ForeignKeys[0].RefTable = UsersTable

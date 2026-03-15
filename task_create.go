@@ -14,6 +14,7 @@ import (
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/task"
+	"github.com/open-uem/ent/taskreport"
 )
 
 // TaskCreate is the builder for creating a Task entity.
@@ -1240,6 +1241,48 @@ func (tc *TaskCreate) SetNillableNetbirdAllowExtraDNSLabels(b *bool) *TaskCreate
 	return tc
 }
 
+// SetIgnoreErrors sets the "ignore_errors" field.
+func (tc *TaskCreate) SetIgnoreErrors(b bool) *TaskCreate {
+	tc.mutation.SetIgnoreErrors(b)
+	return tc
+}
+
+// SetNillableIgnoreErrors sets the "ignore_errors" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableIgnoreErrors(b *bool) *TaskCreate {
+	if b != nil {
+		tc.SetIgnoreErrors(*b)
+	}
+	return tc
+}
+
+// SetDisabled sets the "disabled" field.
+func (tc *TaskCreate) SetDisabled(b bool) *TaskCreate {
+	tc.mutation.SetDisabled(b)
+	return tc
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableDisabled(b *bool) *TaskCreate {
+	if b != nil {
+		tc.SetDisabled(*b)
+	}
+	return tc
+}
+
+// SetOrder sets the "order" field.
+func (tc *TaskCreate) SetOrder(i int) *TaskCreate {
+	tc.mutation.SetOrder(i)
+	return tc
+}
+
+// SetNillableOrder sets the "order" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableOrder(i *int) *TaskCreate {
+	if i != nil {
+		tc.SetOrder(*i)
+	}
+	return tc
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tc *TaskCreate) AddTagIDs(ids ...int) *TaskCreate {
 	tc.mutation.AddTagIDs(ids...)
@@ -1272,6 +1315,21 @@ func (tc *TaskCreate) SetNillableProfileID(id *int) *TaskCreate {
 // SetProfile sets the "profile" edge to the Profile entity.
 func (tc *TaskCreate) SetProfile(p *Profile) *TaskCreate {
 	return tc.SetProfileID(p.ID)
+}
+
+// AddReportIDs adds the "reports" edge to the TaskReport entity by IDs.
+func (tc *TaskCreate) AddReportIDs(ids ...int) *TaskCreate {
+	tc.mutation.AddReportIDs(ids...)
+	return tc
+}
+
+// AddReports adds the "reports" edges to the TaskReport entity.
+func (tc *TaskCreate) AddReports(t ...*TaskReport) *TaskCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tc.AddReportIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -1529,6 +1587,18 @@ func (tc *TaskCreate) defaults() {
 		v := task.DefaultNetbirdAllowExtraDNSLabels
 		tc.mutation.SetNetbirdAllowExtraDNSLabels(v)
 	}
+	if _, ok := tc.mutation.IgnoreErrors(); !ok {
+		v := task.DefaultIgnoreErrors
+		tc.mutation.SetIgnoreErrors(v)
+	}
+	if _, ok := tc.mutation.Disabled(); !ok {
+		v := task.DefaultDisabled
+		tc.mutation.SetDisabled(v)
+	}
+	if _, ok := tc.mutation.Order(); !ok {
+		v := task.DefaultOrder
+		tc.mutation.SetOrder(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1573,6 +1643,9 @@ func (tc *TaskCreate) check() error {
 		if err := task.AptUpgradeTypeValidator(v); err != nil {
 			return &ValidationError{Name: "apt_upgrade_type", err: fmt.Errorf(`ent: validator failed for field "Task.apt_upgrade_type": %w`, err)}
 		}
+	}
+	if _, ok := tc.mutation.Disabled(); !ok {
+		return &ValidationError{Name: "disabled", err: errors.New(`ent: missing required field "Task.disabled"`)}
 	}
 	return nil
 }
@@ -1953,6 +2026,18 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool, value)
 		_node.NetbirdAllowExtraDNSLabels = value
 	}
+	if value, ok := tc.mutation.IgnoreErrors(); ok {
+		_spec.SetField(task.FieldIgnoreErrors, field.TypeBool, value)
+		_node.IgnoreErrors = value
+	}
+	if value, ok := tc.mutation.Disabled(); ok {
+		_spec.SetField(task.FieldDisabled, field.TypeBool, value)
+		_node.Disabled = value
+	}
+	if value, ok := tc.mutation.Order(); ok {
+		_spec.SetField(task.FieldOrder, field.TypeInt, value)
+		_node.Order = value
+	}
 	if nodes := tc.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1984,6 +2069,22 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.profile_tasks = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.ReportsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -3619,6 +3720,60 @@ func (u *TaskUpsert) UpdateNetbirdAllowExtraDNSLabels() *TaskUpsert {
 // ClearNetbirdAllowExtraDNSLabels clears the value of the "netbird_allow_extra_dns_labels" field.
 func (u *TaskUpsert) ClearNetbirdAllowExtraDNSLabels() *TaskUpsert {
 	u.SetNull(task.FieldNetbirdAllowExtraDNSLabels)
+	return u
+}
+
+// SetIgnoreErrors sets the "ignore_errors" field.
+func (u *TaskUpsert) SetIgnoreErrors(v bool) *TaskUpsert {
+	u.Set(task.FieldIgnoreErrors, v)
+	return u
+}
+
+// UpdateIgnoreErrors sets the "ignore_errors" field to the value that was provided on create.
+func (u *TaskUpsert) UpdateIgnoreErrors() *TaskUpsert {
+	u.SetExcluded(task.FieldIgnoreErrors)
+	return u
+}
+
+// ClearIgnoreErrors clears the value of the "ignore_errors" field.
+func (u *TaskUpsert) ClearIgnoreErrors() *TaskUpsert {
+	u.SetNull(task.FieldIgnoreErrors)
+	return u
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *TaskUpsert) SetDisabled(v bool) *TaskUpsert {
+	u.Set(task.FieldDisabled, v)
+	return u
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *TaskUpsert) UpdateDisabled() *TaskUpsert {
+	u.SetExcluded(task.FieldDisabled)
+	return u
+}
+
+// SetOrder sets the "order" field.
+func (u *TaskUpsert) SetOrder(v int) *TaskUpsert {
+	u.Set(task.FieldOrder, v)
+	return u
+}
+
+// UpdateOrder sets the "order" field to the value that was provided on create.
+func (u *TaskUpsert) UpdateOrder() *TaskUpsert {
+	u.SetExcluded(task.FieldOrder)
+	return u
+}
+
+// AddOrder adds v to the "order" field.
+func (u *TaskUpsert) AddOrder(v int) *TaskUpsert {
+	u.Add(task.FieldOrder, v)
+	return u
+}
+
+// ClearOrder clears the value of the "order" field.
+func (u *TaskUpsert) ClearOrder() *TaskUpsert {
+	u.SetNull(task.FieldOrder)
 	return u
 }
 
@@ -5507,6 +5662,69 @@ func (u *TaskUpsertOne) UpdateNetbirdAllowExtraDNSLabels() *TaskUpsertOne {
 func (u *TaskUpsertOne) ClearNetbirdAllowExtraDNSLabels() *TaskUpsertOne {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearNetbirdAllowExtraDNSLabels()
+	})
+}
+
+// SetIgnoreErrors sets the "ignore_errors" field.
+func (u *TaskUpsertOne) SetIgnoreErrors(v bool) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetIgnoreErrors(v)
+	})
+}
+
+// UpdateIgnoreErrors sets the "ignore_errors" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdateIgnoreErrors() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateIgnoreErrors()
+	})
+}
+
+// ClearIgnoreErrors clears the value of the "ignore_errors" field.
+func (u *TaskUpsertOne) ClearIgnoreErrors() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearIgnoreErrors()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *TaskUpsertOne) SetDisabled(v bool) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdateDisabled() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateDisabled()
+	})
+}
+
+// SetOrder sets the "order" field.
+func (u *TaskUpsertOne) SetOrder(v int) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetOrder(v)
+	})
+}
+
+// AddOrder adds v to the "order" field.
+func (u *TaskUpsertOne) AddOrder(v int) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.AddOrder(v)
+	})
+}
+
+// UpdateOrder sets the "order" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdateOrder() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateOrder()
+	})
+}
+
+// ClearOrder clears the value of the "order" field.
+func (u *TaskUpsertOne) ClearOrder() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearOrder()
 	})
 }
 
@@ -7559,6 +7777,69 @@ func (u *TaskUpsertBulk) UpdateNetbirdAllowExtraDNSLabels() *TaskUpsertBulk {
 func (u *TaskUpsertBulk) ClearNetbirdAllowExtraDNSLabels() *TaskUpsertBulk {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearNetbirdAllowExtraDNSLabels()
+	})
+}
+
+// SetIgnoreErrors sets the "ignore_errors" field.
+func (u *TaskUpsertBulk) SetIgnoreErrors(v bool) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetIgnoreErrors(v)
+	})
+}
+
+// UpdateIgnoreErrors sets the "ignore_errors" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdateIgnoreErrors() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateIgnoreErrors()
+	})
+}
+
+// ClearIgnoreErrors clears the value of the "ignore_errors" field.
+func (u *TaskUpsertBulk) ClearIgnoreErrors() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearIgnoreErrors()
+	})
+}
+
+// SetDisabled sets the "disabled" field.
+func (u *TaskUpsertBulk) SetDisabled(v bool) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetDisabled(v)
+	})
+}
+
+// UpdateDisabled sets the "disabled" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdateDisabled() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateDisabled()
+	})
+}
+
+// SetOrder sets the "order" field.
+func (u *TaskUpsertBulk) SetOrder(v int) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetOrder(v)
+	})
+}
+
+// AddOrder adds v to the "order" field.
+func (u *TaskUpsertBulk) AddOrder(v int) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.AddOrder(v)
+	})
+}
+
+// UpdateOrder sets the "order" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdateOrder() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateOrder()
+	})
+}
+
+// ClearOrder clears the value of the "order" field.
+func (u *TaskUpsertBulk) ClearOrder() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearOrder()
 	})
 }
 

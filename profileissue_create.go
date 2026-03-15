@@ -14,6 +14,7 @@ import (
 	"github.com/open-uem/ent/agent"
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/profileissue"
+	"github.com/open-uem/ent/taskreport"
 )
 
 // ProfileIssueCreate is the builder for creating a ProfileIssue entity.
@@ -88,6 +89,21 @@ func (pic *ProfileIssueCreate) SetNillableAgentsID(id *string) *ProfileIssueCrea
 // SetAgents sets the "agents" edge to the Agent entity.
 func (pic *ProfileIssueCreate) SetAgents(a *Agent) *ProfileIssueCreate {
 	return pic.SetAgentsID(a.ID)
+}
+
+// AddTasksreportIDs adds the "tasksreports" edge to the TaskReport entity by IDs.
+func (pic *ProfileIssueCreate) AddTasksreportIDs(ids ...int) *ProfileIssueCreate {
+	pic.mutation.AddTasksreportIDs(ids...)
+	return pic
+}
+
+// AddTasksreports adds the "tasksreports" edges to the TaskReport entity.
+func (pic *ProfileIssueCreate) AddTasksreports(t ...*TaskReport) *ProfileIssueCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return pic.AddTasksreportIDs(ids...)
 }
 
 // Mutation returns the ProfileIssueMutation object of the builder.
@@ -200,6 +216,22 @@ func (pic *ProfileIssueCreate) createSpec() (*ProfileIssue, *sqlgraph.CreateSpec
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.profile_issue_agents = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pic.mutation.TasksreportsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profileissue.TasksreportsTable,
+			Columns: []string{profileissue.TasksreportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

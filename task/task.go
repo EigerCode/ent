@@ -190,10 +190,18 @@ const (
 	FieldNetbirdGroups = "netbird_groups"
 	// FieldNetbirdAllowExtraDNSLabels holds the string denoting the netbird_allow_extra_dns_labels field in the database.
 	FieldNetbirdAllowExtraDNSLabels = "netbird_allow_extra_dns_labels"
+	// FieldIgnoreErrors holds the string denoting the ignore_errors field in the database.
+	FieldIgnoreErrors = "ignore_errors"
+	// FieldDisabled holds the string denoting the disabled field in the database.
+	FieldDisabled = "disabled"
+	// FieldOrder holds the string denoting the order field in the database.
+	FieldOrder = "order"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
+	// EdgeReports holds the string denoting the reports edge name in mutations.
+	EdgeReports = "reports"
 	// Table holds the table name of the task in the database.
 	Table = "tasks"
 	// TagsTable is the table that holds the tags relation/edge.
@@ -210,6 +218,13 @@ const (
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
 	ProfileColumn = "profile_tasks"
+	// ReportsTable is the table that holds the reports relation/edge.
+	ReportsTable = "task_reports"
+	// ReportsInverseTable is the table name for the TaskReport entity.
+	// It exists in this package in order to avoid circular dependency with the "taskreport" package.
+	ReportsInverseTable = "task_reports"
+	// ReportsColumn is the table column denoting the reports relation/edge.
+	ReportsColumn = "task_reports"
 )
 
 // Columns holds all SQL columns for task fields.
@@ -303,6 +318,9 @@ var Columns = []string{
 	FieldTenant,
 	FieldNetbirdGroups,
 	FieldNetbirdAllowExtraDNSLabels,
+	FieldIgnoreErrors,
+	FieldDisabled,
+	FieldOrder,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
@@ -435,6 +453,12 @@ var (
 	DefaultNetbirdGroups string
 	// DefaultNetbirdAllowExtraDNSLabels holds the default value on creation for the "netbird_allow_extra_dns_labels" field.
 	DefaultNetbirdAllowExtraDNSLabels bool
+	// DefaultIgnoreErrors holds the default value on creation for the "ignore_errors" field.
+	DefaultIgnoreErrors bool
+	// DefaultDisabled holds the default value on creation for the "disabled" field.
+	DefaultDisabled bool
+	// DefaultOrder holds the default value on creation for the "order" field.
+	DefaultOrder int
 )
 
 // Type defines the type for the "type" enum field.
@@ -1081,6 +1105,21 @@ func ByNetbirdAllowExtraDNSLabels(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNetbirdAllowExtraDNSLabels, opts...).ToFunc()
 }
 
+// ByIgnoreErrors orders the results by the ignore_errors field.
+func ByIgnoreErrors(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIgnoreErrors, opts...).ToFunc()
+}
+
+// ByDisabled orders the results by the disabled field.
+func ByDisabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisabled, opts...).ToFunc()
+}
+
+// ByOrder orders the results by the order field.
+func ByOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrder, opts...).ToFunc()
+}
+
 // ByTagsCount orders the results by tags count.
 func ByTagsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -1101,6 +1140,20 @@ func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByReportsCount orders the results by reports count.
+func ByReportsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newReportsStep(), opts...)
+	}
+}
+
+// ByReports orders the results by reports terms.
+func ByReports(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newReportsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newTagsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -1113,5 +1166,12 @@ func newProfileStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfileInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
+	)
+}
+func newReportsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ReportsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ReportsTable, ReportsColumn),
 	)
 }

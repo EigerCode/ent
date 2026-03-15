@@ -194,6 +194,12 @@ type Task struct {
 	NetbirdGroups string `json:"netbird_groups,omitempty"`
 	// NetbirdAllowExtraDNSLabels holds the value of the "netbird_allow_extra_dns_labels" field.
 	NetbirdAllowExtraDNSLabels bool `json:"netbird_allow_extra_dns_labels,omitempty"`
+	// IgnoreErrors holds the value of the "ignore_errors" field.
+	IgnoreErrors bool `json:"ignore_errors,omitempty"`
+	// Disabled holds the value of the "disabled" field.
+	Disabled bool `json:"disabled,omitempty"`
+	// Order holds the value of the "order" field.
+	Order int `json:"order,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
 	Edges         TaskEdges `json:"edges"`
@@ -207,9 +213,11 @@ type TaskEdges struct {
 	Tags []*Tag `json:"tags,omitempty"`
 	// Profile holds the value of the profile edge.
 	Profile *Profile `json:"profile,omitempty"`
+	// Reports holds the value of the reports edge.
+	Reports []*TaskReport `json:"reports,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // TagsOrErr returns the Tags value or an error if the edge
@@ -232,14 +240,23 @@ func (e TaskEdges) ProfileOrErr() (*Profile, error) {
 	return nil, &NotLoadedError{edge: "profile"}
 }
 
+// ReportsOrErr returns the Reports value or an error if the edge
+// was not loaded in eager-loading.
+func (e TaskEdges) ReportsOrErr() ([]*TaskReport, error) {
+	if e.loadedTypes[2] {
+		return e.Reports, nil
+	}
+	return nil, &NotLoadedError{edge: "reports"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case task.FieldPackageLatest, task.FieldRegistryHex, task.FieldRegistryForce, task.FieldLocalUserDisable, task.FieldLocalUserPasswordChangeNotAllowed, task.FieldLocalUserPasswordChangeRequired, task.FieldLocalUserPasswordNeverExpires, task.FieldLocalUserAppend, task.FieldLocalUserCreateHome, task.FieldLocalUserForce, task.FieldLocalUserGenerateSSHKey, task.FieldLocalUserMoveHome, task.FieldLocalUserNonunique, task.FieldLocalUserPasswordLock, task.FieldLocalUserSystem, task.FieldLocalGroupSystem, task.FieldLocalGroupForce, task.FieldBrewUpdate, task.FieldBrewUpgradeAll, task.FieldBrewGreedy, task.FieldAptAllowDowngrade, task.FieldAptFailOnAutoremove, task.FieldAptForce, task.FieldAptInstallRecommends, task.FieldAptOnlyUpgrade, task.FieldAptPurge, task.FieldAptUpdateCache, task.FieldNetbirdAllowExtraDNSLabels:
+		case task.FieldPackageLatest, task.FieldRegistryHex, task.FieldRegistryForce, task.FieldLocalUserDisable, task.FieldLocalUserPasswordChangeNotAllowed, task.FieldLocalUserPasswordChangeRequired, task.FieldLocalUserPasswordNeverExpires, task.FieldLocalUserAppend, task.FieldLocalUserCreateHome, task.FieldLocalUserForce, task.FieldLocalUserGenerateSSHKey, task.FieldLocalUserMoveHome, task.FieldLocalUserNonunique, task.FieldLocalUserPasswordLock, task.FieldLocalUserSystem, task.FieldLocalGroupSystem, task.FieldLocalGroupForce, task.FieldBrewUpdate, task.FieldBrewUpgradeAll, task.FieldBrewGreedy, task.FieldAptAllowDowngrade, task.FieldAptFailOnAutoremove, task.FieldAptForce, task.FieldAptInstallRecommends, task.FieldAptOnlyUpgrade, task.FieldAptPurge, task.FieldAptUpdateCache, task.FieldNetbirdAllowExtraDNSLabels, task.FieldIgnoreErrors, task.FieldDisabled:
 			values[i] = new(sql.NullBool)
-		case task.FieldID, task.FieldVersion, task.FieldTenant:
+		case task.FieldID, task.FieldVersion, task.FieldTenant, task.FieldOrder:
 			values[i] = new(sql.NullInt64)
 		case task.FieldName, task.FieldType, task.FieldPackageID, task.FieldPackageName, task.FieldRegistryKey, task.FieldRegistryKeyValueName, task.FieldRegistryKeyValueType, task.FieldRegistryKeyValueData, task.FieldLocalUserUsername, task.FieldLocalUserDescription, task.FieldLocalUserFullname, task.FieldLocalUserPassword, task.FieldLocalUserExpires, task.FieldLocalUserGroup, task.FieldLocalUserGroups, task.FieldLocalUserHome, task.FieldLocalUserPasswordExpireAccountDisable, task.FieldLocalUserPasswordExpireMax, task.FieldLocalUserPasswordExpireMin, task.FieldLocalUserPasswordExpireWarn, task.FieldLocalUserSeuser, task.FieldLocalUserShell, task.FieldLocalUserSkeleton, task.FieldLocalUserID, task.FieldLocalUserIDMax, task.FieldLocalUserIDMin, task.FieldLocalUserSSHKeyBits, task.FieldLocalUserSSHKeyComment, task.FieldLocalUserSSHKeyFile, task.FieldLocalUserSSHKeyPassphrase, task.FieldLocalUserSSHKeyType, task.FieldLocalUserUmask, task.FieldLocalGroupID, task.FieldLocalGroupName, task.FieldLocalGroupDescription, task.FieldLocalGroupMembers, task.FieldLocalGroupMembersToInclude, task.FieldLocalGroupMembersToExclude, task.FieldMsiProductid, task.FieldMsiPath, task.FieldMsiArguments, task.FieldMsiFileHash, task.FieldMsiFileHashAlg, task.FieldMsiLogPath, task.FieldScript, task.FieldScriptExecutable, task.FieldScriptCreates, task.FieldScriptRun, task.FieldAgentType, task.FieldBrewUpgradeOptions, task.FieldBrewInstallOptions, task.FieldPackageVersion, task.FieldAptDeb, task.FieldAptDpkgOptions, task.FieldAptName, task.FieldAptUpgradeType, task.FieldNetbirdGroups:
 			values[i] = new(sql.NullString)
@@ -796,6 +813,24 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.NetbirdAllowExtraDNSLabels = value.Bool
 			}
+		case task.FieldIgnoreErrors:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field ignore_errors", values[i])
+			} else if value.Valid {
+				t.IgnoreErrors = value.Bool
+			}
+		case task.FieldDisabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field disabled", values[i])
+			} else if value.Valid {
+				t.Disabled = value.Bool
+			}
+		case task.FieldOrder:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field order", values[i])
+			} else if value.Valid {
+				t.Order = int(value.Int64)
+			}
 		case task.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field profile_tasks", value)
@@ -824,6 +859,11 @@ func (t *Task) QueryTags() *TagQuery {
 // QueryProfile queries the "profile" edge of the Task entity.
 func (t *Task) QueryProfile() *ProfileQuery {
 	return NewTaskClient(t.config).QueryProfile(t)
+}
+
+// QueryReports queries the "reports" edge of the Task entity.
+func (t *Task) QueryReports() *TaskReportQuery {
+	return NewTaskClient(t.config).QueryReports(t)
 }
 
 // Update returns a builder for updating this Task.
@@ -1112,6 +1152,15 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("netbird_allow_extra_dns_labels=")
 	builder.WriteString(fmt.Sprintf("%v", t.NetbirdAllowExtraDNSLabels))
+	builder.WriteString(", ")
+	builder.WriteString("ignore_errors=")
+	builder.WriteString(fmt.Sprintf("%v", t.IgnoreErrors))
+	builder.WriteString(", ")
+	builder.WriteString("disabled=")
+	builder.WriteString(fmt.Sprintf("%v", t.Disabled))
+	builder.WriteString(", ")
+	builder.WriteString("order=")
+	builder.WriteString(fmt.Sprintf("%v", t.Order))
 	builder.WriteByte(')')
 	return builder.String()
 }

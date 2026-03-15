@@ -23,6 +23,7 @@ func (Deployment) Fields() []ent.Field {
 		field.Time("updated").Optional().Default(time.Now).UpdateDefault(time.Now),
 		field.Bool("failed").Optional().Default(false),
 		field.Bool("by_profile").Optional().Default(false),
+		field.String("more_info").Optional(),
 	}
 }
 

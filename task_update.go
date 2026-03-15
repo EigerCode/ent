@@ -15,6 +15,7 @@ import (
 	"github.com/open-uem/ent/profile"
 	"github.com/open-uem/ent/tag"
 	"github.com/open-uem/ent/task"
+	"github.com/open-uem/ent/taskreport"
 )
 
 // TaskUpdate is the builder for updating Task entities.
@@ -1793,6 +1794,67 @@ func (tu *TaskUpdate) ClearNetbirdAllowExtraDNSLabels() *TaskUpdate {
 	return tu
 }
 
+// SetIgnoreErrors sets the "ignore_errors" field.
+func (tu *TaskUpdate) SetIgnoreErrors(b bool) *TaskUpdate {
+	tu.mutation.SetIgnoreErrors(b)
+	return tu
+}
+
+// SetNillableIgnoreErrors sets the "ignore_errors" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableIgnoreErrors(b *bool) *TaskUpdate {
+	if b != nil {
+		tu.SetIgnoreErrors(*b)
+	}
+	return tu
+}
+
+// ClearIgnoreErrors clears the value of the "ignore_errors" field.
+func (tu *TaskUpdate) ClearIgnoreErrors() *TaskUpdate {
+	tu.mutation.ClearIgnoreErrors()
+	return tu
+}
+
+// SetDisabled sets the "disabled" field.
+func (tu *TaskUpdate) SetDisabled(b bool) *TaskUpdate {
+	tu.mutation.SetDisabled(b)
+	return tu
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableDisabled(b *bool) *TaskUpdate {
+	if b != nil {
+		tu.SetDisabled(*b)
+	}
+	return tu
+}
+
+// SetOrder sets the "order" field.
+func (tu *TaskUpdate) SetOrder(i int) *TaskUpdate {
+	tu.mutation.ResetOrder()
+	tu.mutation.SetOrder(i)
+	return tu
+}
+
+// SetNillableOrder sets the "order" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableOrder(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetOrder(*i)
+	}
+	return tu
+}
+
+// AddOrder adds i to the "order" field.
+func (tu *TaskUpdate) AddOrder(i int) *TaskUpdate {
+	tu.mutation.AddOrder(i)
+	return tu
+}
+
+// ClearOrder clears the value of the "order" field.
+func (tu *TaskUpdate) ClearOrder() *TaskUpdate {
+	tu.mutation.ClearOrder()
+	return tu
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tu *TaskUpdate) AddTagIDs(ids ...int) *TaskUpdate {
 	tu.mutation.AddTagIDs(ids...)
@@ -1827,6 +1889,21 @@ func (tu *TaskUpdate) SetProfile(p *Profile) *TaskUpdate {
 	return tu.SetProfileID(p.ID)
 }
 
+// AddReportIDs adds the "reports" edge to the TaskReport entity by IDs.
+func (tu *TaskUpdate) AddReportIDs(ids ...int) *TaskUpdate {
+	tu.mutation.AddReportIDs(ids...)
+	return tu
+}
+
+// AddReports adds the "reports" edges to the TaskReport entity.
+func (tu *TaskUpdate) AddReports(t ...*TaskReport) *TaskUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tu.AddReportIDs(ids...)
+}
+
 // Mutation returns the TaskMutation object of the builder.
 func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
@@ -1857,6 +1934,27 @@ func (tu *TaskUpdate) RemoveTags(t ...*Tag) *TaskUpdate {
 func (tu *TaskUpdate) ClearProfile() *TaskUpdate {
 	tu.mutation.ClearProfile()
 	return tu
+}
+
+// ClearReports clears all "reports" edges to the TaskReport entity.
+func (tu *TaskUpdate) ClearReports() *TaskUpdate {
+	tu.mutation.ClearReports()
+	return tu
+}
+
+// RemoveReportIDs removes the "reports" edge to TaskReport entities by IDs.
+func (tu *TaskUpdate) RemoveReportIDs(ids ...int) *TaskUpdate {
+	tu.mutation.RemoveReportIDs(ids...)
+	return tu
+}
+
+// RemoveReports removes "reports" edges to TaskReport entities.
+func (tu *TaskUpdate) RemoveReports(t ...*TaskReport) *TaskUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tu.RemoveReportIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -2472,6 +2570,24 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.NetbirdAllowExtraDNSLabelsCleared() {
 		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool)
 	}
+	if value, ok := tu.mutation.IgnoreErrors(); ok {
+		_spec.SetField(task.FieldIgnoreErrors, field.TypeBool, value)
+	}
+	if tu.mutation.IgnoreErrorsCleared() {
+		_spec.ClearField(task.FieldIgnoreErrors, field.TypeBool)
+	}
+	if value, ok := tu.mutation.Disabled(); ok {
+		_spec.SetField(task.FieldDisabled, field.TypeBool, value)
+	}
+	if value, ok := tu.mutation.Order(); ok {
+		_spec.SetField(task.FieldOrder, field.TypeInt, value)
+	}
+	if value, ok := tu.mutation.AddedOrder(); ok {
+		_spec.AddField(task.FieldOrder, field.TypeInt, value)
+	}
+	if tu.mutation.OrderCleared() {
+		_spec.ClearField(task.FieldOrder, field.TypeInt)
+	}
 	if tu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -2539,6 +2655,51 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.ReportsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedReportsIDs(); len(nodes) > 0 && !tu.mutation.ReportsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.ReportsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -4330,6 +4491,67 @@ func (tuo *TaskUpdateOne) ClearNetbirdAllowExtraDNSLabels() *TaskUpdateOne {
 	return tuo
 }
 
+// SetIgnoreErrors sets the "ignore_errors" field.
+func (tuo *TaskUpdateOne) SetIgnoreErrors(b bool) *TaskUpdateOne {
+	tuo.mutation.SetIgnoreErrors(b)
+	return tuo
+}
+
+// SetNillableIgnoreErrors sets the "ignore_errors" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableIgnoreErrors(b *bool) *TaskUpdateOne {
+	if b != nil {
+		tuo.SetIgnoreErrors(*b)
+	}
+	return tuo
+}
+
+// ClearIgnoreErrors clears the value of the "ignore_errors" field.
+func (tuo *TaskUpdateOne) ClearIgnoreErrors() *TaskUpdateOne {
+	tuo.mutation.ClearIgnoreErrors()
+	return tuo
+}
+
+// SetDisabled sets the "disabled" field.
+func (tuo *TaskUpdateOne) SetDisabled(b bool) *TaskUpdateOne {
+	tuo.mutation.SetDisabled(b)
+	return tuo
+}
+
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableDisabled(b *bool) *TaskUpdateOne {
+	if b != nil {
+		tuo.SetDisabled(*b)
+	}
+	return tuo
+}
+
+// SetOrder sets the "order" field.
+func (tuo *TaskUpdateOne) SetOrder(i int) *TaskUpdateOne {
+	tuo.mutation.ResetOrder()
+	tuo.mutation.SetOrder(i)
+	return tuo
+}
+
+// SetNillableOrder sets the "order" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableOrder(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetOrder(*i)
+	}
+	return tuo
+}
+
+// AddOrder adds i to the "order" field.
+func (tuo *TaskUpdateOne) AddOrder(i int) *TaskUpdateOne {
+	tuo.mutation.AddOrder(i)
+	return tuo
+}
+
+// ClearOrder clears the value of the "order" field.
+func (tuo *TaskUpdateOne) ClearOrder() *TaskUpdateOne {
+	tuo.mutation.ClearOrder()
+	return tuo
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tuo *TaskUpdateOne) AddTagIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.AddTagIDs(ids...)
@@ -4364,6 +4586,21 @@ func (tuo *TaskUpdateOne) SetProfile(p *Profile) *TaskUpdateOne {
 	return tuo.SetProfileID(p.ID)
 }
 
+// AddReportIDs adds the "reports" edge to the TaskReport entity by IDs.
+func (tuo *TaskUpdateOne) AddReportIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.AddReportIDs(ids...)
+	return tuo
+}
+
+// AddReports adds the "reports" edges to the TaskReport entity.
+func (tuo *TaskUpdateOne) AddReports(t ...*TaskReport) *TaskUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tuo.AddReportIDs(ids...)
+}
+
 // Mutation returns the TaskMutation object of the builder.
 func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
@@ -4394,6 +4631,27 @@ func (tuo *TaskUpdateOne) RemoveTags(t ...*Tag) *TaskUpdateOne {
 func (tuo *TaskUpdateOne) ClearProfile() *TaskUpdateOne {
 	tuo.mutation.ClearProfile()
 	return tuo
+}
+
+// ClearReports clears all "reports" edges to the TaskReport entity.
+func (tuo *TaskUpdateOne) ClearReports() *TaskUpdateOne {
+	tuo.mutation.ClearReports()
+	return tuo
+}
+
+// RemoveReportIDs removes the "reports" edge to TaskReport entities by IDs.
+func (tuo *TaskUpdateOne) RemoveReportIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.RemoveReportIDs(ids...)
+	return tuo
+}
+
+// RemoveReports removes "reports" edges to TaskReport entities.
+func (tuo *TaskUpdateOne) RemoveReports(t ...*TaskReport) *TaskUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tuo.RemoveReportIDs(ids...)
 }
 
 // Where appends a list predicates to the TaskUpdate builder.
@@ -5039,6 +5297,24 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if tuo.mutation.NetbirdAllowExtraDNSLabelsCleared() {
 		_spec.ClearField(task.FieldNetbirdAllowExtraDNSLabels, field.TypeBool)
 	}
+	if value, ok := tuo.mutation.IgnoreErrors(); ok {
+		_spec.SetField(task.FieldIgnoreErrors, field.TypeBool, value)
+	}
+	if tuo.mutation.IgnoreErrorsCleared() {
+		_spec.ClearField(task.FieldIgnoreErrors, field.TypeBool)
+	}
+	if value, ok := tuo.mutation.Disabled(); ok {
+		_spec.SetField(task.FieldDisabled, field.TypeBool, value)
+	}
+	if value, ok := tuo.mutation.Order(); ok {
+		_spec.SetField(task.FieldOrder, field.TypeInt, value)
+	}
+	if value, ok := tuo.mutation.AddedOrder(); ok {
+		_spec.AddField(task.FieldOrder, field.TypeInt, value)
+	}
+	if tuo.mutation.OrderCleared() {
+		_spec.ClearField(task.FieldOrder, field.TypeInt)
+	}
 	if tuo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -5106,6 +5382,51 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.ReportsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedReportsIDs(); len(nodes) > 0 && !tuo.mutation.ReportsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.ReportsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.ReportsTable,
+			Columns: []string{task.ReportsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
