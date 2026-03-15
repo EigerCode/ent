@@ -13,21 +13,19 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/predicate"
 	"github.com/open-uem/ent/softwareassignment"
-	"github.com/open-uem/ent/softwarepackage"
 	"github.com/open-uem/ent/tenant"
 )
 
 // SoftwareAssignmentQuery is the builder for querying SoftwareAssignment entities.
 type SoftwareAssignmentQuery struct {
 	config
-	ctx         *QueryContext
-	order       []softwareassignment.OrderOption
-	inters      []Interceptor
-	predicates  []predicate.SoftwareAssignment
-	withPackage *SoftwarePackageQuery
-	withTenant  *TenantQuery
-	withFKs     bool
-	modifiers   []func(*sql.Selector)
+	ctx        *QueryContext
+	order      []softwareassignment.OrderOption
+	inters     []Interceptor
+	predicates []predicate.SoftwareAssignment
+	withTenant *TenantQuery
+	withFKs    bool
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -62,28 +60,6 @@ func (saq *SoftwareAssignmentQuery) Unique(unique bool) *SoftwareAssignmentQuery
 func (saq *SoftwareAssignmentQuery) Order(o ...softwareassignment.OrderOption) *SoftwareAssignmentQuery {
 	saq.order = append(saq.order, o...)
 	return saq
-}
-
-// QueryPackage chains the current query on the "package" edge.
-func (saq *SoftwareAssignmentQuery) QueryPackage() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: saq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := saq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := saq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwareassignment.Table, softwareassignment.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwareassignment.PackageTable, softwareassignment.PackageColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(saq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // QueryTenant chains the current query on the "tenant" edge.
@@ -295,29 +271,17 @@ func (saq *SoftwareAssignmentQuery) Clone() *SoftwareAssignmentQuery {
 		return nil
 	}
 	return &SoftwareAssignmentQuery{
-		config:      saq.config,
-		ctx:         saq.ctx.Clone(),
-		order:       append([]softwareassignment.OrderOption{}, saq.order...),
-		inters:      append([]Interceptor{}, saq.inters...),
-		predicates:  append([]predicate.SoftwareAssignment{}, saq.predicates...),
-		withPackage: saq.withPackage.Clone(),
-		withTenant:  saq.withTenant.Clone(),
+		config:     saq.config,
+		ctx:        saq.ctx.Clone(),
+		order:      append([]softwareassignment.OrderOption{}, saq.order...),
+		inters:     append([]Interceptor{}, saq.inters...),
+		predicates: append([]predicate.SoftwareAssignment{}, saq.predicates...),
+		withTenant: saq.withTenant.Clone(),
 		// clone intermediate query.
 		sql:       saq.sql.Clone(),
 		path:      saq.path,
 		modifiers: append([]func(*sql.Selector){}, saq.modifiers...),
 	}
-}
-
-// WithPackage tells the query-builder to eager-load the nodes that are connected to
-// the "package" edge. The optional arguments are used to configure the query builder of the edge.
-func (saq *SoftwareAssignmentQuery) WithPackage(opts ...func(*SoftwarePackageQuery)) *SoftwareAssignmentQuery {
-	query := (&SoftwarePackageClient{config: saq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	saq.withPackage = query
-	return saq
 }
 
 // WithTenant tells the query-builder to eager-load the nodes that are connected to
@@ -337,12 +301,12 @@ func (saq *SoftwareAssignmentQuery) WithTenant(opts ...func(*TenantQuery)) *Soft
 // Example:
 //
 //	var v []struct {
-//		AssignmentType softwareassignment.AssignmentType `json:"assignment_type,omitempty"`
+//		PackageName string `json:"package_name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.SoftwareAssignment.Query().
-//		GroupBy(softwareassignment.FieldAssignmentType).
+//		GroupBy(softwareassignment.FieldPackageName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (saq *SoftwareAssignmentQuery) GroupBy(field string, fields ...string) *SoftwareAssignmentGroupBy {
@@ -360,11 +324,11 @@ func (saq *SoftwareAssignmentQuery) GroupBy(field string, fields ...string) *Sof
 // Example:
 //
 //	var v []struct {
-//		AssignmentType softwareassignment.AssignmentType `json:"assignment_type,omitempty"`
+//		PackageName string `json:"package_name,omitempty"`
 //	}
 //
 //	client.SoftwareAssignment.Query().
-//		Select(softwareassignment.FieldAssignmentType).
+//		Select(softwareassignment.FieldPackageName).
 //		Scan(ctx, &v)
 func (saq *SoftwareAssignmentQuery) Select(fields ...string) *SoftwareAssignmentSelect {
 	saq.ctx.Fields = append(saq.ctx.Fields, fields...)
@@ -410,12 +374,11 @@ func (saq *SoftwareAssignmentQuery) sqlAll(ctx context.Context, hooks ...queryHo
 		nodes       = []*SoftwareAssignment{}
 		withFKs     = saq.withFKs
 		_spec       = saq.querySpec()
-		loadedTypes = [2]bool{
-			saq.withPackage != nil,
+		loadedTypes = [1]bool{
 			saq.withTenant != nil,
 		}
 	)
-	if saq.withPackage != nil || saq.withTenant != nil {
+	if saq.withTenant != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -442,12 +405,6 @@ func (saq *SoftwareAssignmentQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := saq.withPackage; query != nil {
-		if err := saq.loadPackage(ctx, query, nodes, nil,
-			func(n *SoftwareAssignment, e *SoftwarePackage) { n.Edges.Package = e }); err != nil {
-			return nil, err
-		}
-	}
 	if query := saq.withTenant; query != nil {
 		if err := saq.loadTenant(ctx, query, nodes, nil,
 			func(n *SoftwareAssignment, e *Tenant) { n.Edges.Tenant = e }); err != nil {
@@ -457,38 +414,6 @@ func (saq *SoftwareAssignmentQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	return nodes, nil
 }
 
-func (saq *SoftwareAssignmentQuery) loadPackage(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwareAssignment, init func(*SoftwareAssignment), assign func(*SoftwareAssignment, *SoftwarePackage)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SoftwareAssignment)
-	for i := range nodes {
-		if nodes[i].software_package_assignments == nil {
-			continue
-		}
-		fk := *nodes[i].software_package_assignments
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(softwarepackage.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "software_package_assignments" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
 func (saq *SoftwareAssignmentQuery) loadTenant(ctx context.Context, query *TenantQuery, nodes []*SoftwareAssignment, init func(*SoftwareAssignment), assign func(*SoftwareAssignment, *Tenant)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*SoftwareAssignment)

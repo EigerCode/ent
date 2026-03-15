@@ -79,6 +79,26 @@ func (tu *TagUpdate) SetNillableColor(s *string) *TagUpdate {
 	return tu
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (tu *TagUpdate) SetCatalogRing(s string) *TagUpdate {
+	tu.mutation.SetCatalogRing(s)
+	return tu
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (tu *TagUpdate) SetNillableCatalogRing(s *string) *TagUpdate {
+	if s != nil {
+		tu.SetCatalogRing(*s)
+	}
+	return tu
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (tu *TagUpdate) ClearCatalogRing() *TagUpdate {
+	tu.mutation.ClearCatalogRing()
+	return tu
+}
+
 // AddOwnerIDs adds the "owner" edge to the Agent entity by IDs.
 func (tu *TagUpdate) AddOwnerIDs(ids ...string) *TagUpdate {
 	tu.mutation.AddOwnerIDs(ids...)
@@ -308,6 +328,12 @@ func (tu *TagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.CatalogRing(); ok {
+		_spec.SetField(tag.FieldCatalogRing, field.TypeString, value)
+	}
+	if tu.mutation.CatalogRingCleared() {
+		_spec.ClearField(tag.FieldCatalogRing, field.TypeString)
 	}
 	if tu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -572,6 +598,26 @@ func (tuo *TagUpdateOne) SetNillableColor(s *string) *TagUpdateOne {
 	return tuo
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (tuo *TagUpdateOne) SetCatalogRing(s string) *TagUpdateOne {
+	tuo.mutation.SetCatalogRing(s)
+	return tuo
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (tuo *TagUpdateOne) SetNillableCatalogRing(s *string) *TagUpdateOne {
+	if s != nil {
+		tuo.SetCatalogRing(*s)
+	}
+	return tuo
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (tuo *TagUpdateOne) ClearCatalogRing() *TagUpdateOne {
+	tuo.mutation.ClearCatalogRing()
+	return tuo
+}
+
 // AddOwnerIDs adds the "owner" edge to the Agent entity by IDs.
 func (tuo *TagUpdateOne) AddOwnerIDs(ids ...string) *TagUpdateOne {
 	tuo.mutation.AddOwnerIDs(ids...)
@@ -831,6 +877,12 @@ func (tuo *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	}
 	if value, ok := tuo.mutation.Color(); ok {
 		_spec.SetField(tag.FieldColor, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.CatalogRing(); ok {
+		_spec.SetField(tag.FieldCatalogRing, field.TypeString, value)
+	}
+	if tuo.mutation.CatalogRingCleared() {
+		_spec.ClearField(tag.FieldCatalogRing, field.TypeString)
 	}
 	if tuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

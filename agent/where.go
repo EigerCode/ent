@@ -205,6 +205,11 @@ func Wan(v string) predicate.Agent {
 	return predicate.Agent(sql.FieldEQ(FieldWan, v))
 }
 
+// CatalogRing applies equality check predicate on the "catalog_ring" field. It's identical to CatalogRingEQ.
+func CatalogRing(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldEQ(FieldCatalogRing, v))
+}
+
 // OsEQ applies the EQ predicate on the "os" field.
 func OsEQ(v string) predicate.Agent {
 	return predicate.Agent(sql.FieldEQ(FieldOs, v))
@@ -1718,6 +1723,81 @@ func WanEqualFold(v string) predicate.Agent {
 // WanContainsFold applies the ContainsFold predicate on the "wan" field.
 func WanContainsFold(v string) predicate.Agent {
 	return predicate.Agent(sql.FieldContainsFold(FieldWan, v))
+}
+
+// CatalogRingEQ applies the EQ predicate on the "catalog_ring" field.
+func CatalogRingEQ(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldEQ(FieldCatalogRing, v))
+}
+
+// CatalogRingNEQ applies the NEQ predicate on the "catalog_ring" field.
+func CatalogRingNEQ(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldNEQ(FieldCatalogRing, v))
+}
+
+// CatalogRingIn applies the In predicate on the "catalog_ring" field.
+func CatalogRingIn(vs ...string) predicate.Agent {
+	return predicate.Agent(sql.FieldIn(FieldCatalogRing, vs...))
+}
+
+// CatalogRingNotIn applies the NotIn predicate on the "catalog_ring" field.
+func CatalogRingNotIn(vs ...string) predicate.Agent {
+	return predicate.Agent(sql.FieldNotIn(FieldCatalogRing, vs...))
+}
+
+// CatalogRingGT applies the GT predicate on the "catalog_ring" field.
+func CatalogRingGT(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldGT(FieldCatalogRing, v))
+}
+
+// CatalogRingGTE applies the GTE predicate on the "catalog_ring" field.
+func CatalogRingGTE(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldGTE(FieldCatalogRing, v))
+}
+
+// CatalogRingLT applies the LT predicate on the "catalog_ring" field.
+func CatalogRingLT(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldLT(FieldCatalogRing, v))
+}
+
+// CatalogRingLTE applies the LTE predicate on the "catalog_ring" field.
+func CatalogRingLTE(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldLTE(FieldCatalogRing, v))
+}
+
+// CatalogRingContains applies the Contains predicate on the "catalog_ring" field.
+func CatalogRingContains(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldContains(FieldCatalogRing, v))
+}
+
+// CatalogRingHasPrefix applies the HasPrefix predicate on the "catalog_ring" field.
+func CatalogRingHasPrefix(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldHasPrefix(FieldCatalogRing, v))
+}
+
+// CatalogRingHasSuffix applies the HasSuffix predicate on the "catalog_ring" field.
+func CatalogRingHasSuffix(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldHasSuffix(FieldCatalogRing, v))
+}
+
+// CatalogRingIsNil applies the IsNil predicate on the "catalog_ring" field.
+func CatalogRingIsNil() predicate.Agent {
+	return predicate.Agent(sql.FieldIsNull(FieldCatalogRing))
+}
+
+// CatalogRingNotNil applies the NotNil predicate on the "catalog_ring" field.
+func CatalogRingNotNil() predicate.Agent {
+	return predicate.Agent(sql.FieldNotNull(FieldCatalogRing))
+}
+
+// CatalogRingEqualFold applies the EqualFold predicate on the "catalog_ring" field.
+func CatalogRingEqualFold(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldEqualFold(FieldCatalogRing, v))
+}
+
+// CatalogRingContainsFold applies the ContainsFold predicate on the "catalog_ring" field.
+func CatalogRingContainsFold(v string) predicate.Agent {
+	return predicate.Agent(sql.FieldContainsFold(FieldCatalogRing, v))
 }
 
 // HasComputer applies the HasEdge predicate on the "computer" edge.

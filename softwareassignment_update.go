@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/predicate"
 	"github.com/open-uem/ent/softwareassignment"
-	"github.com/open-uem/ent/softwarepackage"
 	"github.com/open-uem/ent/tenant"
 )
 
@@ -28,6 +27,34 @@ type SoftwareAssignmentUpdate struct {
 // Where appends a list predicates to the SoftwareAssignmentUpdate builder.
 func (sau *SoftwareAssignmentUpdate) Where(ps ...predicate.SoftwareAssignment) *SoftwareAssignmentUpdate {
 	sau.mutation.Where(ps...)
+	return sau
+}
+
+// SetPackageName sets the "package_name" field.
+func (sau *SoftwareAssignmentUpdate) SetPackageName(s string) *SoftwareAssignmentUpdate {
+	sau.mutation.SetPackageName(s)
+	return sau
+}
+
+// SetNillablePackageName sets the "package_name" field if the given value is not nil.
+func (sau *SoftwareAssignmentUpdate) SetNillablePackageName(s *string) *SoftwareAssignmentUpdate {
+	if s != nil {
+		sau.SetPackageName(*s)
+	}
+	return sau
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (sau *SoftwareAssignmentUpdate) SetPackagePlatform(sp softwareassignment.PackagePlatform) *SoftwareAssignmentUpdate {
+	sau.mutation.SetPackagePlatform(sp)
+	return sau
+}
+
+// SetNillablePackagePlatform sets the "package_platform" field if the given value is not nil.
+func (sau *SoftwareAssignmentUpdate) SetNillablePackagePlatform(sp *softwareassignment.PackagePlatform) *SoftwareAssignmentUpdate {
+	if sp != nil {
+		sau.SetPackagePlatform(*sp)
+	}
 	return sau
 }
 
@@ -172,17 +199,6 @@ func (sau *SoftwareAssignmentUpdate) ClearModified() *SoftwareAssignmentUpdate {
 	return sau
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by ID.
-func (sau *SoftwareAssignmentUpdate) SetPackageID(id int) *SoftwareAssignmentUpdate {
-	sau.mutation.SetPackageID(id)
-	return sau
-}
-
-// SetPackage sets the "package" edge to the SoftwarePackage entity.
-func (sau *SoftwareAssignmentUpdate) SetPackage(s *SoftwarePackage) *SoftwareAssignmentUpdate {
-	return sau.SetPackageID(s.ID)
-}
-
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (sau *SoftwareAssignmentUpdate) SetTenantID(id int) *SoftwareAssignmentUpdate {
 	sau.mutation.SetTenantID(id)
@@ -205,12 +221,6 @@ func (sau *SoftwareAssignmentUpdate) SetTenant(t *Tenant) *SoftwareAssignmentUpd
 // Mutation returns the SoftwareAssignmentMutation object of the builder.
 func (sau *SoftwareAssignmentUpdate) Mutation() *SoftwareAssignmentMutation {
 	return sau.mutation
-}
-
-// ClearPackage clears the "package" edge to the SoftwarePackage entity.
-func (sau *SoftwareAssignmentUpdate) ClearPackage() *SoftwareAssignmentUpdate {
-	sau.mutation.ClearPackage()
-	return sau
 }
 
 // ClearTenant clears the "tenant" edge to the Tenant entity.
@@ -257,6 +267,16 @@ func (sau *SoftwareAssignmentUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sau *SoftwareAssignmentUpdate) check() error {
+	if v, ok := sau.mutation.PackageName(); ok {
+		if err := softwareassignment.PackageNameValidator(v); err != nil {
+			return &ValidationError{Name: "package_name", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.package_name": %w`, err)}
+		}
+	}
+	if v, ok := sau.mutation.PackagePlatform(); ok {
+		if err := softwareassignment.PackagePlatformValidator(v); err != nil {
+			return &ValidationError{Name: "package_platform", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.package_platform": %w`, err)}
+		}
+	}
 	if v, ok := sau.mutation.AssignmentType(); ok {
 		if err := softwareassignment.AssignmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "assignment_type", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.assignment_type": %w`, err)}
@@ -271,9 +291,6 @@ func (sau *SoftwareAssignmentUpdate) check() error {
 		if err := softwareassignment.TargetIDValidator(v); err != nil {
 			return &ValidationError{Name: "target_id", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.target_id": %w`, err)}
 		}
-	}
-	if sau.mutation.PackageCleared() && len(sau.mutation.PackageIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "SoftwareAssignment.package"`)
 	}
 	return nil
 }
@@ -295,6 +312,12 @@ func (sau *SoftwareAssignmentUpdate) sqlSave(ctx context.Context) (n int, err er
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := sau.mutation.PackageName(); ok {
+		_spec.SetField(softwareassignment.FieldPackageName, field.TypeString, value)
+	}
+	if value, ok := sau.mutation.PackagePlatform(); ok {
+		_spec.SetField(softwareassignment.FieldPackagePlatform, field.TypeEnum, value)
 	}
 	if value, ok := sau.mutation.AssignmentType(); ok {
 		_spec.SetField(softwareassignment.FieldAssignmentType, field.TypeEnum, value)
@@ -337,35 +360,6 @@ func (sau *SoftwareAssignmentUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if sau.mutation.ModifiedCleared() {
 		_spec.ClearField(softwareassignment.FieldModified, field.TypeTime)
-	}
-	if sau.mutation.PackageCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwareassignment.PackageTable,
-			Columns: []string{softwareassignment.PackageColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sau.mutation.PackageIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwareassignment.PackageTable,
-			Columns: []string{softwareassignment.PackageColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if sau.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -416,6 +410,34 @@ type SoftwareAssignmentUpdateOne struct {
 	hooks     []Hook
 	mutation  *SoftwareAssignmentMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetPackageName sets the "package_name" field.
+func (sauo *SoftwareAssignmentUpdateOne) SetPackageName(s string) *SoftwareAssignmentUpdateOne {
+	sauo.mutation.SetPackageName(s)
+	return sauo
+}
+
+// SetNillablePackageName sets the "package_name" field if the given value is not nil.
+func (sauo *SoftwareAssignmentUpdateOne) SetNillablePackageName(s *string) *SoftwareAssignmentUpdateOne {
+	if s != nil {
+		sauo.SetPackageName(*s)
+	}
+	return sauo
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (sauo *SoftwareAssignmentUpdateOne) SetPackagePlatform(sp softwareassignment.PackagePlatform) *SoftwareAssignmentUpdateOne {
+	sauo.mutation.SetPackagePlatform(sp)
+	return sauo
+}
+
+// SetNillablePackagePlatform sets the "package_platform" field if the given value is not nil.
+func (sauo *SoftwareAssignmentUpdateOne) SetNillablePackagePlatform(sp *softwareassignment.PackagePlatform) *SoftwareAssignmentUpdateOne {
+	if sp != nil {
+		sauo.SetPackagePlatform(*sp)
+	}
+	return sauo
 }
 
 // SetAssignmentType sets the "assignment_type" field.
@@ -559,17 +581,6 @@ func (sauo *SoftwareAssignmentUpdateOne) ClearModified() *SoftwareAssignmentUpda
 	return sauo
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by ID.
-func (sauo *SoftwareAssignmentUpdateOne) SetPackageID(id int) *SoftwareAssignmentUpdateOne {
-	sauo.mutation.SetPackageID(id)
-	return sauo
-}
-
-// SetPackage sets the "package" edge to the SoftwarePackage entity.
-func (sauo *SoftwareAssignmentUpdateOne) SetPackage(s *SoftwarePackage) *SoftwareAssignmentUpdateOne {
-	return sauo.SetPackageID(s.ID)
-}
-
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (sauo *SoftwareAssignmentUpdateOne) SetTenantID(id int) *SoftwareAssignmentUpdateOne {
 	sauo.mutation.SetTenantID(id)
@@ -592,12 +603,6 @@ func (sauo *SoftwareAssignmentUpdateOne) SetTenant(t *Tenant) *SoftwareAssignmen
 // Mutation returns the SoftwareAssignmentMutation object of the builder.
 func (sauo *SoftwareAssignmentUpdateOne) Mutation() *SoftwareAssignmentMutation {
 	return sauo.mutation
-}
-
-// ClearPackage clears the "package" edge to the SoftwarePackage entity.
-func (sauo *SoftwareAssignmentUpdateOne) ClearPackage() *SoftwareAssignmentUpdateOne {
-	sauo.mutation.ClearPackage()
-	return sauo
 }
 
 // ClearTenant clears the "tenant" edge to the Tenant entity.
@@ -657,6 +662,16 @@ func (sauo *SoftwareAssignmentUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sauo *SoftwareAssignmentUpdateOne) check() error {
+	if v, ok := sauo.mutation.PackageName(); ok {
+		if err := softwareassignment.PackageNameValidator(v); err != nil {
+			return &ValidationError{Name: "package_name", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.package_name": %w`, err)}
+		}
+	}
+	if v, ok := sauo.mutation.PackagePlatform(); ok {
+		if err := softwareassignment.PackagePlatformValidator(v); err != nil {
+			return &ValidationError{Name: "package_platform", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.package_platform": %w`, err)}
+		}
+	}
 	if v, ok := sauo.mutation.AssignmentType(); ok {
 		if err := softwareassignment.AssignmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "assignment_type", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.assignment_type": %w`, err)}
@@ -671,9 +686,6 @@ func (sauo *SoftwareAssignmentUpdateOne) check() error {
 		if err := softwareassignment.TargetIDValidator(v); err != nil {
 			return &ValidationError{Name: "target_id", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.target_id": %w`, err)}
 		}
-	}
-	if sauo.mutation.PackageCleared() && len(sauo.mutation.PackageIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "SoftwareAssignment.package"`)
 	}
 	return nil
 }
@@ -712,6 +724,12 @@ func (sauo *SoftwareAssignmentUpdateOne) sqlSave(ctx context.Context) (_node *So
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := sauo.mutation.PackageName(); ok {
+		_spec.SetField(softwareassignment.FieldPackageName, field.TypeString, value)
+	}
+	if value, ok := sauo.mutation.PackagePlatform(); ok {
+		_spec.SetField(softwareassignment.FieldPackagePlatform, field.TypeEnum, value)
 	}
 	if value, ok := sauo.mutation.AssignmentType(); ok {
 		_spec.SetField(softwareassignment.FieldAssignmentType, field.TypeEnum, value)
@@ -754,35 +772,6 @@ func (sauo *SoftwareAssignmentUpdateOne) sqlSave(ctx context.Context) (_node *So
 	}
 	if sauo.mutation.ModifiedCleared() {
 		_spec.ClearField(softwareassignment.FieldModified, field.TypeTime)
-	}
-	if sauo.mutation.PackageCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwareassignment.PackageTable,
-			Columns: []string{softwareassignment.PackageColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauo.mutation.PackageIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwareassignment.PackageTable,
-			Columns: []string{softwareassignment.PackageColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if sauo.mutation.TenantCleared() {
 		edge := &sqlgraph.EdgeSpec{

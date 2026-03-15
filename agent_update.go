@@ -621,6 +621,26 @@ func (au *AgentUpdate) SetNillableWan(s *string) *AgentUpdate {
 	return au
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (au *AgentUpdate) SetCatalogRing(s string) *AgentUpdate {
+	au.mutation.SetCatalogRing(s)
+	return au
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (au *AgentUpdate) SetNillableCatalogRing(s *string) *AgentUpdate {
+	if s != nil {
+		au.SetCatalogRing(*s)
+	}
+	return au
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (au *AgentUpdate) ClearCatalogRing() *AgentUpdate {
+	au.mutation.ClearCatalogRing()
+	return au
+}
+
 // SetComputerID sets the "computer" edge to the Computer entity by ID.
 func (au *AgentUpdate) SetComputerID(id int) *AgentUpdate {
 	au.mutation.SetComputerID(id)
@@ -1586,6 +1606,12 @@ func (au *AgentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Wan(); ok {
 		_spec.SetField(agent.FieldWan, field.TypeString, value)
+	}
+	if value, ok := au.mutation.CatalogRing(); ok {
+		_spec.SetField(agent.FieldCatalogRing, field.TypeString, value)
+	}
+	if au.mutation.CatalogRingCleared() {
+		_spec.ClearField(agent.FieldCatalogRing, field.TypeString)
 	}
 	if au.mutation.ComputerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -3073,6 +3099,26 @@ func (auo *AgentUpdateOne) SetNillableWan(s *string) *AgentUpdateOne {
 	return auo
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (auo *AgentUpdateOne) SetCatalogRing(s string) *AgentUpdateOne {
+	auo.mutation.SetCatalogRing(s)
+	return auo
+}
+
+// SetNillableCatalogRing sets the "catalog_ring" field if the given value is not nil.
+func (auo *AgentUpdateOne) SetNillableCatalogRing(s *string) *AgentUpdateOne {
+	if s != nil {
+		auo.SetCatalogRing(*s)
+	}
+	return auo
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (auo *AgentUpdateOne) ClearCatalogRing() *AgentUpdateOne {
+	auo.mutation.ClearCatalogRing()
+	return auo
+}
+
 // SetComputerID sets the "computer" edge to the Computer entity by ID.
 func (auo *AgentUpdateOne) SetComputerID(id int) *AgentUpdateOne {
 	auo.mutation.SetComputerID(id)
@@ -4068,6 +4114,12 @@ func (auo *AgentUpdateOne) sqlSave(ctx context.Context) (_node *Agent, err error
 	}
 	if value, ok := auo.mutation.Wan(); ok {
 		_spec.SetField(agent.FieldWan, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.CatalogRing(); ok {
+		_spec.SetField(agent.FieldCatalogRing, field.TypeString, value)
+	}
+	if auo.mutation.CatalogRingCleared() {
+		_spec.ClearField(agent.FieldCatalogRing, field.TypeString)
 	}
 	if auo.mutation.ComputerCleared() {
 		edge := &sqlgraph.EdgeSpec{

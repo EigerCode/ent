@@ -80,6 +80,11 @@ func Modified(v time.Time) predicate.Site {
 	return predicate.Site(sql.FieldEQ(FieldModified, v))
 }
 
+// CatalogRing applies equality check predicate on the "catalog_ring" field. It's identical to CatalogRingEQ.
+func CatalogRing(v string) predicate.Site {
+	return predicate.Site(sql.FieldEQ(FieldCatalogRing, v))
+}
+
 // DescriptionEQ applies the EQ predicate on the "description" field.
 func DescriptionEQ(v string) predicate.Site {
 	return predicate.Site(sql.FieldEQ(FieldDescription, v))
@@ -348,6 +353,81 @@ func ModifiedIsNil() predicate.Site {
 // ModifiedNotNil applies the NotNil predicate on the "modified" field.
 func ModifiedNotNil() predicate.Site {
 	return predicate.Site(sql.FieldNotNull(FieldModified))
+}
+
+// CatalogRingEQ applies the EQ predicate on the "catalog_ring" field.
+func CatalogRingEQ(v string) predicate.Site {
+	return predicate.Site(sql.FieldEQ(FieldCatalogRing, v))
+}
+
+// CatalogRingNEQ applies the NEQ predicate on the "catalog_ring" field.
+func CatalogRingNEQ(v string) predicate.Site {
+	return predicate.Site(sql.FieldNEQ(FieldCatalogRing, v))
+}
+
+// CatalogRingIn applies the In predicate on the "catalog_ring" field.
+func CatalogRingIn(vs ...string) predicate.Site {
+	return predicate.Site(sql.FieldIn(FieldCatalogRing, vs...))
+}
+
+// CatalogRingNotIn applies the NotIn predicate on the "catalog_ring" field.
+func CatalogRingNotIn(vs ...string) predicate.Site {
+	return predicate.Site(sql.FieldNotIn(FieldCatalogRing, vs...))
+}
+
+// CatalogRingGT applies the GT predicate on the "catalog_ring" field.
+func CatalogRingGT(v string) predicate.Site {
+	return predicate.Site(sql.FieldGT(FieldCatalogRing, v))
+}
+
+// CatalogRingGTE applies the GTE predicate on the "catalog_ring" field.
+func CatalogRingGTE(v string) predicate.Site {
+	return predicate.Site(sql.FieldGTE(FieldCatalogRing, v))
+}
+
+// CatalogRingLT applies the LT predicate on the "catalog_ring" field.
+func CatalogRingLT(v string) predicate.Site {
+	return predicate.Site(sql.FieldLT(FieldCatalogRing, v))
+}
+
+// CatalogRingLTE applies the LTE predicate on the "catalog_ring" field.
+func CatalogRingLTE(v string) predicate.Site {
+	return predicate.Site(sql.FieldLTE(FieldCatalogRing, v))
+}
+
+// CatalogRingContains applies the Contains predicate on the "catalog_ring" field.
+func CatalogRingContains(v string) predicate.Site {
+	return predicate.Site(sql.FieldContains(FieldCatalogRing, v))
+}
+
+// CatalogRingHasPrefix applies the HasPrefix predicate on the "catalog_ring" field.
+func CatalogRingHasPrefix(v string) predicate.Site {
+	return predicate.Site(sql.FieldHasPrefix(FieldCatalogRing, v))
+}
+
+// CatalogRingHasSuffix applies the HasSuffix predicate on the "catalog_ring" field.
+func CatalogRingHasSuffix(v string) predicate.Site {
+	return predicate.Site(sql.FieldHasSuffix(FieldCatalogRing, v))
+}
+
+// CatalogRingIsNil applies the IsNil predicate on the "catalog_ring" field.
+func CatalogRingIsNil() predicate.Site {
+	return predicate.Site(sql.FieldIsNull(FieldCatalogRing))
+}
+
+// CatalogRingNotNil applies the NotNil predicate on the "catalog_ring" field.
+func CatalogRingNotNil() predicate.Site {
+	return predicate.Site(sql.FieldNotNull(FieldCatalogRing))
+}
+
+// CatalogRingEqualFold applies the EqualFold predicate on the "catalog_ring" field.
+func CatalogRingEqualFold(v string) predicate.Site {
+	return predicate.Site(sql.FieldEqualFold(FieldCatalogRing, v))
+}
+
+// CatalogRingContainsFold applies the ContainsFold predicate on the "catalog_ring" field.
+func CatalogRingContainsFold(v string) predicate.Site {
+	return predicate.Site(sql.FieldContainsFold(FieldCatalogRing, v))
 }
 
 // HasTenant applies the HasEdge predicate on the "tenant" edge.

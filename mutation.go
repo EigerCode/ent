@@ -149,6 +149,7 @@ type AgentMutation struct {
 	is_wayland                   *bool
 	is_flatpak_rustdesk          *bool
 	wan                          *string
+	catalog_ring                 *string
 	clearedFields                map[string]struct{}
 	computer                     *int
 	clearedcomputer              bool
@@ -1724,6 +1725,55 @@ func (m *AgentMutation) ResetWan() {
 	m.wan = nil
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (m *AgentMutation) SetCatalogRing(s string) {
+	m.catalog_ring = &s
+}
+
+// CatalogRing returns the value of the "catalog_ring" field in the mutation.
+func (m *AgentMutation) CatalogRing() (r string, exists bool) {
+	v := m.catalog_ring
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCatalogRing returns the old "catalog_ring" field's value of the Agent entity.
+// If the Agent object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AgentMutation) OldCatalogRing(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCatalogRing is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCatalogRing requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCatalogRing: %w", err)
+	}
+	return oldValue.CatalogRing, nil
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (m *AgentMutation) ClearCatalogRing() {
+	m.catalog_ring = nil
+	m.clearedFields[agent.FieldCatalogRing] = struct{}{}
+}
+
+// CatalogRingCleared returns if the "catalog_ring" field was cleared in this mutation.
+func (m *AgentMutation) CatalogRingCleared() bool {
+	_, ok := m.clearedFields[agent.FieldCatalogRing]
+	return ok
+}
+
+// ResetCatalogRing resets all changes to the "catalog_ring" field.
+func (m *AgentMutation) ResetCatalogRing() {
+	m.catalog_ring = nil
+	delete(m.clearedFields, agent.FieldCatalogRing)
+}
+
 // SetComputerID sets the "computer" edge to the Computer entity by id.
 func (m *AgentMutation) SetComputerID(id int) {
 	m.computer = &id
@@ -2856,7 +2906,7 @@ func (m *AgentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AgentMutation) Fields() []string {
-	fields := make([]string, 0, 30)
+	fields := make([]string, 0, 31)
 	if m.os != nil {
 		fields = append(fields, agent.FieldOs)
 	}
@@ -2947,6 +2997,9 @@ func (m *AgentMutation) Fields() []string {
 	if m.wan != nil {
 		fields = append(fields, agent.FieldWan)
 	}
+	if m.catalog_ring != nil {
+		fields = append(fields, agent.FieldCatalogRing)
+	}
 	return fields
 }
 
@@ -3015,6 +3068,8 @@ func (m *AgentMutation) Field(name string) (ent.Value, bool) {
 		return m.IsFlatpakRustdesk()
 	case agent.FieldWan:
 		return m.Wan()
+	case agent.FieldCatalogRing:
+		return m.CatalogRing()
 	}
 	return nil, false
 }
@@ -3084,6 +3139,8 @@ func (m *AgentMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldIsFlatpakRustdesk(ctx)
 	case agent.FieldWan:
 		return m.OldWan(ctx)
+	case agent.FieldCatalogRing:
+		return m.OldCatalogRing(ctx)
 	}
 	return nil, fmt.Errorf("unknown Agent field %s", name)
 }
@@ -3303,6 +3360,13 @@ func (m *AgentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetWan(v)
 		return nil
+	case agent.FieldCatalogRing:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCatalogRing(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Agent field %s", name)
 }
@@ -3408,6 +3472,9 @@ func (m *AgentMutation) ClearedFields() []string {
 	if m.FieldCleared(agent.FieldIsFlatpakRustdesk) {
 		fields = append(fields, agent.FieldIsFlatpakRustdesk)
 	}
+	if m.FieldCleared(agent.FieldCatalogRing) {
+		fields = append(fields, agent.FieldCatalogRing)
+	}
 	return fields
 }
 
@@ -3496,6 +3563,9 @@ func (m *AgentMutation) ClearField(name string) error {
 		return nil
 	case agent.FieldIsFlatpakRustdesk:
 		m.ClearIsFlatpakRustdesk()
+		return nil
+	case agent.FieldCatalogRing:
+		m.ClearCatalogRing()
 		return nil
 	}
 	return fmt.Errorf("unknown Agent nullable field %s", name)
@@ -3594,6 +3664,9 @@ func (m *AgentMutation) ResetField(name string) error {
 		return nil
 	case agent.FieldWan:
 		m.ResetWan()
+		return nil
+	case agent.FieldCatalogRing:
+		m.ResetCatalogRing()
 		return nil
 	}
 	return fmt.Errorf("unknown Agent field %s", name)
@@ -29759,6 +29832,7 @@ type SiteMutation struct {
 	domain                   *string
 	created                  *time.Time
 	modified                 *time.Time
+	catalog_ring             *string
 	clearedFields            map[string]struct{}
 	tenant                   *int
 	clearedtenant            bool
@@ -30119,6 +30193,55 @@ func (m *SiteMutation) ResetModified() {
 	delete(m.clearedFields, site.FieldModified)
 }
 
+// SetCatalogRing sets the "catalog_ring" field.
+func (m *SiteMutation) SetCatalogRing(s string) {
+	m.catalog_ring = &s
+}
+
+// CatalogRing returns the value of the "catalog_ring" field in the mutation.
+func (m *SiteMutation) CatalogRing() (r string, exists bool) {
+	v := m.catalog_ring
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCatalogRing returns the old "catalog_ring" field's value of the Site entity.
+// If the Site object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SiteMutation) OldCatalogRing(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCatalogRing is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCatalogRing requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCatalogRing: %w", err)
+	}
+	return oldValue.CatalogRing, nil
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (m *SiteMutation) ClearCatalogRing() {
+	m.catalog_ring = nil
+	m.clearedFields[site.FieldCatalogRing] = struct{}{}
+}
+
+// CatalogRingCleared returns if the "catalog_ring" field was cleared in this mutation.
+func (m *SiteMutation) CatalogRingCleared() bool {
+	_, ok := m.clearedFields[site.FieldCatalogRing]
+	return ok
+}
+
+// ResetCatalogRing resets all changes to the "catalog_ring" field.
+func (m *SiteMutation) ResetCatalogRing() {
+	m.catalog_ring = nil
+	delete(m.clearedFields, site.FieldCatalogRing)
+}
+
 // SetTenantID sets the "tenant" edge to the Tenant entity by id.
 func (m *SiteMutation) SetTenantID(id int) {
 	m.tenant = &id
@@ -30354,7 +30477,7 @@ func (m *SiteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SiteMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.description != nil {
 		fields = append(fields, site.FieldDescription)
 	}
@@ -30369,6 +30492,9 @@ func (m *SiteMutation) Fields() []string {
 	}
 	if m.modified != nil {
 		fields = append(fields, site.FieldModified)
+	}
+	if m.catalog_ring != nil {
+		fields = append(fields, site.FieldCatalogRing)
 	}
 	return fields
 }
@@ -30388,6 +30514,8 @@ func (m *SiteMutation) Field(name string) (ent.Value, bool) {
 		return m.Created()
 	case site.FieldModified:
 		return m.Modified()
+	case site.FieldCatalogRing:
+		return m.CatalogRing()
 	}
 	return nil, false
 }
@@ -30407,6 +30535,8 @@ func (m *SiteMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreated(ctx)
 	case site.FieldModified:
 		return m.OldModified(ctx)
+	case site.FieldCatalogRing:
+		return m.OldCatalogRing(ctx)
 	}
 	return nil, fmt.Errorf("unknown Site field %s", name)
 }
@@ -30450,6 +30580,13 @@ func (m *SiteMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetModified(v)
+		return nil
+	case site.FieldCatalogRing:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCatalogRing(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Site field %s", name)
@@ -30496,6 +30633,9 @@ func (m *SiteMutation) ClearedFields() []string {
 	if m.FieldCleared(site.FieldModified) {
 		fields = append(fields, site.FieldModified)
 	}
+	if m.FieldCleared(site.FieldCatalogRing) {
+		fields = append(fields, site.FieldCatalogRing)
+	}
 	return fields
 }
 
@@ -30525,6 +30665,9 @@ func (m *SiteMutation) ClearField(name string) error {
 	case site.FieldModified:
 		m.ClearModified()
 		return nil
+	case site.FieldCatalogRing:
+		m.ClearCatalogRing()
+		return nil
 	}
 	return fmt.Errorf("unknown Site nullable field %s", name)
 }
@@ -30547,6 +30690,9 @@ func (m *SiteMutation) ResetField(name string) error {
 		return nil
 	case site.FieldModified:
 		m.ResetModified()
+		return nil
+	case site.FieldCatalogRing:
+		m.ResetCatalogRing()
 		return nil
 	}
 	return fmt.Errorf("unknown Site field %s", name)
@@ -30712,6 +30858,8 @@ type SoftwareAssignmentMutation struct {
 	op                  Op
 	typ                 string
 	id                  *int
+	package_name        *string
+	package_platform    *softwareassignment.PackagePlatform
 	assignment_type     *softwareassignment.AssignmentType
 	target_type         *softwareassignment.TargetType
 	target_id           *string
@@ -30722,8 +30870,6 @@ type SoftwareAssignmentMutation struct {
 	created             *time.Time
 	modified            *time.Time
 	clearedFields       map[string]struct{}
-	_package            *int
-	cleared_package     bool
 	tenant              *int
 	clearedtenant       bool
 	done                bool
@@ -30827,6 +30973,78 @@ func (m *SoftwareAssignmentMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetPackageName sets the "package_name" field.
+func (m *SoftwareAssignmentMutation) SetPackageName(s string) {
+	m.package_name = &s
+}
+
+// PackageName returns the value of the "package_name" field in the mutation.
+func (m *SoftwareAssignmentMutation) PackageName() (r string, exists bool) {
+	v := m.package_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackageName returns the old "package_name" field's value of the SoftwareAssignment entity.
+// If the SoftwareAssignment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SoftwareAssignmentMutation) OldPackageName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackageName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackageName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackageName: %w", err)
+	}
+	return oldValue.PackageName, nil
+}
+
+// ResetPackageName resets all changes to the "package_name" field.
+func (m *SoftwareAssignmentMutation) ResetPackageName() {
+	m.package_name = nil
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (m *SoftwareAssignmentMutation) SetPackagePlatform(sp softwareassignment.PackagePlatform) {
+	m.package_platform = &sp
+}
+
+// PackagePlatform returns the value of the "package_platform" field in the mutation.
+func (m *SoftwareAssignmentMutation) PackagePlatform() (r softwareassignment.PackagePlatform, exists bool) {
+	v := m.package_platform
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackagePlatform returns the old "package_platform" field's value of the SoftwareAssignment entity.
+// If the SoftwareAssignment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SoftwareAssignmentMutation) OldPackagePlatform(ctx context.Context) (v softwareassignment.PackagePlatform, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackagePlatform is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackagePlatform requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackagePlatform: %w", err)
+	}
+	return oldValue.PackagePlatform, nil
+}
+
+// ResetPackagePlatform resets all changes to the "package_platform" field.
+func (m *SoftwareAssignmentMutation) ResetPackagePlatform() {
+	m.package_platform = nil
 }
 
 // SetAssignmentType sets the "assignment_type" field.
@@ -31203,45 +31421,6 @@ func (m *SoftwareAssignmentMutation) ResetModified() {
 	delete(m.clearedFields, softwareassignment.FieldModified)
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by id.
-func (m *SoftwareAssignmentMutation) SetPackageID(id int) {
-	m._package = &id
-}
-
-// ClearPackage clears the "package" edge to the SoftwarePackage entity.
-func (m *SoftwareAssignmentMutation) ClearPackage() {
-	m.cleared_package = true
-}
-
-// PackageCleared reports if the "package" edge to the SoftwarePackage entity was cleared.
-func (m *SoftwareAssignmentMutation) PackageCleared() bool {
-	return m.cleared_package
-}
-
-// PackageID returns the "package" edge ID in the mutation.
-func (m *SoftwareAssignmentMutation) PackageID() (id int, exists bool) {
-	if m._package != nil {
-		return *m._package, true
-	}
-	return
-}
-
-// PackageIDs returns the "package" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// PackageID instead. It exists only for internal usage by the builders.
-func (m *SoftwareAssignmentMutation) PackageIDs() (ids []int) {
-	if id := m._package; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetPackage resets all changes to the "package" edge.
-func (m *SoftwareAssignmentMutation) ResetPackage() {
-	m._package = nil
-	m.cleared_package = false
-}
-
 // SetTenantID sets the "tenant" edge to the Tenant entity by id.
 func (m *SoftwareAssignmentMutation) SetTenantID(id int) {
 	m.tenant = &id
@@ -31315,7 +31494,13 @@ func (m *SoftwareAssignmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SoftwareAssignmentMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 10)
+	if m.package_name != nil {
+		fields = append(fields, softwareassignment.FieldPackageName)
+	}
+	if m.package_platform != nil {
+		fields = append(fields, softwareassignment.FieldPackagePlatform)
+	}
 	if m.assignment_type != nil {
 		fields = append(fields, softwareassignment.FieldAssignmentType)
 	}
@@ -31348,6 +31533,10 @@ func (m *SoftwareAssignmentMutation) Fields() []string {
 // schema.
 func (m *SoftwareAssignmentMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case softwareassignment.FieldPackageName:
+		return m.PackageName()
+	case softwareassignment.FieldPackagePlatform:
+		return m.PackagePlatform()
 	case softwareassignment.FieldAssignmentType:
 		return m.AssignmentType()
 	case softwareassignment.FieldTargetType:
@@ -31373,6 +31562,10 @@ func (m *SoftwareAssignmentMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *SoftwareAssignmentMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case softwareassignment.FieldPackageName:
+		return m.OldPackageName(ctx)
+	case softwareassignment.FieldPackagePlatform:
+		return m.OldPackagePlatform(ctx)
 	case softwareassignment.FieldAssignmentType:
 		return m.OldAssignmentType(ctx)
 	case softwareassignment.FieldTargetType:
@@ -31398,6 +31591,20 @@ func (m *SoftwareAssignmentMutation) OldField(ctx context.Context, name string) 
 // type.
 func (m *SoftwareAssignmentMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case softwareassignment.FieldPackageName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackageName(v)
+		return nil
+	case softwareassignment.FieldPackagePlatform:
+		v, ok := value.(softwareassignment.PackagePlatform)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackagePlatform(v)
+		return nil
 	case softwareassignment.FieldAssignmentType:
 		v, ok := value.(softwareassignment.AssignmentType)
 		if !ok {
@@ -31551,6 +31758,12 @@ func (m *SoftwareAssignmentMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *SoftwareAssignmentMutation) ResetField(name string) error {
 	switch name {
+	case softwareassignment.FieldPackageName:
+		m.ResetPackageName()
+		return nil
+	case softwareassignment.FieldPackagePlatform:
+		m.ResetPackagePlatform()
+		return nil
 	case softwareassignment.FieldAssignmentType:
 		m.ResetAssignmentType()
 		return nil
@@ -31581,10 +31794,7 @@ func (m *SoftwareAssignmentMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SoftwareAssignmentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m._package != nil {
-		edges = append(edges, softwareassignment.EdgePackage)
-	}
+	edges := make([]string, 0, 1)
 	if m.tenant != nil {
 		edges = append(edges, softwareassignment.EdgeTenant)
 	}
@@ -31595,10 +31805,6 @@ func (m *SoftwareAssignmentMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *SoftwareAssignmentMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case softwareassignment.EdgePackage:
-		if id := m._package; id != nil {
-			return []ent.Value{*id}
-		}
 	case softwareassignment.EdgeTenant:
 		if id := m.tenant; id != nil {
 			return []ent.Value{*id}
@@ -31609,7 +31815,7 @@ func (m *SoftwareAssignmentMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SoftwareAssignmentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -31621,10 +31827,7 @@ func (m *SoftwareAssignmentMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SoftwareAssignmentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.cleared_package {
-		edges = append(edges, softwareassignment.EdgePackage)
-	}
+	edges := make([]string, 0, 1)
 	if m.clearedtenant {
 		edges = append(edges, softwareassignment.EdgeTenant)
 	}
@@ -31635,8 +31838,6 @@ func (m *SoftwareAssignmentMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *SoftwareAssignmentMutation) EdgeCleared(name string) bool {
 	switch name {
-	case softwareassignment.EdgePackage:
-		return m.cleared_package
 	case softwareassignment.EdgeTenant:
 		return m.clearedtenant
 	}
@@ -31647,9 +31848,6 @@ func (m *SoftwareAssignmentMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *SoftwareAssignmentMutation) ClearEdge(name string) error {
 	switch name {
-	case softwareassignment.EdgePackage:
-		m.ClearPackage()
-		return nil
 	case softwareassignment.EdgeTenant:
 		m.ClearTenant()
 		return nil
@@ -31661,9 +31859,6 @@ func (m *SoftwareAssignmentMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *SoftwareAssignmentMutation) ResetEdge(name string) error {
 	switch name {
-	case softwareassignment.EdgePackage:
-		m.ResetPackage()
-		return nil
 	case softwareassignment.EdgeTenant:
 		m.ResetTenant()
 		return nil
@@ -33418,7 +33613,6 @@ type SoftwarePackageMutation struct {
 	display_name            *string
 	version                 *string
 	platform                *softwarepackage.Platform
-	installer_type          *softwarepackage.InstallerType
 	installer_path          *string
 	checksum_sha256         *string
 	size_bytes              *int64
@@ -33441,6 +33635,7 @@ type SoftwarePackageMutation struct {
 	force_install_date      *time.Time
 	unattended_install      *bool
 	unattended_uninstall    *bool
+	status                  *softwarepackage.Status
 	source                  *softwarepackage.Source
 	created                 *time.Time
 	modified                *time.Time
@@ -33452,9 +33647,6 @@ type SoftwarePackageMutation struct {
 	clearedcatalogs         bool
 	tenant                  *int
 	clearedtenant           bool
-	assignments             map[int]struct{}
-	removedassignments      map[int]struct{}
-	clearedassignments      bool
 	install_logs            map[int]struct{}
 	removedinstall_logs     map[int]struct{}
 	clearedinstall_logs     bool
@@ -33464,6 +33656,11 @@ type SoftwarePackageMutation struct {
 	update_for              map[int]struct{}
 	removedupdate_for       map[int]struct{}
 	clearedupdate_for       bool
+	global_ref              *int
+	clearedglobal_ref       bool
+	subscribers             map[int]struct{}
+	removedsubscribers      map[int]struct{}
+	clearedsubscribers      bool
 	done                    bool
 	oldValue                func(context.Context) (*SoftwarePackage, error)
 	predicates              []predicate.SoftwarePackage
@@ -33722,42 +33919,6 @@ func (m *SoftwarePackageMutation) OldPlatform(ctx context.Context) (v softwarepa
 // ResetPlatform resets all changes to the "platform" field.
 func (m *SoftwarePackageMutation) ResetPlatform() {
 	m.platform = nil
-}
-
-// SetInstallerType sets the "installer_type" field.
-func (m *SoftwarePackageMutation) SetInstallerType(st softwarepackage.InstallerType) {
-	m.installer_type = &st
-}
-
-// InstallerType returns the value of the "installer_type" field in the mutation.
-func (m *SoftwarePackageMutation) InstallerType() (r softwarepackage.InstallerType, exists bool) {
-	v := m.installer_type
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldInstallerType returns the old "installer_type" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldInstallerType(ctx context.Context) (v softwarepackage.InstallerType, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInstallerType is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInstallerType requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInstallerType: %w", err)
-	}
-	return oldValue.InstallerType, nil
-}
-
-// ResetInstallerType resets all changes to the "installer_type" field.
-func (m *SoftwarePackageMutation) ResetInstallerType() {
-	m.installer_type = nil
 }
 
 // SetInstallerPath sets the "installer_path" field.
@@ -34797,6 +34958,55 @@ func (m *SoftwarePackageMutation) ResetUnattendedUninstall() {
 	delete(m.clearedFields, softwarepackage.FieldUnattendedUninstall)
 }
 
+// SetStatus sets the "status" field.
+func (m *SoftwarePackageMutation) SetStatus(s softwarepackage.Status) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *SoftwarePackageMutation) Status() (r softwarepackage.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the SoftwarePackage entity.
+// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SoftwarePackageMutation) OldStatus(ctx context.Context) (v softwarepackage.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *SoftwarePackageMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[softwarepackage.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *SoftwarePackageMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[softwarepackage.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *SoftwarePackageMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, softwarepackage.FieldStatus)
+}
+
 // SetSource sets the "source" field.
 func (m *SoftwarePackageMutation) SetSource(s softwarepackage.Source) {
 	m.source = &s
@@ -35076,60 +35286,6 @@ func (m *SoftwarePackageMutation) ResetTenant() {
 	m.clearedtenant = false
 }
 
-// AddAssignmentIDs adds the "assignments" edge to the SoftwareAssignment entity by ids.
-func (m *SoftwarePackageMutation) AddAssignmentIDs(ids ...int) {
-	if m.assignments == nil {
-		m.assignments = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.assignments[ids[i]] = struct{}{}
-	}
-}
-
-// ClearAssignments clears the "assignments" edge to the SoftwareAssignment entity.
-func (m *SoftwarePackageMutation) ClearAssignments() {
-	m.clearedassignments = true
-}
-
-// AssignmentsCleared reports if the "assignments" edge to the SoftwareAssignment entity was cleared.
-func (m *SoftwarePackageMutation) AssignmentsCleared() bool {
-	return m.clearedassignments
-}
-
-// RemoveAssignmentIDs removes the "assignments" edge to the SoftwareAssignment entity by IDs.
-func (m *SoftwarePackageMutation) RemoveAssignmentIDs(ids ...int) {
-	if m.removedassignments == nil {
-		m.removedassignments = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.assignments, ids[i])
-		m.removedassignments[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedAssignments returns the removed IDs of the "assignments" edge to the SoftwareAssignment entity.
-func (m *SoftwarePackageMutation) RemovedAssignmentsIDs() (ids []int) {
-	for id := range m.removedassignments {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// AssignmentsIDs returns the "assignments" edge IDs in the mutation.
-func (m *SoftwarePackageMutation) AssignmentsIDs() (ids []int) {
-	for id := range m.assignments {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetAssignments resets all changes to the "assignments" edge.
-func (m *SoftwarePackageMutation) ResetAssignments() {
-	m.assignments = nil
-	m.clearedassignments = false
-	m.removedassignments = nil
-}
-
 // AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by ids.
 func (m *SoftwarePackageMutation) AddInstallLogIDs(ids ...int) {
 	if m.install_logs == nil {
@@ -35292,6 +35448,99 @@ func (m *SoftwarePackageMutation) ResetUpdateFor() {
 	m.removedupdate_for = nil
 }
 
+// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by id.
+func (m *SoftwarePackageMutation) SetGlobalRefID(id int) {
+	m.global_ref = &id
+}
+
+// ClearGlobalRef clears the "global_ref" edge to the SoftwarePackage entity.
+func (m *SoftwarePackageMutation) ClearGlobalRef() {
+	m.clearedglobal_ref = true
+}
+
+// GlobalRefCleared reports if the "global_ref" edge to the SoftwarePackage entity was cleared.
+func (m *SoftwarePackageMutation) GlobalRefCleared() bool {
+	return m.clearedglobal_ref
+}
+
+// GlobalRefID returns the "global_ref" edge ID in the mutation.
+func (m *SoftwarePackageMutation) GlobalRefID() (id int, exists bool) {
+	if m.global_ref != nil {
+		return *m.global_ref, true
+	}
+	return
+}
+
+// GlobalRefIDs returns the "global_ref" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GlobalRefID instead. It exists only for internal usage by the builders.
+func (m *SoftwarePackageMutation) GlobalRefIDs() (ids []int) {
+	if id := m.global_ref; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGlobalRef resets all changes to the "global_ref" edge.
+func (m *SoftwarePackageMutation) ResetGlobalRef() {
+	m.global_ref = nil
+	m.clearedglobal_ref = false
+}
+
+// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by ids.
+func (m *SoftwarePackageMutation) AddSubscriberIDs(ids ...int) {
+	if m.subscribers == nil {
+		m.subscribers = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.subscribers[ids[i]] = struct{}{}
+	}
+}
+
+// ClearSubscribers clears the "subscribers" edge to the SoftwarePackage entity.
+func (m *SoftwarePackageMutation) ClearSubscribers() {
+	m.clearedsubscribers = true
+}
+
+// SubscribersCleared reports if the "subscribers" edge to the SoftwarePackage entity was cleared.
+func (m *SoftwarePackageMutation) SubscribersCleared() bool {
+	return m.clearedsubscribers
+}
+
+// RemoveSubscriberIDs removes the "subscribers" edge to the SoftwarePackage entity by IDs.
+func (m *SoftwarePackageMutation) RemoveSubscriberIDs(ids ...int) {
+	if m.removedsubscribers == nil {
+		m.removedsubscribers = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.subscribers, ids[i])
+		m.removedsubscribers[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedSubscribers returns the removed IDs of the "subscribers" edge to the SoftwarePackage entity.
+func (m *SoftwarePackageMutation) RemovedSubscribersIDs() (ids []int) {
+	for id := range m.removedsubscribers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// SubscribersIDs returns the "subscribers" edge IDs in the mutation.
+func (m *SoftwarePackageMutation) SubscribersIDs() (ids []int) {
+	for id := range m.subscribers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetSubscribers resets all changes to the "subscribers" edge.
+func (m *SoftwarePackageMutation) ResetSubscribers() {
+	m.subscribers = nil
+	m.clearedsubscribers = false
+	m.removedsubscribers = nil
+}
+
 // Where appends a list predicates to the SoftwarePackageMutation builder.
 func (m *SoftwarePackageMutation) Where(ps ...predicate.SoftwarePackage) {
 	m.predicates = append(m.predicates, ps...)
@@ -35338,9 +35587,6 @@ func (m *SoftwarePackageMutation) Fields() []string {
 	}
 	if m.platform != nil {
 		fields = append(fields, softwarepackage.FieldPlatform)
-	}
-	if m.installer_type != nil {
-		fields = append(fields, softwarepackage.FieldInstallerType)
 	}
 	if m.installer_path != nil {
 		fields = append(fields, softwarepackage.FieldInstallerPath)
@@ -35405,6 +35651,9 @@ func (m *SoftwarePackageMutation) Fields() []string {
 	if m.unattended_uninstall != nil {
 		fields = append(fields, softwarepackage.FieldUnattendedUninstall)
 	}
+	if m.status != nil {
+		fields = append(fields, softwarepackage.FieldStatus)
+	}
 	if m.source != nil {
 		fields = append(fields, softwarepackage.FieldSource)
 	}
@@ -35430,8 +35679,6 @@ func (m *SoftwarePackageMutation) Field(name string) (ent.Value, bool) {
 		return m.Version()
 	case softwarepackage.FieldPlatform:
 		return m.Platform()
-	case softwarepackage.FieldInstallerType:
-		return m.InstallerType()
 	case softwarepackage.FieldInstallerPath:
 		return m.InstallerPath()
 	case softwarepackage.FieldChecksumSha256:
@@ -35474,6 +35721,8 @@ func (m *SoftwarePackageMutation) Field(name string) (ent.Value, bool) {
 		return m.UnattendedInstall()
 	case softwarepackage.FieldUnattendedUninstall:
 		return m.UnattendedUninstall()
+	case softwarepackage.FieldStatus:
+		return m.Status()
 	case softwarepackage.FieldSource:
 		return m.Source()
 	case softwarepackage.FieldCreated:
@@ -35497,8 +35746,6 @@ func (m *SoftwarePackageMutation) OldField(ctx context.Context, name string) (en
 		return m.OldVersion(ctx)
 	case softwarepackage.FieldPlatform:
 		return m.OldPlatform(ctx)
-	case softwarepackage.FieldInstallerType:
-		return m.OldInstallerType(ctx)
 	case softwarepackage.FieldInstallerPath:
 		return m.OldInstallerPath(ctx)
 	case softwarepackage.FieldChecksumSha256:
@@ -35541,6 +35788,8 @@ func (m *SoftwarePackageMutation) OldField(ctx context.Context, name string) (en
 		return m.OldUnattendedInstall(ctx)
 	case softwarepackage.FieldUnattendedUninstall:
 		return m.OldUnattendedUninstall(ctx)
+	case softwarepackage.FieldStatus:
+		return m.OldStatus(ctx)
 	case softwarepackage.FieldSource:
 		return m.OldSource(ctx)
 	case softwarepackage.FieldCreated:
@@ -35583,13 +35832,6 @@ func (m *SoftwarePackageMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPlatform(v)
-		return nil
-	case softwarepackage.FieldInstallerType:
-		v, ok := value.(softwarepackage.InstallerType)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetInstallerType(v)
 		return nil
 	case softwarepackage.FieldInstallerPath:
 		v, ok := value.(string)
@@ -35738,6 +35980,13 @@ func (m *SoftwarePackageMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUnattendedUninstall(v)
 		return nil
+	case softwarepackage.FieldStatus:
+		v, ok := value.(softwarepackage.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
 	case softwarepackage.FieldSource:
 		v, ok := value.(softwarepackage.Source)
 		if !ok {
@@ -35867,6 +36116,9 @@ func (m *SoftwarePackageMutation) ClearedFields() []string {
 	if m.FieldCleared(softwarepackage.FieldUnattendedUninstall) {
 		fields = append(fields, softwarepackage.FieldUnattendedUninstall)
 	}
+	if m.FieldCleared(softwarepackage.FieldStatus) {
+		fields = append(fields, softwarepackage.FieldStatus)
+	}
 	if m.FieldCleared(softwarepackage.FieldSource) {
 		fields = append(fields, softwarepackage.FieldSource)
 	}
@@ -35953,6 +36205,9 @@ func (m *SoftwarePackageMutation) ClearField(name string) error {
 	case softwarepackage.FieldUnattendedUninstall:
 		m.ClearUnattendedUninstall()
 		return nil
+	case softwarepackage.FieldStatus:
+		m.ClearStatus()
+		return nil
 	case softwarepackage.FieldSource:
 		m.ClearSource()
 		return nil
@@ -35981,9 +36236,6 @@ func (m *SoftwarePackageMutation) ResetField(name string) error {
 		return nil
 	case softwarepackage.FieldPlatform:
 		m.ResetPlatform()
-		return nil
-	case softwarepackage.FieldInstallerType:
-		m.ResetInstallerType()
 		return nil
 	case softwarepackage.FieldInstallerPath:
 		m.ResetInstallerPath()
@@ -36048,6 +36300,9 @@ func (m *SoftwarePackageMutation) ResetField(name string) error {
 	case softwarepackage.FieldUnattendedUninstall:
 		m.ResetUnattendedUninstall()
 		return nil
+	case softwarepackage.FieldStatus:
+		m.ResetStatus()
+		return nil
 	case softwarepackage.FieldSource:
 		m.ResetSource()
 		return nil
@@ -36063,7 +36318,7 @@ func (m *SoftwarePackageMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SoftwarePackageMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.repo != nil {
 		edges = append(edges, softwarepackage.EdgeRepo)
 	}
@@ -36073,9 +36328,6 @@ func (m *SoftwarePackageMutation) AddedEdges() []string {
 	if m.tenant != nil {
 		edges = append(edges, softwarepackage.EdgeTenant)
 	}
-	if m.assignments != nil {
-		edges = append(edges, softwarepackage.EdgeAssignments)
-	}
 	if m.install_logs != nil {
 		edges = append(edges, softwarepackage.EdgeInstallLogs)
 	}
@@ -36084,6 +36336,12 @@ func (m *SoftwarePackageMutation) AddedEdges() []string {
 	}
 	if m.update_for != nil {
 		edges = append(edges, softwarepackage.EdgeUpdateFor)
+	}
+	if m.global_ref != nil {
+		edges = append(edges, softwarepackage.EdgeGlobalRef)
+	}
+	if m.subscribers != nil {
+		edges = append(edges, softwarepackage.EdgeSubscribers)
 	}
 	return edges
 }
@@ -36106,12 +36364,6 @@ func (m *SoftwarePackageMutation) AddedIDs(name string) []ent.Value {
 		if id := m.tenant; id != nil {
 			return []ent.Value{*id}
 		}
-	case softwarepackage.EdgeAssignments:
-		ids := make([]ent.Value, 0, len(m.assignments))
-		for id := range m.assignments {
-			ids = append(ids, id)
-		}
-		return ids
 	case softwarepackage.EdgeInstallLogs:
 		ids := make([]ent.Value, 0, len(m.install_logs))
 		for id := range m.install_logs {
@@ -36130,18 +36382,25 @@ func (m *SoftwarePackageMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case softwarepackage.EdgeGlobalRef:
+		if id := m.global_ref; id != nil {
+			return []ent.Value{*id}
+		}
+	case softwarepackage.EdgeSubscribers:
+		ids := make([]ent.Value, 0, len(m.subscribers))
+		for id := range m.subscribers {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SoftwarePackageMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedcatalogs != nil {
 		edges = append(edges, softwarepackage.EdgeCatalogs)
-	}
-	if m.removedassignments != nil {
-		edges = append(edges, softwarepackage.EdgeAssignments)
 	}
 	if m.removedinstall_logs != nil {
 		edges = append(edges, softwarepackage.EdgeInstallLogs)
@@ -36151,6 +36410,9 @@ func (m *SoftwarePackageMutation) RemovedEdges() []string {
 	}
 	if m.removedupdate_for != nil {
 		edges = append(edges, softwarepackage.EdgeUpdateFor)
+	}
+	if m.removedsubscribers != nil {
+		edges = append(edges, softwarepackage.EdgeSubscribers)
 	}
 	return edges
 }
@@ -36162,12 +36424,6 @@ func (m *SoftwarePackageMutation) RemovedIDs(name string) []ent.Value {
 	case softwarepackage.EdgeCatalogs:
 		ids := make([]ent.Value, 0, len(m.removedcatalogs))
 		for id := range m.removedcatalogs {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeAssignments:
-		ids := make([]ent.Value, 0, len(m.removedassignments))
-		for id := range m.removedassignments {
 			ids = append(ids, id)
 		}
 		return ids
@@ -36189,13 +36445,19 @@ func (m *SoftwarePackageMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case softwarepackage.EdgeSubscribers:
+		ids := make([]ent.Value, 0, len(m.removedsubscribers))
+		for id := range m.removedsubscribers {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SoftwarePackageMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.clearedrepo {
 		edges = append(edges, softwarepackage.EdgeRepo)
 	}
@@ -36205,9 +36467,6 @@ func (m *SoftwarePackageMutation) ClearedEdges() []string {
 	if m.clearedtenant {
 		edges = append(edges, softwarepackage.EdgeTenant)
 	}
-	if m.clearedassignments {
-		edges = append(edges, softwarepackage.EdgeAssignments)
-	}
 	if m.clearedinstall_logs {
 		edges = append(edges, softwarepackage.EdgeInstallLogs)
 	}
@@ -36216,6 +36475,12 @@ func (m *SoftwarePackageMutation) ClearedEdges() []string {
 	}
 	if m.clearedupdate_for {
 		edges = append(edges, softwarepackage.EdgeUpdateFor)
+	}
+	if m.clearedglobal_ref {
+		edges = append(edges, softwarepackage.EdgeGlobalRef)
+	}
+	if m.clearedsubscribers {
+		edges = append(edges, softwarepackage.EdgeSubscribers)
 	}
 	return edges
 }
@@ -36230,14 +36495,16 @@ func (m *SoftwarePackageMutation) EdgeCleared(name string) bool {
 		return m.clearedcatalogs
 	case softwarepackage.EdgeTenant:
 		return m.clearedtenant
-	case softwarepackage.EdgeAssignments:
-		return m.clearedassignments
 	case softwarepackage.EdgeInstallLogs:
 		return m.clearedinstall_logs
 	case softwarepackage.EdgeRequires:
 		return m.clearedrequires
 	case softwarepackage.EdgeUpdateFor:
 		return m.clearedupdate_for
+	case softwarepackage.EdgeGlobalRef:
+		return m.clearedglobal_ref
+	case softwarepackage.EdgeSubscribers:
+		return m.clearedsubscribers
 	}
 	return false
 }
@@ -36251,6 +36518,9 @@ func (m *SoftwarePackageMutation) ClearEdge(name string) error {
 		return nil
 	case softwarepackage.EdgeTenant:
 		m.ClearTenant()
+		return nil
+	case softwarepackage.EdgeGlobalRef:
+		m.ClearGlobalRef()
 		return nil
 	}
 	return fmt.Errorf("unknown SoftwarePackage unique edge %s", name)
@@ -36269,9 +36539,6 @@ func (m *SoftwarePackageMutation) ResetEdge(name string) error {
 	case softwarepackage.EdgeTenant:
 		m.ResetTenant()
 		return nil
-	case softwarepackage.EdgeAssignments:
-		m.ResetAssignments()
-		return nil
 	case softwarepackage.EdgeInstallLogs:
 		m.ResetInstallLogs()
 		return nil
@@ -36280,6 +36547,12 @@ func (m *SoftwarePackageMutation) ResetEdge(name string) error {
 		return nil
 	case softwarepackage.EdgeUpdateFor:
 		m.ResetUpdateFor()
+		return nil
+	case softwarepackage.EdgeGlobalRef:
+		m.ResetGlobalRef()
+		return nil
+	case softwarepackage.EdgeSubscribers:
+		m.ResetSubscribers()
 		return nil
 	}
 	return fmt.Errorf("unknown SoftwarePackage edge %s", name)
@@ -38186,6 +38459,7 @@ type TagMutation struct {
 	tag             *string
 	description     *string
 	color           *string
+	catalog_ring    *string
 	clearedFields   map[string]struct{}
 	owner           map[string]struct{}
 	removedowner    map[string]struct{}
@@ -38422,6 +38696,55 @@ func (m *TagMutation) OldColor(ctx context.Context) (v string, err error) {
 // ResetColor resets all changes to the "color" field.
 func (m *TagMutation) ResetColor() {
 	m.color = nil
+}
+
+// SetCatalogRing sets the "catalog_ring" field.
+func (m *TagMutation) SetCatalogRing(s string) {
+	m.catalog_ring = &s
+}
+
+// CatalogRing returns the value of the "catalog_ring" field in the mutation.
+func (m *TagMutation) CatalogRing() (r string, exists bool) {
+	v := m.catalog_ring
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCatalogRing returns the old "catalog_ring" field's value of the Tag entity.
+// If the Tag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TagMutation) OldCatalogRing(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCatalogRing is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCatalogRing requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCatalogRing: %w", err)
+	}
+	return oldValue.CatalogRing, nil
+}
+
+// ClearCatalogRing clears the value of the "catalog_ring" field.
+func (m *TagMutation) ClearCatalogRing() {
+	m.catalog_ring = nil
+	m.clearedFields[tag.FieldCatalogRing] = struct{}{}
+}
+
+// CatalogRingCleared returns if the "catalog_ring" field was cleared in this mutation.
+func (m *TagMutation) CatalogRingCleared() bool {
+	_, ok := m.clearedFields[tag.FieldCatalogRing]
+	return ok
+}
+
+// ResetCatalogRing resets all changes to the "catalog_ring" field.
+func (m *TagMutation) ResetCatalogRing() {
+	m.catalog_ring = nil
+	delete(m.clearedFields, tag.FieldCatalogRing)
 }
 
 // AddOwnerIDs adds the "owner" edge to the Agent entity by ids.
@@ -38698,7 +39021,7 @@ func (m *TagMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TagMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.tag != nil {
 		fields = append(fields, tag.FieldTag)
 	}
@@ -38707,6 +39030,9 @@ func (m *TagMutation) Fields() []string {
 	}
 	if m.color != nil {
 		fields = append(fields, tag.FieldColor)
+	}
+	if m.catalog_ring != nil {
+		fields = append(fields, tag.FieldCatalogRing)
 	}
 	return fields
 }
@@ -38722,6 +39048,8 @@ func (m *TagMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case tag.FieldColor:
 		return m.Color()
+	case tag.FieldCatalogRing:
+		return m.CatalogRing()
 	}
 	return nil, false
 }
@@ -38737,6 +39065,8 @@ func (m *TagMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldDescription(ctx)
 	case tag.FieldColor:
 		return m.OldColor(ctx)
+	case tag.FieldCatalogRing:
+		return m.OldCatalogRing(ctx)
 	}
 	return nil, fmt.Errorf("unknown Tag field %s", name)
 }
@@ -38766,6 +39096,13 @@ func (m *TagMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetColor(v)
+		return nil
+	case tag.FieldCatalogRing:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCatalogRing(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Tag field %s", name)
@@ -38800,6 +39137,9 @@ func (m *TagMutation) ClearedFields() []string {
 	if m.FieldCleared(tag.FieldDescription) {
 		fields = append(fields, tag.FieldDescription)
 	}
+	if m.FieldCleared(tag.FieldCatalogRing) {
+		fields = append(fields, tag.FieldCatalogRing)
+	}
 	return fields
 }
 
@@ -38817,6 +39157,9 @@ func (m *TagMutation) ClearField(name string) error {
 	case tag.FieldDescription:
 		m.ClearDescription()
 		return nil
+	case tag.FieldCatalogRing:
+		m.ClearCatalogRing()
+		return nil
 	}
 	return fmt.Errorf("unknown Tag nullable field %s", name)
 }
@@ -38833,6 +39176,9 @@ func (m *TagMutation) ResetField(name string) error {
 		return nil
 	case tag.FieldColor:
 		m.ResetColor()
+		return nil
+	case tag.FieldCatalogRing:
+		m.ResetCatalogRing()
 		return nil
 	}
 	return fmt.Errorf("unknown Tag field %s", name)

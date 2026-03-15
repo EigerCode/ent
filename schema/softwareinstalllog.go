@@ -39,5 +39,7 @@ func (SoftwareInstallLog) Edges() []ent.Edge {
 func (SoftwareInstallLog) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("status"),
+		// Ensure only one record per agent+package (for upsert via ON CONFLICT)
+		index.Edges("agent", "package").Unique(),
 	}
 }

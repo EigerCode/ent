@@ -17,6 +17,10 @@ type SoftwareAssignment struct {
 // Fields of the SoftwareAssignment.
 func (SoftwareAssignment) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("package_name").NotEmpty().
+			Comment("Munki/CIMIAN package name (e.g. Firefox)"),
+		field.Enum("package_platform").Values("darwin", "windows").
+			Comment("Platform of the package"),
 		field.Enum("assignment_type").
 			Values("managed_install", "managed_uninstall", "optional_install", "managed_update"),
 		field.Enum("target_type").Values("site", "tag", "agent").
@@ -36,7 +40,6 @@ func (SoftwareAssignment) Fields() []ent.Field {
 // Edges of the SoftwareAssignment.
 func (SoftwareAssignment) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("package", SoftwarePackage.Type).Unique().Ref("assignments").Required(),
 		edge.From("tenant", Tenant.Type).Unique().Ref("software_assignments"),
 	}
 }
@@ -45,5 +48,6 @@ func (SoftwareAssignment) Edges() []ent.Edge {
 func (SoftwareAssignment) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("target_type", "target_id"),
+		index.Fields("package_name", "package_platform", "target_type", "target_id"),
 	}
 }

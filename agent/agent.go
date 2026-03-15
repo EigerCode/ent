@@ -75,6 +75,8 @@ const (
 	FieldIsFlatpakRustdesk = "is_flatpak_rustdesk"
 	// FieldWan holds the string denoting the wan field in the database.
 	FieldWan = "wan"
+	// FieldCatalogRing holds the string denoting the catalog_ring field in the database.
+	FieldCatalogRing = "catalog_ring"
 	// EdgeComputer holds the string denoting the computer edge name in mutations.
 	EdgeComputer = "computer"
 	// EdgeOperatingsystem holds the string denoting the operatingsystem edge name in mutations.
@@ -350,6 +352,7 @@ var Columns = []string{
 	FieldIsWayland,
 	FieldIsFlatpakRustdesk,
 	FieldWan,
+	FieldCatalogRing,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "agents"
@@ -650,6 +653,11 @@ func ByIsFlatpakRustdesk(opts ...sql.OrderTermOption) OrderOption {
 // ByWan orders the results by the wan field.
 func ByWan(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWan, opts...).ToFunc()
+}
+
+// ByCatalogRing orders the results by the catalog_ring field.
+func ByCatalogRing(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCatalogRing, opts...).ToFunc()
 }
 
 // ByComputerField orders the results by computer field.

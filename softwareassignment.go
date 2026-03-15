@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/open-uem/ent/softwareassignment"
-	"github.com/open-uem/ent/softwarepackage"
 	"github.com/open-uem/ent/tenant"
 )
 
@@ -19,6 +18,10 @@ type SoftwareAssignment struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// Munki/CIMIAN package name (e.g. Firefox)
+	PackageName string `json:"package_name,omitempty"`
+	// Platform of the package
+	PackagePlatform softwareassignment.PackagePlatform `json:"package_platform,omitempty"`
 	// AssignmentType holds the value of the "assignment_type" field.
 	AssignmentType softwareassignment.AssignmentType `json:"assignment_type,omitempty"`
 	// What kind of target this assignment applies to
@@ -37,32 +40,18 @@ type SoftwareAssignment struct {
 	Modified time.Time `json:"modified,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SoftwareAssignmentQuery when eager-loading is set.
-	Edges                        SoftwareAssignmentEdges `json:"edges"`
-	software_package_assignments *int
-	tenant_software_assignments  *int
-	selectValues                 sql.SelectValues
+	Edges                       SoftwareAssignmentEdges `json:"edges"`
+	tenant_software_assignments *int
+	selectValues                sql.SelectValues
 }
 
 // SoftwareAssignmentEdges holds the relations/edges for other nodes in the graph.
 type SoftwareAssignmentEdges struct {
-	// Package holds the value of the package edge.
-	Package *SoftwarePackage `json:"package,omitempty"`
 	// Tenant holds the value of the tenant edge.
 	Tenant *Tenant `json:"tenant,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
-}
-
-// PackageOrErr returns the Package value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e SoftwareAssignmentEdges) PackageOrErr() (*SoftwarePackage, error) {
-	if e.Package != nil {
-		return e.Package, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: softwarepackage.Label}
-	}
-	return nil, &NotLoadedError{edge: "package"}
+	loadedTypes [1]bool
 }
 
 // TenantOrErr returns the Tenant value or an error if the edge
@@ -70,7 +59,7 @@ func (e SoftwareAssignmentEdges) PackageOrErr() (*SoftwarePackage, error) {
 func (e SoftwareAssignmentEdges) TenantOrErr() (*Tenant, error) {
 	if e.Tenant != nil {
 		return e.Tenant, nil
-	} else if e.loadedTypes[1] {
+	} else if e.loadedTypes[0] {
 		return nil, &NotFoundError{label: tenant.Label}
 	}
 	return nil, &NotLoadedError{edge: "tenant"}
@@ -85,13 +74,11 @@ func (*SoftwareAssignment) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case softwareassignment.FieldID, softwareassignment.FieldPriority:
 			values[i] = new(sql.NullInt64)
-		case softwareassignment.FieldAssignmentType, softwareassignment.FieldTargetType, softwareassignment.FieldTargetID, softwareassignment.FieldConditionPredicate:
+		case softwareassignment.FieldPackageName, softwareassignment.FieldPackagePlatform, softwareassignment.FieldAssignmentType, softwareassignment.FieldTargetType, softwareassignment.FieldTargetID, softwareassignment.FieldConditionPredicate:
 			values[i] = new(sql.NullString)
 		case softwareassignment.FieldCreated, softwareassignment.FieldModified:
 			values[i] = new(sql.NullTime)
-		case softwareassignment.ForeignKeys[0]: // software_package_assignments
-			values[i] = new(sql.NullInt64)
-		case softwareassignment.ForeignKeys[1]: // tenant_software_assignments
+		case softwareassignment.ForeignKeys[0]: // tenant_software_assignments
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -114,6 +101,18 @@ func (sa *SoftwareAssignment) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			sa.ID = int(value.Int64)
+		case softwareassignment.FieldPackageName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field package_name", values[i])
+			} else if value.Valid {
+				sa.PackageName = value.String
+			}
+		case softwareassignment.FieldPackagePlatform:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field package_platform", values[i])
+			} else if value.Valid {
+				sa.PackagePlatform = softwareassignment.PackagePlatform(value.String)
+			}
 		case softwareassignment.FieldAssignmentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field assignment_type", values[i])
@@ -164,13 +163,6 @@ func (sa *SoftwareAssignment) assignValues(columns []string, values []any) error
 			}
 		case softwareassignment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field software_package_assignments", value)
-			} else if value.Valid {
-				sa.software_package_assignments = new(int)
-				*sa.software_package_assignments = int(value.Int64)
-			}
-		case softwareassignment.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field tenant_software_assignments", value)
 			} else if value.Valid {
 				sa.tenant_software_assignments = new(int)
@@ -187,11 +179,6 @@ func (sa *SoftwareAssignment) assignValues(columns []string, values []any) error
 // This includes values selected through modifiers, order, etc.
 func (sa *SoftwareAssignment) Value(name string) (ent.Value, error) {
 	return sa.selectValues.Get(name)
-}
-
-// QueryPackage queries the "package" edge of the SoftwareAssignment entity.
-func (sa *SoftwareAssignment) QueryPackage() *SoftwarePackageQuery {
-	return NewSoftwareAssignmentClient(sa.config).QueryPackage(sa)
 }
 
 // QueryTenant queries the "tenant" edge of the SoftwareAssignment entity.
@@ -222,6 +209,12 @@ func (sa *SoftwareAssignment) String() string {
 	var builder strings.Builder
 	builder.WriteString("SoftwareAssignment(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sa.ID))
+	builder.WriteString("package_name=")
+	builder.WriteString(sa.PackageName)
+	builder.WriteString(", ")
+	builder.WriteString("package_platform=")
+	builder.WriteString(fmt.Sprintf("%v", sa.PackagePlatform))
+	builder.WriteString(", ")
 	builder.WriteString("assignment_type=")
 	builder.WriteString(fmt.Sprintf("%v", sa.AssignmentType))
 	builder.WriteString(", ")

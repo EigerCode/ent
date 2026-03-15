@@ -15,6 +15,10 @@ const (
 	Label = "software_assignment"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldPackageName holds the string denoting the package_name field in the database.
+	FieldPackageName = "package_name"
+	// FieldPackagePlatform holds the string denoting the package_platform field in the database.
+	FieldPackagePlatform = "package_platform"
 	// FieldAssignmentType holds the string denoting the assignment_type field in the database.
 	FieldAssignmentType = "assignment_type"
 	// FieldTargetType holds the string denoting the target_type field in the database.
@@ -31,19 +35,10 @@ const (
 	FieldCreated = "created"
 	// FieldModified holds the string denoting the modified field in the database.
 	FieldModified = "modified"
-	// EdgePackage holds the string denoting the package edge name in mutations.
-	EdgePackage = "package"
 	// EdgeTenant holds the string denoting the tenant edge name in mutations.
 	EdgeTenant = "tenant"
 	// Table holds the table name of the softwareassignment in the database.
 	Table = "software_assignments"
-	// PackageTable is the table that holds the package relation/edge.
-	PackageTable = "software_assignments"
-	// PackageInverseTable is the table name for the SoftwarePackage entity.
-	// It exists in this package in order to avoid circular dependency with the "softwarepackage" package.
-	PackageInverseTable = "software_packages"
-	// PackageColumn is the table column denoting the package relation/edge.
-	PackageColumn = "software_package_assignments"
 	// TenantTable is the table that holds the tenant relation/edge.
 	TenantTable = "software_assignments"
 	// TenantInverseTable is the table name for the Tenant entity.
@@ -56,6 +51,8 @@ const (
 // Columns holds all SQL columns for softwareassignment fields.
 var Columns = []string{
 	FieldID,
+	FieldPackageName,
+	FieldPackagePlatform,
 	FieldAssignmentType,
 	FieldTargetType,
 	FieldTargetID,
@@ -69,7 +66,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "software_assignments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"software_package_assignments",
 	"tenant_software_assignments",
 }
 
@@ -89,6 +85,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// PackageNameValidator is a validator for the "package_name" field. It is called by the builders before save.
+	PackageNameValidator func(string) error
 	// TargetIDValidator is a validator for the "target_id" field. It is called by the builders before save.
 	TargetIDValidator func(string) error
 	// DefaultPriority holds the default value on creation for the "priority" field.
@@ -104,6 +102,29 @@ var (
 	// UpdateDefaultModified holds the default value on update for the "modified" field.
 	UpdateDefaultModified func() time.Time
 )
+
+// PackagePlatform defines the type for the "package_platform" enum field.
+type PackagePlatform string
+
+// PackagePlatform values.
+const (
+	PackagePlatformDarwin  PackagePlatform = "darwin"
+	PackagePlatformWindows PackagePlatform = "windows"
+)
+
+func (pp PackagePlatform) String() string {
+	return string(pp)
+}
+
+// PackagePlatformValidator is a validator for the "package_platform" field enum values. It is called by the builders before save.
+func PackagePlatformValidator(pp PackagePlatform) error {
+	switch pp {
+	case PackagePlatformDarwin, PackagePlatformWindows:
+		return nil
+	default:
+		return fmt.Errorf("softwareassignment: invalid enum value for package_platform field: %q", pp)
+	}
+}
 
 // AssignmentType defines the type for the "assignment_type" enum field.
 type AssignmentType string
@@ -162,6 +183,16 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
+// ByPackageName orders the results by the package_name field.
+func ByPackageName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPackageName, opts...).ToFunc()
+}
+
+// ByPackagePlatform orders the results by the package_platform field.
+func ByPackagePlatform(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPackagePlatform, opts...).ToFunc()
+}
+
 // ByAssignmentType orders the results by the assignment_type field.
 func ByAssignmentType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAssignmentType, opts...).ToFunc()
@@ -202,25 +233,11 @@ func ByModified(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldModified, opts...).ToFunc()
 }
 
-// ByPackageField orders the results by package field.
-func ByPackageField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newPackageStep(), sql.OrderByField(field, opts...))
-	}
-}
-
 // ByTenantField orders the results by tenant field.
 func ByTenantField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newTenantStep(), sql.OrderByField(field, opts...))
 	}
-}
-func newPackageStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(PackageInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, PackageTable, PackageColumn),
-	)
 }
 func newTenantStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

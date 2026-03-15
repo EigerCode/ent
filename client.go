@@ -5740,22 +5740,6 @@ func (c *SoftwareAssignmentClient) GetX(ctx context.Context, id int) *SoftwareAs
 	return obj
 }
 
-// QueryPackage queries the package edge of a SoftwareAssignment.
-func (c *SoftwareAssignmentClient) QueryPackage(sa *SoftwareAssignment) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sa.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwareassignment.Table, softwareassignment.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwareassignment.PackageTable, softwareassignment.PackageColumn),
-		)
-		fromV = sqlgraph.Neighbors(sa.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryTenant queries the tenant edge of a SoftwareAssignment.
 func (c *SoftwareAssignmentClient) QueryTenant(sa *SoftwareAssignment) *TenantQuery {
 	query := (&TenantClient{config: c.config}).Query()
@@ -6283,22 +6267,6 @@ func (c *SoftwarePackageClient) QueryTenant(sp *SoftwarePackage) *TenantQuery {
 	return query
 }
 
-// QueryAssignments queries the assignments edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryAssignments(sp *SoftwarePackage) *SoftwareAssignmentQuery {
-	query := (&SoftwareAssignmentClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwareassignment.Table, softwareassignment.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.AssignmentsTable, softwarepackage.AssignmentsColumn),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryInstallLogs queries the install_logs edge of a SoftwarePackage.
 func (c *SoftwarePackageClient) QueryInstallLogs(sp *SoftwarePackage) *SoftwareInstallLogQuery {
 	query := (&SoftwareInstallLogClient{config: c.config}).Query()
@@ -6340,6 +6308,38 @@ func (c *SoftwarePackageClient) QueryUpdateFor(sp *SoftwarePackage) *SoftwarePac
 			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
 			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.UpdateForTable, softwarepackage.UpdateForPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGlobalRef queries the global_ref edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QueryGlobalRef(sp *SoftwarePackage) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.GlobalRefTable, softwarepackage.GlobalRefColumn),
+		)
+		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySubscribers queries the subscribers edge of a SoftwarePackage.
+func (c *SoftwarePackageClient) QuerySubscribers(sp *SoftwarePackage) *SoftwarePackageQuery {
+	query := (&SoftwarePackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := sp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
+			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.SubscribersTable, softwarepackage.SubscribersColumn),
 		)
 		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
 		return fromV, nil

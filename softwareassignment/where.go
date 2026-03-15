@@ -55,6 +55,11 @@ func IDLTE(id int) predicate.SoftwareAssignment {
 	return predicate.SoftwareAssignment(sql.FieldLTE(FieldID, id))
 }
 
+// PackageName applies equality check predicate on the "package_name" field. It's identical to PackageNameEQ.
+func PackageName(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldEQ(FieldPackageName, v))
+}
+
 // TargetID applies equality check predicate on the "target_id" field. It's identical to TargetIDEQ.
 func TargetID(v string) predicate.SoftwareAssignment {
 	return predicate.SoftwareAssignment(sql.FieldEQ(FieldTargetID, v))
@@ -83,6 +88,91 @@ func Created(v time.Time) predicate.SoftwareAssignment {
 // Modified applies equality check predicate on the "modified" field. It's identical to ModifiedEQ.
 func Modified(v time.Time) predicate.SoftwareAssignment {
 	return predicate.SoftwareAssignment(sql.FieldEQ(FieldModified, v))
+}
+
+// PackageNameEQ applies the EQ predicate on the "package_name" field.
+func PackageNameEQ(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldEQ(FieldPackageName, v))
+}
+
+// PackageNameNEQ applies the NEQ predicate on the "package_name" field.
+func PackageNameNEQ(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldNEQ(FieldPackageName, v))
+}
+
+// PackageNameIn applies the In predicate on the "package_name" field.
+func PackageNameIn(vs ...string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldIn(FieldPackageName, vs...))
+}
+
+// PackageNameNotIn applies the NotIn predicate on the "package_name" field.
+func PackageNameNotIn(vs ...string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldNotIn(FieldPackageName, vs...))
+}
+
+// PackageNameGT applies the GT predicate on the "package_name" field.
+func PackageNameGT(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldGT(FieldPackageName, v))
+}
+
+// PackageNameGTE applies the GTE predicate on the "package_name" field.
+func PackageNameGTE(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldGTE(FieldPackageName, v))
+}
+
+// PackageNameLT applies the LT predicate on the "package_name" field.
+func PackageNameLT(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldLT(FieldPackageName, v))
+}
+
+// PackageNameLTE applies the LTE predicate on the "package_name" field.
+func PackageNameLTE(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldLTE(FieldPackageName, v))
+}
+
+// PackageNameContains applies the Contains predicate on the "package_name" field.
+func PackageNameContains(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldContains(FieldPackageName, v))
+}
+
+// PackageNameHasPrefix applies the HasPrefix predicate on the "package_name" field.
+func PackageNameHasPrefix(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldHasPrefix(FieldPackageName, v))
+}
+
+// PackageNameHasSuffix applies the HasSuffix predicate on the "package_name" field.
+func PackageNameHasSuffix(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldHasSuffix(FieldPackageName, v))
+}
+
+// PackageNameEqualFold applies the EqualFold predicate on the "package_name" field.
+func PackageNameEqualFold(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldEqualFold(FieldPackageName, v))
+}
+
+// PackageNameContainsFold applies the ContainsFold predicate on the "package_name" field.
+func PackageNameContainsFold(v string) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldContainsFold(FieldPackageName, v))
+}
+
+// PackagePlatformEQ applies the EQ predicate on the "package_platform" field.
+func PackagePlatformEQ(v PackagePlatform) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldEQ(FieldPackagePlatform, v))
+}
+
+// PackagePlatformNEQ applies the NEQ predicate on the "package_platform" field.
+func PackagePlatformNEQ(v PackagePlatform) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldNEQ(FieldPackagePlatform, v))
+}
+
+// PackagePlatformIn applies the In predicate on the "package_platform" field.
+func PackagePlatformIn(vs ...PackagePlatform) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldIn(FieldPackagePlatform, vs...))
+}
+
+// PackagePlatformNotIn applies the NotIn predicate on the "package_platform" field.
+func PackagePlatformNotIn(vs ...PackagePlatform) predicate.SoftwareAssignment {
+	return predicate.SoftwareAssignment(sql.FieldNotIn(FieldPackagePlatform, vs...))
 }
 
 // AssignmentTypeEQ applies the EQ predicate on the "assignment_type" field.
@@ -433,29 +523,6 @@ func ModifiedIsNil() predicate.SoftwareAssignment {
 // ModifiedNotNil applies the NotNil predicate on the "modified" field.
 func ModifiedNotNil() predicate.SoftwareAssignment {
 	return predicate.SoftwareAssignment(sql.FieldNotNull(FieldModified))
-}
-
-// HasPackage applies the HasEdge predicate on the "package" edge.
-func HasPackage() predicate.SoftwareAssignment {
-	return predicate.SoftwareAssignment(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, PackageTable, PackageColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasPackageWith applies the HasEdge predicate on the "package" edge with a given conditions (other predicates).
-func HasPackageWith(preds ...predicate.SoftwarePackage) predicate.SoftwareAssignment {
-	return predicate.SoftwareAssignment(func(s *sql.Selector) {
-		step := newPackageStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // HasTenant applies the HasEdge predicate on the "tenant" edge.

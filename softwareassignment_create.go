@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/open-uem/ent/softwareassignment"
-	"github.com/open-uem/ent/softwarepackage"
 	"github.com/open-uem/ent/tenant"
 )
 
@@ -22,6 +21,18 @@ type SoftwareAssignmentCreate struct {
 	mutation *SoftwareAssignmentMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetPackageName sets the "package_name" field.
+func (sac *SoftwareAssignmentCreate) SetPackageName(s string) *SoftwareAssignmentCreate {
+	sac.mutation.SetPackageName(s)
+	return sac
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (sac *SoftwareAssignmentCreate) SetPackagePlatform(sp softwareassignment.PackagePlatform) *SoftwareAssignmentCreate {
+	sac.mutation.SetPackagePlatform(sp)
+	return sac
 }
 
 // SetAssignmentType sets the "assignment_type" field.
@@ -112,17 +123,6 @@ func (sac *SoftwareAssignmentCreate) SetNillableModified(t *time.Time) *Software
 	return sac
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by ID.
-func (sac *SoftwareAssignmentCreate) SetPackageID(id int) *SoftwareAssignmentCreate {
-	sac.mutation.SetPackageID(id)
-	return sac
-}
-
-// SetPackage sets the "package" edge to the SoftwarePackage entity.
-func (sac *SoftwareAssignmentCreate) SetPackage(s *SoftwarePackage) *SoftwareAssignmentCreate {
-	return sac.SetPackageID(s.ID)
-}
-
 // SetTenantID sets the "tenant" edge to the Tenant entity by ID.
 func (sac *SoftwareAssignmentCreate) SetTenantID(id int) *SoftwareAssignmentCreate {
 	sac.mutation.SetTenantID(id)
@@ -201,6 +201,22 @@ func (sac *SoftwareAssignmentCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sac *SoftwareAssignmentCreate) check() error {
+	if _, ok := sac.mutation.PackageName(); !ok {
+		return &ValidationError{Name: "package_name", err: errors.New(`ent: missing required field "SoftwareAssignment.package_name"`)}
+	}
+	if v, ok := sac.mutation.PackageName(); ok {
+		if err := softwareassignment.PackageNameValidator(v); err != nil {
+			return &ValidationError{Name: "package_name", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.package_name": %w`, err)}
+		}
+	}
+	if _, ok := sac.mutation.PackagePlatform(); !ok {
+		return &ValidationError{Name: "package_platform", err: errors.New(`ent: missing required field "SoftwareAssignment.package_platform"`)}
+	}
+	if v, ok := sac.mutation.PackagePlatform(); ok {
+		if err := softwareassignment.PackagePlatformValidator(v); err != nil {
+			return &ValidationError{Name: "package_platform", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.package_platform": %w`, err)}
+		}
+	}
 	if _, ok := sac.mutation.AssignmentType(); !ok {
 		return &ValidationError{Name: "assignment_type", err: errors.New(`ent: missing required field "SoftwareAssignment.assignment_type"`)}
 	}
@@ -224,9 +240,6 @@ func (sac *SoftwareAssignmentCreate) check() error {
 		if err := softwareassignment.TargetIDValidator(v); err != nil {
 			return &ValidationError{Name: "target_id", err: fmt.Errorf(`ent: validator failed for field "SoftwareAssignment.target_id": %w`, err)}
 		}
-	}
-	if len(sac.mutation.PackageIDs()) == 0 {
-		return &ValidationError{Name: "package", err: errors.New(`ent: missing required edge "SoftwareAssignment.package"`)}
 	}
 	return nil
 }
@@ -255,6 +268,14 @@ func (sac *SoftwareAssignmentCreate) createSpec() (*SoftwareAssignment, *sqlgrap
 		_spec = sqlgraph.NewCreateSpec(softwareassignment.Table, sqlgraph.NewFieldSpec(softwareassignment.FieldID, field.TypeInt))
 	)
 	_spec.OnConflict = sac.conflict
+	if value, ok := sac.mutation.PackageName(); ok {
+		_spec.SetField(softwareassignment.FieldPackageName, field.TypeString, value)
+		_node.PackageName = value
+	}
+	if value, ok := sac.mutation.PackagePlatform(); ok {
+		_spec.SetField(softwareassignment.FieldPackagePlatform, field.TypeEnum, value)
+		_node.PackagePlatform = value
+	}
 	if value, ok := sac.mutation.AssignmentType(); ok {
 		_spec.SetField(softwareassignment.FieldAssignmentType, field.TypeEnum, value)
 		_node.AssignmentType = value
@@ -287,23 +308,6 @@ func (sac *SoftwareAssignmentCreate) createSpec() (*SoftwareAssignment, *sqlgrap
 		_spec.SetField(softwareassignment.FieldModified, field.TypeTime, value)
 		_node.Modified = value
 	}
-	if nodes := sac.mutation.PackageIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwareassignment.PackageTable,
-			Columns: []string{softwareassignment.PackageColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.software_package_assignments = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := sac.mutation.TenantIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -328,7 +332,7 @@ func (sac *SoftwareAssignmentCreate) createSpec() (*SoftwareAssignment, *sqlgrap
 // of the `INSERT` statement. For example:
 //
 //	client.SoftwareAssignment.Create().
-//		SetAssignmentType(v).
+//		SetPackageName(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -337,7 +341,7 @@ func (sac *SoftwareAssignmentCreate) createSpec() (*SoftwareAssignment, *sqlgrap
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SoftwareAssignmentUpsert) {
-//			SetAssignmentType(v+v).
+//			SetPackageName(v+v).
 //		}).
 //		Exec(ctx)
 func (sac *SoftwareAssignmentCreate) OnConflict(opts ...sql.ConflictOption) *SoftwareAssignmentUpsertOne {
@@ -372,6 +376,30 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetPackageName sets the "package_name" field.
+func (u *SoftwareAssignmentUpsert) SetPackageName(v string) *SoftwareAssignmentUpsert {
+	u.Set(softwareassignment.FieldPackageName, v)
+	return u
+}
+
+// UpdatePackageName sets the "package_name" field to the value that was provided on create.
+func (u *SoftwareAssignmentUpsert) UpdatePackageName() *SoftwareAssignmentUpsert {
+	u.SetExcluded(softwareassignment.FieldPackageName)
+	return u
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (u *SoftwareAssignmentUpsert) SetPackagePlatform(v softwareassignment.PackagePlatform) *SoftwareAssignmentUpsert {
+	u.Set(softwareassignment.FieldPackagePlatform, v)
+	return u
+}
+
+// UpdatePackagePlatform sets the "package_platform" field to the value that was provided on create.
+func (u *SoftwareAssignmentUpsert) UpdatePackagePlatform() *SoftwareAssignmentUpsert {
+	u.SetExcluded(softwareassignment.FieldPackagePlatform)
+	return u
+}
 
 // SetAssignmentType sets the "assignment_type" field.
 func (u *SoftwareAssignmentUpsert) SetAssignmentType(v softwareassignment.AssignmentType) *SoftwareAssignmentUpsert {
@@ -543,6 +571,34 @@ func (u *SoftwareAssignmentUpsertOne) Update(set func(*SoftwareAssignmentUpsert)
 		set(&SoftwareAssignmentUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetPackageName sets the "package_name" field.
+func (u *SoftwareAssignmentUpsertOne) SetPackageName(v string) *SoftwareAssignmentUpsertOne {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.SetPackageName(v)
+	})
+}
+
+// UpdatePackageName sets the "package_name" field to the value that was provided on create.
+func (u *SoftwareAssignmentUpsertOne) UpdatePackageName() *SoftwareAssignmentUpsertOne {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.UpdatePackageName()
+	})
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (u *SoftwareAssignmentUpsertOne) SetPackagePlatform(v softwareassignment.PackagePlatform) *SoftwareAssignmentUpsertOne {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.SetPackagePlatform(v)
+	})
+}
+
+// UpdatePackagePlatform sets the "package_platform" field to the value that was provided on create.
+func (u *SoftwareAssignmentUpsertOne) UpdatePackagePlatform() *SoftwareAssignmentUpsertOne {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.UpdatePackagePlatform()
+	})
 }
 
 // SetAssignmentType sets the "assignment_type" field.
@@ -834,7 +890,7 @@ func (sacb *SoftwareAssignmentCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SoftwareAssignmentUpsert) {
-//			SetAssignmentType(v+v).
+//			SetPackageName(v+v).
 //		}).
 //		Exec(ctx)
 func (sacb *SoftwareAssignmentCreateBulk) OnConflict(opts ...sql.ConflictOption) *SoftwareAssignmentUpsertBulk {
@@ -901,6 +957,34 @@ func (u *SoftwareAssignmentUpsertBulk) Update(set func(*SoftwareAssignmentUpsert
 		set(&SoftwareAssignmentUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetPackageName sets the "package_name" field.
+func (u *SoftwareAssignmentUpsertBulk) SetPackageName(v string) *SoftwareAssignmentUpsertBulk {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.SetPackageName(v)
+	})
+}
+
+// UpdatePackageName sets the "package_name" field to the value that was provided on create.
+func (u *SoftwareAssignmentUpsertBulk) UpdatePackageName() *SoftwareAssignmentUpsertBulk {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.UpdatePackageName()
+	})
+}
+
+// SetPackagePlatform sets the "package_platform" field.
+func (u *SoftwareAssignmentUpsertBulk) SetPackagePlatform(v softwareassignment.PackagePlatform) *SoftwareAssignmentUpsertBulk {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.SetPackagePlatform(v)
+	})
+}
+
+// UpdatePackagePlatform sets the "package_platform" field to the value that was provided on create.
+func (u *SoftwareAssignmentUpsertBulk) UpdatePackagePlatform() *SoftwareAssignmentUpsertBulk {
+	return u.Update(func(s *SoftwareAssignmentUpsert) {
+		s.UpdatePackagePlatform()
+	})
 }
 
 // SetAssignmentType sets the "assignment_type" field.
