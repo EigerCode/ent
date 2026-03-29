@@ -10,6 +10,7 @@ import (
 	"reflect"
 
 	"github.com/EigerCode/ent/migrate"
+	"github.com/google/uuid"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -25,6 +26,7 @@ import (
 	"github.com/EigerCode/ent/deployment"
 	"github.com/EigerCode/ent/enrollmenttoken"
 	"github.com/EigerCode/ent/logicaldisk"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/memoryslot"
 	"github.com/EigerCode/ent/metadata"
 	"github.com/EigerCode/ent/monitor"
@@ -87,6 +89,8 @@ type Client struct {
 	EnrollmentToken *EnrollmentTokenClient
 	// LogicalDisk is the client for interacting with the LogicalDisk builders.
 	LogicalDisk *LogicalDiskClient
+	// ManagedPackage is the client for interacting with the ManagedPackage builders.
+	ManagedPackage *ManagedPackageClient
 	// MemorySlot is the client for interacting with the MemorySlot builders.
 	MemorySlot *MemorySlotClient
 	// Metadata is the client for interacting with the Metadata builders.
@@ -178,6 +182,7 @@ func (c *Client) init() {
 	c.Deployment = NewDeploymentClient(c.config)
 	c.EnrollmentToken = NewEnrollmentTokenClient(c.config)
 	c.LogicalDisk = NewLogicalDiskClient(c.config)
+	c.ManagedPackage = NewManagedPackageClient(c.config)
 	c.MemorySlot = NewMemorySlotClient(c.config)
 	c.Metadata = NewMetadataClient(c.config)
 	c.Monitor = NewMonitorClient(c.config)
@@ -315,6 +320,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Deployment:            NewDeploymentClient(cfg),
 		EnrollmentToken:       NewEnrollmentTokenClient(cfg),
 		LogicalDisk:           NewLogicalDiskClient(cfg),
+		ManagedPackage:        NewManagedPackageClient(cfg),
 		MemorySlot:            NewMemorySlotClient(cfg),
 		Metadata:              NewMetadataClient(cfg),
 		Monitor:               NewMonitorClient(cfg),
@@ -379,6 +385,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Deployment:            NewDeploymentClient(cfg),
 		EnrollmentToken:       NewEnrollmentTokenClient(cfg),
 		LogicalDisk:           NewLogicalDiskClient(cfg),
+		ManagedPackage:        NewManagedPackageClient(cfg),
 		MemorySlot:            NewMemorySlotClient(cfg),
 		Metadata:              NewMetadataClient(cfg),
 		Monitor:               NewMonitorClient(cfg),
@@ -444,11 +451,11 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
-		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
-		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
-		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwareAssignment,
+		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.ManagedPackage,
+		c.MemorySlot, c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings,
+		c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer,
+		c.Profile, c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
+		c.Server, c.Sessions, c.Settings, c.Share, c.Site, c.SoftwareAssignment,
 		c.SoftwareCatalog, c.SoftwareInstallLog, c.SoftwarePackage, c.SoftwareRepo,
 		c.SystemUpdate, c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
 		c.UserTenant, c.WingetConfigExclusion,
@@ -462,11 +469,11 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Agent, c.Antivirus, c.App, c.Authentication, c.Branding, c.Certificate,
-		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.MemorySlot,
-		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
-		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwareAssignment,
+		c.Computer, c.Deployment, c.EnrollmentToken, c.LogicalDisk, c.ManagedPackage,
+		c.MemorySlot, c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings,
+		c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer,
+		c.Profile, c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
+		c.Server, c.Sessions, c.Settings, c.Share, c.Site, c.SoftwareAssignment,
 		c.SoftwareCatalog, c.SoftwareInstallLog, c.SoftwarePackage, c.SoftwareRepo,
 		c.SystemUpdate, c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
 		c.UserTenant, c.WingetConfigExclusion,
@@ -498,6 +505,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.EnrollmentToken.mutate(ctx, m)
 	case *LogicalDiskMutation:
 		return c.LogicalDisk.mutate(ctx, m)
+	case *ManagedPackageMutation:
+		return c.ManagedPackage.mutate(ctx, m)
 	case *MemorySlotMutation:
 		return c.MemorySlot.mutate(ctx, m)
 	case *MetadataMutation:
@@ -2380,6 +2389,267 @@ func (c *LogicalDiskClient) mutate(ctx context.Context, m *LogicalDiskMutation) 
 		return (&LogicalDiskDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown LogicalDisk mutation op: %q", m.Op())
+	}
+}
+
+// ManagedPackageClient is a client for the ManagedPackage schema.
+type ManagedPackageClient struct {
+	config
+}
+
+// NewManagedPackageClient returns a client for the ManagedPackage from the given config.
+func NewManagedPackageClient(c config) *ManagedPackageClient {
+	return &ManagedPackageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `managedpackage.Hooks(f(g(h())))`.
+func (c *ManagedPackageClient) Use(hooks ...Hook) {
+	c.hooks.ManagedPackage = append(c.hooks.ManagedPackage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `managedpackage.Intercept(f(g(h())))`.
+func (c *ManagedPackageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ManagedPackage = append(c.inters.ManagedPackage, interceptors...)
+}
+
+// Create returns a builder for creating a ManagedPackage entity.
+func (c *ManagedPackageClient) Create() *ManagedPackageCreate {
+	mutation := newManagedPackageMutation(c.config, OpCreate)
+	return &ManagedPackageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ManagedPackage entities.
+func (c *ManagedPackageClient) CreateBulk(builders ...*ManagedPackageCreate) *ManagedPackageCreateBulk {
+	return &ManagedPackageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ManagedPackageClient) MapCreateBulk(slice any, setFunc func(*ManagedPackageCreate, int)) *ManagedPackageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ManagedPackageCreateBulk{err: fmt.Errorf("calling to ManagedPackageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ManagedPackageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ManagedPackageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ManagedPackage.
+func (c *ManagedPackageClient) Update() *ManagedPackageUpdate {
+	mutation := newManagedPackageMutation(c.config, OpUpdate)
+	return &ManagedPackageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ManagedPackageClient) UpdateOne(mp *ManagedPackage) *ManagedPackageUpdateOne {
+	mutation := newManagedPackageMutation(c.config, OpUpdateOne, withManagedPackage(mp))
+	return &ManagedPackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ManagedPackageClient) UpdateOneID(id int) *ManagedPackageUpdateOne {
+	mutation := newManagedPackageMutation(c.config, OpUpdateOne, withManagedPackageID(id))
+	return &ManagedPackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ManagedPackage.
+func (c *ManagedPackageClient) Delete() *ManagedPackageDelete {
+	mutation := newManagedPackageMutation(c.config, OpDelete)
+	return &ManagedPackageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ManagedPackageClient) DeleteOne(mp *ManagedPackage) *ManagedPackageDeleteOne {
+	return c.DeleteOneID(mp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ManagedPackageClient) DeleteOneID(id int) *ManagedPackageDeleteOne {
+	builder := c.Delete().Where(managedpackage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ManagedPackageDeleteOne{builder}
+}
+
+// Query returns a query builder for ManagedPackage.
+func (c *ManagedPackageClient) Query() *ManagedPackageQuery {
+	return &ManagedPackageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeManagedPackage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ManagedPackage entity by its id.
+func (c *ManagedPackageClient) Get(ctx context.Context, id int) (*ManagedPackage, error) {
+	return c.Query().Where(managedpackage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ManagedPackageClient) GetX(ctx context.Context, id int) *ManagedPackage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryRepo queries the repo edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryRepo(mp *ManagedPackage) *SoftwareRepoQuery {
+	query := (&SoftwareRepoClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(softwarerepo.Table, softwarerepo.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, managedpackage.RepoTable, managedpackage.RepoColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCatalogs queries the catalogs edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryCatalogs(mp *ManagedPackage) *SoftwareCatalogQuery {
+	query := (&SoftwareCatalogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(softwarecatalog.Table, softwarecatalog.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, managedpackage.CatalogsTable, managedpackage.CatalogsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTenant queries the tenant edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryTenant(mp *ManagedPackage) *TenantQuery {
+	query := (&TenantClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, managedpackage.TenantTable, managedpackage.TenantColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInstallLogs queries the install_logs edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryInstallLogs(mp *ManagedPackage) *SoftwareInstallLogQuery {
+	query := (&SoftwareInstallLogClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(softwareinstalllog.Table, softwareinstalllog.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, managedpackage.InstallLogsTable, managedpackage.InstallLogsColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRequires queries the requires edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryRequires(mp *ManagedPackage) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, managedpackage.RequiresTable, managedpackage.RequiresPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUpdateFor queries the update_for edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryUpdateFor(mp *ManagedPackage) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, managedpackage.UpdateForTable, managedpackage.UpdateForPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGlobalRef queries the global_ref edge of a ManagedPackage.
+func (c *ManagedPackageClient) QueryGlobalRef(mp *ManagedPackage) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, managedpackage.GlobalRefTable, managedpackage.GlobalRefColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySubscribers queries the subscribers edge of a ManagedPackage.
+func (c *ManagedPackageClient) QuerySubscribers(mp *ManagedPackage) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := mp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(managedpackage.Table, managedpackage.FieldID, id),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, managedpackage.SubscribersTable, managedpackage.SubscribersColumn),
+		)
+		fromV = sqlgraph.Neighbors(mp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *ManagedPackageClient) Hooks() []Hook {
+	return c.hooks.ManagedPackage
+}
+
+// Interceptors returns the client interceptors.
+func (c *ManagedPackageClient) Interceptors() []Interceptor {
+	return c.inters.ManagedPackage
+}
+
+func (c *ManagedPackageClient) mutate(ctx context.Context, m *ManagedPackageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ManagedPackageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ManagedPackageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ManagedPackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ManagedPackageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ManagedPackage mutation op: %q", m.Op())
 	}
 }
 
@@ -5930,13 +6200,13 @@ func (c *SoftwareCatalogClient) QueryTenant(sc *SoftwareCatalog) *TenantQuery {
 }
 
 // QueryPackages queries the packages edge of a SoftwareCatalog.
-func (c *SoftwareCatalogClient) QueryPackages(sc *SoftwareCatalog) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
+func (c *SoftwareCatalogClient) QueryPackages(sc *SoftwareCatalog) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := sc.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(softwarecatalog.Table, softwarecatalog.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, softwarecatalog.PackagesTable, softwarecatalog.PackagesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(sc.driver.Dialect(), step)
@@ -6095,13 +6365,13 @@ func (c *SoftwareInstallLogClient) QueryAgent(sil *SoftwareInstallLog) *AgentQue
 }
 
 // QueryPackage queries the package edge of a SoftwareInstallLog.
-func (c *SoftwareInstallLogClient) QueryPackage(sil *SoftwareInstallLog) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
+func (c *SoftwareInstallLogClient) QueryPackage(sil *SoftwareInstallLog) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := sil.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(softwareinstalllog.Table, softwareinstalllog.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, softwareinstalllog.PackageTable, softwareinstalllog.PackageColumn),
 		)
 		fromV = sqlgraph.Neighbors(sil.driver.Dialect(), step)
@@ -6196,7 +6466,7 @@ func (c *SoftwarePackageClient) UpdateOne(sp *SoftwarePackage) *SoftwarePackageU
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *SoftwarePackageClient) UpdateOneID(id int) *SoftwarePackageUpdateOne {
+func (c *SoftwarePackageClient) UpdateOneID(id uuid.UUID) *SoftwarePackageUpdateOne {
 	mutation := newSoftwarePackageMutation(c.config, OpUpdateOne, withSoftwarePackageID(id))
 	return &SoftwarePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -6213,7 +6483,7 @@ func (c *SoftwarePackageClient) DeleteOne(sp *SoftwarePackage) *SoftwarePackageD
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *SoftwarePackageClient) DeleteOneID(id int) *SoftwarePackageDeleteOne {
+func (c *SoftwarePackageClient) DeleteOneID(id uuid.UUID) *SoftwarePackageDeleteOne {
 	builder := c.Delete().Where(softwarepackage.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -6230,145 +6500,17 @@ func (c *SoftwarePackageClient) Query() *SoftwarePackageQuery {
 }
 
 // Get returns a SoftwarePackage entity by its id.
-func (c *SoftwarePackageClient) Get(ctx context.Context, id int) (*SoftwarePackage, error) {
+func (c *SoftwarePackageClient) Get(ctx context.Context, id uuid.UUID) (*SoftwarePackage, error) {
 	return c.Query().Where(softwarepackage.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *SoftwarePackageClient) GetX(ctx context.Context, id int) *SoftwarePackage {
+func (c *SoftwarePackageClient) GetX(ctx context.Context, id uuid.UUID) *SoftwarePackage {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryRepo queries the repo edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryRepo(sp *SoftwarePackage) *SoftwareRepoQuery {
-	query := (&SoftwareRepoClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwarerepo.Table, softwarerepo.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.RepoTable, softwarepackage.RepoColumn),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryCatalogs queries the catalogs edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryCatalogs(sp *SoftwarePackage) *SoftwareCatalogQuery {
-	query := (&SoftwareCatalogClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwarecatalog.Table, softwarecatalog.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, softwarepackage.CatalogsTable, softwarepackage.CatalogsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryTenant queries the tenant edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryTenant(sp *SoftwarePackage) *TenantQuery {
-	query := (&TenantClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(tenant.Table, tenant.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.TenantTable, softwarepackage.TenantColumn),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryInstallLogs queries the install_logs edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryInstallLogs(sp *SoftwarePackage) *SoftwareInstallLogQuery {
-	query := (&SoftwareInstallLogClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwareinstalllog.Table, softwareinstalllog.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.InstallLogsTable, softwarepackage.InstallLogsColumn),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryRequires queries the requires edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryRequires(sp *SoftwarePackage) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.RequiresTable, softwarepackage.RequiresPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUpdateFor queries the update_for edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryUpdateFor(sp *SoftwarePackage) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.UpdateForTable, softwarepackage.UpdateForPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryGlobalRef queries the global_ref edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QueryGlobalRef(sp *SoftwarePackage) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.GlobalRefTable, softwarepackage.GlobalRefColumn),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QuerySubscribers queries the subscribers edge of a SoftwarePackage.
-func (c *SoftwarePackageClient) QuerySubscribers(sp *SoftwarePackage) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sp.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.SubscribersTable, softwarepackage.SubscribersColumn),
-		)
-		fromV = sqlgraph.Neighbors(sp.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // Hooks returns the client hooks.
@@ -6521,13 +6663,13 @@ func (c *SoftwareRepoClient) QueryTenant(sr *SoftwareRepo) *TenantQuery {
 }
 
 // QueryPackages queries the packages edge of a SoftwareRepo.
-func (c *SoftwareRepoClient) QueryPackages(sr *SoftwareRepo) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
+func (c *SoftwareRepoClient) QueryPackages(sr *SoftwareRepo) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := sr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(softwarerepo.Table, softwarerepo.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, softwarerepo.PackagesTable, softwarerepo.PackagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
@@ -7522,13 +7664,13 @@ func (c *TenantClient) QuerySoftwareRepos(t *Tenant) *SoftwareRepoQuery {
 }
 
 // QuerySoftwarePackages queries the software_packages edge of a Tenant.
-func (c *TenantClient) QuerySoftwarePackages(t *Tenant) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: c.config}).Query()
+func (c *TenantClient) QuerySoftwarePackages(t *Tenant) *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tenant.Table, tenant.FieldID, id),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwarePackagesTable, tenant.SoftwarePackagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
@@ -8242,20 +8384,20 @@ func (c *WingetConfigExclusionClient) mutate(ctx context.Context, m *WingetConfi
 type (
 	hooks struct {
 		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
-		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
-		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
-		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
-		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
+		Deployment, EnrollmentToken, LogicalDisk, ManagedPackage, MemorySlot, Metadata,
+		Monitor, Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem,
+		OrgMetadata, PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode,
+		Release, Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
 		SoftwareAssignment, SoftwareCatalog, SoftwareInstallLog, SoftwarePackage,
 		SoftwareRepo, SystemUpdate, Tag, Task, TaskReport, Tenant, Update, User,
 		UserTenant, WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
 		Agent, Antivirus, App, Authentication, Branding, Certificate, Computer,
-		Deployment, EnrollmentToken, LogicalDisk, MemorySlot, Metadata, Monitor,
-		Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata,
-		PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode, Release,
-		Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
+		Deployment, EnrollmentToken, LogicalDisk, ManagedPackage, MemorySlot, Metadata,
+		Monitor, Netbird, NetbirdSettings, NetworkAdapter, OperatingSystem,
+		OrgMetadata, PhysicalDisk, Printer, Profile, ProfileIssue, RecoveryCode,
+		Release, Revocation, Rustdesk, Server, Sessions, Settings, Share, Site,
 		SoftwareAssignment, SoftwareCatalog, SoftwareInstallLog, SoftwarePackage,
 		SoftwareRepo, SystemUpdate, Tag, Task, TaskReport, Tenant, Update, User,
 		UserTenant, WingetConfigExclusion []ent.Interceptor

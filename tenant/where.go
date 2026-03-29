@@ -599,7 +599,7 @@ func HasSoftwarePackages() predicate.Tenant {
 }
 
 // HasSoftwarePackagesWith applies the HasEdge predicate on the "software_packages" edge with a given conditions (other predicates).
-func HasSoftwarePackagesWith(preds ...predicate.SoftwarePackage) predicate.Tenant {
+func HasSoftwarePackagesWith(preds ...predicate.ManagedPackage) predicate.Tenant {
 	return predicate.Tenant(func(s *sql.Selector) {
 		step := newSoftwarePackagesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {

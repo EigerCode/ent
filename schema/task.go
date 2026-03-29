@@ -148,6 +148,9 @@ func (Task) Fields() []ent.Field {
 		field.Bool("ignore_errors").Optional().Default(false),
 		field.Bool("disabled").Default(false),
 		field.Int("order").Optional().Default(0),
+		field.String("package_branch").Optional().Default(""),
+		field.String("package_arch").Optional().Default(""),
+		field.String("package_brew_type").Optional().Default(""),
 	}
 }
 

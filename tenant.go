@@ -59,7 +59,7 @@ type TenantEdges struct {
 	// SoftwareRepos holds the value of the software_repos edge.
 	SoftwareRepos []*SoftwareRepo `json:"software_repos,omitempty"`
 	// SoftwarePackages holds the value of the software_packages edge.
-	SoftwarePackages []*SoftwarePackage `json:"software_packages,omitempty"`
+	SoftwarePackages []*ManagedPackage `json:"software_packages,omitempty"`
 	// SoftwareCatalogs holds the value of the software_catalogs edge.
 	SoftwareCatalogs []*SoftwareCatalog `json:"software_catalogs,omitempty"`
 	// SoftwareAssignments holds the value of the software_assignments edge.
@@ -156,7 +156,7 @@ func (e TenantEdges) SoftwareReposOrErr() ([]*SoftwareRepo, error) {
 
 // SoftwarePackagesOrErr returns the SoftwarePackages value or an error if the edge
 // was not loaded in eager-loading.
-func (e TenantEdges) SoftwarePackagesOrErr() ([]*SoftwarePackage, error) {
+func (e TenantEdges) SoftwarePackagesOrErr() ([]*ManagedPackage, error) {
 	if e.loadedTypes[9] {
 		return e.SoftwarePackages, nil
 	}
@@ -319,7 +319,7 @@ func (t *Tenant) QuerySoftwareRepos() *SoftwareRepoQuery {
 }
 
 // QuerySoftwarePackages queries the "software_packages" edge of the Tenant entity.
-func (t *Tenant) QuerySoftwarePackages() *SoftwarePackageQuery {
+func (t *Tenant) QuerySoftwarePackages() *ManagedPackageQuery {
 	return NewTenantClient(t.config).QuerySoftwarePackages(t)
 }
 

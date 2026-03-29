@@ -49,6 +49,48 @@ func (dc *DeploymentCreate) SetNillableVersion(s *string) *DeploymentCreate {
 	return dc
 }
 
+// SetBranch sets the "branch" field.
+func (dc *DeploymentCreate) SetBranch(s string) *DeploymentCreate {
+	dc.mutation.SetBranch(s)
+	return dc
+}
+
+// SetNillableBranch sets the "branch" field if the given value is not nil.
+func (dc *DeploymentCreate) SetNillableBranch(s *string) *DeploymentCreate {
+	if s != nil {
+		dc.SetBranch(*s)
+	}
+	return dc
+}
+
+// SetBrewType sets the "brew_type" field.
+func (dc *DeploymentCreate) SetBrewType(s string) *DeploymentCreate {
+	dc.mutation.SetBrewType(s)
+	return dc
+}
+
+// SetNillableBrewType sets the "brew_type" field if the given value is not nil.
+func (dc *DeploymentCreate) SetNillableBrewType(s *string) *DeploymentCreate {
+	if s != nil {
+		dc.SetBrewType(*s)
+	}
+	return dc
+}
+
+// SetVerified sets the "verified" field.
+func (dc *DeploymentCreate) SetVerified(b bool) *DeploymentCreate {
+	dc.mutation.SetVerified(b)
+	return dc
+}
+
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (dc *DeploymentCreate) SetNillableVerified(b *bool) *DeploymentCreate {
+	if b != nil {
+		dc.SetVerified(*b)
+	}
+	return dc
+}
+
 // SetInstalled sets the "installed" field.
 func (dc *DeploymentCreate) SetInstalled(t time.Time) *DeploymentCreate {
 	dc.mutation.SetInstalled(t)
@@ -233,6 +275,18 @@ func (dc *DeploymentCreate) createSpec() (*Deployment, *sqlgraph.CreateSpec) {
 		_spec.SetField(deployment.FieldVersion, field.TypeString, value)
 		_node.Version = value
 	}
+	if value, ok := dc.mutation.Branch(); ok {
+		_spec.SetField(deployment.FieldBranch, field.TypeString, value)
+		_node.Branch = value
+	}
+	if value, ok := dc.mutation.BrewType(); ok {
+		_spec.SetField(deployment.FieldBrewType, field.TypeString, value)
+		_node.BrewType = value
+	}
+	if value, ok := dc.mutation.Verified(); ok {
+		_spec.SetField(deployment.FieldVerified, field.TypeBool, value)
+		_node.Verified = value
+	}
 	if value, ok := dc.mutation.Installed(); ok {
 		_spec.SetField(deployment.FieldInstalled, field.TypeTime, value)
 		_node.Installed = value
@@ -361,6 +415,60 @@ func (u *DeploymentUpsert) UpdateVersion() *DeploymentUpsert {
 // ClearVersion clears the value of the "version" field.
 func (u *DeploymentUpsert) ClearVersion() *DeploymentUpsert {
 	u.SetNull(deployment.FieldVersion)
+	return u
+}
+
+// SetBranch sets the "branch" field.
+func (u *DeploymentUpsert) SetBranch(v string) *DeploymentUpsert {
+	u.Set(deployment.FieldBranch, v)
+	return u
+}
+
+// UpdateBranch sets the "branch" field to the value that was provided on create.
+func (u *DeploymentUpsert) UpdateBranch() *DeploymentUpsert {
+	u.SetExcluded(deployment.FieldBranch)
+	return u
+}
+
+// ClearBranch clears the value of the "branch" field.
+func (u *DeploymentUpsert) ClearBranch() *DeploymentUpsert {
+	u.SetNull(deployment.FieldBranch)
+	return u
+}
+
+// SetBrewType sets the "brew_type" field.
+func (u *DeploymentUpsert) SetBrewType(v string) *DeploymentUpsert {
+	u.Set(deployment.FieldBrewType, v)
+	return u
+}
+
+// UpdateBrewType sets the "brew_type" field to the value that was provided on create.
+func (u *DeploymentUpsert) UpdateBrewType() *DeploymentUpsert {
+	u.SetExcluded(deployment.FieldBrewType)
+	return u
+}
+
+// ClearBrewType clears the value of the "brew_type" field.
+func (u *DeploymentUpsert) ClearBrewType() *DeploymentUpsert {
+	u.SetNull(deployment.FieldBrewType)
+	return u
+}
+
+// SetVerified sets the "verified" field.
+func (u *DeploymentUpsert) SetVerified(v bool) *DeploymentUpsert {
+	u.Set(deployment.FieldVerified, v)
+	return u
+}
+
+// UpdateVerified sets the "verified" field to the value that was provided on create.
+func (u *DeploymentUpsert) UpdateVerified() *DeploymentUpsert {
+	u.SetExcluded(deployment.FieldVerified)
+	return u
+}
+
+// ClearVerified clears the value of the "verified" field.
+func (u *DeploymentUpsert) ClearVerified() *DeploymentUpsert {
+	u.SetNull(deployment.FieldVerified)
 	return u
 }
 
@@ -540,6 +648,69 @@ func (u *DeploymentUpsertOne) UpdateVersion() *DeploymentUpsertOne {
 func (u *DeploymentUpsertOne) ClearVersion() *DeploymentUpsertOne {
 	return u.Update(func(s *DeploymentUpsert) {
 		s.ClearVersion()
+	})
+}
+
+// SetBranch sets the "branch" field.
+func (u *DeploymentUpsertOne) SetBranch(v string) *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetBranch(v)
+	})
+}
+
+// UpdateBranch sets the "branch" field to the value that was provided on create.
+func (u *DeploymentUpsertOne) UpdateBranch() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateBranch()
+	})
+}
+
+// ClearBranch clears the value of the "branch" field.
+func (u *DeploymentUpsertOne) ClearBranch() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearBranch()
+	})
+}
+
+// SetBrewType sets the "brew_type" field.
+func (u *DeploymentUpsertOne) SetBrewType(v string) *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetBrewType(v)
+	})
+}
+
+// UpdateBrewType sets the "brew_type" field to the value that was provided on create.
+func (u *DeploymentUpsertOne) UpdateBrewType() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateBrewType()
+	})
+}
+
+// ClearBrewType clears the value of the "brew_type" field.
+func (u *DeploymentUpsertOne) ClearBrewType() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearBrewType()
+	})
+}
+
+// SetVerified sets the "verified" field.
+func (u *DeploymentUpsertOne) SetVerified(v bool) *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetVerified(v)
+	})
+}
+
+// UpdateVerified sets the "verified" field to the value that was provided on create.
+func (u *DeploymentUpsertOne) UpdateVerified() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateVerified()
+	})
+}
+
+// ClearVerified clears the value of the "verified" field.
+func (u *DeploymentUpsertOne) ClearVerified() *DeploymentUpsertOne {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearVerified()
 	})
 }
 
@@ -898,6 +1069,69 @@ func (u *DeploymentUpsertBulk) UpdateVersion() *DeploymentUpsertBulk {
 func (u *DeploymentUpsertBulk) ClearVersion() *DeploymentUpsertBulk {
 	return u.Update(func(s *DeploymentUpsert) {
 		s.ClearVersion()
+	})
+}
+
+// SetBranch sets the "branch" field.
+func (u *DeploymentUpsertBulk) SetBranch(v string) *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetBranch(v)
+	})
+}
+
+// UpdateBranch sets the "branch" field to the value that was provided on create.
+func (u *DeploymentUpsertBulk) UpdateBranch() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateBranch()
+	})
+}
+
+// ClearBranch clears the value of the "branch" field.
+func (u *DeploymentUpsertBulk) ClearBranch() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearBranch()
+	})
+}
+
+// SetBrewType sets the "brew_type" field.
+func (u *DeploymentUpsertBulk) SetBrewType(v string) *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetBrewType(v)
+	})
+}
+
+// UpdateBrewType sets the "brew_type" field to the value that was provided on create.
+func (u *DeploymentUpsertBulk) UpdateBrewType() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateBrewType()
+	})
+}
+
+// ClearBrewType clears the value of the "brew_type" field.
+func (u *DeploymentUpsertBulk) ClearBrewType() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearBrewType()
+	})
+}
+
+// SetVerified sets the "verified" field.
+func (u *DeploymentUpsertBulk) SetVerified(v bool) *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.SetVerified(v)
+	})
+}
+
+// UpdateVerified sets the "verified" field to the value that was provided on create.
+func (u *DeploymentUpsertBulk) UpdateVerified() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.UpdateVerified()
+	})
+}
+
+// ClearVerified clears the value of the "verified" field.
+func (u *DeploymentUpsertBulk) ClearVerified() *DeploymentUpsertBulk {
+	return u.Update(func(s *DeploymentUpsert) {
+		s.ClearVerified()
 	})
 }
 

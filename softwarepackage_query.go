@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -13,30 +12,18 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/predicate"
-	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwareinstalllog"
 	"github.com/EigerCode/ent/softwarepackage"
-	"github.com/EigerCode/ent/softwarerepo"
-	"github.com/EigerCode/ent/tenant"
+	"github.com/google/uuid"
 )
 
 // SoftwarePackageQuery is the builder for querying SoftwarePackage entities.
 type SoftwarePackageQuery struct {
 	config
-	ctx             *QueryContext
-	order           []softwarepackage.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.SoftwarePackage
-	withRepo        *SoftwareRepoQuery
-	withCatalogs    *SoftwareCatalogQuery
-	withTenant      *TenantQuery
-	withInstallLogs *SoftwareInstallLogQuery
-	withRequires    *SoftwarePackageQuery
-	withUpdateFor   *SoftwarePackageQuery
-	withGlobalRef   *SoftwarePackageQuery
-	withSubscribers *SoftwarePackageQuery
-	withFKs         bool
-	modifiers       []func(*sql.Selector)
+	ctx        *QueryContext
+	order      []softwarepackage.OrderOption
+	inters     []Interceptor
+	predicates []predicate.SoftwarePackage
+	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -73,182 +60,6 @@ func (spq *SoftwarePackageQuery) Order(o ...softwarepackage.OrderOption) *Softwa
 	return spq
 }
 
-// QueryRepo chains the current query on the "repo" edge.
-func (spq *SoftwarePackageQuery) QueryRepo() *SoftwareRepoQuery {
-	query := (&SoftwareRepoClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwarerepo.Table, softwarerepo.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.RepoTable, softwarepackage.RepoColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryCatalogs chains the current query on the "catalogs" edge.
-func (spq *SoftwarePackageQuery) QueryCatalogs() *SoftwareCatalogQuery {
-	query := (&SoftwareCatalogClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwarecatalog.Table, softwarecatalog.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, softwarepackage.CatalogsTable, softwarepackage.CatalogsPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryTenant chains the current query on the "tenant" edge.
-func (spq *SoftwarePackageQuery) QueryTenant() *TenantQuery {
-	query := (&TenantClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(tenant.Table, tenant.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.TenantTable, softwarepackage.TenantColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryInstallLogs chains the current query on the "install_logs" edge.
-func (spq *SoftwarePackageQuery) QueryInstallLogs() *SoftwareInstallLogQuery {
-	query := (&SoftwareInstallLogClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwareinstalllog.Table, softwareinstalllog.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.InstallLogsTable, softwarepackage.InstallLogsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryRequires chains the current query on the "requires" edge.
-func (spq *SoftwarePackageQuery) QueryRequires() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.RequiresTable, softwarepackage.RequiresPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryUpdateFor chains the current query on the "update_for" edge.
-func (spq *SoftwarePackageQuery) QueryUpdateFor() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, softwarepackage.UpdateForTable, softwarepackage.UpdateForPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryGlobalRef chains the current query on the "global_ref" edge.
-func (spq *SoftwarePackageQuery) QueryGlobalRef() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, softwarepackage.GlobalRefTable, softwarepackage.GlobalRefColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QuerySubscribers chains the current query on the "subscribers" edge.
-func (spq *SoftwarePackageQuery) QuerySubscribers() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := spq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := spq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(softwarepackage.Table, softwarepackage.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, softwarepackage.SubscribersTable, softwarepackage.SubscribersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(spq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // First returns the first SoftwarePackage entity from the query.
 // Returns a *NotFoundError when no SoftwarePackage was found.
 func (spq *SoftwarePackageQuery) First(ctx context.Context) (*SoftwarePackage, error) {
@@ -273,8 +84,8 @@ func (spq *SoftwarePackageQuery) FirstX(ctx context.Context) *SoftwarePackage {
 
 // FirstID returns the first SoftwarePackage ID from the query.
 // Returns a *NotFoundError when no SoftwarePackage ID was found.
-func (spq *SoftwarePackageQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (spq *SoftwarePackageQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = spq.Limit(1).IDs(setContextOp(ctx, spq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -286,7 +97,7 @@ func (spq *SoftwarePackageQuery) FirstID(ctx context.Context) (id int, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (spq *SoftwarePackageQuery) FirstIDX(ctx context.Context) int {
+func (spq *SoftwarePackageQuery) FirstIDX(ctx context.Context) uuid.UUID {
 	id, err := spq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -324,8 +135,8 @@ func (spq *SoftwarePackageQuery) OnlyX(ctx context.Context) *SoftwarePackage {
 // OnlyID is like Only, but returns the only SoftwarePackage ID in the query.
 // Returns a *NotSingularError when more than one SoftwarePackage ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (spq *SoftwarePackageQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (spq *SoftwarePackageQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+	var ids []uuid.UUID
 	if ids, err = spq.Limit(2).IDs(setContextOp(ctx, spq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -341,7 +152,7 @@ func (spq *SoftwarePackageQuery) OnlyID(ctx context.Context) (id int, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (spq *SoftwarePackageQuery) OnlyIDX(ctx context.Context) int {
+func (spq *SoftwarePackageQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 	id, err := spq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -369,7 +180,7 @@ func (spq *SoftwarePackageQuery) AllX(ctx context.Context) []*SoftwarePackage {
 }
 
 // IDs executes the query and returns a list of SoftwarePackage IDs.
-func (spq *SoftwarePackageQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (spq *SoftwarePackageQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if spq.ctx.Unique == nil && spq.path != nil {
 		spq.Unique(true)
 	}
@@ -381,7 +192,7 @@ func (spq *SoftwarePackageQuery) IDs(ctx context.Context) (ids []int, err error)
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (spq *SoftwarePackageQuery) IDsX(ctx context.Context) []int {
+func (spq *SoftwarePackageQuery) IDsX(ctx context.Context) []uuid.UUID {
 	ids, err := spq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -436,112 +247,16 @@ func (spq *SoftwarePackageQuery) Clone() *SoftwarePackageQuery {
 		return nil
 	}
 	return &SoftwarePackageQuery{
-		config:          spq.config,
-		ctx:             spq.ctx.Clone(),
-		order:           append([]softwarepackage.OrderOption{}, spq.order...),
-		inters:          append([]Interceptor{}, spq.inters...),
-		predicates:      append([]predicate.SoftwarePackage{}, spq.predicates...),
-		withRepo:        spq.withRepo.Clone(),
-		withCatalogs:    spq.withCatalogs.Clone(),
-		withTenant:      spq.withTenant.Clone(),
-		withInstallLogs: spq.withInstallLogs.Clone(),
-		withRequires:    spq.withRequires.Clone(),
-		withUpdateFor:   spq.withUpdateFor.Clone(),
-		withGlobalRef:   spq.withGlobalRef.Clone(),
-		withSubscribers: spq.withSubscribers.Clone(),
+		config:     spq.config,
+		ctx:        spq.ctx.Clone(),
+		order:      append([]softwarepackage.OrderOption{}, spq.order...),
+		inters:     append([]Interceptor{}, spq.inters...),
+		predicates: append([]predicate.SoftwarePackage{}, spq.predicates...),
 		// clone intermediate query.
 		sql:       spq.sql.Clone(),
 		path:      spq.path,
 		modifiers: append([]func(*sql.Selector){}, spq.modifiers...),
 	}
-}
-
-// WithRepo tells the query-builder to eager-load the nodes that are connected to
-// the "repo" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithRepo(opts ...func(*SoftwareRepoQuery)) *SoftwarePackageQuery {
-	query := (&SoftwareRepoClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withRepo = query
-	return spq
-}
-
-// WithCatalogs tells the query-builder to eager-load the nodes that are connected to
-// the "catalogs" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithCatalogs(opts ...func(*SoftwareCatalogQuery)) *SoftwarePackageQuery {
-	query := (&SoftwareCatalogClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withCatalogs = query
-	return spq
-}
-
-// WithTenant tells the query-builder to eager-load the nodes that are connected to
-// the "tenant" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithTenant(opts ...func(*TenantQuery)) *SoftwarePackageQuery {
-	query := (&TenantClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withTenant = query
-	return spq
-}
-
-// WithInstallLogs tells the query-builder to eager-load the nodes that are connected to
-// the "install_logs" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithInstallLogs(opts ...func(*SoftwareInstallLogQuery)) *SoftwarePackageQuery {
-	query := (&SoftwareInstallLogClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withInstallLogs = query
-	return spq
-}
-
-// WithRequires tells the query-builder to eager-load the nodes that are connected to
-// the "requires" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithRequires(opts ...func(*SoftwarePackageQuery)) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withRequires = query
-	return spq
-}
-
-// WithUpdateFor tells the query-builder to eager-load the nodes that are connected to
-// the "update_for" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithUpdateFor(opts ...func(*SoftwarePackageQuery)) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withUpdateFor = query
-	return spq
-}
-
-// WithGlobalRef tells the query-builder to eager-load the nodes that are connected to
-// the "global_ref" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithGlobalRef(opts ...func(*SoftwarePackageQuery)) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withGlobalRef = query
-	return spq
-}
-
-// WithSubscribers tells the query-builder to eager-load the nodes that are connected to
-// the "subscribers" edge. The optional arguments are used to configure the query builder of the edge.
-func (spq *SoftwarePackageQuery) WithSubscribers(opts ...func(*SoftwarePackageQuery)) *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: spq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	spq.withSubscribers = query
-	return spq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -550,12 +265,12 @@ func (spq *SoftwarePackageQuery) WithSubscribers(opts ...func(*SoftwarePackageQu
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		PackageID string `json:"package_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.SoftwarePackage.Query().
-//		GroupBy(softwarepackage.FieldName).
+//		GroupBy(softwarepackage.FieldPackageID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (spq *SoftwarePackageQuery) GroupBy(field string, fields ...string) *SoftwarePackageGroupBy {
@@ -573,11 +288,11 @@ func (spq *SoftwarePackageQuery) GroupBy(field string, fields ...string) *Softwa
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		PackageID string `json:"package_id,omitempty"`
 //	}
 //
 //	client.SoftwarePackage.Query().
-//		Select(softwarepackage.FieldName).
+//		Select(softwarepackage.FieldPackageID).
 //		Scan(ctx, &v)
 func (spq *SoftwarePackageQuery) Select(fields ...string) *SoftwarePackageSelect {
 	spq.ctx.Fields = append(spq.ctx.Fields, fields...)
@@ -620,33 +335,15 @@ func (spq *SoftwarePackageQuery) prepareQuery(ctx context.Context) error {
 
 func (spq *SoftwarePackageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*SoftwarePackage, error) {
 	var (
-		nodes       = []*SoftwarePackage{}
-		withFKs     = spq.withFKs
-		_spec       = spq.querySpec()
-		loadedTypes = [8]bool{
-			spq.withRepo != nil,
-			spq.withCatalogs != nil,
-			spq.withTenant != nil,
-			spq.withInstallLogs != nil,
-			spq.withRequires != nil,
-			spq.withUpdateFor != nil,
-			spq.withGlobalRef != nil,
-			spq.withSubscribers != nil,
-		}
+		nodes = []*SoftwarePackage{}
+		_spec = spq.querySpec()
 	)
-	if spq.withRepo != nil || spq.withTenant != nil || spq.withGlobalRef != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, softwarepackage.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*SoftwarePackage).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &SoftwarePackage{config: spq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if len(spq.modifiers) > 0 {
@@ -661,402 +358,7 @@ func (spq *SoftwarePackageQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := spq.withRepo; query != nil {
-		if err := spq.loadRepo(ctx, query, nodes, nil,
-			func(n *SoftwarePackage, e *SoftwareRepo) { n.Edges.Repo = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withCatalogs; query != nil {
-		if err := spq.loadCatalogs(ctx, query, nodes,
-			func(n *SoftwarePackage) { n.Edges.Catalogs = []*SoftwareCatalog{} },
-			func(n *SoftwarePackage, e *SoftwareCatalog) { n.Edges.Catalogs = append(n.Edges.Catalogs, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withTenant; query != nil {
-		if err := spq.loadTenant(ctx, query, nodes, nil,
-			func(n *SoftwarePackage, e *Tenant) { n.Edges.Tenant = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withInstallLogs; query != nil {
-		if err := spq.loadInstallLogs(ctx, query, nodes,
-			func(n *SoftwarePackage) { n.Edges.InstallLogs = []*SoftwareInstallLog{} },
-			func(n *SoftwarePackage, e *SoftwareInstallLog) { n.Edges.InstallLogs = append(n.Edges.InstallLogs, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withRequires; query != nil {
-		if err := spq.loadRequires(ctx, query, nodes,
-			func(n *SoftwarePackage) { n.Edges.Requires = []*SoftwarePackage{} },
-			func(n *SoftwarePackage, e *SoftwarePackage) { n.Edges.Requires = append(n.Edges.Requires, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withUpdateFor; query != nil {
-		if err := spq.loadUpdateFor(ctx, query, nodes,
-			func(n *SoftwarePackage) { n.Edges.UpdateFor = []*SoftwarePackage{} },
-			func(n *SoftwarePackage, e *SoftwarePackage) { n.Edges.UpdateFor = append(n.Edges.UpdateFor, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withGlobalRef; query != nil {
-		if err := spq.loadGlobalRef(ctx, query, nodes, nil,
-			func(n *SoftwarePackage, e *SoftwarePackage) { n.Edges.GlobalRef = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := spq.withSubscribers; query != nil {
-		if err := spq.loadSubscribers(ctx, query, nodes,
-			func(n *SoftwarePackage) { n.Edges.Subscribers = []*SoftwarePackage{} },
-			func(n *SoftwarePackage, e *SoftwarePackage) { n.Edges.Subscribers = append(n.Edges.Subscribers, e) }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (spq *SoftwarePackageQuery) loadRepo(ctx context.Context, query *SoftwareRepoQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwareRepo)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SoftwarePackage)
-	for i := range nodes {
-		if nodes[i].software_repo_packages == nil {
-			continue
-		}
-		fk := *nodes[i].software_repo_packages
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(softwarerepo.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "software_repo_packages" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadCatalogs(ctx context.Context, query *SoftwareCatalogQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwareCatalog)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*SoftwarePackage)
-	nids := make(map[int]map[*SoftwarePackage]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
-		}
-	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(softwarepackage.CatalogsTable)
-		s.Join(joinT).On(s.C(softwarecatalog.FieldID), joinT.C(softwarepackage.CatalogsPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(softwarepackage.CatalogsPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(softwarepackage.CatalogsPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*SoftwarePackage]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*SoftwareCatalog](ctx, query, qr, query.inters)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected "catalogs" node returned %v`, n.ID)
-		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadTenant(ctx context.Context, query *TenantQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *Tenant)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SoftwarePackage)
-	for i := range nodes {
-		if nodes[i].tenant_software_packages == nil {
-			continue
-		}
-		fk := *nodes[i].tenant_software_packages
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(tenant.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "tenant_software_packages" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadInstallLogs(ctx context.Context, query *SoftwareInstallLogQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwareInstallLog)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*SoftwarePackage)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.SoftwareInstallLog(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(softwarepackage.InstallLogsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.software_package_install_logs
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "software_package_install_logs" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "software_package_install_logs" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadRequires(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwarePackage)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*SoftwarePackage)
-	nids := make(map[int]map[*SoftwarePackage]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
-		}
-	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(softwarepackage.RequiresTable)
-		s.Join(joinT).On(s.C(softwarepackage.FieldID), joinT.C(softwarepackage.RequiresPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(softwarepackage.RequiresPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(softwarepackage.RequiresPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*SoftwarePackage]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*SoftwarePackage](ctx, query, qr, query.inters)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected "requires" node returned %v`, n.ID)
-		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadUpdateFor(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwarePackage)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*SoftwarePackage)
-	nids := make(map[int]map[*SoftwarePackage]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
-		}
-	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(softwarepackage.UpdateForTable)
-		s.Join(joinT).On(s.C(softwarepackage.FieldID), joinT.C(softwarepackage.UpdateForPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(softwarepackage.UpdateForPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(softwarepackage.UpdateForPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*SoftwarePackage]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*SoftwarePackage](ctx, query, qr, query.inters)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected "update_for" node returned %v`, n.ID)
-		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadGlobalRef(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwarePackage)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*SoftwarePackage)
-	for i := range nodes {
-		if nodes[i].software_package_subscribers == nil {
-			continue
-		}
-		fk := *nodes[i].software_package_subscribers
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(softwarepackage.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "software_package_subscribers" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (spq *SoftwarePackageQuery) loadSubscribers(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwarePackage, init func(*SoftwarePackage), assign func(*SoftwarePackage, *SoftwarePackage)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*SoftwarePackage)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.SoftwarePackage(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(softwarepackage.SubscribersColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.software_package_subscribers
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "software_package_subscribers" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "software_package_subscribers" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
 }
 
 func (spq *SoftwarePackageQuery) sqlCount(ctx context.Context) (int, error) {
@@ -1072,7 +374,7 @@ func (spq *SoftwarePackageQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (spq *SoftwarePackageQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(softwarepackage.Table, softwarepackage.Columns, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(softwarepackage.Table, softwarepackage.Columns, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeUUID))
 	_spec.From = spq.sql
 	if unique := spq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

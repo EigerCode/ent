@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/enrollmenttoken"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/netbirdsettings"
 	"github.com/EigerCode/ent/orgmetadata"
 	"github.com/EigerCode/ent/rustdesk"
@@ -19,7 +20,6 @@ import (
 	"github.com/EigerCode/ent/site"
 	"github.com/EigerCode/ent/softwareassignment"
 	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwarepackage"
 	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/tenant"
@@ -261,17 +261,17 @@ func (tc *TenantCreate) AddSoftwareRepos(s ...*SoftwareRepo) *TenantCreate {
 	return tc.AddSoftwareRepoIDs(ids...)
 }
 
-// AddSoftwarePackageIDs adds the "software_packages" edge to the SoftwarePackage entity by IDs.
+// AddSoftwarePackageIDs adds the "software_packages" edge to the ManagedPackage entity by IDs.
 func (tc *TenantCreate) AddSoftwarePackageIDs(ids ...int) *TenantCreate {
 	tc.mutation.AddSoftwarePackageIDs(ids...)
 	return tc
 }
 
-// AddSoftwarePackages adds the "software_packages" edges to the SoftwarePackage entity.
-func (tc *TenantCreate) AddSoftwarePackages(s ...*SoftwarePackage) *TenantCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+// AddSoftwarePackages adds the "software_packages" edges to the ManagedPackage entity.
+func (tc *TenantCreate) AddSoftwarePackages(m ...*ManagedPackage) *TenantCreate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
 	return tc.AddSoftwarePackageIDs(ids...)
 }
@@ -566,7 +566,7 @@ func (tc *TenantCreate) createSpec() (*Tenant, *sqlgraph.CreateSpec) {
 			Columns: []string{tenant.SoftwarePackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

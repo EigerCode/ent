@@ -11,6 +11,7 @@ import (
 	"github.com/EigerCode/ent/deployment"
 	"github.com/EigerCode/ent/enrollmenttoken"
 	"github.com/EigerCode/ent/logicaldisk"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/netbird"
 	"github.com/EigerCode/ent/netbirdsettings"
 	"github.com/EigerCode/ent/networkadapter"
@@ -36,6 +37,7 @@ import (
 	"github.com/EigerCode/ent/user"
 	"github.com/EigerCode/ent/usertenant"
 	"github.com/EigerCode/ent/wingetconfigexclusion"
+	"github.com/google/uuid"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -227,21 +229,21 @@ func init() {
 	deploymentFields := schema.Deployment{}.Fields()
 	_ = deploymentFields
 	// deploymentDescInstalled is the schema descriptor for installed field.
-	deploymentDescInstalled := deploymentFields[3].Descriptor()
+	deploymentDescInstalled := deploymentFields[6].Descriptor()
 	// deployment.DefaultInstalled holds the default value on creation for the installed field.
 	deployment.DefaultInstalled = deploymentDescInstalled.Default.(func() time.Time)
 	// deploymentDescUpdated is the schema descriptor for updated field.
-	deploymentDescUpdated := deploymentFields[4].Descriptor()
+	deploymentDescUpdated := deploymentFields[7].Descriptor()
 	// deployment.DefaultUpdated holds the default value on creation for the updated field.
 	deployment.DefaultUpdated = deploymentDescUpdated.Default.(func() time.Time)
 	// deployment.UpdateDefaultUpdated holds the default value on update for the updated field.
 	deployment.UpdateDefaultUpdated = deploymentDescUpdated.UpdateDefault.(func() time.Time)
 	// deploymentDescFailed is the schema descriptor for failed field.
-	deploymentDescFailed := deploymentFields[5].Descriptor()
+	deploymentDescFailed := deploymentFields[8].Descriptor()
 	// deployment.DefaultFailed holds the default value on creation for the failed field.
 	deployment.DefaultFailed = deploymentDescFailed.Default.(bool)
 	// deploymentDescByProfile is the schema descriptor for by_profile field.
-	deploymentDescByProfile := deploymentFields[6].Descriptor()
+	deploymentDescByProfile := deploymentFields[9].Descriptor()
 	// deployment.DefaultByProfile holds the default value on creation for the by_profile field.
 	deployment.DefaultByProfile = deploymentDescByProfile.Default.(bool)
 	enrollmenttokenFields := schema.EnrollmentToken{}.Fields()
@@ -278,6 +280,106 @@ func init() {
 	logicaldiskDescUsage := logicaldiskFields[2].Descriptor()
 	// logicaldisk.DefaultUsage holds the default value on creation for the usage field.
 	logicaldisk.DefaultUsage = logicaldiskDescUsage.Default.(int8)
+	managedpackageFields := schema.ManagedPackage{}.Fields()
+	_ = managedpackageFields
+	// managedpackageDescName is the schema descriptor for name field.
+	managedpackageDescName := managedpackageFields[0].Descriptor()
+	// managedpackage.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	managedpackage.NameValidator = managedpackageDescName.Validators[0].(func(string) error)
+	// managedpackageDescDisplayName is the schema descriptor for display_name field.
+	managedpackageDescDisplayName := managedpackageFields[1].Descriptor()
+	// managedpackage.DefaultDisplayName holds the default value on creation for the display_name field.
+	managedpackage.DefaultDisplayName = managedpackageDescDisplayName.Default.(string)
+	// managedpackageDescVersion is the schema descriptor for version field.
+	managedpackageDescVersion := managedpackageFields[2].Descriptor()
+	// managedpackage.VersionValidator is a validator for the "version" field. It is called by the builders before save.
+	managedpackage.VersionValidator = managedpackageDescVersion.Validators[0].(func(string) error)
+	// managedpackageDescInstallerPath is the schema descriptor for installer_path field.
+	managedpackageDescInstallerPath := managedpackageFields[4].Descriptor()
+	// managedpackage.InstallerPathValidator is a validator for the "installer_path" field. It is called by the builders before save.
+	managedpackage.InstallerPathValidator = managedpackageDescInstallerPath.Validators[0].(func(string) error)
+	// managedpackageDescChecksumSha256 is the schema descriptor for checksum_sha256 field.
+	managedpackageDescChecksumSha256 := managedpackageFields[5].Descriptor()
+	// managedpackage.DefaultChecksumSha256 holds the default value on creation for the checksum_sha256 field.
+	managedpackage.DefaultChecksumSha256 = managedpackageDescChecksumSha256.Default.(string)
+	// managedpackageDescSizeBytes is the schema descriptor for size_bytes field.
+	managedpackageDescSizeBytes := managedpackageFields[6].Descriptor()
+	// managedpackage.DefaultSizeBytes holds the default value on creation for the size_bytes field.
+	managedpackage.DefaultSizeBytes = managedpackageDescSizeBytes.Default.(int64)
+	// managedpackageDescIconName is the schema descriptor for icon_name field.
+	managedpackageDescIconName := managedpackageFields[7].Descriptor()
+	// managedpackage.DefaultIconName holds the default value on creation for the icon_name field.
+	managedpackage.DefaultIconName = managedpackageDescIconName.Default.(string)
+	// managedpackageDescDescription is the schema descriptor for description field.
+	managedpackageDescDescription := managedpackageFields[8].Descriptor()
+	// managedpackage.DefaultDescription holds the default value on creation for the description field.
+	managedpackage.DefaultDescription = managedpackageDescDescription.Default.(string)
+	// managedpackageDescCategory is the schema descriptor for category field.
+	managedpackageDescCategory := managedpackageFields[9].Descriptor()
+	// managedpackage.DefaultCategory holds the default value on creation for the category field.
+	managedpackage.DefaultCategory = managedpackageDescCategory.Default.(string)
+	// managedpackageDescDeveloper is the schema descriptor for developer field.
+	managedpackageDescDeveloper := managedpackageFields[10].Descriptor()
+	// managedpackage.DefaultDeveloper holds the default value on creation for the developer field.
+	managedpackage.DefaultDeveloper = managedpackageDescDeveloper.Default.(string)
+	// managedpackageDescPkginfoData is the schema descriptor for pkginfo_data field.
+	managedpackageDescPkginfoData := managedpackageFields[11].Descriptor()
+	// managedpackage.DefaultPkginfoData holds the default value on creation for the pkginfo_data field.
+	managedpackage.DefaultPkginfoData = managedpackageDescPkginfoData.Default.(string)
+	// managedpackageDescPreInstallScript is the schema descriptor for pre_install_script field.
+	managedpackageDescPreInstallScript := managedpackageFields[12].Descriptor()
+	// managedpackage.DefaultPreInstallScript holds the default value on creation for the pre_install_script field.
+	managedpackage.DefaultPreInstallScript = managedpackageDescPreInstallScript.Default.(string)
+	// managedpackageDescPostInstallScript is the schema descriptor for post_install_script field.
+	managedpackageDescPostInstallScript := managedpackageFields[13].Descriptor()
+	// managedpackage.DefaultPostInstallScript holds the default value on creation for the post_install_script field.
+	managedpackage.DefaultPostInstallScript = managedpackageDescPostInstallScript.Default.(string)
+	// managedpackageDescUninstallMethod is the schema descriptor for uninstall_method field.
+	managedpackageDescUninstallMethod := managedpackageFields[14].Descriptor()
+	// managedpackage.DefaultUninstallMethod holds the default value on creation for the uninstall_method field.
+	managedpackage.DefaultUninstallMethod = managedpackageDescUninstallMethod.Default.(string)
+	// managedpackageDescInstallsItems is the schema descriptor for installs_items field.
+	managedpackageDescInstallsItems := managedpackageFields[15].Descriptor()
+	// managedpackage.DefaultInstallsItems holds the default value on creation for the installs_items field.
+	managedpackage.DefaultInstallsItems = managedpackageDescInstallsItems.Default.(string)
+	// managedpackageDescReceipts is the schema descriptor for receipts field.
+	managedpackageDescReceipts := managedpackageFields[16].Descriptor()
+	// managedpackage.DefaultReceipts holds the default value on creation for the receipts field.
+	managedpackage.DefaultReceipts = managedpackageDescReceipts.Default.(string)
+	// managedpackageDescBlockingApps is the schema descriptor for blocking_apps field.
+	managedpackageDescBlockingApps := managedpackageFields[17].Descriptor()
+	// managedpackage.DefaultBlockingApps holds the default value on creation for the blocking_apps field.
+	managedpackage.DefaultBlockingApps = managedpackageDescBlockingApps.Default.(string)
+	// managedpackageDescMinOsVersion is the schema descriptor for min_os_version field.
+	managedpackageDescMinOsVersion := managedpackageFields[19].Descriptor()
+	// managedpackage.DefaultMinOsVersion holds the default value on creation for the min_os_version field.
+	managedpackage.DefaultMinOsVersion = managedpackageDescMinOsVersion.Default.(string)
+	// managedpackageDescMaxOsVersion is the schema descriptor for max_os_version field.
+	managedpackageDescMaxOsVersion := managedpackageFields[20].Descriptor()
+	// managedpackage.DefaultMaxOsVersion holds the default value on creation for the max_os_version field.
+	managedpackage.DefaultMaxOsVersion = managedpackageDescMaxOsVersion.Default.(string)
+	// managedpackageDescSupportedArchitectures is the schema descriptor for supported_architectures field.
+	managedpackageDescSupportedArchitectures := managedpackageFields[21].Descriptor()
+	// managedpackage.DefaultSupportedArchitectures holds the default value on creation for the supported_architectures field.
+	managedpackage.DefaultSupportedArchitectures = managedpackageDescSupportedArchitectures.Default.(string)
+	// managedpackageDescUnattendedInstall is the schema descriptor for unattended_install field.
+	managedpackageDescUnattendedInstall := managedpackageFields[23].Descriptor()
+	// managedpackage.DefaultUnattendedInstall holds the default value on creation for the unattended_install field.
+	managedpackage.DefaultUnattendedInstall = managedpackageDescUnattendedInstall.Default.(bool)
+	// managedpackageDescUnattendedUninstall is the schema descriptor for unattended_uninstall field.
+	managedpackageDescUnattendedUninstall := managedpackageFields[24].Descriptor()
+	// managedpackage.DefaultUnattendedUninstall holds the default value on creation for the unattended_uninstall field.
+	managedpackage.DefaultUnattendedUninstall = managedpackageDescUnattendedUninstall.Default.(bool)
+	// managedpackageDescCreated is the schema descriptor for created field.
+	managedpackageDescCreated := managedpackageFields[27].Descriptor()
+	// managedpackage.DefaultCreated holds the default value on creation for the created field.
+	managedpackage.DefaultCreated = managedpackageDescCreated.Default.(func() time.Time)
+	// managedpackageDescModified is the schema descriptor for modified field.
+	managedpackageDescModified := managedpackageFields[28].Descriptor()
+	// managedpackage.DefaultModified holds the default value on creation for the modified field.
+	managedpackage.DefaultModified = managedpackageDescModified.Default.(func() time.Time)
+	// managedpackage.UpdateDefaultModified holds the default value on update for the modified field.
+	managedpackage.UpdateDefaultModified = managedpackageDescModified.UpdateDefault.(func() time.Time)
 	netbirdFields := schema.Netbird{}.Fields()
 	_ = netbirdFields
 	// netbirdDescVersion is the schema descriptor for version field.
@@ -628,104 +730,10 @@ func init() {
 	softwareinstalllog.DefaultCreated = softwareinstalllogDescCreated.Default.(func() time.Time)
 	softwarepackageFields := schema.SoftwarePackage{}.Fields()
 	_ = softwarepackageFields
-	// softwarepackageDescName is the schema descriptor for name field.
-	softwarepackageDescName := softwarepackageFields[0].Descriptor()
-	// softwarepackage.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	softwarepackage.NameValidator = softwarepackageDescName.Validators[0].(func(string) error)
-	// softwarepackageDescDisplayName is the schema descriptor for display_name field.
-	softwarepackageDescDisplayName := softwarepackageFields[1].Descriptor()
-	// softwarepackage.DefaultDisplayName holds the default value on creation for the display_name field.
-	softwarepackage.DefaultDisplayName = softwarepackageDescDisplayName.Default.(string)
-	// softwarepackageDescVersion is the schema descriptor for version field.
-	softwarepackageDescVersion := softwarepackageFields[2].Descriptor()
-	// softwarepackage.VersionValidator is a validator for the "version" field. It is called by the builders before save.
-	softwarepackage.VersionValidator = softwarepackageDescVersion.Validators[0].(func(string) error)
-	// softwarepackageDescInstallerPath is the schema descriptor for installer_path field.
-	softwarepackageDescInstallerPath := softwarepackageFields[4].Descriptor()
-	// softwarepackage.InstallerPathValidator is a validator for the "installer_path" field. It is called by the builders before save.
-	softwarepackage.InstallerPathValidator = softwarepackageDescInstallerPath.Validators[0].(func(string) error)
-	// softwarepackageDescChecksumSha256 is the schema descriptor for checksum_sha256 field.
-	softwarepackageDescChecksumSha256 := softwarepackageFields[5].Descriptor()
-	// softwarepackage.DefaultChecksumSha256 holds the default value on creation for the checksum_sha256 field.
-	softwarepackage.DefaultChecksumSha256 = softwarepackageDescChecksumSha256.Default.(string)
-	// softwarepackageDescSizeBytes is the schema descriptor for size_bytes field.
-	softwarepackageDescSizeBytes := softwarepackageFields[6].Descriptor()
-	// softwarepackage.DefaultSizeBytes holds the default value on creation for the size_bytes field.
-	softwarepackage.DefaultSizeBytes = softwarepackageDescSizeBytes.Default.(int64)
-	// softwarepackageDescIconName is the schema descriptor for icon_name field.
-	softwarepackageDescIconName := softwarepackageFields[7].Descriptor()
-	// softwarepackage.DefaultIconName holds the default value on creation for the icon_name field.
-	softwarepackage.DefaultIconName = softwarepackageDescIconName.Default.(string)
-	// softwarepackageDescDescription is the schema descriptor for description field.
-	softwarepackageDescDescription := softwarepackageFields[8].Descriptor()
-	// softwarepackage.DefaultDescription holds the default value on creation for the description field.
-	softwarepackage.DefaultDescription = softwarepackageDescDescription.Default.(string)
-	// softwarepackageDescCategory is the schema descriptor for category field.
-	softwarepackageDescCategory := softwarepackageFields[9].Descriptor()
-	// softwarepackage.DefaultCategory holds the default value on creation for the category field.
-	softwarepackage.DefaultCategory = softwarepackageDescCategory.Default.(string)
-	// softwarepackageDescDeveloper is the schema descriptor for developer field.
-	softwarepackageDescDeveloper := softwarepackageFields[10].Descriptor()
-	// softwarepackage.DefaultDeveloper holds the default value on creation for the developer field.
-	softwarepackage.DefaultDeveloper = softwarepackageDescDeveloper.Default.(string)
-	// softwarepackageDescPkginfoData is the schema descriptor for pkginfo_data field.
-	softwarepackageDescPkginfoData := softwarepackageFields[11].Descriptor()
-	// softwarepackage.DefaultPkginfoData holds the default value on creation for the pkginfo_data field.
-	softwarepackage.DefaultPkginfoData = softwarepackageDescPkginfoData.Default.(string)
-	// softwarepackageDescPreInstallScript is the schema descriptor for pre_install_script field.
-	softwarepackageDescPreInstallScript := softwarepackageFields[12].Descriptor()
-	// softwarepackage.DefaultPreInstallScript holds the default value on creation for the pre_install_script field.
-	softwarepackage.DefaultPreInstallScript = softwarepackageDescPreInstallScript.Default.(string)
-	// softwarepackageDescPostInstallScript is the schema descriptor for post_install_script field.
-	softwarepackageDescPostInstallScript := softwarepackageFields[13].Descriptor()
-	// softwarepackage.DefaultPostInstallScript holds the default value on creation for the post_install_script field.
-	softwarepackage.DefaultPostInstallScript = softwarepackageDescPostInstallScript.Default.(string)
-	// softwarepackageDescUninstallMethod is the schema descriptor for uninstall_method field.
-	softwarepackageDescUninstallMethod := softwarepackageFields[14].Descriptor()
-	// softwarepackage.DefaultUninstallMethod holds the default value on creation for the uninstall_method field.
-	softwarepackage.DefaultUninstallMethod = softwarepackageDescUninstallMethod.Default.(string)
-	// softwarepackageDescInstallsItems is the schema descriptor for installs_items field.
-	softwarepackageDescInstallsItems := softwarepackageFields[15].Descriptor()
-	// softwarepackage.DefaultInstallsItems holds the default value on creation for the installs_items field.
-	softwarepackage.DefaultInstallsItems = softwarepackageDescInstallsItems.Default.(string)
-	// softwarepackageDescReceipts is the schema descriptor for receipts field.
-	softwarepackageDescReceipts := softwarepackageFields[16].Descriptor()
-	// softwarepackage.DefaultReceipts holds the default value on creation for the receipts field.
-	softwarepackage.DefaultReceipts = softwarepackageDescReceipts.Default.(string)
-	// softwarepackageDescBlockingApps is the schema descriptor for blocking_apps field.
-	softwarepackageDescBlockingApps := softwarepackageFields[17].Descriptor()
-	// softwarepackage.DefaultBlockingApps holds the default value on creation for the blocking_apps field.
-	softwarepackage.DefaultBlockingApps = softwarepackageDescBlockingApps.Default.(string)
-	// softwarepackageDescMinOsVersion is the schema descriptor for min_os_version field.
-	softwarepackageDescMinOsVersion := softwarepackageFields[19].Descriptor()
-	// softwarepackage.DefaultMinOsVersion holds the default value on creation for the min_os_version field.
-	softwarepackage.DefaultMinOsVersion = softwarepackageDescMinOsVersion.Default.(string)
-	// softwarepackageDescMaxOsVersion is the schema descriptor for max_os_version field.
-	softwarepackageDescMaxOsVersion := softwarepackageFields[20].Descriptor()
-	// softwarepackage.DefaultMaxOsVersion holds the default value on creation for the max_os_version field.
-	softwarepackage.DefaultMaxOsVersion = softwarepackageDescMaxOsVersion.Default.(string)
-	// softwarepackageDescSupportedArchitectures is the schema descriptor for supported_architectures field.
-	softwarepackageDescSupportedArchitectures := softwarepackageFields[21].Descriptor()
-	// softwarepackage.DefaultSupportedArchitectures holds the default value on creation for the supported_architectures field.
-	softwarepackage.DefaultSupportedArchitectures = softwarepackageDescSupportedArchitectures.Default.(string)
-	// softwarepackageDescUnattendedInstall is the schema descriptor for unattended_install field.
-	softwarepackageDescUnattendedInstall := softwarepackageFields[23].Descriptor()
-	// softwarepackage.DefaultUnattendedInstall holds the default value on creation for the unattended_install field.
-	softwarepackage.DefaultUnattendedInstall = softwarepackageDescUnattendedInstall.Default.(bool)
-	// softwarepackageDescUnattendedUninstall is the schema descriptor for unattended_uninstall field.
-	softwarepackageDescUnattendedUninstall := softwarepackageFields[24].Descriptor()
-	// softwarepackage.DefaultUnattendedUninstall holds the default value on creation for the unattended_uninstall field.
-	softwarepackage.DefaultUnattendedUninstall = softwarepackageDescUnattendedUninstall.Default.(bool)
-	// softwarepackageDescCreated is the schema descriptor for created field.
-	softwarepackageDescCreated := softwarepackageFields[27].Descriptor()
-	// softwarepackage.DefaultCreated holds the default value on creation for the created field.
-	softwarepackage.DefaultCreated = softwarepackageDescCreated.Default.(func() time.Time)
-	// softwarepackageDescModified is the schema descriptor for modified field.
-	softwarepackageDescModified := softwarepackageFields[28].Descriptor()
-	// softwarepackage.DefaultModified holds the default value on creation for the modified field.
-	softwarepackage.DefaultModified = softwarepackageDescModified.Default.(func() time.Time)
-	// softwarepackage.UpdateDefaultModified holds the default value on update for the modified field.
-	softwarepackage.UpdateDefaultModified = softwarepackageDescModified.UpdateDefault.(func() time.Time)
+	// softwarepackageDescID is the schema descriptor for id field.
+	softwarepackageDescID := softwarepackageFields[0].Descriptor()
+	// softwarepackage.DefaultID holds the default value on creation for the id field.
+	softwarepackage.DefaultID = softwarepackageDescID.Default.(func() uuid.UUID)
 	softwarerepoFields := schema.SoftwareRepo{}.Fields()
 	_ = softwarerepoFields
 	// softwarerepoDescName is the schema descriptor for name field.
@@ -1006,6 +1014,18 @@ func init() {
 	taskDescOrder := taskFields[90].Descriptor()
 	// task.DefaultOrder holds the default value on creation for the order field.
 	task.DefaultOrder = taskDescOrder.Default.(int)
+	// taskDescPackageBranch is the schema descriptor for package_branch field.
+	taskDescPackageBranch := taskFields[91].Descriptor()
+	// task.DefaultPackageBranch holds the default value on creation for the package_branch field.
+	task.DefaultPackageBranch = taskDescPackageBranch.Default.(string)
+	// taskDescPackageArch is the schema descriptor for package_arch field.
+	taskDescPackageArch := taskFields[92].Descriptor()
+	// task.DefaultPackageArch holds the default value on creation for the package_arch field.
+	task.DefaultPackageArch = taskDescPackageArch.Default.(string)
+	// taskDescPackageBrewType is the schema descriptor for package_brew_type field.
+	taskDescPackageBrewType := taskFields[93].Descriptor()
+	// task.DefaultPackageBrewType holds the default value on creation for the package_brew_type field.
+	task.DefaultPackageBrewType = taskDescPackageBrewType.Default.(string)
 	taskreportFields := schema.TaskReport{}.Fields()
 	_ = taskreportFields
 	// taskreportDescStdOutput is the schema descriptor for std_output field.

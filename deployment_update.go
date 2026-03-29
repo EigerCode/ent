@@ -78,6 +78,66 @@ func (du *DeploymentUpdate) ClearVersion() *DeploymentUpdate {
 	return du
 }
 
+// SetBranch sets the "branch" field.
+func (du *DeploymentUpdate) SetBranch(s string) *DeploymentUpdate {
+	du.mutation.SetBranch(s)
+	return du
+}
+
+// SetNillableBranch sets the "branch" field if the given value is not nil.
+func (du *DeploymentUpdate) SetNillableBranch(s *string) *DeploymentUpdate {
+	if s != nil {
+		du.SetBranch(*s)
+	}
+	return du
+}
+
+// ClearBranch clears the value of the "branch" field.
+func (du *DeploymentUpdate) ClearBranch() *DeploymentUpdate {
+	du.mutation.ClearBranch()
+	return du
+}
+
+// SetBrewType sets the "brew_type" field.
+func (du *DeploymentUpdate) SetBrewType(s string) *DeploymentUpdate {
+	du.mutation.SetBrewType(s)
+	return du
+}
+
+// SetNillableBrewType sets the "brew_type" field if the given value is not nil.
+func (du *DeploymentUpdate) SetNillableBrewType(s *string) *DeploymentUpdate {
+	if s != nil {
+		du.SetBrewType(*s)
+	}
+	return du
+}
+
+// ClearBrewType clears the value of the "brew_type" field.
+func (du *DeploymentUpdate) ClearBrewType() *DeploymentUpdate {
+	du.mutation.ClearBrewType()
+	return du
+}
+
+// SetVerified sets the "verified" field.
+func (du *DeploymentUpdate) SetVerified(b bool) *DeploymentUpdate {
+	du.mutation.SetVerified(b)
+	return du
+}
+
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (du *DeploymentUpdate) SetNillableVerified(b *bool) *DeploymentUpdate {
+	if b != nil {
+		du.SetVerified(*b)
+	}
+	return du
+}
+
+// ClearVerified clears the value of the "verified" field.
+func (du *DeploymentUpdate) ClearVerified() *DeploymentUpdate {
+	du.mutation.ClearVerified()
+	return du
+}
+
 // SetInstalled sets the "installed" field.
 func (du *DeploymentUpdate) SetInstalled(t time.Time) *DeploymentUpdate {
 	du.mutation.SetInstalled(t)
@@ -266,6 +326,24 @@ func (du *DeploymentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if du.mutation.VersionCleared() {
 		_spec.ClearField(deployment.FieldVersion, field.TypeString)
 	}
+	if value, ok := du.mutation.Branch(); ok {
+		_spec.SetField(deployment.FieldBranch, field.TypeString, value)
+	}
+	if du.mutation.BranchCleared() {
+		_spec.ClearField(deployment.FieldBranch, field.TypeString)
+	}
+	if value, ok := du.mutation.BrewType(); ok {
+		_spec.SetField(deployment.FieldBrewType, field.TypeString, value)
+	}
+	if du.mutation.BrewTypeCleared() {
+		_spec.ClearField(deployment.FieldBrewType, field.TypeString)
+	}
+	if value, ok := du.mutation.Verified(); ok {
+		_spec.SetField(deployment.FieldVerified, field.TypeBool, value)
+	}
+	if du.mutation.VerifiedCleared() {
+		_spec.ClearField(deployment.FieldVerified, field.TypeBool)
+	}
 	if value, ok := du.mutation.Installed(); ok {
 		_spec.SetField(deployment.FieldInstalled, field.TypeTime, value)
 	}
@@ -392,6 +470,66 @@ func (duo *DeploymentUpdateOne) SetNillableVersion(s *string) *DeploymentUpdateO
 // ClearVersion clears the value of the "version" field.
 func (duo *DeploymentUpdateOne) ClearVersion() *DeploymentUpdateOne {
 	duo.mutation.ClearVersion()
+	return duo
+}
+
+// SetBranch sets the "branch" field.
+func (duo *DeploymentUpdateOne) SetBranch(s string) *DeploymentUpdateOne {
+	duo.mutation.SetBranch(s)
+	return duo
+}
+
+// SetNillableBranch sets the "branch" field if the given value is not nil.
+func (duo *DeploymentUpdateOne) SetNillableBranch(s *string) *DeploymentUpdateOne {
+	if s != nil {
+		duo.SetBranch(*s)
+	}
+	return duo
+}
+
+// ClearBranch clears the value of the "branch" field.
+func (duo *DeploymentUpdateOne) ClearBranch() *DeploymentUpdateOne {
+	duo.mutation.ClearBranch()
+	return duo
+}
+
+// SetBrewType sets the "brew_type" field.
+func (duo *DeploymentUpdateOne) SetBrewType(s string) *DeploymentUpdateOne {
+	duo.mutation.SetBrewType(s)
+	return duo
+}
+
+// SetNillableBrewType sets the "brew_type" field if the given value is not nil.
+func (duo *DeploymentUpdateOne) SetNillableBrewType(s *string) *DeploymentUpdateOne {
+	if s != nil {
+		duo.SetBrewType(*s)
+	}
+	return duo
+}
+
+// ClearBrewType clears the value of the "brew_type" field.
+func (duo *DeploymentUpdateOne) ClearBrewType() *DeploymentUpdateOne {
+	duo.mutation.ClearBrewType()
+	return duo
+}
+
+// SetVerified sets the "verified" field.
+func (duo *DeploymentUpdateOne) SetVerified(b bool) *DeploymentUpdateOne {
+	duo.mutation.SetVerified(b)
+	return duo
+}
+
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (duo *DeploymentUpdateOne) SetNillableVerified(b *bool) *DeploymentUpdateOne {
+	if b != nil {
+		duo.SetVerified(*b)
+	}
+	return duo
+}
+
+// ClearVerified clears the value of the "verified" field.
+func (duo *DeploymentUpdateOne) ClearVerified() *DeploymentUpdateOne {
+	duo.mutation.ClearVerified()
 	return duo
 }
 
@@ -612,6 +750,24 @@ func (duo *DeploymentUpdateOne) sqlSave(ctx context.Context) (_node *Deployment,
 	}
 	if duo.mutation.VersionCleared() {
 		_spec.ClearField(deployment.FieldVersion, field.TypeString)
+	}
+	if value, ok := duo.mutation.Branch(); ok {
+		_spec.SetField(deployment.FieldBranch, field.TypeString, value)
+	}
+	if duo.mutation.BranchCleared() {
+		_spec.ClearField(deployment.FieldBranch, field.TypeString)
+	}
+	if value, ok := duo.mutation.BrewType(); ok {
+		_spec.SetField(deployment.FieldBrewType, field.TypeString, value)
+	}
+	if duo.mutation.BrewTypeCleared() {
+		_spec.ClearField(deployment.FieldBrewType, field.TypeString)
+	}
+	if value, ok := duo.mutation.Verified(); ok {
+		_spec.SetField(deployment.FieldVerified, field.TypeBool, value)
+	}
+	if duo.mutation.VerifiedCleared() {
+		_spec.ClearField(deployment.FieldVerified, field.TypeBool)
 	}
 	if value, ok := duo.mutation.Installed(); ok {
 		_spec.SetField(deployment.FieldInstalled, field.TypeTime, value)

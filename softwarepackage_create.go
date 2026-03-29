@@ -6,16 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwareinstalllog"
 	"github.com/EigerCode/ent/softwarepackage"
-	"github.com/EigerCode/ent/softwarerepo"
-	"github.com/EigerCode/ent/tenant"
+	"github.com/google/uuid"
 )
 
 // SoftwarePackageCreate is the builder for creating a SoftwarePackage entity.
@@ -26,23 +23,15 @@ type SoftwarePackageCreate struct {
 	conflict []sql.ConflictOption
 }
 
+// SetPackageID sets the "package_id" field.
+func (spc *SoftwarePackageCreate) SetPackageID(s string) *SoftwarePackageCreate {
+	spc.mutation.SetPackageID(s)
+	return spc
+}
+
 // SetName sets the "name" field.
 func (spc *SoftwarePackageCreate) SetName(s string) *SoftwarePackageCreate {
 	spc.mutation.SetName(s)
-	return spc
-}
-
-// SetDisplayName sets the "display_name" field.
-func (spc *SoftwarePackageCreate) SetDisplayName(s string) *SoftwarePackageCreate {
-	spc.mutation.SetDisplayName(s)
-	return spc
-}
-
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableDisplayName(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetDisplayName(*s)
-	}
 	return spc
 }
 
@@ -52,484 +41,88 @@ func (spc *SoftwarePackageCreate) SetVersion(s string) *SoftwarePackageCreate {
 	return spc
 }
 
-// SetPlatform sets the "platform" field.
-func (spc *SoftwarePackageCreate) SetPlatform(s softwarepackage.Platform) *SoftwarePackageCreate {
-	spc.mutation.SetPlatform(s)
-	return spc
-}
-
-// SetInstallerPath sets the "installer_path" field.
-func (spc *SoftwarePackageCreate) SetInstallerPath(s string) *SoftwarePackageCreate {
-	spc.mutation.SetInstallerPath(s)
-	return spc
-}
-
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (spc *SoftwarePackageCreate) SetChecksumSha256(s string) *SoftwarePackageCreate {
-	spc.mutation.SetChecksumSha256(s)
-	return spc
-}
-
-// SetNillableChecksumSha256 sets the "checksum_sha256" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableChecksumSha256(s *string) *SoftwarePackageCreate {
+// SetNillableVersion sets the "version" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableVersion(s *string) *SoftwarePackageCreate {
 	if s != nil {
-		spc.SetChecksumSha256(*s)
+		spc.SetVersion(*s)
 	}
 	return spc
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (spc *SoftwarePackageCreate) SetSizeBytes(i int64) *SoftwarePackageCreate {
-	spc.mutation.SetSizeBytes(i)
+// SetBranch sets the "branch" field.
+func (spc *SoftwarePackageCreate) SetBranch(s string) *SoftwarePackageCreate {
+	spc.mutation.SetBranch(s)
 	return spc
 }
 
-// SetNillableSizeBytes sets the "size_bytes" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableSizeBytes(i *int64) *SoftwarePackageCreate {
-	if i != nil {
-		spc.SetSizeBytes(*i)
-	}
-	return spc
-}
-
-// SetIconName sets the "icon_name" field.
-func (spc *SoftwarePackageCreate) SetIconName(s string) *SoftwarePackageCreate {
-	spc.mutation.SetIconName(s)
-	return spc
-}
-
-// SetNillableIconName sets the "icon_name" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableIconName(s *string) *SoftwarePackageCreate {
+// SetNillableBranch sets the "branch" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableBranch(s *string) *SoftwarePackageCreate {
 	if s != nil {
-		spc.SetIconName(*s)
+		spc.SetBranch(*s)
 	}
 	return spc
 }
 
-// SetDescription sets the "description" field.
-func (spc *SoftwarePackageCreate) SetDescription(s string) *SoftwarePackageCreate {
-	spc.mutation.SetDescription(s)
+// SetArch sets the "arch" field.
+func (spc *SoftwarePackageCreate) SetArch(s string) *SoftwarePackageCreate {
+	spc.mutation.SetArch(s)
 	return spc
 }
 
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableDescription(s *string) *SoftwarePackageCreate {
+// SetNillableArch sets the "arch" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableArch(s *string) *SoftwarePackageCreate {
 	if s != nil {
-		spc.SetDescription(*s)
+		spc.SetArch(*s)
 	}
 	return spc
 }
 
-// SetCategory sets the "category" field.
-func (spc *SoftwarePackageCreate) SetCategory(s string) *SoftwarePackageCreate {
-	spc.mutation.SetCategory(s)
+// SetBrewType sets the "brew_type" field.
+func (spc *SoftwarePackageCreate) SetBrewType(s string) *SoftwarePackageCreate {
+	spc.mutation.SetBrewType(s)
 	return spc
 }
 
-// SetNillableCategory sets the "category" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableCategory(s *string) *SoftwarePackageCreate {
+// SetNillableBrewType sets the "brew_type" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableBrewType(s *string) *SoftwarePackageCreate {
 	if s != nil {
-		spc.SetCategory(*s)
+		spc.SetBrewType(*s)
 	}
 	return spc
 }
 
-// SetDeveloper sets the "developer" field.
-func (spc *SoftwarePackageCreate) SetDeveloper(s string) *SoftwarePackageCreate {
-	spc.mutation.SetDeveloper(s)
+// SetVerified sets the "verified" field.
+func (spc *SoftwarePackageCreate) SetVerified(b bool) *SoftwarePackageCreate {
+	spc.mutation.SetVerified(b)
 	return spc
 }
 
-// SetNillableDeveloper sets the "developer" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableDeveloper(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetDeveloper(*s)
-	}
-	return spc
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (spc *SoftwarePackageCreate) SetPkginfoData(s string) *SoftwarePackageCreate {
-	spc.mutation.SetPkginfoData(s)
-	return spc
-}
-
-// SetNillablePkginfoData sets the "pkginfo_data" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillablePkginfoData(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetPkginfoData(*s)
-	}
-	return spc
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (spc *SoftwarePackageCreate) SetPreInstallScript(s string) *SoftwarePackageCreate {
-	spc.mutation.SetPreInstallScript(s)
-	return spc
-}
-
-// SetNillablePreInstallScript sets the "pre_install_script" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillablePreInstallScript(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetPreInstallScript(*s)
-	}
-	return spc
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (spc *SoftwarePackageCreate) SetPostInstallScript(s string) *SoftwarePackageCreate {
-	spc.mutation.SetPostInstallScript(s)
-	return spc
-}
-
-// SetNillablePostInstallScript sets the "post_install_script" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillablePostInstallScript(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetPostInstallScript(*s)
-	}
-	return spc
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (spc *SoftwarePackageCreate) SetUninstallMethod(s string) *SoftwarePackageCreate {
-	spc.mutation.SetUninstallMethod(s)
-	return spc
-}
-
-// SetNillableUninstallMethod sets the "uninstall_method" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableUninstallMethod(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetUninstallMethod(*s)
-	}
-	return spc
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (spc *SoftwarePackageCreate) SetInstallsItems(s string) *SoftwarePackageCreate {
-	spc.mutation.SetInstallsItems(s)
-	return spc
-}
-
-// SetNillableInstallsItems sets the "installs_items" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableInstallsItems(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetInstallsItems(*s)
-	}
-	return spc
-}
-
-// SetReceipts sets the "receipts" field.
-func (spc *SoftwarePackageCreate) SetReceipts(s string) *SoftwarePackageCreate {
-	spc.mutation.SetReceipts(s)
-	return spc
-}
-
-// SetNillableReceipts sets the "receipts" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableReceipts(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetReceipts(*s)
-	}
-	return spc
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (spc *SoftwarePackageCreate) SetBlockingApps(s string) *SoftwarePackageCreate {
-	spc.mutation.SetBlockingApps(s)
-	return spc
-}
-
-// SetNillableBlockingApps sets the "blocking_apps" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableBlockingApps(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetBlockingApps(*s)
-	}
-	return spc
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (spc *SoftwarePackageCreate) SetRestartAction(sa softwarepackage.RestartAction) *SoftwarePackageCreate {
-	spc.mutation.SetRestartAction(sa)
-	return spc
-}
-
-// SetNillableRestartAction sets the "restart_action" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableRestartAction(sa *softwarepackage.RestartAction) *SoftwarePackageCreate {
-	if sa != nil {
-		spc.SetRestartAction(*sa)
-	}
-	return spc
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (spc *SoftwarePackageCreate) SetMinOsVersion(s string) *SoftwarePackageCreate {
-	spc.mutation.SetMinOsVersion(s)
-	return spc
-}
-
-// SetNillableMinOsVersion sets the "min_os_version" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableMinOsVersion(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetMinOsVersion(*s)
-	}
-	return spc
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (spc *SoftwarePackageCreate) SetMaxOsVersion(s string) *SoftwarePackageCreate {
-	spc.mutation.SetMaxOsVersion(s)
-	return spc
-}
-
-// SetNillableMaxOsVersion sets the "max_os_version" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableMaxOsVersion(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetMaxOsVersion(*s)
-	}
-	return spc
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (spc *SoftwarePackageCreate) SetSupportedArchitectures(s string) *SoftwarePackageCreate {
-	spc.mutation.SetSupportedArchitectures(s)
-	return spc
-}
-
-// SetNillableSupportedArchitectures sets the "supported_architectures" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableSupportedArchitectures(s *string) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetSupportedArchitectures(*s)
-	}
-	return spc
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (spc *SoftwarePackageCreate) SetForceInstallDate(t time.Time) *SoftwarePackageCreate {
-	spc.mutation.SetForceInstallDate(t)
-	return spc
-}
-
-// SetNillableForceInstallDate sets the "force_install_date" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableForceInstallDate(t *time.Time) *SoftwarePackageCreate {
-	if t != nil {
-		spc.SetForceInstallDate(*t)
-	}
-	return spc
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (spc *SoftwarePackageCreate) SetUnattendedInstall(b bool) *SoftwarePackageCreate {
-	spc.mutation.SetUnattendedInstall(b)
-	return spc
-}
-
-// SetNillableUnattendedInstall sets the "unattended_install" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableUnattendedInstall(b *bool) *SoftwarePackageCreate {
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableVerified(b *bool) *SoftwarePackageCreate {
 	if b != nil {
-		spc.SetUnattendedInstall(*b)
-	}
-	return spc
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (spc *SoftwarePackageCreate) SetUnattendedUninstall(b bool) *SoftwarePackageCreate {
-	spc.mutation.SetUnattendedUninstall(b)
-	return spc
-}
-
-// SetNillableUnattendedUninstall sets the "unattended_uninstall" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableUnattendedUninstall(b *bool) *SoftwarePackageCreate {
-	if b != nil {
-		spc.SetUnattendedUninstall(*b)
-	}
-	return spc
-}
-
-// SetStatus sets the "status" field.
-func (spc *SoftwarePackageCreate) SetStatus(s softwarepackage.Status) *SoftwarePackageCreate {
-	spc.mutation.SetStatus(s)
-	return spc
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableStatus(s *softwarepackage.Status) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetStatus(*s)
+		spc.SetVerified(*b)
 	}
 	return spc
 }
 
 // SetSource sets the "source" field.
-func (spc *SoftwarePackageCreate) SetSource(s softwarepackage.Source) *SoftwarePackageCreate {
+func (spc *SoftwarePackageCreate) SetSource(s string) *SoftwarePackageCreate {
 	spc.mutation.SetSource(s)
 	return spc
 }
 
-// SetNillableSource sets the "source" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableSource(s *softwarepackage.Source) *SoftwarePackageCreate {
-	if s != nil {
-		spc.SetSource(*s)
+// SetID sets the "id" field.
+func (spc *SoftwarePackageCreate) SetID(u uuid.UUID) *SoftwarePackageCreate {
+	spc.mutation.SetID(u)
+	return spc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (spc *SoftwarePackageCreate) SetNillableID(u *uuid.UUID) *SoftwarePackageCreate {
+	if u != nil {
+		spc.SetID(*u)
 	}
 	return spc
-}
-
-// SetCreated sets the "created" field.
-func (spc *SoftwarePackageCreate) SetCreated(t time.Time) *SoftwarePackageCreate {
-	spc.mutation.SetCreated(t)
-	return spc
-}
-
-// SetNillableCreated sets the "created" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableCreated(t *time.Time) *SoftwarePackageCreate {
-	if t != nil {
-		spc.SetCreated(*t)
-	}
-	return spc
-}
-
-// SetModified sets the "modified" field.
-func (spc *SoftwarePackageCreate) SetModified(t time.Time) *SoftwarePackageCreate {
-	spc.mutation.SetModified(t)
-	return spc
-}
-
-// SetNillableModified sets the "modified" field if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableModified(t *time.Time) *SoftwarePackageCreate {
-	if t != nil {
-		spc.SetModified(*t)
-	}
-	return spc
-}
-
-// SetRepoID sets the "repo" edge to the SoftwareRepo entity by ID.
-func (spc *SoftwarePackageCreate) SetRepoID(id int) *SoftwarePackageCreate {
-	spc.mutation.SetRepoID(id)
-	return spc
-}
-
-// SetNillableRepoID sets the "repo" edge to the SoftwareRepo entity by ID if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableRepoID(id *int) *SoftwarePackageCreate {
-	if id != nil {
-		spc = spc.SetRepoID(*id)
-	}
-	return spc
-}
-
-// SetRepo sets the "repo" edge to the SoftwareRepo entity.
-func (spc *SoftwarePackageCreate) SetRepo(s *SoftwareRepo) *SoftwarePackageCreate {
-	return spc.SetRepoID(s.ID)
-}
-
-// AddCatalogIDs adds the "catalogs" edge to the SoftwareCatalog entity by IDs.
-func (spc *SoftwarePackageCreate) AddCatalogIDs(ids ...int) *SoftwarePackageCreate {
-	spc.mutation.AddCatalogIDs(ids...)
-	return spc
-}
-
-// AddCatalogs adds the "catalogs" edges to the SoftwareCatalog entity.
-func (spc *SoftwarePackageCreate) AddCatalogs(s ...*SoftwareCatalog) *SoftwarePackageCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spc.AddCatalogIDs(ids...)
-}
-
-// SetTenantID sets the "tenant" edge to the Tenant entity by ID.
-func (spc *SoftwarePackageCreate) SetTenantID(id int) *SoftwarePackageCreate {
-	spc.mutation.SetTenantID(id)
-	return spc
-}
-
-// SetNillableTenantID sets the "tenant" edge to the Tenant entity by ID if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableTenantID(id *int) *SoftwarePackageCreate {
-	if id != nil {
-		spc = spc.SetTenantID(*id)
-	}
-	return spc
-}
-
-// SetTenant sets the "tenant" edge to the Tenant entity.
-func (spc *SoftwarePackageCreate) SetTenant(t *Tenant) *SoftwarePackageCreate {
-	return spc.SetTenantID(t.ID)
-}
-
-// AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by IDs.
-func (spc *SoftwarePackageCreate) AddInstallLogIDs(ids ...int) *SoftwarePackageCreate {
-	spc.mutation.AddInstallLogIDs(ids...)
-	return spc
-}
-
-// AddInstallLogs adds the "install_logs" edges to the SoftwareInstallLog entity.
-func (spc *SoftwarePackageCreate) AddInstallLogs(s ...*SoftwareInstallLog) *SoftwarePackageCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spc.AddInstallLogIDs(ids...)
-}
-
-// AddRequireIDs adds the "requires" edge to the SoftwarePackage entity by IDs.
-func (spc *SoftwarePackageCreate) AddRequireIDs(ids ...int) *SoftwarePackageCreate {
-	spc.mutation.AddRequireIDs(ids...)
-	return spc
-}
-
-// AddRequires adds the "requires" edges to the SoftwarePackage entity.
-func (spc *SoftwarePackageCreate) AddRequires(s ...*SoftwarePackage) *SoftwarePackageCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spc.AddRequireIDs(ids...)
-}
-
-// AddUpdateForIDs adds the "update_for" edge to the SoftwarePackage entity by IDs.
-func (spc *SoftwarePackageCreate) AddUpdateForIDs(ids ...int) *SoftwarePackageCreate {
-	spc.mutation.AddUpdateForIDs(ids...)
-	return spc
-}
-
-// AddUpdateFor adds the "update_for" edges to the SoftwarePackage entity.
-func (spc *SoftwarePackageCreate) AddUpdateFor(s ...*SoftwarePackage) *SoftwarePackageCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spc.AddUpdateForIDs(ids...)
-}
-
-// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID.
-func (spc *SoftwarePackageCreate) SetGlobalRefID(id int) *SoftwarePackageCreate {
-	spc.mutation.SetGlobalRefID(id)
-	return spc
-}
-
-// SetNillableGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID if the given value is not nil.
-func (spc *SoftwarePackageCreate) SetNillableGlobalRefID(id *int) *SoftwarePackageCreate {
-	if id != nil {
-		spc = spc.SetGlobalRefID(*id)
-	}
-	return spc
-}
-
-// SetGlobalRef sets the "global_ref" edge to the SoftwarePackage entity.
-func (spc *SoftwarePackageCreate) SetGlobalRef(s *SoftwarePackage) *SoftwarePackageCreate {
-	return spc.SetGlobalRefID(s.ID)
-}
-
-// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by IDs.
-func (spc *SoftwarePackageCreate) AddSubscriberIDs(ids ...int) *SoftwarePackageCreate {
-	spc.mutation.AddSubscriberIDs(ids...)
-	return spc
-}
-
-// AddSubscribers adds the "subscribers" edges to the SoftwarePackage entity.
-func (spc *SoftwarePackageCreate) AddSubscribers(s ...*SoftwarePackage) *SoftwarePackageCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spc.AddSubscriberIDs(ids...)
 }
 
 // Mutation returns the SoftwarePackageMutation object of the builder.
@@ -567,152 +160,22 @@ func (spc *SoftwarePackageCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (spc *SoftwarePackageCreate) defaults() {
-	if _, ok := spc.mutation.DisplayName(); !ok {
-		v := softwarepackage.DefaultDisplayName
-		spc.mutation.SetDisplayName(v)
-	}
-	if _, ok := spc.mutation.ChecksumSha256(); !ok {
-		v := softwarepackage.DefaultChecksumSha256
-		spc.mutation.SetChecksumSha256(v)
-	}
-	if _, ok := spc.mutation.SizeBytes(); !ok {
-		v := softwarepackage.DefaultSizeBytes
-		spc.mutation.SetSizeBytes(v)
-	}
-	if _, ok := spc.mutation.IconName(); !ok {
-		v := softwarepackage.DefaultIconName
-		spc.mutation.SetIconName(v)
-	}
-	if _, ok := spc.mutation.Description(); !ok {
-		v := softwarepackage.DefaultDescription
-		spc.mutation.SetDescription(v)
-	}
-	if _, ok := spc.mutation.Category(); !ok {
-		v := softwarepackage.DefaultCategory
-		spc.mutation.SetCategory(v)
-	}
-	if _, ok := spc.mutation.Developer(); !ok {
-		v := softwarepackage.DefaultDeveloper
-		spc.mutation.SetDeveloper(v)
-	}
-	if _, ok := spc.mutation.PkginfoData(); !ok {
-		v := softwarepackage.DefaultPkginfoData
-		spc.mutation.SetPkginfoData(v)
-	}
-	if _, ok := spc.mutation.PreInstallScript(); !ok {
-		v := softwarepackage.DefaultPreInstallScript
-		spc.mutation.SetPreInstallScript(v)
-	}
-	if _, ok := spc.mutation.PostInstallScript(); !ok {
-		v := softwarepackage.DefaultPostInstallScript
-		spc.mutation.SetPostInstallScript(v)
-	}
-	if _, ok := spc.mutation.UninstallMethod(); !ok {
-		v := softwarepackage.DefaultUninstallMethod
-		spc.mutation.SetUninstallMethod(v)
-	}
-	if _, ok := spc.mutation.InstallsItems(); !ok {
-		v := softwarepackage.DefaultInstallsItems
-		spc.mutation.SetInstallsItems(v)
-	}
-	if _, ok := spc.mutation.Receipts(); !ok {
-		v := softwarepackage.DefaultReceipts
-		spc.mutation.SetReceipts(v)
-	}
-	if _, ok := spc.mutation.BlockingApps(); !ok {
-		v := softwarepackage.DefaultBlockingApps
-		spc.mutation.SetBlockingApps(v)
-	}
-	if _, ok := spc.mutation.RestartAction(); !ok {
-		v := softwarepackage.DefaultRestartAction
-		spc.mutation.SetRestartAction(v)
-	}
-	if _, ok := spc.mutation.MinOsVersion(); !ok {
-		v := softwarepackage.DefaultMinOsVersion
-		spc.mutation.SetMinOsVersion(v)
-	}
-	if _, ok := spc.mutation.MaxOsVersion(); !ok {
-		v := softwarepackage.DefaultMaxOsVersion
-		spc.mutation.SetMaxOsVersion(v)
-	}
-	if _, ok := spc.mutation.SupportedArchitectures(); !ok {
-		v := softwarepackage.DefaultSupportedArchitectures
-		spc.mutation.SetSupportedArchitectures(v)
-	}
-	if _, ok := spc.mutation.UnattendedInstall(); !ok {
-		v := softwarepackage.DefaultUnattendedInstall
-		spc.mutation.SetUnattendedInstall(v)
-	}
-	if _, ok := spc.mutation.UnattendedUninstall(); !ok {
-		v := softwarepackage.DefaultUnattendedUninstall
-		spc.mutation.SetUnattendedUninstall(v)
-	}
-	if _, ok := spc.mutation.Status(); !ok {
-		v := softwarepackage.DefaultStatus
-		spc.mutation.SetStatus(v)
-	}
-	if _, ok := spc.mutation.Source(); !ok {
-		v := softwarepackage.DefaultSource
-		spc.mutation.SetSource(v)
-	}
-	if _, ok := spc.mutation.Created(); !ok {
-		v := softwarepackage.DefaultCreated()
-		spc.mutation.SetCreated(v)
-	}
-	if _, ok := spc.mutation.Modified(); !ok {
-		v := softwarepackage.DefaultModified()
-		spc.mutation.SetModified(v)
+	if _, ok := spc.mutation.ID(); !ok {
+		v := softwarepackage.DefaultID()
+		spc.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (spc *SoftwarePackageCreate) check() error {
+	if _, ok := spc.mutation.PackageID(); !ok {
+		return &ValidationError{Name: "package_id", err: errors.New(`ent: missing required field "SoftwarePackage.package_id"`)}
+	}
 	if _, ok := spc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "SoftwarePackage.name"`)}
 	}
-	if v, ok := spc.mutation.Name(); ok {
-		if err := softwarepackage.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.name": %w`, err)}
-		}
-	}
-	if _, ok := spc.mutation.Version(); !ok {
-		return &ValidationError{Name: "version", err: errors.New(`ent: missing required field "SoftwarePackage.version"`)}
-	}
-	if v, ok := spc.mutation.Version(); ok {
-		if err := softwarepackage.VersionValidator(v); err != nil {
-			return &ValidationError{Name: "version", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.version": %w`, err)}
-		}
-	}
-	if _, ok := spc.mutation.Platform(); !ok {
-		return &ValidationError{Name: "platform", err: errors.New(`ent: missing required field "SoftwarePackage.platform"`)}
-	}
-	if v, ok := spc.mutation.Platform(); ok {
-		if err := softwarepackage.PlatformValidator(v); err != nil {
-			return &ValidationError{Name: "platform", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.platform": %w`, err)}
-		}
-	}
-	if _, ok := spc.mutation.InstallerPath(); !ok {
-		return &ValidationError{Name: "installer_path", err: errors.New(`ent: missing required field "SoftwarePackage.installer_path"`)}
-	}
-	if v, ok := spc.mutation.InstallerPath(); ok {
-		if err := softwarepackage.InstallerPathValidator(v); err != nil {
-			return &ValidationError{Name: "installer_path", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_path": %w`, err)}
-		}
-	}
-	if v, ok := spc.mutation.RestartAction(); ok {
-		if err := softwarepackage.RestartActionValidator(v); err != nil {
-			return &ValidationError{Name: "restart_action", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.restart_action": %w`, err)}
-		}
-	}
-	if v, ok := spc.mutation.Status(); ok {
-		if err := softwarepackage.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.status": %w`, err)}
-		}
-	}
-	if v, ok := spc.mutation.Source(); ok {
-		if err := softwarepackage.SourceValidator(v); err != nil {
-			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.source": %w`, err)}
-		}
+	if _, ok := spc.mutation.Source(); !ok {
+		return &ValidationError{Name: "source", err: errors.New(`ent: missing required field "SoftwarePackage.source"`)}
 	}
 	return nil
 }
@@ -728,8 +191,13 @@ func (spc *SoftwarePackageCreate) sqlSave(ctx context.Context) (*SoftwarePackage
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
+			_node.ID = *id
+		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
+			return nil, err
+		}
+	}
 	spc.mutation.id = &_node.ID
 	spc.mutation.done = true
 	return _node, nil
@@ -738,255 +206,44 @@ func (spc *SoftwarePackageCreate) sqlSave(ctx context.Context) (*SoftwarePackage
 func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SoftwarePackage{config: spc.config}
-		_spec = sqlgraph.NewCreateSpec(softwarepackage.Table, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(softwarepackage.Table, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeUUID))
 	)
 	_spec.OnConflict = spc.conflict
+	if id, ok := spc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = &id
+	}
+	if value, ok := spc.mutation.PackageID(); ok {
+		_spec.SetField(softwarepackage.FieldPackageID, field.TypeString, value)
+		_node.PackageID = value
+	}
 	if value, ok := spc.mutation.Name(); ok {
 		_spec.SetField(softwarepackage.FieldName, field.TypeString, value)
 		_node.Name = value
-	}
-	if value, ok := spc.mutation.DisplayName(); ok {
-		_spec.SetField(softwarepackage.FieldDisplayName, field.TypeString, value)
-		_node.DisplayName = value
 	}
 	if value, ok := spc.mutation.Version(); ok {
 		_spec.SetField(softwarepackage.FieldVersion, field.TypeString, value)
 		_node.Version = value
 	}
-	if value, ok := spc.mutation.Platform(); ok {
-		_spec.SetField(softwarepackage.FieldPlatform, field.TypeEnum, value)
-		_node.Platform = value
+	if value, ok := spc.mutation.Branch(); ok {
+		_spec.SetField(softwarepackage.FieldBranch, field.TypeString, value)
+		_node.Branch = value
 	}
-	if value, ok := spc.mutation.InstallerPath(); ok {
-		_spec.SetField(softwarepackage.FieldInstallerPath, field.TypeString, value)
-		_node.InstallerPath = value
+	if value, ok := spc.mutation.Arch(); ok {
+		_spec.SetField(softwarepackage.FieldArch, field.TypeString, value)
+		_node.Arch = value
 	}
-	if value, ok := spc.mutation.ChecksumSha256(); ok {
-		_spec.SetField(softwarepackage.FieldChecksumSha256, field.TypeString, value)
-		_node.ChecksumSha256 = value
+	if value, ok := spc.mutation.BrewType(); ok {
+		_spec.SetField(softwarepackage.FieldBrewType, field.TypeString, value)
+		_node.BrewType = value
 	}
-	if value, ok := spc.mutation.SizeBytes(); ok {
-		_spec.SetField(softwarepackage.FieldSizeBytes, field.TypeInt64, value)
-		_node.SizeBytes = value
-	}
-	if value, ok := spc.mutation.IconName(); ok {
-		_spec.SetField(softwarepackage.FieldIconName, field.TypeString, value)
-		_node.IconName = value
-	}
-	if value, ok := spc.mutation.Description(); ok {
-		_spec.SetField(softwarepackage.FieldDescription, field.TypeString, value)
-		_node.Description = value
-	}
-	if value, ok := spc.mutation.Category(); ok {
-		_spec.SetField(softwarepackage.FieldCategory, field.TypeString, value)
-		_node.Category = value
-	}
-	if value, ok := spc.mutation.Developer(); ok {
-		_spec.SetField(softwarepackage.FieldDeveloper, field.TypeString, value)
-		_node.Developer = value
-	}
-	if value, ok := spc.mutation.PkginfoData(); ok {
-		_spec.SetField(softwarepackage.FieldPkginfoData, field.TypeString, value)
-		_node.PkginfoData = value
-	}
-	if value, ok := spc.mutation.PreInstallScript(); ok {
-		_spec.SetField(softwarepackage.FieldPreInstallScript, field.TypeString, value)
-		_node.PreInstallScript = value
-	}
-	if value, ok := spc.mutation.PostInstallScript(); ok {
-		_spec.SetField(softwarepackage.FieldPostInstallScript, field.TypeString, value)
-		_node.PostInstallScript = value
-	}
-	if value, ok := spc.mutation.UninstallMethod(); ok {
-		_spec.SetField(softwarepackage.FieldUninstallMethod, field.TypeString, value)
-		_node.UninstallMethod = value
-	}
-	if value, ok := spc.mutation.InstallsItems(); ok {
-		_spec.SetField(softwarepackage.FieldInstallsItems, field.TypeString, value)
-		_node.InstallsItems = value
-	}
-	if value, ok := spc.mutation.Receipts(); ok {
-		_spec.SetField(softwarepackage.FieldReceipts, field.TypeString, value)
-		_node.Receipts = value
-	}
-	if value, ok := spc.mutation.BlockingApps(); ok {
-		_spec.SetField(softwarepackage.FieldBlockingApps, field.TypeString, value)
-		_node.BlockingApps = value
-	}
-	if value, ok := spc.mutation.RestartAction(); ok {
-		_spec.SetField(softwarepackage.FieldRestartAction, field.TypeEnum, value)
-		_node.RestartAction = value
-	}
-	if value, ok := spc.mutation.MinOsVersion(); ok {
-		_spec.SetField(softwarepackage.FieldMinOsVersion, field.TypeString, value)
-		_node.MinOsVersion = value
-	}
-	if value, ok := spc.mutation.MaxOsVersion(); ok {
-		_spec.SetField(softwarepackage.FieldMaxOsVersion, field.TypeString, value)
-		_node.MaxOsVersion = value
-	}
-	if value, ok := spc.mutation.SupportedArchitectures(); ok {
-		_spec.SetField(softwarepackage.FieldSupportedArchitectures, field.TypeString, value)
-		_node.SupportedArchitectures = value
-	}
-	if value, ok := spc.mutation.ForceInstallDate(); ok {
-		_spec.SetField(softwarepackage.FieldForceInstallDate, field.TypeTime, value)
-		_node.ForceInstallDate = &value
-	}
-	if value, ok := spc.mutation.UnattendedInstall(); ok {
-		_spec.SetField(softwarepackage.FieldUnattendedInstall, field.TypeBool, value)
-		_node.UnattendedInstall = value
-	}
-	if value, ok := spc.mutation.UnattendedUninstall(); ok {
-		_spec.SetField(softwarepackage.FieldUnattendedUninstall, field.TypeBool, value)
-		_node.UnattendedUninstall = value
-	}
-	if value, ok := spc.mutation.Status(); ok {
-		_spec.SetField(softwarepackage.FieldStatus, field.TypeEnum, value)
-		_node.Status = value
+	if value, ok := spc.mutation.Verified(); ok {
+		_spec.SetField(softwarepackage.FieldVerified, field.TypeBool, value)
+		_node.Verified = value
 	}
 	if value, ok := spc.mutation.Source(); ok {
-		_spec.SetField(softwarepackage.FieldSource, field.TypeEnum, value)
+		_spec.SetField(softwarepackage.FieldSource, field.TypeString, value)
 		_node.Source = value
-	}
-	if value, ok := spc.mutation.Created(); ok {
-		_spec.SetField(softwarepackage.FieldCreated, field.TypeTime, value)
-		_node.Created = value
-	}
-	if value, ok := spc.mutation.Modified(); ok {
-		_spec.SetField(softwarepackage.FieldModified, field.TypeTime, value)
-		_node.Modified = value
-	}
-	if nodes := spc.mutation.RepoIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.RepoTable,
-			Columns: []string{softwarepackage.RepoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.software_repo_packages = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.CatalogsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.TenantIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.TenantTable,
-			Columns: []string{softwarepackage.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.tenant_software_packages = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.InstallLogsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.RequiresIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.UpdateForIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.GlobalRefIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.GlobalRefTable,
-			Columns: []string{softwarepackage.GlobalRefColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.software_package_subscribers = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := spc.mutation.SubscribersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -995,7 +252,7 @@ func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.Crea
 // of the `INSERT` statement. For example:
 //
 //	client.SoftwarePackage.Create().
-//		SetName(v).
+//		SetPackageID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -1004,7 +261,7 @@ func (spc *SoftwarePackageCreate) createSpec() (*SoftwarePackage, *sqlgraph.Crea
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SoftwarePackageUpsert) {
-//			SetName(v+v).
+//			SetPackageID(v+v).
 //		}).
 //		Exec(ctx)
 func (spc *SoftwarePackageCreate) OnConflict(opts ...sql.ConflictOption) *SoftwarePackageUpsertOne {
@@ -1040,6 +297,18 @@ type (
 	}
 )
 
+// SetPackageID sets the "package_id" field.
+func (u *SoftwarePackageUpsert) SetPackageID(v string) *SoftwarePackageUpsert {
+	u.Set(softwarepackage.FieldPackageID, v)
+	return u
+}
+
+// UpdatePackageID sets the "package_id" field to the value that was provided on create.
+func (u *SoftwarePackageUpsert) UpdatePackageID() *SoftwarePackageUpsert {
+	u.SetExcluded(softwarepackage.FieldPackageID)
+	return u
+}
+
 // SetName sets the "name" field.
 func (u *SoftwarePackageUpsert) SetName(v string) *SoftwarePackageUpsert {
 	u.Set(softwarepackage.FieldName, v)
@@ -1049,24 +318,6 @@ func (u *SoftwarePackageUpsert) SetName(v string) *SoftwarePackageUpsert {
 // UpdateName sets the "name" field to the value that was provided on create.
 func (u *SoftwarePackageUpsert) UpdateName() *SoftwarePackageUpsert {
 	u.SetExcluded(softwarepackage.FieldName)
-	return u
-}
-
-// SetDisplayName sets the "display_name" field.
-func (u *SoftwarePackageUpsert) SetDisplayName(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldDisplayName, v)
-	return u
-}
-
-// UpdateDisplayName sets the "display_name" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateDisplayName() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldDisplayName)
-	return u
-}
-
-// ClearDisplayName clears the value of the "display_name" field.
-func (u *SoftwarePackageUpsert) ClearDisplayName() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldDisplayName)
 	return u
 }
 
@@ -1082,416 +333,86 @@ func (u *SoftwarePackageUpsert) UpdateVersion() *SoftwarePackageUpsert {
 	return u
 }
 
-// SetPlatform sets the "platform" field.
-func (u *SoftwarePackageUpsert) SetPlatform(v softwarepackage.Platform) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldPlatform, v)
+// ClearVersion clears the value of the "version" field.
+func (u *SoftwarePackageUpsert) ClearVersion() *SoftwarePackageUpsert {
+	u.SetNull(softwarepackage.FieldVersion)
 	return u
 }
 
-// UpdatePlatform sets the "platform" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdatePlatform() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldPlatform)
+// SetBranch sets the "branch" field.
+func (u *SoftwarePackageUpsert) SetBranch(v string) *SoftwarePackageUpsert {
+	u.Set(softwarepackage.FieldBranch, v)
 	return u
 }
 
-// SetInstallerPath sets the "installer_path" field.
-func (u *SoftwarePackageUpsert) SetInstallerPath(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldInstallerPath, v)
+// UpdateBranch sets the "branch" field to the value that was provided on create.
+func (u *SoftwarePackageUpsert) UpdateBranch() *SoftwarePackageUpsert {
+	u.SetExcluded(softwarepackage.FieldBranch)
 	return u
 }
 
-// UpdateInstallerPath sets the "installer_path" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateInstallerPath() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldInstallerPath)
+// ClearBranch clears the value of the "branch" field.
+func (u *SoftwarePackageUpsert) ClearBranch() *SoftwarePackageUpsert {
+	u.SetNull(softwarepackage.FieldBranch)
 	return u
 }
 
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (u *SoftwarePackageUpsert) SetChecksumSha256(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldChecksumSha256, v)
+// SetArch sets the "arch" field.
+func (u *SoftwarePackageUpsert) SetArch(v string) *SoftwarePackageUpsert {
+	u.Set(softwarepackage.FieldArch, v)
 	return u
 }
 
-// UpdateChecksumSha256 sets the "checksum_sha256" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateChecksumSha256() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldChecksumSha256)
+// UpdateArch sets the "arch" field to the value that was provided on create.
+func (u *SoftwarePackageUpsert) UpdateArch() *SoftwarePackageUpsert {
+	u.SetExcluded(softwarepackage.FieldArch)
 	return u
 }
 
-// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
-func (u *SoftwarePackageUpsert) ClearChecksumSha256() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldChecksumSha256)
+// ClearArch clears the value of the "arch" field.
+func (u *SoftwarePackageUpsert) ClearArch() *SoftwarePackageUpsert {
+	u.SetNull(softwarepackage.FieldArch)
 	return u
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (u *SoftwarePackageUpsert) SetSizeBytes(v int64) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldSizeBytes, v)
+// SetBrewType sets the "brew_type" field.
+func (u *SoftwarePackageUpsert) SetBrewType(v string) *SoftwarePackageUpsert {
+	u.Set(softwarepackage.FieldBrewType, v)
 	return u
 }
 
-// UpdateSizeBytes sets the "size_bytes" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateSizeBytes() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldSizeBytes)
+// UpdateBrewType sets the "brew_type" field to the value that was provided on create.
+func (u *SoftwarePackageUpsert) UpdateBrewType() *SoftwarePackageUpsert {
+	u.SetExcluded(softwarepackage.FieldBrewType)
 	return u
 }
 
-// AddSizeBytes adds v to the "size_bytes" field.
-func (u *SoftwarePackageUpsert) AddSizeBytes(v int64) *SoftwarePackageUpsert {
-	u.Add(softwarepackage.FieldSizeBytes, v)
+// ClearBrewType clears the value of the "brew_type" field.
+func (u *SoftwarePackageUpsert) ClearBrewType() *SoftwarePackageUpsert {
+	u.SetNull(softwarepackage.FieldBrewType)
 	return u
 }
 
-// ClearSizeBytes clears the value of the "size_bytes" field.
-func (u *SoftwarePackageUpsert) ClearSizeBytes() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldSizeBytes)
+// SetVerified sets the "verified" field.
+func (u *SoftwarePackageUpsert) SetVerified(v bool) *SoftwarePackageUpsert {
+	u.Set(softwarepackage.FieldVerified, v)
 	return u
 }
 
-// SetIconName sets the "icon_name" field.
-func (u *SoftwarePackageUpsert) SetIconName(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldIconName, v)
+// UpdateVerified sets the "verified" field to the value that was provided on create.
+func (u *SoftwarePackageUpsert) UpdateVerified() *SoftwarePackageUpsert {
+	u.SetExcluded(softwarepackage.FieldVerified)
 	return u
 }
 
-// UpdateIconName sets the "icon_name" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateIconName() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldIconName)
-	return u
-}
-
-// ClearIconName clears the value of the "icon_name" field.
-func (u *SoftwarePackageUpsert) ClearIconName() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldIconName)
-	return u
-}
-
-// SetDescription sets the "description" field.
-func (u *SoftwarePackageUpsert) SetDescription(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldDescription, v)
-	return u
-}
-
-// UpdateDescription sets the "description" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateDescription() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldDescription)
-	return u
-}
-
-// ClearDescription clears the value of the "description" field.
-func (u *SoftwarePackageUpsert) ClearDescription() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldDescription)
-	return u
-}
-
-// SetCategory sets the "category" field.
-func (u *SoftwarePackageUpsert) SetCategory(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldCategory, v)
-	return u
-}
-
-// UpdateCategory sets the "category" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateCategory() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldCategory)
-	return u
-}
-
-// ClearCategory clears the value of the "category" field.
-func (u *SoftwarePackageUpsert) ClearCategory() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldCategory)
-	return u
-}
-
-// SetDeveloper sets the "developer" field.
-func (u *SoftwarePackageUpsert) SetDeveloper(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldDeveloper, v)
-	return u
-}
-
-// UpdateDeveloper sets the "developer" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateDeveloper() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldDeveloper)
-	return u
-}
-
-// ClearDeveloper clears the value of the "developer" field.
-func (u *SoftwarePackageUpsert) ClearDeveloper() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldDeveloper)
-	return u
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (u *SoftwarePackageUpsert) SetPkginfoData(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldPkginfoData, v)
-	return u
-}
-
-// UpdatePkginfoData sets the "pkginfo_data" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdatePkginfoData() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldPkginfoData)
-	return u
-}
-
-// ClearPkginfoData clears the value of the "pkginfo_data" field.
-func (u *SoftwarePackageUpsert) ClearPkginfoData() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldPkginfoData)
-	return u
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (u *SoftwarePackageUpsert) SetPreInstallScript(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldPreInstallScript, v)
-	return u
-}
-
-// UpdatePreInstallScript sets the "pre_install_script" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdatePreInstallScript() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldPreInstallScript)
-	return u
-}
-
-// ClearPreInstallScript clears the value of the "pre_install_script" field.
-func (u *SoftwarePackageUpsert) ClearPreInstallScript() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldPreInstallScript)
-	return u
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (u *SoftwarePackageUpsert) SetPostInstallScript(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldPostInstallScript, v)
-	return u
-}
-
-// UpdatePostInstallScript sets the "post_install_script" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdatePostInstallScript() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldPostInstallScript)
-	return u
-}
-
-// ClearPostInstallScript clears the value of the "post_install_script" field.
-func (u *SoftwarePackageUpsert) ClearPostInstallScript() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldPostInstallScript)
-	return u
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (u *SoftwarePackageUpsert) SetUninstallMethod(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldUninstallMethod, v)
-	return u
-}
-
-// UpdateUninstallMethod sets the "uninstall_method" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateUninstallMethod() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldUninstallMethod)
-	return u
-}
-
-// ClearUninstallMethod clears the value of the "uninstall_method" field.
-func (u *SoftwarePackageUpsert) ClearUninstallMethod() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldUninstallMethod)
-	return u
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (u *SoftwarePackageUpsert) SetInstallsItems(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldInstallsItems, v)
-	return u
-}
-
-// UpdateInstallsItems sets the "installs_items" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateInstallsItems() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldInstallsItems)
-	return u
-}
-
-// ClearInstallsItems clears the value of the "installs_items" field.
-func (u *SoftwarePackageUpsert) ClearInstallsItems() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldInstallsItems)
-	return u
-}
-
-// SetReceipts sets the "receipts" field.
-func (u *SoftwarePackageUpsert) SetReceipts(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldReceipts, v)
-	return u
-}
-
-// UpdateReceipts sets the "receipts" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateReceipts() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldReceipts)
-	return u
-}
-
-// ClearReceipts clears the value of the "receipts" field.
-func (u *SoftwarePackageUpsert) ClearReceipts() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldReceipts)
-	return u
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (u *SoftwarePackageUpsert) SetBlockingApps(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldBlockingApps, v)
-	return u
-}
-
-// UpdateBlockingApps sets the "blocking_apps" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateBlockingApps() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldBlockingApps)
-	return u
-}
-
-// ClearBlockingApps clears the value of the "blocking_apps" field.
-func (u *SoftwarePackageUpsert) ClearBlockingApps() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldBlockingApps)
-	return u
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (u *SoftwarePackageUpsert) SetRestartAction(v softwarepackage.RestartAction) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldRestartAction, v)
-	return u
-}
-
-// UpdateRestartAction sets the "restart_action" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateRestartAction() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldRestartAction)
-	return u
-}
-
-// ClearRestartAction clears the value of the "restart_action" field.
-func (u *SoftwarePackageUpsert) ClearRestartAction() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldRestartAction)
-	return u
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (u *SoftwarePackageUpsert) SetMinOsVersion(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldMinOsVersion, v)
-	return u
-}
-
-// UpdateMinOsVersion sets the "min_os_version" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateMinOsVersion() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldMinOsVersion)
-	return u
-}
-
-// ClearMinOsVersion clears the value of the "min_os_version" field.
-func (u *SoftwarePackageUpsert) ClearMinOsVersion() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldMinOsVersion)
-	return u
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (u *SoftwarePackageUpsert) SetMaxOsVersion(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldMaxOsVersion, v)
-	return u
-}
-
-// UpdateMaxOsVersion sets the "max_os_version" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateMaxOsVersion() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldMaxOsVersion)
-	return u
-}
-
-// ClearMaxOsVersion clears the value of the "max_os_version" field.
-func (u *SoftwarePackageUpsert) ClearMaxOsVersion() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldMaxOsVersion)
-	return u
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (u *SoftwarePackageUpsert) SetSupportedArchitectures(v string) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldSupportedArchitectures, v)
-	return u
-}
-
-// UpdateSupportedArchitectures sets the "supported_architectures" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateSupportedArchitectures() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldSupportedArchitectures)
-	return u
-}
-
-// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
-func (u *SoftwarePackageUpsert) ClearSupportedArchitectures() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldSupportedArchitectures)
-	return u
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (u *SoftwarePackageUpsert) SetForceInstallDate(v time.Time) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldForceInstallDate, v)
-	return u
-}
-
-// UpdateForceInstallDate sets the "force_install_date" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateForceInstallDate() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldForceInstallDate)
-	return u
-}
-
-// ClearForceInstallDate clears the value of the "force_install_date" field.
-func (u *SoftwarePackageUpsert) ClearForceInstallDate() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldForceInstallDate)
-	return u
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (u *SoftwarePackageUpsert) SetUnattendedInstall(v bool) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldUnattendedInstall, v)
-	return u
-}
-
-// UpdateUnattendedInstall sets the "unattended_install" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateUnattendedInstall() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldUnattendedInstall)
-	return u
-}
-
-// ClearUnattendedInstall clears the value of the "unattended_install" field.
-func (u *SoftwarePackageUpsert) ClearUnattendedInstall() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldUnattendedInstall)
-	return u
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (u *SoftwarePackageUpsert) SetUnattendedUninstall(v bool) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldUnattendedUninstall, v)
-	return u
-}
-
-// UpdateUnattendedUninstall sets the "unattended_uninstall" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateUnattendedUninstall() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldUnattendedUninstall)
-	return u
-}
-
-// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
-func (u *SoftwarePackageUpsert) ClearUnattendedUninstall() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldUnattendedUninstall)
-	return u
-}
-
-// SetStatus sets the "status" field.
-func (u *SoftwarePackageUpsert) SetStatus(v softwarepackage.Status) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldStatus, v)
-	return u
-}
-
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateStatus() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldStatus)
-	return u
-}
-
-// ClearStatus clears the value of the "status" field.
-func (u *SoftwarePackageUpsert) ClearStatus() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldStatus)
+// ClearVerified clears the value of the "verified" field.
+func (u *SoftwarePackageUpsert) ClearVerified() *SoftwarePackageUpsert {
+	u.SetNull(softwarepackage.FieldVerified)
 	return u
 }
 
 // SetSource sets the "source" field.
-func (u *SoftwarePackageUpsert) SetSource(v softwarepackage.Source) *SoftwarePackageUpsert {
+func (u *SoftwarePackageUpsert) SetSource(v string) *SoftwarePackageUpsert {
 	u.Set(softwarepackage.FieldSource, v)
 	return u
 }
@@ -1502,58 +423,24 @@ func (u *SoftwarePackageUpsert) UpdateSource() *SoftwarePackageUpsert {
 	return u
 }
 
-// ClearSource clears the value of the "source" field.
-func (u *SoftwarePackageUpsert) ClearSource() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldSource)
-	return u
-}
-
-// SetCreated sets the "created" field.
-func (u *SoftwarePackageUpsert) SetCreated(v time.Time) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldCreated, v)
-	return u
-}
-
-// UpdateCreated sets the "created" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateCreated() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldCreated)
-	return u
-}
-
-// ClearCreated clears the value of the "created" field.
-func (u *SoftwarePackageUpsert) ClearCreated() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldCreated)
-	return u
-}
-
-// SetModified sets the "modified" field.
-func (u *SoftwarePackageUpsert) SetModified(v time.Time) *SoftwarePackageUpsert {
-	u.Set(softwarepackage.FieldModified, v)
-	return u
-}
-
-// UpdateModified sets the "modified" field to the value that was provided on create.
-func (u *SoftwarePackageUpsert) UpdateModified() *SoftwarePackageUpsert {
-	u.SetExcluded(softwarepackage.FieldModified)
-	return u
-}
-
-// ClearModified clears the value of the "modified" field.
-func (u *SoftwarePackageUpsert) ClearModified() *SoftwarePackageUpsert {
-	u.SetNull(softwarepackage.FieldModified)
-	return u
-}
-
-// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
 //	client.SoftwarePackage.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(softwarepackage.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *SoftwarePackageUpsertOne) UpdateNewValues() *SoftwarePackageUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.ID(); exists {
+			s.SetIgnore(softwarepackage.FieldID)
+		}
+	}))
 	return u
 }
 
@@ -1584,6 +471,20 @@ func (u *SoftwarePackageUpsertOne) Update(set func(*SoftwarePackageUpsert)) *Sof
 	return u
 }
 
+// SetPackageID sets the "package_id" field.
+func (u *SoftwarePackageUpsertOne) SetPackageID(v string) *SoftwarePackageUpsertOne {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.SetPackageID(v)
+	})
+}
+
+// UpdatePackageID sets the "package_id" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertOne) UpdatePackageID() *SoftwarePackageUpsertOne {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.UpdatePackageID()
+	})
+}
+
 // SetName sets the "name" field.
 func (u *SoftwarePackageUpsertOne) SetName(v string) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
@@ -1595,27 +496,6 @@ func (u *SoftwarePackageUpsertOne) SetName(v string) *SoftwarePackageUpsertOne {
 func (u *SoftwarePackageUpsertOne) UpdateName() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.UpdateName()
-	})
-}
-
-// SetDisplayName sets the "display_name" field.
-func (u *SoftwarePackageUpsertOne) SetDisplayName(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetDisplayName(v)
-	})
-}
-
-// UpdateDisplayName sets the "display_name" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateDisplayName() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateDisplayName()
-	})
-}
-
-// ClearDisplayName clears the value of the "display_name" field.
-func (u *SoftwarePackageUpsertOne) ClearDisplayName() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearDisplayName()
 	})
 }
 
@@ -1633,484 +513,99 @@ func (u *SoftwarePackageUpsertOne) UpdateVersion() *SoftwarePackageUpsertOne {
 	})
 }
 
-// SetPlatform sets the "platform" field.
-func (u *SoftwarePackageUpsertOne) SetPlatform(v softwarepackage.Platform) *SoftwarePackageUpsertOne {
+// ClearVersion clears the value of the "version" field.
+func (u *SoftwarePackageUpsertOne) ClearVersion() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPlatform(v)
+		s.ClearVersion()
 	})
 }
 
-// UpdatePlatform sets the "platform" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdatePlatform() *SoftwarePackageUpsertOne {
+// SetBranch sets the "branch" field.
+func (u *SoftwarePackageUpsertOne) SetBranch(v string) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePlatform()
+		s.SetBranch(v)
 	})
 }
 
-// SetInstallerPath sets the "installer_path" field.
-func (u *SoftwarePackageUpsertOne) SetInstallerPath(v string) *SoftwarePackageUpsertOne {
+// UpdateBranch sets the "branch" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertOne) UpdateBranch() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetInstallerPath(v)
+		s.UpdateBranch()
 	})
 }
 
-// UpdateInstallerPath sets the "installer_path" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateInstallerPath() *SoftwarePackageUpsertOne {
+// ClearBranch clears the value of the "branch" field.
+func (u *SoftwarePackageUpsertOne) ClearBranch() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateInstallerPath()
+		s.ClearBranch()
 	})
 }
 
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (u *SoftwarePackageUpsertOne) SetChecksumSha256(v string) *SoftwarePackageUpsertOne {
+// SetArch sets the "arch" field.
+func (u *SoftwarePackageUpsertOne) SetArch(v string) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetChecksumSha256(v)
+		s.SetArch(v)
 	})
 }
 
-// UpdateChecksumSha256 sets the "checksum_sha256" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateChecksumSha256() *SoftwarePackageUpsertOne {
+// UpdateArch sets the "arch" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertOne) UpdateArch() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateChecksumSha256()
+		s.UpdateArch()
 	})
 }
 
-// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
-func (u *SoftwarePackageUpsertOne) ClearChecksumSha256() *SoftwarePackageUpsertOne {
+// ClearArch clears the value of the "arch" field.
+func (u *SoftwarePackageUpsertOne) ClearArch() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearChecksumSha256()
+		s.ClearArch()
 	})
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (u *SoftwarePackageUpsertOne) SetSizeBytes(v int64) *SoftwarePackageUpsertOne {
+// SetBrewType sets the "brew_type" field.
+func (u *SoftwarePackageUpsertOne) SetBrewType(v string) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetSizeBytes(v)
+		s.SetBrewType(v)
 	})
 }
 
-// AddSizeBytes adds v to the "size_bytes" field.
-func (u *SoftwarePackageUpsertOne) AddSizeBytes(v int64) *SoftwarePackageUpsertOne {
+// UpdateBrewType sets the "brew_type" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertOne) UpdateBrewType() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.AddSizeBytes(v)
+		s.UpdateBrewType()
 	})
 }
 
-// UpdateSizeBytes sets the "size_bytes" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateSizeBytes() *SoftwarePackageUpsertOne {
+// ClearBrewType clears the value of the "brew_type" field.
+func (u *SoftwarePackageUpsertOne) ClearBrewType() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateSizeBytes()
+		s.ClearBrewType()
 	})
 }
 
-// ClearSizeBytes clears the value of the "size_bytes" field.
-func (u *SoftwarePackageUpsertOne) ClearSizeBytes() *SoftwarePackageUpsertOne {
+// SetVerified sets the "verified" field.
+func (u *SoftwarePackageUpsertOne) SetVerified(v bool) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearSizeBytes()
+		s.SetVerified(v)
 	})
 }
 
-// SetIconName sets the "icon_name" field.
-func (u *SoftwarePackageUpsertOne) SetIconName(v string) *SoftwarePackageUpsertOne {
+// UpdateVerified sets the "verified" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertOne) UpdateVerified() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetIconName(v)
+		s.UpdateVerified()
 	})
 }
 
-// UpdateIconName sets the "icon_name" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateIconName() *SoftwarePackageUpsertOne {
+// ClearVerified clears the value of the "verified" field.
+func (u *SoftwarePackageUpsertOne) ClearVerified() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateIconName()
-	})
-}
-
-// ClearIconName clears the value of the "icon_name" field.
-func (u *SoftwarePackageUpsertOne) ClearIconName() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearIconName()
-	})
-}
-
-// SetDescription sets the "description" field.
-func (u *SoftwarePackageUpsertOne) SetDescription(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetDescription(v)
-	})
-}
-
-// UpdateDescription sets the "description" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateDescription() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateDescription()
-	})
-}
-
-// ClearDescription clears the value of the "description" field.
-func (u *SoftwarePackageUpsertOne) ClearDescription() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearDescription()
-	})
-}
-
-// SetCategory sets the "category" field.
-func (u *SoftwarePackageUpsertOne) SetCategory(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetCategory(v)
-	})
-}
-
-// UpdateCategory sets the "category" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateCategory() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateCategory()
-	})
-}
-
-// ClearCategory clears the value of the "category" field.
-func (u *SoftwarePackageUpsertOne) ClearCategory() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearCategory()
-	})
-}
-
-// SetDeveloper sets the "developer" field.
-func (u *SoftwarePackageUpsertOne) SetDeveloper(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetDeveloper(v)
-	})
-}
-
-// UpdateDeveloper sets the "developer" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateDeveloper() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateDeveloper()
-	})
-}
-
-// ClearDeveloper clears the value of the "developer" field.
-func (u *SoftwarePackageUpsertOne) ClearDeveloper() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearDeveloper()
-	})
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (u *SoftwarePackageUpsertOne) SetPkginfoData(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPkginfoData(v)
-	})
-}
-
-// UpdatePkginfoData sets the "pkginfo_data" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdatePkginfoData() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePkginfoData()
-	})
-}
-
-// ClearPkginfoData clears the value of the "pkginfo_data" field.
-func (u *SoftwarePackageUpsertOne) ClearPkginfoData() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearPkginfoData()
-	})
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (u *SoftwarePackageUpsertOne) SetPreInstallScript(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPreInstallScript(v)
-	})
-}
-
-// UpdatePreInstallScript sets the "pre_install_script" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdatePreInstallScript() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePreInstallScript()
-	})
-}
-
-// ClearPreInstallScript clears the value of the "pre_install_script" field.
-func (u *SoftwarePackageUpsertOne) ClearPreInstallScript() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearPreInstallScript()
-	})
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (u *SoftwarePackageUpsertOne) SetPostInstallScript(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPostInstallScript(v)
-	})
-}
-
-// UpdatePostInstallScript sets the "post_install_script" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdatePostInstallScript() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePostInstallScript()
-	})
-}
-
-// ClearPostInstallScript clears the value of the "post_install_script" field.
-func (u *SoftwarePackageUpsertOne) ClearPostInstallScript() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearPostInstallScript()
-	})
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (u *SoftwarePackageUpsertOne) SetUninstallMethod(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetUninstallMethod(v)
-	})
-}
-
-// UpdateUninstallMethod sets the "uninstall_method" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateUninstallMethod() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateUninstallMethod()
-	})
-}
-
-// ClearUninstallMethod clears the value of the "uninstall_method" field.
-func (u *SoftwarePackageUpsertOne) ClearUninstallMethod() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearUninstallMethod()
-	})
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (u *SoftwarePackageUpsertOne) SetInstallsItems(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetInstallsItems(v)
-	})
-}
-
-// UpdateInstallsItems sets the "installs_items" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateInstallsItems() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateInstallsItems()
-	})
-}
-
-// ClearInstallsItems clears the value of the "installs_items" field.
-func (u *SoftwarePackageUpsertOne) ClearInstallsItems() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearInstallsItems()
-	})
-}
-
-// SetReceipts sets the "receipts" field.
-func (u *SoftwarePackageUpsertOne) SetReceipts(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetReceipts(v)
-	})
-}
-
-// UpdateReceipts sets the "receipts" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateReceipts() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateReceipts()
-	})
-}
-
-// ClearReceipts clears the value of the "receipts" field.
-func (u *SoftwarePackageUpsertOne) ClearReceipts() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearReceipts()
-	})
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (u *SoftwarePackageUpsertOne) SetBlockingApps(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetBlockingApps(v)
-	})
-}
-
-// UpdateBlockingApps sets the "blocking_apps" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateBlockingApps() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateBlockingApps()
-	})
-}
-
-// ClearBlockingApps clears the value of the "blocking_apps" field.
-func (u *SoftwarePackageUpsertOne) ClearBlockingApps() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearBlockingApps()
-	})
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (u *SoftwarePackageUpsertOne) SetRestartAction(v softwarepackage.RestartAction) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetRestartAction(v)
-	})
-}
-
-// UpdateRestartAction sets the "restart_action" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateRestartAction() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateRestartAction()
-	})
-}
-
-// ClearRestartAction clears the value of the "restart_action" field.
-func (u *SoftwarePackageUpsertOne) ClearRestartAction() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearRestartAction()
-	})
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (u *SoftwarePackageUpsertOne) SetMinOsVersion(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetMinOsVersion(v)
-	})
-}
-
-// UpdateMinOsVersion sets the "min_os_version" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateMinOsVersion() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateMinOsVersion()
-	})
-}
-
-// ClearMinOsVersion clears the value of the "min_os_version" field.
-func (u *SoftwarePackageUpsertOne) ClearMinOsVersion() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearMinOsVersion()
-	})
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (u *SoftwarePackageUpsertOne) SetMaxOsVersion(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetMaxOsVersion(v)
-	})
-}
-
-// UpdateMaxOsVersion sets the "max_os_version" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateMaxOsVersion() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateMaxOsVersion()
-	})
-}
-
-// ClearMaxOsVersion clears the value of the "max_os_version" field.
-func (u *SoftwarePackageUpsertOne) ClearMaxOsVersion() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearMaxOsVersion()
-	})
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (u *SoftwarePackageUpsertOne) SetSupportedArchitectures(v string) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetSupportedArchitectures(v)
-	})
-}
-
-// UpdateSupportedArchitectures sets the "supported_architectures" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateSupportedArchitectures() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateSupportedArchitectures()
-	})
-}
-
-// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
-func (u *SoftwarePackageUpsertOne) ClearSupportedArchitectures() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearSupportedArchitectures()
-	})
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (u *SoftwarePackageUpsertOne) SetForceInstallDate(v time.Time) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetForceInstallDate(v)
-	})
-}
-
-// UpdateForceInstallDate sets the "force_install_date" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateForceInstallDate() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateForceInstallDate()
-	})
-}
-
-// ClearForceInstallDate clears the value of the "force_install_date" field.
-func (u *SoftwarePackageUpsertOne) ClearForceInstallDate() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearForceInstallDate()
-	})
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (u *SoftwarePackageUpsertOne) SetUnattendedInstall(v bool) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetUnattendedInstall(v)
-	})
-}
-
-// UpdateUnattendedInstall sets the "unattended_install" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateUnattendedInstall() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateUnattendedInstall()
-	})
-}
-
-// ClearUnattendedInstall clears the value of the "unattended_install" field.
-func (u *SoftwarePackageUpsertOne) ClearUnattendedInstall() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearUnattendedInstall()
-	})
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (u *SoftwarePackageUpsertOne) SetUnattendedUninstall(v bool) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetUnattendedUninstall(v)
-	})
-}
-
-// UpdateUnattendedUninstall sets the "unattended_uninstall" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateUnattendedUninstall() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateUnattendedUninstall()
-	})
-}
-
-// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
-func (u *SoftwarePackageUpsertOne) ClearUnattendedUninstall() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearUnattendedUninstall()
-	})
-}
-
-// SetStatus sets the "status" field.
-func (u *SoftwarePackageUpsertOne) SetStatus(v softwarepackage.Status) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetStatus(v)
-	})
-}
-
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateStatus() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateStatus()
-	})
-}
-
-// ClearStatus clears the value of the "status" field.
-func (u *SoftwarePackageUpsertOne) ClearStatus() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearStatus()
+		s.ClearVerified()
 	})
 }
 
 // SetSource sets the "source" field.
-func (u *SoftwarePackageUpsertOne) SetSource(v softwarepackage.Source) *SoftwarePackageUpsertOne {
+func (u *SoftwarePackageUpsertOne) SetSource(v string) *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.SetSource(v)
 	})
@@ -2120,55 +615,6 @@ func (u *SoftwarePackageUpsertOne) SetSource(v softwarepackage.Source) *Software
 func (u *SoftwarePackageUpsertOne) UpdateSource() *SoftwarePackageUpsertOne {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.UpdateSource()
-	})
-}
-
-// ClearSource clears the value of the "source" field.
-func (u *SoftwarePackageUpsertOne) ClearSource() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearSource()
-	})
-}
-
-// SetCreated sets the "created" field.
-func (u *SoftwarePackageUpsertOne) SetCreated(v time.Time) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetCreated(v)
-	})
-}
-
-// UpdateCreated sets the "created" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateCreated() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateCreated()
-	})
-}
-
-// ClearCreated clears the value of the "created" field.
-func (u *SoftwarePackageUpsertOne) ClearCreated() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearCreated()
-	})
-}
-
-// SetModified sets the "modified" field.
-func (u *SoftwarePackageUpsertOne) SetModified(v time.Time) *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetModified(v)
-	})
-}
-
-// UpdateModified sets the "modified" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertOne) UpdateModified() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateModified()
-	})
-}
-
-// ClearModified clears the value of the "modified" field.
-func (u *SoftwarePackageUpsertOne) ClearModified() *SoftwarePackageUpsertOne {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearModified()
 	})
 }
 
@@ -2188,7 +634,12 @@ func (u *SoftwarePackageUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SoftwarePackageUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *SoftwarePackageUpsertOne) ID(ctx context.Context) (id uuid.UUID, err error) {
+	if u.create.driver.Dialect() == dialect.MySQL {
+		// In case of "ON CONFLICT", there is no way to get back non-numeric ID
+		// fields from the database since MySQL does not support the RETURNING clause.
+		return id, errors.New("ent: SoftwarePackageUpsertOne.ID is not supported by MySQL driver. Use SoftwarePackageUpsertOne.Exec instead")
+	}
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -2197,7 +648,7 @@ func (u *SoftwarePackageUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SoftwarePackageUpsertOne) IDX(ctx context.Context) int {
+func (u *SoftwarePackageUpsertOne) IDX(ctx context.Context) uuid.UUID {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -2252,10 +703,6 @@ func (spcb *SoftwarePackageCreateBulk) Save(ctx context.Context) ([]*SoftwarePac
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})
@@ -2307,7 +754,7 @@ func (spcb *SoftwarePackageCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.SoftwarePackageUpsert) {
-//			SetName(v+v).
+//			SetPackageID(v+v).
 //		}).
 //		Exec(ctx)
 func (spcb *SoftwarePackageCreateBulk) OnConflict(opts ...sql.ConflictOption) *SoftwarePackageUpsertBulk {
@@ -2342,10 +789,20 @@ type SoftwarePackageUpsertBulk struct {
 //	client.SoftwarePackage.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
+//			sql.ResolveWith(func(u *sql.UpdateSet) {
+//				u.SetIgnore(softwarepackage.FieldID)
+//			}),
 //		).
 //		Exec(ctx)
 func (u *SoftwarePackageUpsertBulk) UpdateNewValues() *SoftwarePackageUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.ID(); exists {
+				s.SetIgnore(softwarepackage.FieldID)
+			}
+		}
+	}))
 	return u
 }
 
@@ -2376,6 +833,20 @@ func (u *SoftwarePackageUpsertBulk) Update(set func(*SoftwarePackageUpsert)) *So
 	return u
 }
 
+// SetPackageID sets the "package_id" field.
+func (u *SoftwarePackageUpsertBulk) SetPackageID(v string) *SoftwarePackageUpsertBulk {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.SetPackageID(v)
+	})
+}
+
+// UpdatePackageID sets the "package_id" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertBulk) UpdatePackageID() *SoftwarePackageUpsertBulk {
+	return u.Update(func(s *SoftwarePackageUpsert) {
+		s.UpdatePackageID()
+	})
+}
+
 // SetName sets the "name" field.
 func (u *SoftwarePackageUpsertBulk) SetName(v string) *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
@@ -2387,27 +858,6 @@ func (u *SoftwarePackageUpsertBulk) SetName(v string) *SoftwarePackageUpsertBulk
 func (u *SoftwarePackageUpsertBulk) UpdateName() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.UpdateName()
-	})
-}
-
-// SetDisplayName sets the "display_name" field.
-func (u *SoftwarePackageUpsertBulk) SetDisplayName(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetDisplayName(v)
-	})
-}
-
-// UpdateDisplayName sets the "display_name" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateDisplayName() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateDisplayName()
-	})
-}
-
-// ClearDisplayName clears the value of the "display_name" field.
-func (u *SoftwarePackageUpsertBulk) ClearDisplayName() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearDisplayName()
 	})
 }
 
@@ -2425,484 +875,99 @@ func (u *SoftwarePackageUpsertBulk) UpdateVersion() *SoftwarePackageUpsertBulk {
 	})
 }
 
-// SetPlatform sets the "platform" field.
-func (u *SoftwarePackageUpsertBulk) SetPlatform(v softwarepackage.Platform) *SoftwarePackageUpsertBulk {
+// ClearVersion clears the value of the "version" field.
+func (u *SoftwarePackageUpsertBulk) ClearVersion() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPlatform(v)
+		s.ClearVersion()
 	})
 }
 
-// UpdatePlatform sets the "platform" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdatePlatform() *SoftwarePackageUpsertBulk {
+// SetBranch sets the "branch" field.
+func (u *SoftwarePackageUpsertBulk) SetBranch(v string) *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePlatform()
+		s.SetBranch(v)
 	})
 }
 
-// SetInstallerPath sets the "installer_path" field.
-func (u *SoftwarePackageUpsertBulk) SetInstallerPath(v string) *SoftwarePackageUpsertBulk {
+// UpdateBranch sets the "branch" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertBulk) UpdateBranch() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetInstallerPath(v)
+		s.UpdateBranch()
 	})
 }
 
-// UpdateInstallerPath sets the "installer_path" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateInstallerPath() *SoftwarePackageUpsertBulk {
+// ClearBranch clears the value of the "branch" field.
+func (u *SoftwarePackageUpsertBulk) ClearBranch() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateInstallerPath()
+		s.ClearBranch()
 	})
 }
 
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (u *SoftwarePackageUpsertBulk) SetChecksumSha256(v string) *SoftwarePackageUpsertBulk {
+// SetArch sets the "arch" field.
+func (u *SoftwarePackageUpsertBulk) SetArch(v string) *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetChecksumSha256(v)
+		s.SetArch(v)
 	})
 }
 
-// UpdateChecksumSha256 sets the "checksum_sha256" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateChecksumSha256() *SoftwarePackageUpsertBulk {
+// UpdateArch sets the "arch" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertBulk) UpdateArch() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateChecksumSha256()
+		s.UpdateArch()
 	})
 }
 
-// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
-func (u *SoftwarePackageUpsertBulk) ClearChecksumSha256() *SoftwarePackageUpsertBulk {
+// ClearArch clears the value of the "arch" field.
+func (u *SoftwarePackageUpsertBulk) ClearArch() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearChecksumSha256()
+		s.ClearArch()
 	})
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (u *SoftwarePackageUpsertBulk) SetSizeBytes(v int64) *SoftwarePackageUpsertBulk {
+// SetBrewType sets the "brew_type" field.
+func (u *SoftwarePackageUpsertBulk) SetBrewType(v string) *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetSizeBytes(v)
+		s.SetBrewType(v)
 	})
 }
 
-// AddSizeBytes adds v to the "size_bytes" field.
-func (u *SoftwarePackageUpsertBulk) AddSizeBytes(v int64) *SoftwarePackageUpsertBulk {
+// UpdateBrewType sets the "brew_type" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertBulk) UpdateBrewType() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.AddSizeBytes(v)
+		s.UpdateBrewType()
 	})
 }
 
-// UpdateSizeBytes sets the "size_bytes" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateSizeBytes() *SoftwarePackageUpsertBulk {
+// ClearBrewType clears the value of the "brew_type" field.
+func (u *SoftwarePackageUpsertBulk) ClearBrewType() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateSizeBytes()
+		s.ClearBrewType()
 	})
 }
 
-// ClearSizeBytes clears the value of the "size_bytes" field.
-func (u *SoftwarePackageUpsertBulk) ClearSizeBytes() *SoftwarePackageUpsertBulk {
+// SetVerified sets the "verified" field.
+func (u *SoftwarePackageUpsertBulk) SetVerified(v bool) *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearSizeBytes()
+		s.SetVerified(v)
 	})
 }
 
-// SetIconName sets the "icon_name" field.
-func (u *SoftwarePackageUpsertBulk) SetIconName(v string) *SoftwarePackageUpsertBulk {
+// UpdateVerified sets the "verified" field to the value that was provided on create.
+func (u *SoftwarePackageUpsertBulk) UpdateVerified() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetIconName(v)
+		s.UpdateVerified()
 	})
 }
 
-// UpdateIconName sets the "icon_name" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateIconName() *SoftwarePackageUpsertBulk {
+// ClearVerified clears the value of the "verified" field.
+func (u *SoftwarePackageUpsertBulk) ClearVerified() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateIconName()
-	})
-}
-
-// ClearIconName clears the value of the "icon_name" field.
-func (u *SoftwarePackageUpsertBulk) ClearIconName() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearIconName()
-	})
-}
-
-// SetDescription sets the "description" field.
-func (u *SoftwarePackageUpsertBulk) SetDescription(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetDescription(v)
-	})
-}
-
-// UpdateDescription sets the "description" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateDescription() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateDescription()
-	})
-}
-
-// ClearDescription clears the value of the "description" field.
-func (u *SoftwarePackageUpsertBulk) ClearDescription() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearDescription()
-	})
-}
-
-// SetCategory sets the "category" field.
-func (u *SoftwarePackageUpsertBulk) SetCategory(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetCategory(v)
-	})
-}
-
-// UpdateCategory sets the "category" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateCategory() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateCategory()
-	})
-}
-
-// ClearCategory clears the value of the "category" field.
-func (u *SoftwarePackageUpsertBulk) ClearCategory() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearCategory()
-	})
-}
-
-// SetDeveloper sets the "developer" field.
-func (u *SoftwarePackageUpsertBulk) SetDeveloper(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetDeveloper(v)
-	})
-}
-
-// UpdateDeveloper sets the "developer" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateDeveloper() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateDeveloper()
-	})
-}
-
-// ClearDeveloper clears the value of the "developer" field.
-func (u *SoftwarePackageUpsertBulk) ClearDeveloper() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearDeveloper()
-	})
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (u *SoftwarePackageUpsertBulk) SetPkginfoData(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPkginfoData(v)
-	})
-}
-
-// UpdatePkginfoData sets the "pkginfo_data" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdatePkginfoData() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePkginfoData()
-	})
-}
-
-// ClearPkginfoData clears the value of the "pkginfo_data" field.
-func (u *SoftwarePackageUpsertBulk) ClearPkginfoData() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearPkginfoData()
-	})
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (u *SoftwarePackageUpsertBulk) SetPreInstallScript(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPreInstallScript(v)
-	})
-}
-
-// UpdatePreInstallScript sets the "pre_install_script" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdatePreInstallScript() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePreInstallScript()
-	})
-}
-
-// ClearPreInstallScript clears the value of the "pre_install_script" field.
-func (u *SoftwarePackageUpsertBulk) ClearPreInstallScript() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearPreInstallScript()
-	})
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (u *SoftwarePackageUpsertBulk) SetPostInstallScript(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetPostInstallScript(v)
-	})
-}
-
-// UpdatePostInstallScript sets the "post_install_script" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdatePostInstallScript() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdatePostInstallScript()
-	})
-}
-
-// ClearPostInstallScript clears the value of the "post_install_script" field.
-func (u *SoftwarePackageUpsertBulk) ClearPostInstallScript() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearPostInstallScript()
-	})
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (u *SoftwarePackageUpsertBulk) SetUninstallMethod(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetUninstallMethod(v)
-	})
-}
-
-// UpdateUninstallMethod sets the "uninstall_method" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateUninstallMethod() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateUninstallMethod()
-	})
-}
-
-// ClearUninstallMethod clears the value of the "uninstall_method" field.
-func (u *SoftwarePackageUpsertBulk) ClearUninstallMethod() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearUninstallMethod()
-	})
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (u *SoftwarePackageUpsertBulk) SetInstallsItems(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetInstallsItems(v)
-	})
-}
-
-// UpdateInstallsItems sets the "installs_items" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateInstallsItems() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateInstallsItems()
-	})
-}
-
-// ClearInstallsItems clears the value of the "installs_items" field.
-func (u *SoftwarePackageUpsertBulk) ClearInstallsItems() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearInstallsItems()
-	})
-}
-
-// SetReceipts sets the "receipts" field.
-func (u *SoftwarePackageUpsertBulk) SetReceipts(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetReceipts(v)
-	})
-}
-
-// UpdateReceipts sets the "receipts" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateReceipts() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateReceipts()
-	})
-}
-
-// ClearReceipts clears the value of the "receipts" field.
-func (u *SoftwarePackageUpsertBulk) ClearReceipts() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearReceipts()
-	})
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (u *SoftwarePackageUpsertBulk) SetBlockingApps(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetBlockingApps(v)
-	})
-}
-
-// UpdateBlockingApps sets the "blocking_apps" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateBlockingApps() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateBlockingApps()
-	})
-}
-
-// ClearBlockingApps clears the value of the "blocking_apps" field.
-func (u *SoftwarePackageUpsertBulk) ClearBlockingApps() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearBlockingApps()
-	})
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (u *SoftwarePackageUpsertBulk) SetRestartAction(v softwarepackage.RestartAction) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetRestartAction(v)
-	})
-}
-
-// UpdateRestartAction sets the "restart_action" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateRestartAction() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateRestartAction()
-	})
-}
-
-// ClearRestartAction clears the value of the "restart_action" field.
-func (u *SoftwarePackageUpsertBulk) ClearRestartAction() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearRestartAction()
-	})
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (u *SoftwarePackageUpsertBulk) SetMinOsVersion(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetMinOsVersion(v)
-	})
-}
-
-// UpdateMinOsVersion sets the "min_os_version" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateMinOsVersion() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateMinOsVersion()
-	})
-}
-
-// ClearMinOsVersion clears the value of the "min_os_version" field.
-func (u *SoftwarePackageUpsertBulk) ClearMinOsVersion() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearMinOsVersion()
-	})
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (u *SoftwarePackageUpsertBulk) SetMaxOsVersion(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetMaxOsVersion(v)
-	})
-}
-
-// UpdateMaxOsVersion sets the "max_os_version" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateMaxOsVersion() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateMaxOsVersion()
-	})
-}
-
-// ClearMaxOsVersion clears the value of the "max_os_version" field.
-func (u *SoftwarePackageUpsertBulk) ClearMaxOsVersion() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearMaxOsVersion()
-	})
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (u *SoftwarePackageUpsertBulk) SetSupportedArchitectures(v string) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetSupportedArchitectures(v)
-	})
-}
-
-// UpdateSupportedArchitectures sets the "supported_architectures" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateSupportedArchitectures() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateSupportedArchitectures()
-	})
-}
-
-// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
-func (u *SoftwarePackageUpsertBulk) ClearSupportedArchitectures() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearSupportedArchitectures()
-	})
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (u *SoftwarePackageUpsertBulk) SetForceInstallDate(v time.Time) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetForceInstallDate(v)
-	})
-}
-
-// UpdateForceInstallDate sets the "force_install_date" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateForceInstallDate() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateForceInstallDate()
-	})
-}
-
-// ClearForceInstallDate clears the value of the "force_install_date" field.
-func (u *SoftwarePackageUpsertBulk) ClearForceInstallDate() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearForceInstallDate()
-	})
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (u *SoftwarePackageUpsertBulk) SetUnattendedInstall(v bool) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetUnattendedInstall(v)
-	})
-}
-
-// UpdateUnattendedInstall sets the "unattended_install" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateUnattendedInstall() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateUnattendedInstall()
-	})
-}
-
-// ClearUnattendedInstall clears the value of the "unattended_install" field.
-func (u *SoftwarePackageUpsertBulk) ClearUnattendedInstall() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearUnattendedInstall()
-	})
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (u *SoftwarePackageUpsertBulk) SetUnattendedUninstall(v bool) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetUnattendedUninstall(v)
-	})
-}
-
-// UpdateUnattendedUninstall sets the "unattended_uninstall" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateUnattendedUninstall() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateUnattendedUninstall()
-	})
-}
-
-// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
-func (u *SoftwarePackageUpsertBulk) ClearUnattendedUninstall() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearUnattendedUninstall()
-	})
-}
-
-// SetStatus sets the "status" field.
-func (u *SoftwarePackageUpsertBulk) SetStatus(v softwarepackage.Status) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetStatus(v)
-	})
-}
-
-// UpdateStatus sets the "status" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateStatus() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateStatus()
-	})
-}
-
-// ClearStatus clears the value of the "status" field.
-func (u *SoftwarePackageUpsertBulk) ClearStatus() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearStatus()
+		s.ClearVerified()
 	})
 }
 
 // SetSource sets the "source" field.
-func (u *SoftwarePackageUpsertBulk) SetSource(v softwarepackage.Source) *SoftwarePackageUpsertBulk {
+func (u *SoftwarePackageUpsertBulk) SetSource(v string) *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.SetSource(v)
 	})
@@ -2912,55 +977,6 @@ func (u *SoftwarePackageUpsertBulk) SetSource(v softwarepackage.Source) *Softwar
 func (u *SoftwarePackageUpsertBulk) UpdateSource() *SoftwarePackageUpsertBulk {
 	return u.Update(func(s *SoftwarePackageUpsert) {
 		s.UpdateSource()
-	})
-}
-
-// ClearSource clears the value of the "source" field.
-func (u *SoftwarePackageUpsertBulk) ClearSource() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearSource()
-	})
-}
-
-// SetCreated sets the "created" field.
-func (u *SoftwarePackageUpsertBulk) SetCreated(v time.Time) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetCreated(v)
-	})
-}
-
-// UpdateCreated sets the "created" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateCreated() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateCreated()
-	})
-}
-
-// ClearCreated clears the value of the "created" field.
-func (u *SoftwarePackageUpsertBulk) ClearCreated() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearCreated()
-	})
-}
-
-// SetModified sets the "modified" field.
-func (u *SoftwarePackageUpsertBulk) SetModified(v time.Time) *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.SetModified(v)
-	})
-}
-
-// UpdateModified sets the "modified" field to the value that was provided on create.
-func (u *SoftwarePackageUpsertBulk) UpdateModified() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.UpdateModified()
-	})
-}
-
-// ClearModified clears the value of the "modified" field.
-func (u *SoftwarePackageUpsertBulk) ClearModified() *SoftwarePackageUpsertBulk {
-	return u.Update(func(s *SoftwarePackageUpsert) {
-		s.ClearModified()
 	})
 }
 

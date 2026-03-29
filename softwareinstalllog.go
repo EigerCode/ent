@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/softwareinstalllog"
-	"github.com/EigerCode/ent/softwarepackage"
 )
 
 // SoftwareInstallLog is the model entity for the SoftwareInstallLog schema.
@@ -35,10 +35,10 @@ type SoftwareInstallLog struct {
 	Created time.Time `json:"created,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SoftwareInstallLogQuery when eager-loading is set.
-	Edges                         SoftwareInstallLogEdges `json:"edges"`
-	agent_software_install_logs   *string
-	software_package_install_logs *int
-	selectValues                  sql.SelectValues
+	Edges                        SoftwareInstallLogEdges `json:"edges"`
+	agent_software_install_logs  *string
+	managed_package_install_logs *int
+	selectValues                 sql.SelectValues
 }
 
 // SoftwareInstallLogEdges holds the relations/edges for other nodes in the graph.
@@ -46,7 +46,7 @@ type SoftwareInstallLogEdges struct {
 	// Agent holds the value of the agent edge.
 	Agent *Agent `json:"agent,omitempty"`
 	// Package holds the value of the package edge.
-	Package *SoftwarePackage `json:"package,omitempty"`
+	Package *ManagedPackage `json:"package,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -65,11 +65,11 @@ func (e SoftwareInstallLogEdges) AgentOrErr() (*Agent, error) {
 
 // PackageOrErr returns the Package value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e SoftwareInstallLogEdges) PackageOrErr() (*SoftwarePackage, error) {
+func (e SoftwareInstallLogEdges) PackageOrErr() (*ManagedPackage, error) {
 	if e.Package != nil {
 		return e.Package, nil
 	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: softwarepackage.Label}
+		return nil, &NotFoundError{label: managedpackage.Label}
 	}
 	return nil, &NotLoadedError{edge: "package"}
 }
@@ -87,7 +87,7 @@ func (*SoftwareInstallLog) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case softwareinstalllog.ForeignKeys[0]: // agent_software_install_logs
 			values[i] = new(sql.NullString)
-		case softwareinstalllog.ForeignKeys[1]: // software_package_install_logs
+		case softwareinstalllog.ForeignKeys[1]: // managed_package_install_logs
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -163,10 +163,10 @@ func (sil *SoftwareInstallLog) assignValues(columns []string, values []any) erro
 			}
 		case softwareinstalllog.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field software_package_install_logs", value)
+				return fmt.Errorf("unexpected type %T for edge-field managed_package_install_logs", value)
 			} else if value.Valid {
-				sil.software_package_install_logs = new(int)
-				*sil.software_package_install_logs = int(value.Int64)
+				sil.managed_package_install_logs = new(int)
+				*sil.managed_package_install_logs = int(value.Int64)
 			}
 		default:
 			sil.selectValues.Set(columns[i], values[i])
@@ -187,7 +187,7 @@ func (sil *SoftwareInstallLog) QueryAgent() *AgentQuery {
 }
 
 // QueryPackage queries the "package" edge of the SoftwareInstallLog entity.
-func (sil *SoftwareInstallLog) QueryPackage() *SoftwarePackageQuery {
+func (sil *SoftwareInstallLog) QueryPackage() *ManagedPackageQuery {
 	return NewSoftwareInstallLogClient(sil.config).QueryPackage(sil)
 }
 

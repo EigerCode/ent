@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/softwareinstalllog"
-	"github.com/EigerCode/ent/softwarepackage"
 )
 
 // SoftwareInstallLogCreate is the builder for creating a SoftwareInstallLog entity.
@@ -117,13 +117,13 @@ func (silc *SoftwareInstallLogCreate) SetAgent(a *Agent) *SoftwareInstallLogCrea
 	return silc.SetAgentID(a.ID)
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by ID.
+// SetPackageID sets the "package" edge to the ManagedPackage entity by ID.
 func (silc *SoftwareInstallLogCreate) SetPackageID(id int) *SoftwareInstallLogCreate {
 	silc.mutation.SetPackageID(id)
 	return silc
 }
 
-// SetNillablePackageID sets the "package" edge to the SoftwarePackage entity by ID if the given value is not nil.
+// SetNillablePackageID sets the "package" edge to the ManagedPackage entity by ID if the given value is not nil.
 func (silc *SoftwareInstallLogCreate) SetNillablePackageID(id *int) *SoftwareInstallLogCreate {
 	if id != nil {
 		silc = silc.SetPackageID(*id)
@@ -131,9 +131,9 @@ func (silc *SoftwareInstallLogCreate) SetNillablePackageID(id *int) *SoftwareIns
 	return silc
 }
 
-// SetPackage sets the "package" edge to the SoftwarePackage entity.
-func (silc *SoftwareInstallLogCreate) SetPackage(s *SoftwarePackage) *SoftwareInstallLogCreate {
-	return silc.SetPackageID(s.ID)
+// SetPackage sets the "package" edge to the ManagedPackage entity.
+func (silc *SoftwareInstallLogCreate) SetPackage(m *ManagedPackage) *SoftwareInstallLogCreate {
+	return silc.SetPackageID(m.ID)
 }
 
 // Mutation returns the SoftwareInstallLogMutation object of the builder.
@@ -286,13 +286,13 @@ func (silc *SoftwareInstallLogCreate) createSpec() (*SoftwareInstallLog, *sqlgra
 			Columns: []string{softwareinstalllog.PackageColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.software_package_install_logs = &nodes[0]
+		_node.managed_package_install_logs = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

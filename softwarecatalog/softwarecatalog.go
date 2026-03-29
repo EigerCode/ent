@@ -41,9 +41,9 @@ const (
 	TenantColumn = "tenant_software_catalogs"
 	// PackagesTable is the table that holds the packages relation/edge. The primary key declared below.
 	PackagesTable = "software_catalog_packages"
-	// PackagesInverseTable is the table name for the SoftwarePackage entity.
-	// It exists in this package in order to avoid circular dependency with the "softwarepackage" package.
-	PackagesInverseTable = "software_packages"
+	// PackagesInverseTable is the table name for the ManagedPackage entity.
+	// It exists in this package in order to avoid circular dependency with the "managedpackage" package.
+	PackagesInverseTable = "managed_packages"
 )
 
 // Columns holds all SQL columns for softwarecatalog fields.
@@ -66,7 +66,7 @@ var ForeignKeys = []string{
 var (
 	// PackagesPrimaryKey and PackagesColumn2 are the table columns denoting the
 	// primary key for the packages relation (M2M).
-	PackagesPrimaryKey = []string{"software_catalog_id", "software_package_id"}
+	PackagesPrimaryKey = []string{"software_catalog_id", "managed_package_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

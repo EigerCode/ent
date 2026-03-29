@@ -31,7 +31,7 @@ func (SoftwareInstallLog) Fields() []ent.Field {
 func (SoftwareInstallLog) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("agent", Agent.Type).Unique().Ref("software_install_logs").Required(),
-		edge.From("package", SoftwarePackage.Type).Unique().Ref("install_logs"),
+		edge.From("package", ManagedPackage.Type).Unique().Ref("install_logs"),
 	}
 }
 

@@ -1283,6 +1283,48 @@ func (tc *TaskCreate) SetNillableOrder(i *int) *TaskCreate {
 	return tc
 }
 
+// SetPackageBranch sets the "package_branch" field.
+func (tc *TaskCreate) SetPackageBranch(s string) *TaskCreate {
+	tc.mutation.SetPackageBranch(s)
+	return tc
+}
+
+// SetNillablePackageBranch sets the "package_branch" field if the given value is not nil.
+func (tc *TaskCreate) SetNillablePackageBranch(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetPackageBranch(*s)
+	}
+	return tc
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (tc *TaskCreate) SetPackageArch(s string) *TaskCreate {
+	tc.mutation.SetPackageArch(s)
+	return tc
+}
+
+// SetNillablePackageArch sets the "package_arch" field if the given value is not nil.
+func (tc *TaskCreate) SetNillablePackageArch(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetPackageArch(*s)
+	}
+	return tc
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (tc *TaskCreate) SetPackageBrewType(s string) *TaskCreate {
+	tc.mutation.SetPackageBrewType(s)
+	return tc
+}
+
+// SetNillablePackageBrewType sets the "package_brew_type" field if the given value is not nil.
+func (tc *TaskCreate) SetNillablePackageBrewType(s *string) *TaskCreate {
+	if s != nil {
+		tc.SetPackageBrewType(*s)
+	}
+	return tc
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tc *TaskCreate) AddTagIDs(ids ...int) *TaskCreate {
 	tc.mutation.AddTagIDs(ids...)
@@ -1598,6 +1640,18 @@ func (tc *TaskCreate) defaults() {
 	if _, ok := tc.mutation.Order(); !ok {
 		v := task.DefaultOrder
 		tc.mutation.SetOrder(v)
+	}
+	if _, ok := tc.mutation.PackageBranch(); !ok {
+		v := task.DefaultPackageBranch
+		tc.mutation.SetPackageBranch(v)
+	}
+	if _, ok := tc.mutation.PackageArch(); !ok {
+		v := task.DefaultPackageArch
+		tc.mutation.SetPackageArch(v)
+	}
+	if _, ok := tc.mutation.PackageBrewType(); !ok {
+		v := task.DefaultPackageBrewType
+		tc.mutation.SetPackageBrewType(v)
 	}
 }
 
@@ -2037,6 +2091,18 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Order(); ok {
 		_spec.SetField(task.FieldOrder, field.TypeInt, value)
 		_node.Order = value
+	}
+	if value, ok := tc.mutation.PackageBranch(); ok {
+		_spec.SetField(task.FieldPackageBranch, field.TypeString, value)
+		_node.PackageBranch = value
+	}
+	if value, ok := tc.mutation.PackageArch(); ok {
+		_spec.SetField(task.FieldPackageArch, field.TypeString, value)
+		_node.PackageArch = value
+	}
+	if value, ok := tc.mutation.PackageBrewType(); ok {
+		_spec.SetField(task.FieldPackageBrewType, field.TypeString, value)
+		_node.PackageBrewType = value
 	}
 	if nodes := tc.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -3774,6 +3840,60 @@ func (u *TaskUpsert) AddOrder(v int) *TaskUpsert {
 // ClearOrder clears the value of the "order" field.
 func (u *TaskUpsert) ClearOrder() *TaskUpsert {
 	u.SetNull(task.FieldOrder)
+	return u
+}
+
+// SetPackageBranch sets the "package_branch" field.
+func (u *TaskUpsert) SetPackageBranch(v string) *TaskUpsert {
+	u.Set(task.FieldPackageBranch, v)
+	return u
+}
+
+// UpdatePackageBranch sets the "package_branch" field to the value that was provided on create.
+func (u *TaskUpsert) UpdatePackageBranch() *TaskUpsert {
+	u.SetExcluded(task.FieldPackageBranch)
+	return u
+}
+
+// ClearPackageBranch clears the value of the "package_branch" field.
+func (u *TaskUpsert) ClearPackageBranch() *TaskUpsert {
+	u.SetNull(task.FieldPackageBranch)
+	return u
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (u *TaskUpsert) SetPackageArch(v string) *TaskUpsert {
+	u.Set(task.FieldPackageArch, v)
+	return u
+}
+
+// UpdatePackageArch sets the "package_arch" field to the value that was provided on create.
+func (u *TaskUpsert) UpdatePackageArch() *TaskUpsert {
+	u.SetExcluded(task.FieldPackageArch)
+	return u
+}
+
+// ClearPackageArch clears the value of the "package_arch" field.
+func (u *TaskUpsert) ClearPackageArch() *TaskUpsert {
+	u.SetNull(task.FieldPackageArch)
+	return u
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (u *TaskUpsert) SetPackageBrewType(v string) *TaskUpsert {
+	u.Set(task.FieldPackageBrewType, v)
+	return u
+}
+
+// UpdatePackageBrewType sets the "package_brew_type" field to the value that was provided on create.
+func (u *TaskUpsert) UpdatePackageBrewType() *TaskUpsert {
+	u.SetExcluded(task.FieldPackageBrewType)
+	return u
+}
+
+// ClearPackageBrewType clears the value of the "package_brew_type" field.
+func (u *TaskUpsert) ClearPackageBrewType() *TaskUpsert {
+	u.SetNull(task.FieldPackageBrewType)
 	return u
 }
 
@@ -5725,6 +5845,69 @@ func (u *TaskUpsertOne) UpdateOrder() *TaskUpsertOne {
 func (u *TaskUpsertOne) ClearOrder() *TaskUpsertOne {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearOrder()
+	})
+}
+
+// SetPackageBranch sets the "package_branch" field.
+func (u *TaskUpsertOne) SetPackageBranch(v string) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetPackageBranch(v)
+	})
+}
+
+// UpdatePackageBranch sets the "package_branch" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdatePackageBranch() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdatePackageBranch()
+	})
+}
+
+// ClearPackageBranch clears the value of the "package_branch" field.
+func (u *TaskUpsertOne) ClearPackageBranch() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearPackageBranch()
+	})
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (u *TaskUpsertOne) SetPackageArch(v string) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetPackageArch(v)
+	})
+}
+
+// UpdatePackageArch sets the "package_arch" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdatePackageArch() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdatePackageArch()
+	})
+}
+
+// ClearPackageArch clears the value of the "package_arch" field.
+func (u *TaskUpsertOne) ClearPackageArch() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearPackageArch()
+	})
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (u *TaskUpsertOne) SetPackageBrewType(v string) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetPackageBrewType(v)
+	})
+}
+
+// UpdatePackageBrewType sets the "package_brew_type" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdatePackageBrewType() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdatePackageBrewType()
+	})
+}
+
+// ClearPackageBrewType clears the value of the "package_brew_type" field.
+func (u *TaskUpsertOne) ClearPackageBrewType() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearPackageBrewType()
 	})
 }
 
@@ -7840,6 +8023,69 @@ func (u *TaskUpsertBulk) UpdateOrder() *TaskUpsertBulk {
 func (u *TaskUpsertBulk) ClearOrder() *TaskUpsertBulk {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearOrder()
+	})
+}
+
+// SetPackageBranch sets the "package_branch" field.
+func (u *TaskUpsertBulk) SetPackageBranch(v string) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetPackageBranch(v)
+	})
+}
+
+// UpdatePackageBranch sets the "package_branch" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdatePackageBranch() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdatePackageBranch()
+	})
+}
+
+// ClearPackageBranch clears the value of the "package_branch" field.
+func (u *TaskUpsertBulk) ClearPackageBranch() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearPackageBranch()
+	})
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (u *TaskUpsertBulk) SetPackageArch(v string) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetPackageArch(v)
+	})
+}
+
+// UpdatePackageArch sets the "package_arch" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdatePackageArch() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdatePackageArch()
+	})
+}
+
+// ClearPackageArch clears the value of the "package_arch" field.
+func (u *TaskUpsertBulk) ClearPackageArch() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearPackageArch()
+	})
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (u *TaskUpsertBulk) SetPackageBrewType(v string) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetPackageBrewType(v)
+	})
+}
+
+// UpdatePackageBrewType sets the "package_brew_type" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdatePackageBrewType() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdatePackageBrewType()
+	})
+}
+
+// ClearPackageBrewType clears the value of the "package_brew_type" field.
+func (u *TaskUpsertBulk) ClearPackageBrewType() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearPackageBrewType()
 	})
 }
 

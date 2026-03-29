@@ -70,6 +70,21 @@ func Version(v string) predicate.Deployment {
 	return predicate.Deployment(sql.FieldEQ(FieldVersion, v))
 }
 
+// Branch applies equality check predicate on the "branch" field. It's identical to BranchEQ.
+func Branch(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldBranch, v))
+}
+
+// BrewType applies equality check predicate on the "brew_type" field. It's identical to BrewTypeEQ.
+func BrewType(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldBrewType, v))
+}
+
+// Verified applies equality check predicate on the "verified" field. It's identical to VerifiedEQ.
+func Verified(v bool) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldVerified, v))
+}
+
 // Installed applies equality check predicate on the "installed" field. It's identical to InstalledEQ.
 func Installed(v time.Time) predicate.Deployment {
 	return predicate.Deployment(sql.FieldEQ(FieldInstalled, v))
@@ -298,6 +313,176 @@ func VersionEqualFold(v string) predicate.Deployment {
 // VersionContainsFold applies the ContainsFold predicate on the "version" field.
 func VersionContainsFold(v string) predicate.Deployment {
 	return predicate.Deployment(sql.FieldContainsFold(FieldVersion, v))
+}
+
+// BranchEQ applies the EQ predicate on the "branch" field.
+func BranchEQ(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldBranch, v))
+}
+
+// BranchNEQ applies the NEQ predicate on the "branch" field.
+func BranchNEQ(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNEQ(FieldBranch, v))
+}
+
+// BranchIn applies the In predicate on the "branch" field.
+func BranchIn(vs ...string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldIn(FieldBranch, vs...))
+}
+
+// BranchNotIn applies the NotIn predicate on the "branch" field.
+func BranchNotIn(vs ...string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotIn(FieldBranch, vs...))
+}
+
+// BranchGT applies the GT predicate on the "branch" field.
+func BranchGT(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldGT(FieldBranch, v))
+}
+
+// BranchGTE applies the GTE predicate on the "branch" field.
+func BranchGTE(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldGTE(FieldBranch, v))
+}
+
+// BranchLT applies the LT predicate on the "branch" field.
+func BranchLT(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldLT(FieldBranch, v))
+}
+
+// BranchLTE applies the LTE predicate on the "branch" field.
+func BranchLTE(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldLTE(FieldBranch, v))
+}
+
+// BranchContains applies the Contains predicate on the "branch" field.
+func BranchContains(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldContains(FieldBranch, v))
+}
+
+// BranchHasPrefix applies the HasPrefix predicate on the "branch" field.
+func BranchHasPrefix(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldHasPrefix(FieldBranch, v))
+}
+
+// BranchHasSuffix applies the HasSuffix predicate on the "branch" field.
+func BranchHasSuffix(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldHasSuffix(FieldBranch, v))
+}
+
+// BranchIsNil applies the IsNil predicate on the "branch" field.
+func BranchIsNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldIsNull(FieldBranch))
+}
+
+// BranchNotNil applies the NotNil predicate on the "branch" field.
+func BranchNotNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotNull(FieldBranch))
+}
+
+// BranchEqualFold applies the EqualFold predicate on the "branch" field.
+func BranchEqualFold(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEqualFold(FieldBranch, v))
+}
+
+// BranchContainsFold applies the ContainsFold predicate on the "branch" field.
+func BranchContainsFold(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldContainsFold(FieldBranch, v))
+}
+
+// BrewTypeEQ applies the EQ predicate on the "brew_type" field.
+func BrewTypeEQ(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldBrewType, v))
+}
+
+// BrewTypeNEQ applies the NEQ predicate on the "brew_type" field.
+func BrewTypeNEQ(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNEQ(FieldBrewType, v))
+}
+
+// BrewTypeIn applies the In predicate on the "brew_type" field.
+func BrewTypeIn(vs ...string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldIn(FieldBrewType, vs...))
+}
+
+// BrewTypeNotIn applies the NotIn predicate on the "brew_type" field.
+func BrewTypeNotIn(vs ...string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotIn(FieldBrewType, vs...))
+}
+
+// BrewTypeGT applies the GT predicate on the "brew_type" field.
+func BrewTypeGT(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldGT(FieldBrewType, v))
+}
+
+// BrewTypeGTE applies the GTE predicate on the "brew_type" field.
+func BrewTypeGTE(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldGTE(FieldBrewType, v))
+}
+
+// BrewTypeLT applies the LT predicate on the "brew_type" field.
+func BrewTypeLT(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldLT(FieldBrewType, v))
+}
+
+// BrewTypeLTE applies the LTE predicate on the "brew_type" field.
+func BrewTypeLTE(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldLTE(FieldBrewType, v))
+}
+
+// BrewTypeContains applies the Contains predicate on the "brew_type" field.
+func BrewTypeContains(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldContains(FieldBrewType, v))
+}
+
+// BrewTypeHasPrefix applies the HasPrefix predicate on the "brew_type" field.
+func BrewTypeHasPrefix(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldHasPrefix(FieldBrewType, v))
+}
+
+// BrewTypeHasSuffix applies the HasSuffix predicate on the "brew_type" field.
+func BrewTypeHasSuffix(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldHasSuffix(FieldBrewType, v))
+}
+
+// BrewTypeIsNil applies the IsNil predicate on the "brew_type" field.
+func BrewTypeIsNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldIsNull(FieldBrewType))
+}
+
+// BrewTypeNotNil applies the NotNil predicate on the "brew_type" field.
+func BrewTypeNotNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotNull(FieldBrewType))
+}
+
+// BrewTypeEqualFold applies the EqualFold predicate on the "brew_type" field.
+func BrewTypeEqualFold(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEqualFold(FieldBrewType, v))
+}
+
+// BrewTypeContainsFold applies the ContainsFold predicate on the "brew_type" field.
+func BrewTypeContainsFold(v string) predicate.Deployment {
+	return predicate.Deployment(sql.FieldContainsFold(FieldBrewType, v))
+}
+
+// VerifiedEQ applies the EQ predicate on the "verified" field.
+func VerifiedEQ(v bool) predicate.Deployment {
+	return predicate.Deployment(sql.FieldEQ(FieldVerified, v))
+}
+
+// VerifiedNEQ applies the NEQ predicate on the "verified" field.
+func VerifiedNEQ(v bool) predicate.Deployment {
+	return predicate.Deployment(sql.FieldNEQ(FieldVerified, v))
+}
+
+// VerifiedIsNil applies the IsNil predicate on the "verified" field.
+func VerifiedIsNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldIsNull(FieldVerified))
+}
+
+// VerifiedNotNil applies the NotNil predicate on the "verified" field.
+func VerifiedNotNil() predicate.Deployment {
+	return predicate.Deployment(sql.FieldNotNull(FieldVerified))
 }
 
 // InstalledEQ applies the EQ predicate on the "installed" field.

@@ -42,7 +42,7 @@ type SoftwareCatalogEdges struct {
 	// Tenant holds the value of the tenant edge.
 	Tenant *Tenant `json:"tenant,omitempty"`
 	// Packages holds the value of the packages edge.
-	Packages []*SoftwarePackage `json:"packages,omitempty"`
+	Packages []*ManagedPackage `json:"packages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -61,7 +61,7 @@ func (e SoftwareCatalogEdges) TenantOrErr() (*Tenant, error) {
 
 // PackagesOrErr returns the Packages value or an error if the edge
 // was not loaded in eager-loading.
-func (e SoftwareCatalogEdges) PackagesOrErr() ([]*SoftwarePackage, error) {
+func (e SoftwareCatalogEdges) PackagesOrErr() ([]*ManagedPackage, error) {
 	if e.loadedTypes[1] {
 		return e.Packages, nil
 	}
@@ -166,7 +166,7 @@ func (sc *SoftwareCatalog) QueryTenant() *TenantQuery {
 }
 
 // QueryPackages queries the "packages" edge of the SoftwareCatalog entity.
-func (sc *SoftwareCatalog) QueryPackages() *SoftwarePackageQuery {
+func (sc *SoftwareCatalog) QueryPackages() *ManagedPackageQuery {
 	return NewSoftwareCatalogClient(sc.config).QueryPackages(sc)
 }
 

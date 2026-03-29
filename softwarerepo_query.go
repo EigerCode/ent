@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/predicate"
-	"github.com/EigerCode/ent/softwarepackage"
 	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/tenant"
 )
@@ -26,7 +26,7 @@ type SoftwareRepoQuery struct {
 	inters       []Interceptor
 	predicates   []predicate.SoftwareRepo
 	withTenant   *TenantQuery
-	withPackages *SoftwarePackageQuery
+	withPackages *ManagedPackageQuery
 	withFKs      bool
 	modifiers    []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -88,8 +88,8 @@ func (srq *SoftwareRepoQuery) QueryTenant() *TenantQuery {
 }
 
 // QueryPackages chains the current query on the "packages" edge.
-func (srq *SoftwareRepoQuery) QueryPackages() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: srq.config}).Query()
+func (srq *SoftwareRepoQuery) QueryPackages() *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: srq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := srq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -100,7 +100,7 @@ func (srq *SoftwareRepoQuery) QueryPackages() *SoftwarePackageQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(softwarerepo.Table, softwarerepo.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, softwarerepo.PackagesTable, softwarerepo.PackagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(srq.driver.Dialect(), step)
@@ -323,8 +323,8 @@ func (srq *SoftwareRepoQuery) WithTenant(opts ...func(*TenantQuery)) *SoftwareRe
 
 // WithPackages tells the query-builder to eager-load the nodes that are connected to
 // the "packages" edge. The optional arguments are used to configure the query builder of the edge.
-func (srq *SoftwareRepoQuery) WithPackages(opts ...func(*SoftwarePackageQuery)) *SoftwareRepoQuery {
-	query := (&SoftwarePackageClient{config: srq.config}).Query()
+func (srq *SoftwareRepoQuery) WithPackages(opts ...func(*ManagedPackageQuery)) *SoftwareRepoQuery {
+	query := (&ManagedPackageClient{config: srq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -451,8 +451,8 @@ func (srq *SoftwareRepoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	}
 	if query := srq.withPackages; query != nil {
 		if err := srq.loadPackages(ctx, query, nodes,
-			func(n *SoftwareRepo) { n.Edges.Packages = []*SoftwarePackage{} },
-			func(n *SoftwareRepo, e *SoftwarePackage) { n.Edges.Packages = append(n.Edges.Packages, e) }); err != nil {
+			func(n *SoftwareRepo) { n.Edges.Packages = []*ManagedPackage{} },
+			func(n *SoftwareRepo, e *ManagedPackage) { n.Edges.Packages = append(n.Edges.Packages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -491,7 +491,7 @@ func (srq *SoftwareRepoQuery) loadTenant(ctx context.Context, query *TenantQuery
 	}
 	return nil
 }
-func (srq *SoftwareRepoQuery) loadPackages(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwareRepo, init func(*SoftwareRepo), assign func(*SoftwareRepo, *SoftwarePackage)) error {
+func (srq *SoftwareRepoQuery) loadPackages(ctx context.Context, query *ManagedPackageQuery, nodes []*SoftwareRepo, init func(*SoftwareRepo), assign func(*SoftwareRepo, *ManagedPackage)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*SoftwareRepo)
 	for i := range nodes {
@@ -502,7 +502,7 @@ func (srq *SoftwareRepoQuery) loadPackages(ctx context.Context, query *SoftwareP
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.SoftwarePackage(func(s *sql.Selector) {
+	query.Where(predicate.ManagedPackage(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(softwarerepo.PackagesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

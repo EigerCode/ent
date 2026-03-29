@@ -129,6 +129,18 @@ func (f LogicalDiskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LogicalDiskMutation", m)
 }
 
+// The ManagedPackageFunc type is an adapter to allow the use of ordinary
+// function as ManagedPackage mutator.
+type ManagedPackageFunc func(context.Context, *ent.ManagedPackageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ManagedPackageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ManagedPackageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ManagedPackageMutation", m)
+}
+
 // The MemorySlotFunc type is an adapter to allow the use of ordinary
 // function as MemorySlot mutator.
 type MemorySlotFunc func(context.Context, *ent.MemorySlotMutation) (ent.Value, error)

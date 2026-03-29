@@ -3,56 +3,59 @@
 package softwarepackage
 
 import (
-	"time"
-
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/EigerCode/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.SoftwarePackage {
+func ID(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.SoftwarePackage {
+func IDEQ(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.SoftwarePackage {
+func IDNEQ(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.SoftwarePackage {
+func IDIn(ids ...uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.SoftwarePackage {
+func IDNotIn(ids ...uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.SoftwarePackage {
+func IDGT(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.SoftwarePackage {
+func IDGTE(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.SoftwarePackage {
+func IDLT(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.SoftwarePackage {
+func IDLTE(id uuid.UUID) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldLTE(FieldID, id))
+}
+
+// PackageID applies equality check predicate on the "package_id" field. It's identical to PackageIDEQ.
+func PackageID(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldPackageID, v))
 }
 
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
@@ -60,124 +63,99 @@ func Name(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldName, v))
 }
 
-// DisplayName applies equality check predicate on the "display_name" field. It's identical to DisplayNameEQ.
-func DisplayName(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldDisplayName, v))
-}
-
 // Version applies equality check predicate on the "version" field. It's identical to VersionEQ.
 func Version(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldVersion, v))
 }
 
-// InstallerPath applies equality check predicate on the "installer_path" field. It's identical to InstallerPathEQ.
-func InstallerPath(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldInstallerPath, v))
+// Branch applies equality check predicate on the "branch" field. It's identical to BranchEQ.
+func Branch(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldBranch, v))
 }
 
-// ChecksumSha256 applies equality check predicate on the "checksum_sha256" field. It's identical to ChecksumSha256EQ.
-func ChecksumSha256(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldChecksumSha256, v))
+// Arch applies equality check predicate on the "arch" field. It's identical to ArchEQ.
+func Arch(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldArch, v))
 }
 
-// SizeBytes applies equality check predicate on the "size_bytes" field. It's identical to SizeBytesEQ.
-func SizeBytes(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldSizeBytes, v))
+// BrewType applies equality check predicate on the "brew_type" field. It's identical to BrewTypeEQ.
+func BrewType(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldBrewType, v))
 }
 
-// IconName applies equality check predicate on the "icon_name" field. It's identical to IconNameEQ.
-func IconName(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldIconName, v))
+// Verified applies equality check predicate on the "verified" field. It's identical to VerifiedEQ.
+func Verified(v bool) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldVerified, v))
 }
 
-// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
-func Description(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldDescription, v))
+// Source applies equality check predicate on the "source" field. It's identical to SourceEQ.
+func Source(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldSource, v))
 }
 
-// Category applies equality check predicate on the "category" field. It's identical to CategoryEQ.
-func Category(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldCategory, v))
+// PackageIDEQ applies the EQ predicate on the "package_id" field.
+func PackageIDEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldPackageID, v))
 }
 
-// Developer applies equality check predicate on the "developer" field. It's identical to DeveloperEQ.
-func Developer(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldDeveloper, v))
+// PackageIDNEQ applies the NEQ predicate on the "package_id" field.
+func PackageIDNEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNEQ(FieldPackageID, v))
 }
 
-// PkginfoData applies equality check predicate on the "pkginfo_data" field. It's identical to PkginfoDataEQ.
-func PkginfoData(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPkginfoData, v))
+// PackageIDIn applies the In predicate on the "package_id" field.
+func PackageIDIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIn(FieldPackageID, vs...))
 }
 
-// PreInstallScript applies equality check predicate on the "pre_install_script" field. It's identical to PreInstallScriptEQ.
-func PreInstallScript(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPreInstallScript, v))
+// PackageIDNotIn applies the NotIn predicate on the "package_id" field.
+func PackageIDNotIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotIn(FieldPackageID, vs...))
 }
 
-// PostInstallScript applies equality check predicate on the "post_install_script" field. It's identical to PostInstallScriptEQ.
-func PostInstallScript(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPostInstallScript, v))
+// PackageIDGT applies the GT predicate on the "package_id" field.
+func PackageIDGT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGT(FieldPackageID, v))
 }
 
-// UninstallMethod applies equality check predicate on the "uninstall_method" field. It's identical to UninstallMethodEQ.
-func UninstallMethod(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldUninstallMethod, v))
+// PackageIDGTE applies the GTE predicate on the "package_id" field.
+func PackageIDGTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGTE(FieldPackageID, v))
 }
 
-// InstallsItems applies equality check predicate on the "installs_items" field. It's identical to InstallsItemsEQ.
-func InstallsItems(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldInstallsItems, v))
+// PackageIDLT applies the LT predicate on the "package_id" field.
+func PackageIDLT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLT(FieldPackageID, v))
 }
 
-// Receipts applies equality check predicate on the "receipts" field. It's identical to ReceiptsEQ.
-func Receipts(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldReceipts, v))
+// PackageIDLTE applies the LTE predicate on the "package_id" field.
+func PackageIDLTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLTE(FieldPackageID, v))
 }
 
-// BlockingApps applies equality check predicate on the "blocking_apps" field. It's identical to BlockingAppsEQ.
-func BlockingApps(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldBlockingApps, v))
+// PackageIDContains applies the Contains predicate on the "package_id" field.
+func PackageIDContains(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContains(FieldPackageID, v))
 }
 
-// MinOsVersion applies equality check predicate on the "min_os_version" field. It's identical to MinOsVersionEQ.
-func MinOsVersion(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldMinOsVersion, v))
+// PackageIDHasPrefix applies the HasPrefix predicate on the "package_id" field.
+func PackageIDHasPrefix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldPackageID, v))
 }
 
-// MaxOsVersion applies equality check predicate on the "max_os_version" field. It's identical to MaxOsVersionEQ.
-func MaxOsVersion(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldMaxOsVersion, v))
+// PackageIDHasSuffix applies the HasSuffix predicate on the "package_id" field.
+func PackageIDHasSuffix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldPackageID, v))
 }
 
-// SupportedArchitectures applies equality check predicate on the "supported_architectures" field. It's identical to SupportedArchitecturesEQ.
-func SupportedArchitectures(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldSupportedArchitectures, v))
+// PackageIDEqualFold applies the EqualFold predicate on the "package_id" field.
+func PackageIDEqualFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldPackageID, v))
 }
 
-// ForceInstallDate applies equality check predicate on the "force_install_date" field. It's identical to ForceInstallDateEQ.
-func ForceInstallDate(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldForceInstallDate, v))
-}
-
-// UnattendedInstall applies equality check predicate on the "unattended_install" field. It's identical to UnattendedInstallEQ.
-func UnattendedInstall(v bool) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldUnattendedInstall, v))
-}
-
-// UnattendedUninstall applies equality check predicate on the "unattended_uninstall" field. It's identical to UnattendedUninstallEQ.
-func UnattendedUninstall(v bool) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldUnattendedUninstall, v))
-}
-
-// Created applies equality check predicate on the "created" field. It's identical to CreatedEQ.
-func Created(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldCreated, v))
-}
-
-// Modified applies equality check predicate on the "modified" field. It's identical to ModifiedEQ.
-func Modified(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldModified, v))
+// PackageIDContainsFold applies the ContainsFold predicate on the "package_id" field.
+func PackageIDContainsFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldPackageID, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -245,81 +223,6 @@ func NameContainsFold(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldName, v))
 }
 
-// DisplayNameEQ applies the EQ predicate on the "display_name" field.
-func DisplayNameEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldDisplayName, v))
-}
-
-// DisplayNameNEQ applies the NEQ predicate on the "display_name" field.
-func DisplayNameNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldDisplayName, v))
-}
-
-// DisplayNameIn applies the In predicate on the "display_name" field.
-func DisplayNameIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldDisplayName, vs...))
-}
-
-// DisplayNameNotIn applies the NotIn predicate on the "display_name" field.
-func DisplayNameNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldDisplayName, vs...))
-}
-
-// DisplayNameGT applies the GT predicate on the "display_name" field.
-func DisplayNameGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldDisplayName, v))
-}
-
-// DisplayNameGTE applies the GTE predicate on the "display_name" field.
-func DisplayNameGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldDisplayName, v))
-}
-
-// DisplayNameLT applies the LT predicate on the "display_name" field.
-func DisplayNameLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldDisplayName, v))
-}
-
-// DisplayNameLTE applies the LTE predicate on the "display_name" field.
-func DisplayNameLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldDisplayName, v))
-}
-
-// DisplayNameContains applies the Contains predicate on the "display_name" field.
-func DisplayNameContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldDisplayName, v))
-}
-
-// DisplayNameHasPrefix applies the HasPrefix predicate on the "display_name" field.
-func DisplayNameHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldDisplayName, v))
-}
-
-// DisplayNameHasSuffix applies the HasSuffix predicate on the "display_name" field.
-func DisplayNameHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldDisplayName, v))
-}
-
-// DisplayNameIsNil applies the IsNil predicate on the "display_name" field.
-func DisplayNameIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldDisplayName))
-}
-
-// DisplayNameNotNil applies the NotNil predicate on the "display_name" field.
-func DisplayNameNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldDisplayName))
-}
-
-// DisplayNameEqualFold applies the EqualFold predicate on the "display_name" field.
-func DisplayNameEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldDisplayName, v))
-}
-
-// DisplayNameContainsFold applies the ContainsFold predicate on the "display_name" field.
-func DisplayNameContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldDisplayName, v))
-}
-
 // VersionEQ applies the EQ predicate on the "version" field.
 func VersionEQ(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldVersion, v))
@@ -375,6 +278,16 @@ func VersionHasSuffix(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldVersion, v))
 }
 
+// VersionIsNil applies the IsNil predicate on the "version" field.
+func VersionIsNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIsNull(FieldVersion))
+}
+
+// VersionNotNil applies the NotNil predicate on the "version" field.
+func VersionNotNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotNull(FieldVersion))
+}
+
 // VersionEqualFold applies the EqualFold predicate on the "version" field.
 func VersionEqualFold(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldVersion, v))
@@ -385,1728 +298,314 @@ func VersionContainsFold(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldVersion, v))
 }
 
-// PlatformEQ applies the EQ predicate on the "platform" field.
-func PlatformEQ(v Platform) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPlatform, v))
+// BranchEQ applies the EQ predicate on the "branch" field.
+func BranchEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldBranch, v))
 }
 
-// PlatformNEQ applies the NEQ predicate on the "platform" field.
-func PlatformNEQ(v Platform) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldPlatform, v))
+// BranchNEQ applies the NEQ predicate on the "branch" field.
+func BranchNEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNEQ(FieldBranch, v))
 }
 
-// PlatformIn applies the In predicate on the "platform" field.
-func PlatformIn(vs ...Platform) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldPlatform, vs...))
+// BranchIn applies the In predicate on the "branch" field.
+func BranchIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIn(FieldBranch, vs...))
 }
 
-// PlatformNotIn applies the NotIn predicate on the "platform" field.
-func PlatformNotIn(vs ...Platform) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldPlatform, vs...))
+// BranchNotIn applies the NotIn predicate on the "branch" field.
+func BranchNotIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotIn(FieldBranch, vs...))
 }
 
-// InstallerPathEQ applies the EQ predicate on the "installer_path" field.
-func InstallerPathEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldInstallerPath, v))
+// BranchGT applies the GT predicate on the "branch" field.
+func BranchGT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGT(FieldBranch, v))
 }
 
-// InstallerPathNEQ applies the NEQ predicate on the "installer_path" field.
-func InstallerPathNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldInstallerPath, v))
+// BranchGTE applies the GTE predicate on the "branch" field.
+func BranchGTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGTE(FieldBranch, v))
 }
 
-// InstallerPathIn applies the In predicate on the "installer_path" field.
-func InstallerPathIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldInstallerPath, vs...))
+// BranchLT applies the LT predicate on the "branch" field.
+func BranchLT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLT(FieldBranch, v))
 }
 
-// InstallerPathNotIn applies the NotIn predicate on the "installer_path" field.
-func InstallerPathNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldInstallerPath, vs...))
+// BranchLTE applies the LTE predicate on the "branch" field.
+func BranchLTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLTE(FieldBranch, v))
 }
 
-// InstallerPathGT applies the GT predicate on the "installer_path" field.
-func InstallerPathGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldInstallerPath, v))
+// BranchContains applies the Contains predicate on the "branch" field.
+func BranchContains(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContains(FieldBranch, v))
 }
 
-// InstallerPathGTE applies the GTE predicate on the "installer_path" field.
-func InstallerPathGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldInstallerPath, v))
+// BranchHasPrefix applies the HasPrefix predicate on the "branch" field.
+func BranchHasPrefix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldBranch, v))
 }
 
-// InstallerPathLT applies the LT predicate on the "installer_path" field.
-func InstallerPathLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldInstallerPath, v))
+// BranchHasSuffix applies the HasSuffix predicate on the "branch" field.
+func BranchHasSuffix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldBranch, v))
 }
 
-// InstallerPathLTE applies the LTE predicate on the "installer_path" field.
-func InstallerPathLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldInstallerPath, v))
+// BranchIsNil applies the IsNil predicate on the "branch" field.
+func BranchIsNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIsNull(FieldBranch))
 }
 
-// InstallerPathContains applies the Contains predicate on the "installer_path" field.
-func InstallerPathContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldInstallerPath, v))
+// BranchNotNil applies the NotNil predicate on the "branch" field.
+func BranchNotNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotNull(FieldBranch))
 }
 
-// InstallerPathHasPrefix applies the HasPrefix predicate on the "installer_path" field.
-func InstallerPathHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldInstallerPath, v))
+// BranchEqualFold applies the EqualFold predicate on the "branch" field.
+func BranchEqualFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldBranch, v))
 }
 
-// InstallerPathHasSuffix applies the HasSuffix predicate on the "installer_path" field.
-func InstallerPathHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldInstallerPath, v))
+// BranchContainsFold applies the ContainsFold predicate on the "branch" field.
+func BranchContainsFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldBranch, v))
 }
 
-// InstallerPathEqualFold applies the EqualFold predicate on the "installer_path" field.
-func InstallerPathEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldInstallerPath, v))
+// ArchEQ applies the EQ predicate on the "arch" field.
+func ArchEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldArch, v))
 }
 
-// InstallerPathContainsFold applies the ContainsFold predicate on the "installer_path" field.
-func InstallerPathContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldInstallerPath, v))
+// ArchNEQ applies the NEQ predicate on the "arch" field.
+func ArchNEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNEQ(FieldArch, v))
 }
 
-// ChecksumSha256EQ applies the EQ predicate on the "checksum_sha256" field.
-func ChecksumSha256EQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldChecksumSha256, v))
+// ArchIn applies the In predicate on the "arch" field.
+func ArchIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIn(FieldArch, vs...))
 }
 
-// ChecksumSha256NEQ applies the NEQ predicate on the "checksum_sha256" field.
-func ChecksumSha256NEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldChecksumSha256, v))
+// ArchNotIn applies the NotIn predicate on the "arch" field.
+func ArchNotIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotIn(FieldArch, vs...))
 }
 
-// ChecksumSha256In applies the In predicate on the "checksum_sha256" field.
-func ChecksumSha256In(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldChecksumSha256, vs...))
+// ArchGT applies the GT predicate on the "arch" field.
+func ArchGT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGT(FieldArch, v))
 }
 
-// ChecksumSha256NotIn applies the NotIn predicate on the "checksum_sha256" field.
-func ChecksumSha256NotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldChecksumSha256, vs...))
+// ArchGTE applies the GTE predicate on the "arch" field.
+func ArchGTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGTE(FieldArch, v))
 }
 
-// ChecksumSha256GT applies the GT predicate on the "checksum_sha256" field.
-func ChecksumSha256GT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldChecksumSha256, v))
+// ArchLT applies the LT predicate on the "arch" field.
+func ArchLT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLT(FieldArch, v))
 }
 
-// ChecksumSha256GTE applies the GTE predicate on the "checksum_sha256" field.
-func ChecksumSha256GTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldChecksumSha256, v))
+// ArchLTE applies the LTE predicate on the "arch" field.
+func ArchLTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLTE(FieldArch, v))
 }
 
-// ChecksumSha256LT applies the LT predicate on the "checksum_sha256" field.
-func ChecksumSha256LT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldChecksumSha256, v))
+// ArchContains applies the Contains predicate on the "arch" field.
+func ArchContains(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContains(FieldArch, v))
 }
 
-// ChecksumSha256LTE applies the LTE predicate on the "checksum_sha256" field.
-func ChecksumSha256LTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldChecksumSha256, v))
+// ArchHasPrefix applies the HasPrefix predicate on the "arch" field.
+func ArchHasPrefix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldArch, v))
 }
 
-// ChecksumSha256Contains applies the Contains predicate on the "checksum_sha256" field.
-func ChecksumSha256Contains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldChecksumSha256, v))
+// ArchHasSuffix applies the HasSuffix predicate on the "arch" field.
+func ArchHasSuffix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldArch, v))
 }
 
-// ChecksumSha256HasPrefix applies the HasPrefix predicate on the "checksum_sha256" field.
-func ChecksumSha256HasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldChecksumSha256, v))
+// ArchIsNil applies the IsNil predicate on the "arch" field.
+func ArchIsNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIsNull(FieldArch))
 }
 
-// ChecksumSha256HasSuffix applies the HasSuffix predicate on the "checksum_sha256" field.
-func ChecksumSha256HasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldChecksumSha256, v))
+// ArchNotNil applies the NotNil predicate on the "arch" field.
+func ArchNotNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotNull(FieldArch))
 }
 
-// ChecksumSha256IsNil applies the IsNil predicate on the "checksum_sha256" field.
-func ChecksumSha256IsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldChecksumSha256))
+// ArchEqualFold applies the EqualFold predicate on the "arch" field.
+func ArchEqualFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldArch, v))
 }
 
-// ChecksumSha256NotNil applies the NotNil predicate on the "checksum_sha256" field.
-func ChecksumSha256NotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldChecksumSha256))
+// ArchContainsFold applies the ContainsFold predicate on the "arch" field.
+func ArchContainsFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldArch, v))
 }
 
-// ChecksumSha256EqualFold applies the EqualFold predicate on the "checksum_sha256" field.
-func ChecksumSha256EqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldChecksumSha256, v))
+// BrewTypeEQ applies the EQ predicate on the "brew_type" field.
+func BrewTypeEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldBrewType, v))
 }
 
-// ChecksumSha256ContainsFold applies the ContainsFold predicate on the "checksum_sha256" field.
-func ChecksumSha256ContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldChecksumSha256, v))
+// BrewTypeNEQ applies the NEQ predicate on the "brew_type" field.
+func BrewTypeNEQ(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNEQ(FieldBrewType, v))
 }
 
-// SizeBytesEQ applies the EQ predicate on the "size_bytes" field.
-func SizeBytesEQ(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldSizeBytes, v))
+// BrewTypeIn applies the In predicate on the "brew_type" field.
+func BrewTypeIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIn(FieldBrewType, vs...))
 }
 
-// SizeBytesNEQ applies the NEQ predicate on the "size_bytes" field.
-func SizeBytesNEQ(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldSizeBytes, v))
+// BrewTypeNotIn applies the NotIn predicate on the "brew_type" field.
+func BrewTypeNotIn(vs ...string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotIn(FieldBrewType, vs...))
 }
 
-// SizeBytesIn applies the In predicate on the "size_bytes" field.
-func SizeBytesIn(vs ...int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldSizeBytes, vs...))
+// BrewTypeGT applies the GT predicate on the "brew_type" field.
+func BrewTypeGT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGT(FieldBrewType, v))
 }
 
-// SizeBytesNotIn applies the NotIn predicate on the "size_bytes" field.
-func SizeBytesNotIn(vs ...int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldSizeBytes, vs...))
+// BrewTypeGTE applies the GTE predicate on the "brew_type" field.
+func BrewTypeGTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGTE(FieldBrewType, v))
 }
 
-// SizeBytesGT applies the GT predicate on the "size_bytes" field.
-func SizeBytesGT(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldSizeBytes, v))
+// BrewTypeLT applies the LT predicate on the "brew_type" field.
+func BrewTypeLT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLT(FieldBrewType, v))
 }
 
-// SizeBytesGTE applies the GTE predicate on the "size_bytes" field.
-func SizeBytesGTE(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldSizeBytes, v))
+// BrewTypeLTE applies the LTE predicate on the "brew_type" field.
+func BrewTypeLTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLTE(FieldBrewType, v))
 }
 
-// SizeBytesLT applies the LT predicate on the "size_bytes" field.
-func SizeBytesLT(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldSizeBytes, v))
+// BrewTypeContains applies the Contains predicate on the "brew_type" field.
+func BrewTypeContains(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContains(FieldBrewType, v))
 }
 
-// SizeBytesLTE applies the LTE predicate on the "size_bytes" field.
-func SizeBytesLTE(v int64) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldSizeBytes, v))
+// BrewTypeHasPrefix applies the HasPrefix predicate on the "brew_type" field.
+func BrewTypeHasPrefix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldBrewType, v))
 }
 
-// SizeBytesIsNil applies the IsNil predicate on the "size_bytes" field.
-func SizeBytesIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldSizeBytes))
+// BrewTypeHasSuffix applies the HasSuffix predicate on the "brew_type" field.
+func BrewTypeHasSuffix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldBrewType, v))
 }
 
-// SizeBytesNotNil applies the NotNil predicate on the "size_bytes" field.
-func SizeBytesNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldSizeBytes))
+// BrewTypeIsNil applies the IsNil predicate on the "brew_type" field.
+func BrewTypeIsNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIsNull(FieldBrewType))
 }
 
-// IconNameEQ applies the EQ predicate on the "icon_name" field.
-func IconNameEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldIconName, v))
+// BrewTypeNotNil applies the NotNil predicate on the "brew_type" field.
+func BrewTypeNotNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotNull(FieldBrewType))
 }
 
-// IconNameNEQ applies the NEQ predicate on the "icon_name" field.
-func IconNameNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldIconName, v))
+// BrewTypeEqualFold applies the EqualFold predicate on the "brew_type" field.
+func BrewTypeEqualFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldBrewType, v))
 }
 
-// IconNameIn applies the In predicate on the "icon_name" field.
-func IconNameIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldIconName, vs...))
+// BrewTypeContainsFold applies the ContainsFold predicate on the "brew_type" field.
+func BrewTypeContainsFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldBrewType, v))
 }
 
-// IconNameNotIn applies the NotIn predicate on the "icon_name" field.
-func IconNameNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldIconName, vs...))
+// VerifiedEQ applies the EQ predicate on the "verified" field.
+func VerifiedEQ(v bool) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEQ(FieldVerified, v))
 }
 
-// IconNameGT applies the GT predicate on the "icon_name" field.
-func IconNameGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldIconName, v))
+// VerifiedNEQ applies the NEQ predicate on the "verified" field.
+func VerifiedNEQ(v bool) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNEQ(FieldVerified, v))
 }
 
-// IconNameGTE applies the GTE predicate on the "icon_name" field.
-func IconNameGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldIconName, v))
+// VerifiedIsNil applies the IsNil predicate on the "verified" field.
+func VerifiedIsNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldIsNull(FieldVerified))
 }
 
-// IconNameLT applies the LT predicate on the "icon_name" field.
-func IconNameLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldIconName, v))
-}
-
-// IconNameLTE applies the LTE predicate on the "icon_name" field.
-func IconNameLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldIconName, v))
-}
-
-// IconNameContains applies the Contains predicate on the "icon_name" field.
-func IconNameContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldIconName, v))
-}
-
-// IconNameHasPrefix applies the HasPrefix predicate on the "icon_name" field.
-func IconNameHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldIconName, v))
-}
-
-// IconNameHasSuffix applies the HasSuffix predicate on the "icon_name" field.
-func IconNameHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldIconName, v))
-}
-
-// IconNameIsNil applies the IsNil predicate on the "icon_name" field.
-func IconNameIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldIconName))
-}
-
-// IconNameNotNil applies the NotNil predicate on the "icon_name" field.
-func IconNameNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldIconName))
-}
-
-// IconNameEqualFold applies the EqualFold predicate on the "icon_name" field.
-func IconNameEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldIconName, v))
-}
-
-// IconNameContainsFold applies the ContainsFold predicate on the "icon_name" field.
-func IconNameContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldIconName, v))
-}
-
-// DescriptionEQ applies the EQ predicate on the "description" field.
-func DescriptionEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldDescription, v))
-}
-
-// DescriptionNEQ applies the NEQ predicate on the "description" field.
-func DescriptionNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldDescription, v))
-}
-
-// DescriptionIn applies the In predicate on the "description" field.
-func DescriptionIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldDescription, vs...))
-}
-
-// DescriptionNotIn applies the NotIn predicate on the "description" field.
-func DescriptionNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldDescription, vs...))
-}
-
-// DescriptionGT applies the GT predicate on the "description" field.
-func DescriptionGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldDescription, v))
-}
-
-// DescriptionGTE applies the GTE predicate on the "description" field.
-func DescriptionGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldDescription, v))
-}
-
-// DescriptionLT applies the LT predicate on the "description" field.
-func DescriptionLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldDescription, v))
-}
-
-// DescriptionLTE applies the LTE predicate on the "description" field.
-func DescriptionLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldDescription, v))
-}
-
-// DescriptionContains applies the Contains predicate on the "description" field.
-func DescriptionContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldDescription, v))
-}
-
-// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
-func DescriptionHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldDescription, v))
-}
-
-// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
-func DescriptionHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldDescription, v))
-}
-
-// DescriptionIsNil applies the IsNil predicate on the "description" field.
-func DescriptionIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldDescription))
-}
-
-// DescriptionNotNil applies the NotNil predicate on the "description" field.
-func DescriptionNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldDescription))
-}
-
-// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
-func DescriptionEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldDescription, v))
-}
-
-// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
-func DescriptionContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldDescription, v))
-}
-
-// CategoryEQ applies the EQ predicate on the "category" field.
-func CategoryEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldCategory, v))
-}
-
-// CategoryNEQ applies the NEQ predicate on the "category" field.
-func CategoryNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldCategory, v))
-}
-
-// CategoryIn applies the In predicate on the "category" field.
-func CategoryIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldCategory, vs...))
-}
-
-// CategoryNotIn applies the NotIn predicate on the "category" field.
-func CategoryNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldCategory, vs...))
-}
-
-// CategoryGT applies the GT predicate on the "category" field.
-func CategoryGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldCategory, v))
-}
-
-// CategoryGTE applies the GTE predicate on the "category" field.
-func CategoryGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldCategory, v))
-}
-
-// CategoryLT applies the LT predicate on the "category" field.
-func CategoryLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldCategory, v))
-}
-
-// CategoryLTE applies the LTE predicate on the "category" field.
-func CategoryLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldCategory, v))
-}
-
-// CategoryContains applies the Contains predicate on the "category" field.
-func CategoryContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldCategory, v))
-}
-
-// CategoryHasPrefix applies the HasPrefix predicate on the "category" field.
-func CategoryHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldCategory, v))
-}
-
-// CategoryHasSuffix applies the HasSuffix predicate on the "category" field.
-func CategoryHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldCategory, v))
-}
-
-// CategoryIsNil applies the IsNil predicate on the "category" field.
-func CategoryIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldCategory))
-}
-
-// CategoryNotNil applies the NotNil predicate on the "category" field.
-func CategoryNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldCategory))
-}
-
-// CategoryEqualFold applies the EqualFold predicate on the "category" field.
-func CategoryEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldCategory, v))
-}
-
-// CategoryContainsFold applies the ContainsFold predicate on the "category" field.
-func CategoryContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldCategory, v))
-}
-
-// DeveloperEQ applies the EQ predicate on the "developer" field.
-func DeveloperEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldDeveloper, v))
-}
-
-// DeveloperNEQ applies the NEQ predicate on the "developer" field.
-func DeveloperNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldDeveloper, v))
-}
-
-// DeveloperIn applies the In predicate on the "developer" field.
-func DeveloperIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldDeveloper, vs...))
-}
-
-// DeveloperNotIn applies the NotIn predicate on the "developer" field.
-func DeveloperNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldDeveloper, vs...))
-}
-
-// DeveloperGT applies the GT predicate on the "developer" field.
-func DeveloperGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldDeveloper, v))
-}
-
-// DeveloperGTE applies the GTE predicate on the "developer" field.
-func DeveloperGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldDeveloper, v))
-}
-
-// DeveloperLT applies the LT predicate on the "developer" field.
-func DeveloperLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldDeveloper, v))
-}
-
-// DeveloperLTE applies the LTE predicate on the "developer" field.
-func DeveloperLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldDeveloper, v))
-}
-
-// DeveloperContains applies the Contains predicate on the "developer" field.
-func DeveloperContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldDeveloper, v))
-}
-
-// DeveloperHasPrefix applies the HasPrefix predicate on the "developer" field.
-func DeveloperHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldDeveloper, v))
-}
-
-// DeveloperHasSuffix applies the HasSuffix predicate on the "developer" field.
-func DeveloperHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldDeveloper, v))
-}
-
-// DeveloperIsNil applies the IsNil predicate on the "developer" field.
-func DeveloperIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldDeveloper))
-}
-
-// DeveloperNotNil applies the NotNil predicate on the "developer" field.
-func DeveloperNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldDeveloper))
-}
-
-// DeveloperEqualFold applies the EqualFold predicate on the "developer" field.
-func DeveloperEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldDeveloper, v))
-}
-
-// DeveloperContainsFold applies the ContainsFold predicate on the "developer" field.
-func DeveloperContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldDeveloper, v))
-}
-
-// PkginfoDataEQ applies the EQ predicate on the "pkginfo_data" field.
-func PkginfoDataEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPkginfoData, v))
-}
-
-// PkginfoDataNEQ applies the NEQ predicate on the "pkginfo_data" field.
-func PkginfoDataNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldPkginfoData, v))
-}
-
-// PkginfoDataIn applies the In predicate on the "pkginfo_data" field.
-func PkginfoDataIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldPkginfoData, vs...))
-}
-
-// PkginfoDataNotIn applies the NotIn predicate on the "pkginfo_data" field.
-func PkginfoDataNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldPkginfoData, vs...))
-}
-
-// PkginfoDataGT applies the GT predicate on the "pkginfo_data" field.
-func PkginfoDataGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldPkginfoData, v))
-}
-
-// PkginfoDataGTE applies the GTE predicate on the "pkginfo_data" field.
-func PkginfoDataGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldPkginfoData, v))
-}
-
-// PkginfoDataLT applies the LT predicate on the "pkginfo_data" field.
-func PkginfoDataLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldPkginfoData, v))
-}
-
-// PkginfoDataLTE applies the LTE predicate on the "pkginfo_data" field.
-func PkginfoDataLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldPkginfoData, v))
-}
-
-// PkginfoDataContains applies the Contains predicate on the "pkginfo_data" field.
-func PkginfoDataContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldPkginfoData, v))
-}
-
-// PkginfoDataHasPrefix applies the HasPrefix predicate on the "pkginfo_data" field.
-func PkginfoDataHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldPkginfoData, v))
-}
-
-// PkginfoDataHasSuffix applies the HasSuffix predicate on the "pkginfo_data" field.
-func PkginfoDataHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldPkginfoData, v))
-}
-
-// PkginfoDataIsNil applies the IsNil predicate on the "pkginfo_data" field.
-func PkginfoDataIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldPkginfoData))
-}
-
-// PkginfoDataNotNil applies the NotNil predicate on the "pkginfo_data" field.
-func PkginfoDataNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldPkginfoData))
-}
-
-// PkginfoDataEqualFold applies the EqualFold predicate on the "pkginfo_data" field.
-func PkginfoDataEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldPkginfoData, v))
-}
-
-// PkginfoDataContainsFold applies the ContainsFold predicate on the "pkginfo_data" field.
-func PkginfoDataContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldPkginfoData, v))
-}
-
-// PreInstallScriptEQ applies the EQ predicate on the "pre_install_script" field.
-func PreInstallScriptEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptNEQ applies the NEQ predicate on the "pre_install_script" field.
-func PreInstallScriptNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptIn applies the In predicate on the "pre_install_script" field.
-func PreInstallScriptIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldPreInstallScript, vs...))
-}
-
-// PreInstallScriptNotIn applies the NotIn predicate on the "pre_install_script" field.
-func PreInstallScriptNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldPreInstallScript, vs...))
-}
-
-// PreInstallScriptGT applies the GT predicate on the "pre_install_script" field.
-func PreInstallScriptGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptGTE applies the GTE predicate on the "pre_install_script" field.
-func PreInstallScriptGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptLT applies the LT predicate on the "pre_install_script" field.
-func PreInstallScriptLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptLTE applies the LTE predicate on the "pre_install_script" field.
-func PreInstallScriptLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptContains applies the Contains predicate on the "pre_install_script" field.
-func PreInstallScriptContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptHasPrefix applies the HasPrefix predicate on the "pre_install_script" field.
-func PreInstallScriptHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptHasSuffix applies the HasSuffix predicate on the "pre_install_script" field.
-func PreInstallScriptHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptIsNil applies the IsNil predicate on the "pre_install_script" field.
-func PreInstallScriptIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldPreInstallScript))
-}
-
-// PreInstallScriptNotNil applies the NotNil predicate on the "pre_install_script" field.
-func PreInstallScriptNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldPreInstallScript))
-}
-
-// PreInstallScriptEqualFold applies the EqualFold predicate on the "pre_install_script" field.
-func PreInstallScriptEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldPreInstallScript, v))
-}
-
-// PreInstallScriptContainsFold applies the ContainsFold predicate on the "pre_install_script" field.
-func PreInstallScriptContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldPreInstallScript, v))
-}
-
-// PostInstallScriptEQ applies the EQ predicate on the "post_install_script" field.
-func PostInstallScriptEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptNEQ applies the NEQ predicate on the "post_install_script" field.
-func PostInstallScriptNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptIn applies the In predicate on the "post_install_script" field.
-func PostInstallScriptIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldPostInstallScript, vs...))
-}
-
-// PostInstallScriptNotIn applies the NotIn predicate on the "post_install_script" field.
-func PostInstallScriptNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldPostInstallScript, vs...))
-}
-
-// PostInstallScriptGT applies the GT predicate on the "post_install_script" field.
-func PostInstallScriptGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptGTE applies the GTE predicate on the "post_install_script" field.
-func PostInstallScriptGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptLT applies the LT predicate on the "post_install_script" field.
-func PostInstallScriptLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptLTE applies the LTE predicate on the "post_install_script" field.
-func PostInstallScriptLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptContains applies the Contains predicate on the "post_install_script" field.
-func PostInstallScriptContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptHasPrefix applies the HasPrefix predicate on the "post_install_script" field.
-func PostInstallScriptHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptHasSuffix applies the HasSuffix predicate on the "post_install_script" field.
-func PostInstallScriptHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptIsNil applies the IsNil predicate on the "post_install_script" field.
-func PostInstallScriptIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldPostInstallScript))
-}
-
-// PostInstallScriptNotNil applies the NotNil predicate on the "post_install_script" field.
-func PostInstallScriptNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldPostInstallScript))
-}
-
-// PostInstallScriptEqualFold applies the EqualFold predicate on the "post_install_script" field.
-func PostInstallScriptEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldPostInstallScript, v))
-}
-
-// PostInstallScriptContainsFold applies the ContainsFold predicate on the "post_install_script" field.
-func PostInstallScriptContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldPostInstallScript, v))
-}
-
-// UninstallMethodEQ applies the EQ predicate on the "uninstall_method" field.
-func UninstallMethodEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldUninstallMethod, v))
-}
-
-// UninstallMethodNEQ applies the NEQ predicate on the "uninstall_method" field.
-func UninstallMethodNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldUninstallMethod, v))
-}
-
-// UninstallMethodIn applies the In predicate on the "uninstall_method" field.
-func UninstallMethodIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldUninstallMethod, vs...))
-}
-
-// UninstallMethodNotIn applies the NotIn predicate on the "uninstall_method" field.
-func UninstallMethodNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldUninstallMethod, vs...))
-}
-
-// UninstallMethodGT applies the GT predicate on the "uninstall_method" field.
-func UninstallMethodGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldUninstallMethod, v))
-}
-
-// UninstallMethodGTE applies the GTE predicate on the "uninstall_method" field.
-func UninstallMethodGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldUninstallMethod, v))
-}
-
-// UninstallMethodLT applies the LT predicate on the "uninstall_method" field.
-func UninstallMethodLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldUninstallMethod, v))
-}
-
-// UninstallMethodLTE applies the LTE predicate on the "uninstall_method" field.
-func UninstallMethodLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldUninstallMethod, v))
-}
-
-// UninstallMethodContains applies the Contains predicate on the "uninstall_method" field.
-func UninstallMethodContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldUninstallMethod, v))
-}
-
-// UninstallMethodHasPrefix applies the HasPrefix predicate on the "uninstall_method" field.
-func UninstallMethodHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldUninstallMethod, v))
-}
-
-// UninstallMethodHasSuffix applies the HasSuffix predicate on the "uninstall_method" field.
-func UninstallMethodHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldUninstallMethod, v))
-}
-
-// UninstallMethodIsNil applies the IsNil predicate on the "uninstall_method" field.
-func UninstallMethodIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldUninstallMethod))
-}
-
-// UninstallMethodNotNil applies the NotNil predicate on the "uninstall_method" field.
-func UninstallMethodNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldUninstallMethod))
-}
-
-// UninstallMethodEqualFold applies the EqualFold predicate on the "uninstall_method" field.
-func UninstallMethodEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldUninstallMethod, v))
-}
-
-// UninstallMethodContainsFold applies the ContainsFold predicate on the "uninstall_method" field.
-func UninstallMethodContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldUninstallMethod, v))
-}
-
-// InstallsItemsEQ applies the EQ predicate on the "installs_items" field.
-func InstallsItemsEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldInstallsItems, v))
-}
-
-// InstallsItemsNEQ applies the NEQ predicate on the "installs_items" field.
-func InstallsItemsNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldInstallsItems, v))
-}
-
-// InstallsItemsIn applies the In predicate on the "installs_items" field.
-func InstallsItemsIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldInstallsItems, vs...))
-}
-
-// InstallsItemsNotIn applies the NotIn predicate on the "installs_items" field.
-func InstallsItemsNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldInstallsItems, vs...))
-}
-
-// InstallsItemsGT applies the GT predicate on the "installs_items" field.
-func InstallsItemsGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldInstallsItems, v))
-}
-
-// InstallsItemsGTE applies the GTE predicate on the "installs_items" field.
-func InstallsItemsGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldInstallsItems, v))
-}
-
-// InstallsItemsLT applies the LT predicate on the "installs_items" field.
-func InstallsItemsLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldInstallsItems, v))
-}
-
-// InstallsItemsLTE applies the LTE predicate on the "installs_items" field.
-func InstallsItemsLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldInstallsItems, v))
-}
-
-// InstallsItemsContains applies the Contains predicate on the "installs_items" field.
-func InstallsItemsContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldInstallsItems, v))
-}
-
-// InstallsItemsHasPrefix applies the HasPrefix predicate on the "installs_items" field.
-func InstallsItemsHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldInstallsItems, v))
-}
-
-// InstallsItemsHasSuffix applies the HasSuffix predicate on the "installs_items" field.
-func InstallsItemsHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldInstallsItems, v))
-}
-
-// InstallsItemsIsNil applies the IsNil predicate on the "installs_items" field.
-func InstallsItemsIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldInstallsItems))
-}
-
-// InstallsItemsNotNil applies the NotNil predicate on the "installs_items" field.
-func InstallsItemsNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldInstallsItems))
-}
-
-// InstallsItemsEqualFold applies the EqualFold predicate on the "installs_items" field.
-func InstallsItemsEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldInstallsItems, v))
-}
-
-// InstallsItemsContainsFold applies the ContainsFold predicate on the "installs_items" field.
-func InstallsItemsContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldInstallsItems, v))
-}
-
-// ReceiptsEQ applies the EQ predicate on the "receipts" field.
-func ReceiptsEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldReceipts, v))
-}
-
-// ReceiptsNEQ applies the NEQ predicate on the "receipts" field.
-func ReceiptsNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldReceipts, v))
-}
-
-// ReceiptsIn applies the In predicate on the "receipts" field.
-func ReceiptsIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldReceipts, vs...))
-}
-
-// ReceiptsNotIn applies the NotIn predicate on the "receipts" field.
-func ReceiptsNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldReceipts, vs...))
-}
-
-// ReceiptsGT applies the GT predicate on the "receipts" field.
-func ReceiptsGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldReceipts, v))
-}
-
-// ReceiptsGTE applies the GTE predicate on the "receipts" field.
-func ReceiptsGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldReceipts, v))
-}
-
-// ReceiptsLT applies the LT predicate on the "receipts" field.
-func ReceiptsLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldReceipts, v))
-}
-
-// ReceiptsLTE applies the LTE predicate on the "receipts" field.
-func ReceiptsLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldReceipts, v))
-}
-
-// ReceiptsContains applies the Contains predicate on the "receipts" field.
-func ReceiptsContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldReceipts, v))
-}
-
-// ReceiptsHasPrefix applies the HasPrefix predicate on the "receipts" field.
-func ReceiptsHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldReceipts, v))
-}
-
-// ReceiptsHasSuffix applies the HasSuffix predicate on the "receipts" field.
-func ReceiptsHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldReceipts, v))
-}
-
-// ReceiptsIsNil applies the IsNil predicate on the "receipts" field.
-func ReceiptsIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldReceipts))
-}
-
-// ReceiptsNotNil applies the NotNil predicate on the "receipts" field.
-func ReceiptsNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldReceipts))
-}
-
-// ReceiptsEqualFold applies the EqualFold predicate on the "receipts" field.
-func ReceiptsEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldReceipts, v))
-}
-
-// ReceiptsContainsFold applies the ContainsFold predicate on the "receipts" field.
-func ReceiptsContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldReceipts, v))
-}
-
-// BlockingAppsEQ applies the EQ predicate on the "blocking_apps" field.
-func BlockingAppsEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldBlockingApps, v))
-}
-
-// BlockingAppsNEQ applies the NEQ predicate on the "blocking_apps" field.
-func BlockingAppsNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldBlockingApps, v))
-}
-
-// BlockingAppsIn applies the In predicate on the "blocking_apps" field.
-func BlockingAppsIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldBlockingApps, vs...))
-}
-
-// BlockingAppsNotIn applies the NotIn predicate on the "blocking_apps" field.
-func BlockingAppsNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldBlockingApps, vs...))
-}
-
-// BlockingAppsGT applies the GT predicate on the "blocking_apps" field.
-func BlockingAppsGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldBlockingApps, v))
-}
-
-// BlockingAppsGTE applies the GTE predicate on the "blocking_apps" field.
-func BlockingAppsGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldBlockingApps, v))
-}
-
-// BlockingAppsLT applies the LT predicate on the "blocking_apps" field.
-func BlockingAppsLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldBlockingApps, v))
-}
-
-// BlockingAppsLTE applies the LTE predicate on the "blocking_apps" field.
-func BlockingAppsLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldBlockingApps, v))
-}
-
-// BlockingAppsContains applies the Contains predicate on the "blocking_apps" field.
-func BlockingAppsContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldBlockingApps, v))
-}
-
-// BlockingAppsHasPrefix applies the HasPrefix predicate on the "blocking_apps" field.
-func BlockingAppsHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldBlockingApps, v))
-}
-
-// BlockingAppsHasSuffix applies the HasSuffix predicate on the "blocking_apps" field.
-func BlockingAppsHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldBlockingApps, v))
-}
-
-// BlockingAppsIsNil applies the IsNil predicate on the "blocking_apps" field.
-func BlockingAppsIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldBlockingApps))
-}
-
-// BlockingAppsNotNil applies the NotNil predicate on the "blocking_apps" field.
-func BlockingAppsNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldBlockingApps))
-}
-
-// BlockingAppsEqualFold applies the EqualFold predicate on the "blocking_apps" field.
-func BlockingAppsEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldBlockingApps, v))
-}
-
-// BlockingAppsContainsFold applies the ContainsFold predicate on the "blocking_apps" field.
-func BlockingAppsContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldBlockingApps, v))
-}
-
-// RestartActionEQ applies the EQ predicate on the "restart_action" field.
-func RestartActionEQ(v RestartAction) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldRestartAction, v))
-}
-
-// RestartActionNEQ applies the NEQ predicate on the "restart_action" field.
-func RestartActionNEQ(v RestartAction) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldRestartAction, v))
-}
-
-// RestartActionIn applies the In predicate on the "restart_action" field.
-func RestartActionIn(vs ...RestartAction) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldRestartAction, vs...))
-}
-
-// RestartActionNotIn applies the NotIn predicate on the "restart_action" field.
-func RestartActionNotIn(vs ...RestartAction) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldRestartAction, vs...))
-}
-
-// RestartActionIsNil applies the IsNil predicate on the "restart_action" field.
-func RestartActionIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldRestartAction))
-}
-
-// RestartActionNotNil applies the NotNil predicate on the "restart_action" field.
-func RestartActionNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldRestartAction))
-}
-
-// MinOsVersionEQ applies the EQ predicate on the "min_os_version" field.
-func MinOsVersionEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldMinOsVersion, v))
-}
-
-// MinOsVersionNEQ applies the NEQ predicate on the "min_os_version" field.
-func MinOsVersionNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldMinOsVersion, v))
-}
-
-// MinOsVersionIn applies the In predicate on the "min_os_version" field.
-func MinOsVersionIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldMinOsVersion, vs...))
-}
-
-// MinOsVersionNotIn applies the NotIn predicate on the "min_os_version" field.
-func MinOsVersionNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldMinOsVersion, vs...))
-}
-
-// MinOsVersionGT applies the GT predicate on the "min_os_version" field.
-func MinOsVersionGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldMinOsVersion, v))
-}
-
-// MinOsVersionGTE applies the GTE predicate on the "min_os_version" field.
-func MinOsVersionGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldMinOsVersion, v))
-}
-
-// MinOsVersionLT applies the LT predicate on the "min_os_version" field.
-func MinOsVersionLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldMinOsVersion, v))
-}
-
-// MinOsVersionLTE applies the LTE predicate on the "min_os_version" field.
-func MinOsVersionLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldMinOsVersion, v))
-}
-
-// MinOsVersionContains applies the Contains predicate on the "min_os_version" field.
-func MinOsVersionContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldMinOsVersion, v))
-}
-
-// MinOsVersionHasPrefix applies the HasPrefix predicate on the "min_os_version" field.
-func MinOsVersionHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldMinOsVersion, v))
-}
-
-// MinOsVersionHasSuffix applies the HasSuffix predicate on the "min_os_version" field.
-func MinOsVersionHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldMinOsVersion, v))
-}
-
-// MinOsVersionIsNil applies the IsNil predicate on the "min_os_version" field.
-func MinOsVersionIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldMinOsVersion))
-}
-
-// MinOsVersionNotNil applies the NotNil predicate on the "min_os_version" field.
-func MinOsVersionNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldMinOsVersion))
-}
-
-// MinOsVersionEqualFold applies the EqualFold predicate on the "min_os_version" field.
-func MinOsVersionEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldMinOsVersion, v))
-}
-
-// MinOsVersionContainsFold applies the ContainsFold predicate on the "min_os_version" field.
-func MinOsVersionContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldMinOsVersion, v))
-}
-
-// MaxOsVersionEQ applies the EQ predicate on the "max_os_version" field.
-func MaxOsVersionEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionNEQ applies the NEQ predicate on the "max_os_version" field.
-func MaxOsVersionNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionIn applies the In predicate on the "max_os_version" field.
-func MaxOsVersionIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldMaxOsVersion, vs...))
-}
-
-// MaxOsVersionNotIn applies the NotIn predicate on the "max_os_version" field.
-func MaxOsVersionNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldMaxOsVersion, vs...))
-}
-
-// MaxOsVersionGT applies the GT predicate on the "max_os_version" field.
-func MaxOsVersionGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionGTE applies the GTE predicate on the "max_os_version" field.
-func MaxOsVersionGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionLT applies the LT predicate on the "max_os_version" field.
-func MaxOsVersionLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionLTE applies the LTE predicate on the "max_os_version" field.
-func MaxOsVersionLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionContains applies the Contains predicate on the "max_os_version" field.
-func MaxOsVersionContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionHasPrefix applies the HasPrefix predicate on the "max_os_version" field.
-func MaxOsVersionHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionHasSuffix applies the HasSuffix predicate on the "max_os_version" field.
-func MaxOsVersionHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionIsNil applies the IsNil predicate on the "max_os_version" field.
-func MaxOsVersionIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldMaxOsVersion))
-}
-
-// MaxOsVersionNotNil applies the NotNil predicate on the "max_os_version" field.
-func MaxOsVersionNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldMaxOsVersion))
-}
-
-// MaxOsVersionEqualFold applies the EqualFold predicate on the "max_os_version" field.
-func MaxOsVersionEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldMaxOsVersion, v))
-}
-
-// MaxOsVersionContainsFold applies the ContainsFold predicate on the "max_os_version" field.
-func MaxOsVersionContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldMaxOsVersion, v))
-}
-
-// SupportedArchitecturesEQ applies the EQ predicate on the "supported_architectures" field.
-func SupportedArchitecturesEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesNEQ applies the NEQ predicate on the "supported_architectures" field.
-func SupportedArchitecturesNEQ(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesIn applies the In predicate on the "supported_architectures" field.
-func SupportedArchitecturesIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldSupportedArchitectures, vs...))
-}
-
-// SupportedArchitecturesNotIn applies the NotIn predicate on the "supported_architectures" field.
-func SupportedArchitecturesNotIn(vs ...string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldSupportedArchitectures, vs...))
-}
-
-// SupportedArchitecturesGT applies the GT predicate on the "supported_architectures" field.
-func SupportedArchitecturesGT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesGTE applies the GTE predicate on the "supported_architectures" field.
-func SupportedArchitecturesGTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesLT applies the LT predicate on the "supported_architectures" field.
-func SupportedArchitecturesLT(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesLTE applies the LTE predicate on the "supported_architectures" field.
-func SupportedArchitecturesLTE(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesContains applies the Contains predicate on the "supported_architectures" field.
-func SupportedArchitecturesContains(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContains(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesHasPrefix applies the HasPrefix predicate on the "supported_architectures" field.
-func SupportedArchitecturesHasPrefix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesHasSuffix applies the HasSuffix predicate on the "supported_architectures" field.
-func SupportedArchitecturesHasSuffix(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesIsNil applies the IsNil predicate on the "supported_architectures" field.
-func SupportedArchitecturesIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldSupportedArchitectures))
-}
-
-// SupportedArchitecturesNotNil applies the NotNil predicate on the "supported_architectures" field.
-func SupportedArchitecturesNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldSupportedArchitectures))
-}
-
-// SupportedArchitecturesEqualFold applies the EqualFold predicate on the "supported_architectures" field.
-func SupportedArchitecturesEqualFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldSupportedArchitectures, v))
-}
-
-// SupportedArchitecturesContainsFold applies the ContainsFold predicate on the "supported_architectures" field.
-func SupportedArchitecturesContainsFold(v string) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldSupportedArchitectures, v))
-}
-
-// ForceInstallDateEQ applies the EQ predicate on the "force_install_date" field.
-func ForceInstallDateEQ(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldForceInstallDate, v))
-}
-
-// ForceInstallDateNEQ applies the NEQ predicate on the "force_install_date" field.
-func ForceInstallDateNEQ(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldForceInstallDate, v))
-}
-
-// ForceInstallDateIn applies the In predicate on the "force_install_date" field.
-func ForceInstallDateIn(vs ...time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldForceInstallDate, vs...))
-}
-
-// ForceInstallDateNotIn applies the NotIn predicate on the "force_install_date" field.
-func ForceInstallDateNotIn(vs ...time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldForceInstallDate, vs...))
-}
-
-// ForceInstallDateGT applies the GT predicate on the "force_install_date" field.
-func ForceInstallDateGT(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldForceInstallDate, v))
-}
-
-// ForceInstallDateGTE applies the GTE predicate on the "force_install_date" field.
-func ForceInstallDateGTE(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldForceInstallDate, v))
-}
-
-// ForceInstallDateLT applies the LT predicate on the "force_install_date" field.
-func ForceInstallDateLT(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldForceInstallDate, v))
-}
-
-// ForceInstallDateLTE applies the LTE predicate on the "force_install_date" field.
-func ForceInstallDateLTE(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldForceInstallDate, v))
-}
-
-// ForceInstallDateIsNil applies the IsNil predicate on the "force_install_date" field.
-func ForceInstallDateIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldForceInstallDate))
-}
-
-// ForceInstallDateNotNil applies the NotNil predicate on the "force_install_date" field.
-func ForceInstallDateNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldForceInstallDate))
-}
-
-// UnattendedInstallEQ applies the EQ predicate on the "unattended_install" field.
-func UnattendedInstallEQ(v bool) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldUnattendedInstall, v))
-}
-
-// UnattendedInstallNEQ applies the NEQ predicate on the "unattended_install" field.
-func UnattendedInstallNEQ(v bool) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldUnattendedInstall, v))
-}
-
-// UnattendedInstallIsNil applies the IsNil predicate on the "unattended_install" field.
-func UnattendedInstallIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldUnattendedInstall))
-}
-
-// UnattendedInstallNotNil applies the NotNil predicate on the "unattended_install" field.
-func UnattendedInstallNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldUnattendedInstall))
-}
-
-// UnattendedUninstallEQ applies the EQ predicate on the "unattended_uninstall" field.
-func UnattendedUninstallEQ(v bool) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldUnattendedUninstall, v))
-}
-
-// UnattendedUninstallNEQ applies the NEQ predicate on the "unattended_uninstall" field.
-func UnattendedUninstallNEQ(v bool) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldUnattendedUninstall, v))
-}
-
-// UnattendedUninstallIsNil applies the IsNil predicate on the "unattended_uninstall" field.
-func UnattendedUninstallIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldUnattendedUninstall))
-}
-
-// UnattendedUninstallNotNil applies the NotNil predicate on the "unattended_uninstall" field.
-func UnattendedUninstallNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldUnattendedUninstall))
-}
-
-// StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldStatus, v))
-}
-
-// StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldStatus, v))
-}
-
-// StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldStatus, vs...))
-}
-
-// StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldStatus, vs...))
-}
-
-// StatusIsNil applies the IsNil predicate on the "status" field.
-func StatusIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldStatus))
-}
-
-// StatusNotNil applies the NotNil predicate on the "status" field.
-func StatusNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldStatus))
+// VerifiedNotNil applies the NotNil predicate on the "verified" field.
+func VerifiedNotNil() predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldNotNull(FieldVerified))
 }
 
 // SourceEQ applies the EQ predicate on the "source" field.
-func SourceEQ(v Source) predicate.SoftwarePackage {
+func SourceEQ(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldEQ(FieldSource, v))
 }
 
 // SourceNEQ applies the NEQ predicate on the "source" field.
-func SourceNEQ(v Source) predicate.SoftwarePackage {
+func SourceNEQ(v string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldNEQ(FieldSource, v))
 }
 
 // SourceIn applies the In predicate on the "source" field.
-func SourceIn(vs ...Source) predicate.SoftwarePackage {
+func SourceIn(vs ...string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldIn(FieldSource, vs...))
 }
 
 // SourceNotIn applies the NotIn predicate on the "source" field.
-func SourceNotIn(vs ...Source) predicate.SoftwarePackage {
+func SourceNotIn(vs ...string) predicate.SoftwarePackage {
 	return predicate.SoftwarePackage(sql.FieldNotIn(FieldSource, vs...))
 }
 
-// SourceIsNil applies the IsNil predicate on the "source" field.
-func SourceIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldSource))
+// SourceGT applies the GT predicate on the "source" field.
+func SourceGT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGT(FieldSource, v))
 }
 
-// SourceNotNil applies the NotNil predicate on the "source" field.
-func SourceNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldSource))
+// SourceGTE applies the GTE predicate on the "source" field.
+func SourceGTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldGTE(FieldSource, v))
 }
 
-// CreatedEQ applies the EQ predicate on the "created" field.
-func CreatedEQ(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldCreated, v))
+// SourceLT applies the LT predicate on the "source" field.
+func SourceLT(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLT(FieldSource, v))
 }
 
-// CreatedNEQ applies the NEQ predicate on the "created" field.
-func CreatedNEQ(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldCreated, v))
+// SourceLTE applies the LTE predicate on the "source" field.
+func SourceLTE(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldLTE(FieldSource, v))
 }
 
-// CreatedIn applies the In predicate on the "created" field.
-func CreatedIn(vs ...time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldCreated, vs...))
+// SourceContains applies the Contains predicate on the "source" field.
+func SourceContains(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContains(FieldSource, v))
 }
 
-// CreatedNotIn applies the NotIn predicate on the "created" field.
-func CreatedNotIn(vs ...time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldCreated, vs...))
+// SourceHasPrefix applies the HasPrefix predicate on the "source" field.
+func SourceHasPrefix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasPrefix(FieldSource, v))
 }
 
-// CreatedGT applies the GT predicate on the "created" field.
-func CreatedGT(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldCreated, v))
+// SourceHasSuffix applies the HasSuffix predicate on the "source" field.
+func SourceHasSuffix(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldHasSuffix(FieldSource, v))
 }
 
-// CreatedGTE applies the GTE predicate on the "created" field.
-func CreatedGTE(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldCreated, v))
+// SourceEqualFold applies the EqualFold predicate on the "source" field.
+func SourceEqualFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldEqualFold(FieldSource, v))
 }
 
-// CreatedLT applies the LT predicate on the "created" field.
-func CreatedLT(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldCreated, v))
-}
-
-// CreatedLTE applies the LTE predicate on the "created" field.
-func CreatedLTE(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldCreated, v))
-}
-
-// CreatedIsNil applies the IsNil predicate on the "created" field.
-func CreatedIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldCreated))
-}
-
-// CreatedNotNil applies the NotNil predicate on the "created" field.
-func CreatedNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldCreated))
-}
-
-// ModifiedEQ applies the EQ predicate on the "modified" field.
-func ModifiedEQ(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldEQ(FieldModified, v))
-}
-
-// ModifiedNEQ applies the NEQ predicate on the "modified" field.
-func ModifiedNEQ(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNEQ(FieldModified, v))
-}
-
-// ModifiedIn applies the In predicate on the "modified" field.
-func ModifiedIn(vs ...time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIn(FieldModified, vs...))
-}
-
-// ModifiedNotIn applies the NotIn predicate on the "modified" field.
-func ModifiedNotIn(vs ...time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotIn(FieldModified, vs...))
-}
-
-// ModifiedGT applies the GT predicate on the "modified" field.
-func ModifiedGT(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGT(FieldModified, v))
-}
-
-// ModifiedGTE applies the GTE predicate on the "modified" field.
-func ModifiedGTE(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldGTE(FieldModified, v))
-}
-
-// ModifiedLT applies the LT predicate on the "modified" field.
-func ModifiedLT(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLT(FieldModified, v))
-}
-
-// ModifiedLTE applies the LTE predicate on the "modified" field.
-func ModifiedLTE(v time.Time) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldLTE(FieldModified, v))
-}
-
-// ModifiedIsNil applies the IsNil predicate on the "modified" field.
-func ModifiedIsNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldIsNull(FieldModified))
-}
-
-// ModifiedNotNil applies the NotNil predicate on the "modified" field.
-func ModifiedNotNil() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(sql.FieldNotNull(FieldModified))
-}
-
-// HasRepo applies the HasEdge predicate on the "repo" edge.
-func HasRepo() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, RepoTable, RepoColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasRepoWith applies the HasEdge predicate on the "repo" edge with a given conditions (other predicates).
-func HasRepoWith(preds ...predicate.SoftwareRepo) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newRepoStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasCatalogs applies the HasEdge predicate on the "catalogs" edge.
-func HasCatalogs() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, CatalogsTable, CatalogsPrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasCatalogsWith applies the HasEdge predicate on the "catalogs" edge with a given conditions (other predicates).
-func HasCatalogsWith(preds ...predicate.SoftwareCatalog) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newCatalogsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasTenant applies the HasEdge predicate on the "tenant" edge.
-func HasTenant() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, TenantTable, TenantColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasTenantWith applies the HasEdge predicate on the "tenant" edge with a given conditions (other predicates).
-func HasTenantWith(preds ...predicate.Tenant) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newTenantStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasInstallLogs applies the HasEdge predicate on the "install_logs" edge.
-func HasInstallLogs() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, InstallLogsTable, InstallLogsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasInstallLogsWith applies the HasEdge predicate on the "install_logs" edge with a given conditions (other predicates).
-func HasInstallLogsWith(preds ...predicate.SoftwareInstallLog) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newInstallLogsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasRequires applies the HasEdge predicate on the "requires" edge.
-func HasRequires() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, RequiresTable, RequiresPrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasRequiresWith applies the HasEdge predicate on the "requires" edge with a given conditions (other predicates).
-func HasRequiresWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newRequiresStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasUpdateFor applies the HasEdge predicate on the "update_for" edge.
-func HasUpdateFor() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, UpdateForTable, UpdateForPrimaryKey...),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasUpdateForWith applies the HasEdge predicate on the "update_for" edge with a given conditions (other predicates).
-func HasUpdateForWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newUpdateForStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasGlobalRef applies the HasEdge predicate on the "global_ref" edge.
-func HasGlobalRef() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, GlobalRefTable, GlobalRefColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasGlobalRefWith applies the HasEdge predicate on the "global_ref" edge with a given conditions (other predicates).
-func HasGlobalRefWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newGlobalRefStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasSubscribers applies the HasEdge predicate on the "subscribers" edge.
-func HasSubscribers() predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, SubscribersTable, SubscribersColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasSubscribersWith applies the HasEdge predicate on the "subscribers" edge with a given conditions (other predicates).
-func HasSubscribersWith(preds ...predicate.SoftwarePackage) predicate.SoftwarePackage {
-	return predicate.SoftwarePackage(func(s *sql.Selector) {
-		step := newSubscribersStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
+// SourceContainsFold applies the ContainsFold predicate on the "source" field.
+func SourceContainsFold(v string) predicate.SoftwarePackage {
+	return predicate.SoftwarePackage(sql.FieldContainsFold(FieldSource, v))
 }
 
 // And groups predicates with the AND operator between them.

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/enrollmenttoken"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/netbirdsettings"
 	"github.com/EigerCode/ent/orgmetadata"
 	"github.com/EigerCode/ent/predicate"
@@ -21,7 +22,6 @@ import (
 	"github.com/EigerCode/ent/site"
 	"github.com/EigerCode/ent/softwareassignment"
 	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwarepackage"
 	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/tag"
 	"github.com/EigerCode/ent/tenant"
@@ -44,7 +44,7 @@ type TenantQuery struct {
 	withUserTenants         *UserTenantQuery
 	withEnrollmentTokens    *EnrollmentTokenQuery
 	withSoftwareRepos       *SoftwareRepoQuery
-	withSoftwarePackages    *SoftwarePackageQuery
+	withSoftwarePackages    *ManagedPackageQuery
 	withSoftwareCatalogs    *SoftwareCatalogQuery
 	withSoftwareAssignments *SoftwareAssignmentQuery
 	withFKs                 bool
@@ -284,8 +284,8 @@ func (tq *TenantQuery) QuerySoftwareRepos() *SoftwareRepoQuery {
 }
 
 // QuerySoftwarePackages chains the current query on the "software_packages" edge.
-func (tq *TenantQuery) QuerySoftwarePackages() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: tq.config}).Query()
+func (tq *TenantQuery) QuerySoftwarePackages() *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -296,7 +296,7 @@ func (tq *TenantQuery) QuerySoftwarePackages() *SoftwarePackageQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tenant.Table, tenant.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, tenant.SoftwarePackagesTable, tenant.SoftwarePackagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
@@ -661,8 +661,8 @@ func (tq *TenantQuery) WithSoftwareRepos(opts ...func(*SoftwareRepoQuery)) *Tena
 
 // WithSoftwarePackages tells the query-builder to eager-load the nodes that are connected to
 // the "software_packages" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TenantQuery) WithSoftwarePackages(opts ...func(*SoftwarePackageQuery)) *TenantQuery {
-	query := (&SoftwarePackageClient{config: tq.config}).Query()
+func (tq *TenantQuery) WithSoftwarePackages(opts ...func(*ManagedPackageQuery)) *TenantQuery {
+	query := (&ManagedPackageClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -876,8 +876,8 @@ func (tq *TenantQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tenan
 	}
 	if query := tq.withSoftwarePackages; query != nil {
 		if err := tq.loadSoftwarePackages(ctx, query, nodes,
-			func(n *Tenant) { n.Edges.SoftwarePackages = []*SoftwarePackage{} },
-			func(n *Tenant, e *SoftwarePackage) { n.Edges.SoftwarePackages = append(n.Edges.SoftwarePackages, e) }); err != nil {
+			func(n *Tenant) { n.Edges.SoftwarePackages = []*ManagedPackage{} },
+			func(n *Tenant, e *ManagedPackage) { n.Edges.SoftwarePackages = append(n.Edges.SoftwarePackages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1206,7 +1206,7 @@ func (tq *TenantQuery) loadSoftwareRepos(ctx context.Context, query *SoftwareRep
 	}
 	return nil
 }
-func (tq *TenantQuery) loadSoftwarePackages(ctx context.Context, query *SoftwarePackageQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *SoftwarePackage)) error {
+func (tq *TenantQuery) loadSoftwarePackages(ctx context.Context, query *ManagedPackageQuery, nodes []*Tenant, init func(*Tenant), assign func(*Tenant, *ManagedPackage)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*Tenant)
 	for i := range nodes {
@@ -1217,7 +1217,7 @@ func (tq *TenantQuery) loadSoftwarePackages(ctx context.Context, query *Software
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.SoftwarePackage(func(s *sql.Selector) {
+	query.Where(predicate.ManagedPackage(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(tenant.SoftwarePackagesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

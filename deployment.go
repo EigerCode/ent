@@ -24,6 +24,12 @@ type Deployment struct {
 	Name string `json:"name,omitempty"`
 	// Version holds the value of the "version" field.
 	Version string `json:"version,omitempty"`
+	// Branch holds the value of the "branch" field.
+	Branch string `json:"branch,omitempty"`
+	// BrewType holds the value of the "brew_type" field.
+	BrewType string `json:"brew_type,omitempty"`
+	// Verified holds the value of the "verified" field.
+	Verified bool `json:"verified,omitempty"`
 	// Installed holds the value of the "installed" field.
 	Installed time.Time `json:"installed,omitempty"`
 	// Updated holds the value of the "updated" field.
@@ -66,11 +72,11 @@ func (*Deployment) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case deployment.FieldFailed, deployment.FieldByProfile:
+		case deployment.FieldVerified, deployment.FieldFailed, deployment.FieldByProfile:
 			values[i] = new(sql.NullBool)
 		case deployment.FieldID:
 			values[i] = new(sql.NullInt64)
-		case deployment.FieldPackageID, deployment.FieldName, deployment.FieldVersion, deployment.FieldMoreInfo:
+		case deployment.FieldPackageID, deployment.FieldName, deployment.FieldVersion, deployment.FieldBranch, deployment.FieldBrewType, deployment.FieldMoreInfo:
 			values[i] = new(sql.NullString)
 		case deployment.FieldInstalled, deployment.FieldUpdated:
 			values[i] = new(sql.NullTime)
@@ -114,6 +120,24 @@ func (d *Deployment) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field version", values[i])
 			} else if value.Valid {
 				d.Version = value.String
+			}
+		case deployment.FieldBranch:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field branch", values[i])
+			} else if value.Valid {
+				d.Branch = value.String
+			}
+		case deployment.FieldBrewType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field brew_type", values[i])
+			} else if value.Valid {
+				d.BrewType = value.String
+			}
+		case deployment.FieldVerified:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field verified", values[i])
+			} else if value.Valid {
+				d.Verified = value.Bool
 			}
 		case deployment.FieldInstalled:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -201,6 +225,15 @@ func (d *Deployment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("version=")
 	builder.WriteString(d.Version)
+	builder.WriteString(", ")
+	builder.WriteString("branch=")
+	builder.WriteString(d.Branch)
+	builder.WriteString(", ")
+	builder.WriteString("brew_type=")
+	builder.WriteString(d.BrewType)
+	builder.WriteString(", ")
+	builder.WriteString("verified=")
+	builder.WriteString(fmt.Sprintf("%v", d.Verified))
 	builder.WriteString(", ")
 	builder.WriteString("installed=")
 	builder.WriteString(d.Installed.Format(time.ANSIC))

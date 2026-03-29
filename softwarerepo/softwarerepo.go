@@ -55,10 +55,10 @@ const (
 	// TenantColumn is the table column denoting the tenant relation/edge.
 	TenantColumn = "tenant_software_repos"
 	// PackagesTable is the table that holds the packages relation/edge.
-	PackagesTable = "software_packages"
-	// PackagesInverseTable is the table name for the SoftwarePackage entity.
-	// It exists in this package in order to avoid circular dependency with the "softwarepackage" package.
-	PackagesInverseTable = "software_packages"
+	PackagesTable = "managed_packages"
+	// PackagesInverseTable is the table name for the ManagedPackage entity.
+	// It exists in this package in order to avoid circular dependency with the "managedpackage" package.
+	PackagesInverseTable = "managed_packages"
 	// PackagesColumn is the table column denoting the packages relation/edge.
 	PackagesColumn = "software_repo_packages"
 )

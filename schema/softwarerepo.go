@@ -39,7 +39,7 @@ func (SoftwareRepo) Fields() []ent.Field {
 func (SoftwareRepo) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tenant", Tenant.Type).Unique().Ref("software_repos"),
-		edge.To("packages", SoftwarePackage.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("packages", ManagedPackage.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }
 

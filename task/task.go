@@ -196,6 +196,12 @@ const (
 	FieldDisabled = "disabled"
 	// FieldOrder holds the string denoting the order field in the database.
 	FieldOrder = "order"
+	// FieldPackageBranch holds the string denoting the package_branch field in the database.
+	FieldPackageBranch = "package_branch"
+	// FieldPackageArch holds the string denoting the package_arch field in the database.
+	FieldPackageArch = "package_arch"
+	// FieldPackageBrewType holds the string denoting the package_brew_type field in the database.
+	FieldPackageBrewType = "package_brew_type"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
@@ -321,6 +327,9 @@ var Columns = []string{
 	FieldIgnoreErrors,
 	FieldDisabled,
 	FieldOrder,
+	FieldPackageBranch,
+	FieldPackageArch,
+	FieldPackageBrewType,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
@@ -459,6 +468,12 @@ var (
 	DefaultDisabled bool
 	// DefaultOrder holds the default value on creation for the "order" field.
 	DefaultOrder int
+	// DefaultPackageBranch holds the default value on creation for the "package_branch" field.
+	DefaultPackageBranch string
+	// DefaultPackageArch holds the default value on creation for the "package_arch" field.
+	DefaultPackageArch string
+	// DefaultPackageBrewType holds the default value on creation for the "package_brew_type" field.
+	DefaultPackageBrewType string
 )
 
 // Type defines the type for the "type" enum field.
@@ -1118,6 +1133,21 @@ func ByDisabled(opts ...sql.OrderTermOption) OrderOption {
 // ByOrder orders the results by the order field.
 func ByOrder(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrder, opts...).ToFunc()
+}
+
+// ByPackageBranch orders the results by the package_branch field.
+func ByPackageBranch(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPackageBranch, opts...).ToFunc()
+}
+
+// ByPackageArch orders the results by the package_arch field.
+func ByPackageArch(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPackageArch, opts...).ToFunc()
+}
+
+// ByPackageBrewType orders the results by the package_brew_type field.
+func ByPackageBrewType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPackageBrewType, opts...).ToFunc()
 }
 
 // ByTagsCount orders the results by tags count.

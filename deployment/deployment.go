@@ -20,6 +20,12 @@ const (
 	FieldName = "name"
 	// FieldVersion holds the string denoting the version field in the database.
 	FieldVersion = "version"
+	// FieldBranch holds the string denoting the branch field in the database.
+	FieldBranch = "branch"
+	// FieldBrewType holds the string denoting the brew_type field in the database.
+	FieldBrewType = "brew_type"
+	// FieldVerified holds the string denoting the verified field in the database.
+	FieldVerified = "verified"
 	// FieldInstalled holds the string denoting the installed field in the database.
 	FieldInstalled = "installed"
 	// FieldUpdated holds the string denoting the updated field in the database.
@@ -51,6 +57,9 @@ var Columns = []string{
 	FieldPackageID,
 	FieldName,
 	FieldVersion,
+	FieldBranch,
+	FieldBrewType,
+	FieldVerified,
 	FieldInstalled,
 	FieldUpdated,
 	FieldFailed,
@@ -113,6 +122,21 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByVersion orders the results by the version field.
 func ByVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVersion, opts...).ToFunc()
+}
+
+// ByBranch orders the results by the branch field.
+func ByBranch(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBranch, opts...).ToFunc()
+}
+
+// ByBrewType orders the results by the brew_type field.
+func ByBrewType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBrewType, opts...).ToFunc()
+}
+
+// ByVerified orders the results by the verified field.
+func ByVerified(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVerified, opts...).ToFunc()
 }
 
 // ByInstalled orders the results by the installed field.

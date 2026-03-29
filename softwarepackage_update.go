@@ -6,17 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/predicate"
-	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwareinstalllog"
 	"github.com/EigerCode/ent/softwarepackage"
-	"github.com/EigerCode/ent/softwarerepo"
-	"github.com/EigerCode/ent/tenant"
 )
 
 // SoftwarePackageUpdate is the builder for updating SoftwarePackage entities.
@@ -30,6 +25,20 @@ type SoftwarePackageUpdate struct {
 // Where appends a list predicates to the SoftwarePackageUpdate builder.
 func (spu *SoftwarePackageUpdate) Where(ps ...predicate.SoftwarePackage) *SoftwarePackageUpdate {
 	spu.mutation.Where(ps...)
+	return spu
+}
+
+// SetPackageID sets the "package_id" field.
+func (spu *SoftwarePackageUpdate) SetPackageID(s string) *SoftwarePackageUpdate {
+	spu.mutation.SetPackageID(s)
+	return spu
+}
+
+// SetNillablePackageID sets the "package_id" field if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillablePackageID(s *string) *SoftwarePackageUpdate {
+	if s != nil {
+		spu.SetPackageID(*s)
+	}
 	return spu
 }
 
@@ -47,26 +56,6 @@ func (spu *SoftwarePackageUpdate) SetNillableName(s *string) *SoftwarePackageUpd
 	return spu
 }
 
-// SetDisplayName sets the "display_name" field.
-func (spu *SoftwarePackageUpdate) SetDisplayName(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetDisplayName(s)
-	return spu
-}
-
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableDisplayName(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetDisplayName(*s)
-	}
-	return spu
-}
-
-// ClearDisplayName clears the value of the "display_name" field.
-func (spu *SoftwarePackageUpdate) ClearDisplayName() *SoftwarePackageUpdate {
-	spu.mutation.ClearDisplayName()
-	return spu
-}
-
 // SetVersion sets the "version" field.
 func (spu *SoftwarePackageUpdate) SetVersion(s string) *SoftwarePackageUpdate {
 	spu.mutation.SetVersion(s)
@@ -81,643 +70,104 @@ func (spu *SoftwarePackageUpdate) SetNillableVersion(s *string) *SoftwarePackage
 	return spu
 }
 
-// SetPlatform sets the "platform" field.
-func (spu *SoftwarePackageUpdate) SetPlatform(s softwarepackage.Platform) *SoftwarePackageUpdate {
-	spu.mutation.SetPlatform(s)
+// ClearVersion clears the value of the "version" field.
+func (spu *SoftwarePackageUpdate) ClearVersion() *SoftwarePackageUpdate {
+	spu.mutation.ClearVersion()
 	return spu
 }
 
-// SetNillablePlatform sets the "platform" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillablePlatform(s *softwarepackage.Platform) *SoftwarePackageUpdate {
+// SetBranch sets the "branch" field.
+func (spu *SoftwarePackageUpdate) SetBranch(s string) *SoftwarePackageUpdate {
+	spu.mutation.SetBranch(s)
+	return spu
+}
+
+// SetNillableBranch sets the "branch" field if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillableBranch(s *string) *SoftwarePackageUpdate {
 	if s != nil {
-		spu.SetPlatform(*s)
+		spu.SetBranch(*s)
 	}
 	return spu
 }
 
-// SetInstallerPath sets the "installer_path" field.
-func (spu *SoftwarePackageUpdate) SetInstallerPath(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetInstallerPath(s)
+// ClearBranch clears the value of the "branch" field.
+func (spu *SoftwarePackageUpdate) ClearBranch() *SoftwarePackageUpdate {
+	spu.mutation.ClearBranch()
 	return spu
 }
 
-// SetNillableInstallerPath sets the "installer_path" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableInstallerPath(s *string) *SoftwarePackageUpdate {
+// SetArch sets the "arch" field.
+func (spu *SoftwarePackageUpdate) SetArch(s string) *SoftwarePackageUpdate {
+	spu.mutation.SetArch(s)
+	return spu
+}
+
+// SetNillableArch sets the "arch" field if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillableArch(s *string) *SoftwarePackageUpdate {
 	if s != nil {
-		spu.SetInstallerPath(*s)
+		spu.SetArch(*s)
 	}
 	return spu
 }
 
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (spu *SoftwarePackageUpdate) SetChecksumSha256(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetChecksumSha256(s)
+// ClearArch clears the value of the "arch" field.
+func (spu *SoftwarePackageUpdate) ClearArch() *SoftwarePackageUpdate {
+	spu.mutation.ClearArch()
 	return spu
 }
 
-// SetNillableChecksumSha256 sets the "checksum_sha256" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableChecksumSha256(s *string) *SoftwarePackageUpdate {
+// SetBrewType sets the "brew_type" field.
+func (spu *SoftwarePackageUpdate) SetBrewType(s string) *SoftwarePackageUpdate {
+	spu.mutation.SetBrewType(s)
+	return spu
+}
+
+// SetNillableBrewType sets the "brew_type" field if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillableBrewType(s *string) *SoftwarePackageUpdate {
 	if s != nil {
-		spu.SetChecksumSha256(*s)
+		spu.SetBrewType(*s)
 	}
 	return spu
 }
 
-// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
-func (spu *SoftwarePackageUpdate) ClearChecksumSha256() *SoftwarePackageUpdate {
-	spu.mutation.ClearChecksumSha256()
+// ClearBrewType clears the value of the "brew_type" field.
+func (spu *SoftwarePackageUpdate) ClearBrewType() *SoftwarePackageUpdate {
+	spu.mutation.ClearBrewType()
 	return spu
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (spu *SoftwarePackageUpdate) SetSizeBytes(i int64) *SoftwarePackageUpdate {
-	spu.mutation.ResetSizeBytes()
-	spu.mutation.SetSizeBytes(i)
+// SetVerified sets the "verified" field.
+func (spu *SoftwarePackageUpdate) SetVerified(b bool) *SoftwarePackageUpdate {
+	spu.mutation.SetVerified(b)
 	return spu
 }
 
-// SetNillableSizeBytes sets the "size_bytes" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableSizeBytes(i *int64) *SoftwarePackageUpdate {
-	if i != nil {
-		spu.SetSizeBytes(*i)
-	}
-	return spu
-}
-
-// AddSizeBytes adds i to the "size_bytes" field.
-func (spu *SoftwarePackageUpdate) AddSizeBytes(i int64) *SoftwarePackageUpdate {
-	spu.mutation.AddSizeBytes(i)
-	return spu
-}
-
-// ClearSizeBytes clears the value of the "size_bytes" field.
-func (spu *SoftwarePackageUpdate) ClearSizeBytes() *SoftwarePackageUpdate {
-	spu.mutation.ClearSizeBytes()
-	return spu
-}
-
-// SetIconName sets the "icon_name" field.
-func (spu *SoftwarePackageUpdate) SetIconName(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetIconName(s)
-	return spu
-}
-
-// SetNillableIconName sets the "icon_name" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableIconName(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetIconName(*s)
-	}
-	return spu
-}
-
-// ClearIconName clears the value of the "icon_name" field.
-func (spu *SoftwarePackageUpdate) ClearIconName() *SoftwarePackageUpdate {
-	spu.mutation.ClearIconName()
-	return spu
-}
-
-// SetDescription sets the "description" field.
-func (spu *SoftwarePackageUpdate) SetDescription(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetDescription(s)
-	return spu
-}
-
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableDescription(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetDescription(*s)
-	}
-	return spu
-}
-
-// ClearDescription clears the value of the "description" field.
-func (spu *SoftwarePackageUpdate) ClearDescription() *SoftwarePackageUpdate {
-	spu.mutation.ClearDescription()
-	return spu
-}
-
-// SetCategory sets the "category" field.
-func (spu *SoftwarePackageUpdate) SetCategory(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetCategory(s)
-	return spu
-}
-
-// SetNillableCategory sets the "category" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableCategory(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetCategory(*s)
-	}
-	return spu
-}
-
-// ClearCategory clears the value of the "category" field.
-func (spu *SoftwarePackageUpdate) ClearCategory() *SoftwarePackageUpdate {
-	spu.mutation.ClearCategory()
-	return spu
-}
-
-// SetDeveloper sets the "developer" field.
-func (spu *SoftwarePackageUpdate) SetDeveloper(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetDeveloper(s)
-	return spu
-}
-
-// SetNillableDeveloper sets the "developer" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableDeveloper(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetDeveloper(*s)
-	}
-	return spu
-}
-
-// ClearDeveloper clears the value of the "developer" field.
-func (spu *SoftwarePackageUpdate) ClearDeveloper() *SoftwarePackageUpdate {
-	spu.mutation.ClearDeveloper()
-	return spu
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (spu *SoftwarePackageUpdate) SetPkginfoData(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetPkginfoData(s)
-	return spu
-}
-
-// SetNillablePkginfoData sets the "pkginfo_data" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillablePkginfoData(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetPkginfoData(*s)
-	}
-	return spu
-}
-
-// ClearPkginfoData clears the value of the "pkginfo_data" field.
-func (spu *SoftwarePackageUpdate) ClearPkginfoData() *SoftwarePackageUpdate {
-	spu.mutation.ClearPkginfoData()
-	return spu
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (spu *SoftwarePackageUpdate) SetPreInstallScript(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetPreInstallScript(s)
-	return spu
-}
-
-// SetNillablePreInstallScript sets the "pre_install_script" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillablePreInstallScript(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetPreInstallScript(*s)
-	}
-	return spu
-}
-
-// ClearPreInstallScript clears the value of the "pre_install_script" field.
-func (spu *SoftwarePackageUpdate) ClearPreInstallScript() *SoftwarePackageUpdate {
-	spu.mutation.ClearPreInstallScript()
-	return spu
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (spu *SoftwarePackageUpdate) SetPostInstallScript(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetPostInstallScript(s)
-	return spu
-}
-
-// SetNillablePostInstallScript sets the "post_install_script" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillablePostInstallScript(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetPostInstallScript(*s)
-	}
-	return spu
-}
-
-// ClearPostInstallScript clears the value of the "post_install_script" field.
-func (spu *SoftwarePackageUpdate) ClearPostInstallScript() *SoftwarePackageUpdate {
-	spu.mutation.ClearPostInstallScript()
-	return spu
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (spu *SoftwarePackageUpdate) SetUninstallMethod(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetUninstallMethod(s)
-	return spu
-}
-
-// SetNillableUninstallMethod sets the "uninstall_method" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableUninstallMethod(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetUninstallMethod(*s)
-	}
-	return spu
-}
-
-// ClearUninstallMethod clears the value of the "uninstall_method" field.
-func (spu *SoftwarePackageUpdate) ClearUninstallMethod() *SoftwarePackageUpdate {
-	spu.mutation.ClearUninstallMethod()
-	return spu
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (spu *SoftwarePackageUpdate) SetInstallsItems(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetInstallsItems(s)
-	return spu
-}
-
-// SetNillableInstallsItems sets the "installs_items" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableInstallsItems(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetInstallsItems(*s)
-	}
-	return spu
-}
-
-// ClearInstallsItems clears the value of the "installs_items" field.
-func (spu *SoftwarePackageUpdate) ClearInstallsItems() *SoftwarePackageUpdate {
-	spu.mutation.ClearInstallsItems()
-	return spu
-}
-
-// SetReceipts sets the "receipts" field.
-func (spu *SoftwarePackageUpdate) SetReceipts(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetReceipts(s)
-	return spu
-}
-
-// SetNillableReceipts sets the "receipts" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableReceipts(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetReceipts(*s)
-	}
-	return spu
-}
-
-// ClearReceipts clears the value of the "receipts" field.
-func (spu *SoftwarePackageUpdate) ClearReceipts() *SoftwarePackageUpdate {
-	spu.mutation.ClearReceipts()
-	return spu
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (spu *SoftwarePackageUpdate) SetBlockingApps(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetBlockingApps(s)
-	return spu
-}
-
-// SetNillableBlockingApps sets the "blocking_apps" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableBlockingApps(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetBlockingApps(*s)
-	}
-	return spu
-}
-
-// ClearBlockingApps clears the value of the "blocking_apps" field.
-func (spu *SoftwarePackageUpdate) ClearBlockingApps() *SoftwarePackageUpdate {
-	spu.mutation.ClearBlockingApps()
-	return spu
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (spu *SoftwarePackageUpdate) SetRestartAction(sa softwarepackage.RestartAction) *SoftwarePackageUpdate {
-	spu.mutation.SetRestartAction(sa)
-	return spu
-}
-
-// SetNillableRestartAction sets the "restart_action" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableRestartAction(sa *softwarepackage.RestartAction) *SoftwarePackageUpdate {
-	if sa != nil {
-		spu.SetRestartAction(*sa)
-	}
-	return spu
-}
-
-// ClearRestartAction clears the value of the "restart_action" field.
-func (spu *SoftwarePackageUpdate) ClearRestartAction() *SoftwarePackageUpdate {
-	spu.mutation.ClearRestartAction()
-	return spu
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (spu *SoftwarePackageUpdate) SetMinOsVersion(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetMinOsVersion(s)
-	return spu
-}
-
-// SetNillableMinOsVersion sets the "min_os_version" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableMinOsVersion(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetMinOsVersion(*s)
-	}
-	return spu
-}
-
-// ClearMinOsVersion clears the value of the "min_os_version" field.
-func (spu *SoftwarePackageUpdate) ClearMinOsVersion() *SoftwarePackageUpdate {
-	spu.mutation.ClearMinOsVersion()
-	return spu
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (spu *SoftwarePackageUpdate) SetMaxOsVersion(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetMaxOsVersion(s)
-	return spu
-}
-
-// SetNillableMaxOsVersion sets the "max_os_version" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableMaxOsVersion(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetMaxOsVersion(*s)
-	}
-	return spu
-}
-
-// ClearMaxOsVersion clears the value of the "max_os_version" field.
-func (spu *SoftwarePackageUpdate) ClearMaxOsVersion() *SoftwarePackageUpdate {
-	spu.mutation.ClearMaxOsVersion()
-	return spu
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (spu *SoftwarePackageUpdate) SetSupportedArchitectures(s string) *SoftwarePackageUpdate {
-	spu.mutation.SetSupportedArchitectures(s)
-	return spu
-}
-
-// SetNillableSupportedArchitectures sets the "supported_architectures" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableSupportedArchitectures(s *string) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetSupportedArchitectures(*s)
-	}
-	return spu
-}
-
-// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
-func (spu *SoftwarePackageUpdate) ClearSupportedArchitectures() *SoftwarePackageUpdate {
-	spu.mutation.ClearSupportedArchitectures()
-	return spu
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (spu *SoftwarePackageUpdate) SetForceInstallDate(t time.Time) *SoftwarePackageUpdate {
-	spu.mutation.SetForceInstallDate(t)
-	return spu
-}
-
-// SetNillableForceInstallDate sets the "force_install_date" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableForceInstallDate(t *time.Time) *SoftwarePackageUpdate {
-	if t != nil {
-		spu.SetForceInstallDate(*t)
-	}
-	return spu
-}
-
-// ClearForceInstallDate clears the value of the "force_install_date" field.
-func (spu *SoftwarePackageUpdate) ClearForceInstallDate() *SoftwarePackageUpdate {
-	spu.mutation.ClearForceInstallDate()
-	return spu
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (spu *SoftwarePackageUpdate) SetUnattendedInstall(b bool) *SoftwarePackageUpdate {
-	spu.mutation.SetUnattendedInstall(b)
-	return spu
-}
-
-// SetNillableUnattendedInstall sets the "unattended_install" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableUnattendedInstall(b *bool) *SoftwarePackageUpdate {
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (spu *SoftwarePackageUpdate) SetNillableVerified(b *bool) *SoftwarePackageUpdate {
 	if b != nil {
-		spu.SetUnattendedInstall(*b)
+		spu.SetVerified(*b)
 	}
 	return spu
 }
 
-// ClearUnattendedInstall clears the value of the "unattended_install" field.
-func (spu *SoftwarePackageUpdate) ClearUnattendedInstall() *SoftwarePackageUpdate {
-	spu.mutation.ClearUnattendedInstall()
-	return spu
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (spu *SoftwarePackageUpdate) SetUnattendedUninstall(b bool) *SoftwarePackageUpdate {
-	spu.mutation.SetUnattendedUninstall(b)
-	return spu
-}
-
-// SetNillableUnattendedUninstall sets the "unattended_uninstall" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableUnattendedUninstall(b *bool) *SoftwarePackageUpdate {
-	if b != nil {
-		spu.SetUnattendedUninstall(*b)
-	}
-	return spu
-}
-
-// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
-func (spu *SoftwarePackageUpdate) ClearUnattendedUninstall() *SoftwarePackageUpdate {
-	spu.mutation.ClearUnattendedUninstall()
-	return spu
-}
-
-// SetStatus sets the "status" field.
-func (spu *SoftwarePackageUpdate) SetStatus(s softwarepackage.Status) *SoftwarePackageUpdate {
-	spu.mutation.SetStatus(s)
-	return spu
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableStatus(s *softwarepackage.Status) *SoftwarePackageUpdate {
-	if s != nil {
-		spu.SetStatus(*s)
-	}
-	return spu
-}
-
-// ClearStatus clears the value of the "status" field.
-func (spu *SoftwarePackageUpdate) ClearStatus() *SoftwarePackageUpdate {
-	spu.mutation.ClearStatus()
+// ClearVerified clears the value of the "verified" field.
+func (spu *SoftwarePackageUpdate) ClearVerified() *SoftwarePackageUpdate {
+	spu.mutation.ClearVerified()
 	return spu
 }
 
 // SetSource sets the "source" field.
-func (spu *SoftwarePackageUpdate) SetSource(s softwarepackage.Source) *SoftwarePackageUpdate {
+func (spu *SoftwarePackageUpdate) SetSource(s string) *SoftwarePackageUpdate {
 	spu.mutation.SetSource(s)
 	return spu
 }
 
 // SetNillableSource sets the "source" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableSource(s *softwarepackage.Source) *SoftwarePackageUpdate {
+func (spu *SoftwarePackageUpdate) SetNillableSource(s *string) *SoftwarePackageUpdate {
 	if s != nil {
 		spu.SetSource(*s)
 	}
 	return spu
-}
-
-// ClearSource clears the value of the "source" field.
-func (spu *SoftwarePackageUpdate) ClearSource() *SoftwarePackageUpdate {
-	spu.mutation.ClearSource()
-	return spu
-}
-
-// SetCreated sets the "created" field.
-func (spu *SoftwarePackageUpdate) SetCreated(t time.Time) *SoftwarePackageUpdate {
-	spu.mutation.SetCreated(t)
-	return spu
-}
-
-// SetNillableCreated sets the "created" field if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableCreated(t *time.Time) *SoftwarePackageUpdate {
-	if t != nil {
-		spu.SetCreated(*t)
-	}
-	return spu
-}
-
-// ClearCreated clears the value of the "created" field.
-func (spu *SoftwarePackageUpdate) ClearCreated() *SoftwarePackageUpdate {
-	spu.mutation.ClearCreated()
-	return spu
-}
-
-// SetModified sets the "modified" field.
-func (spu *SoftwarePackageUpdate) SetModified(t time.Time) *SoftwarePackageUpdate {
-	spu.mutation.SetModified(t)
-	return spu
-}
-
-// ClearModified clears the value of the "modified" field.
-func (spu *SoftwarePackageUpdate) ClearModified() *SoftwarePackageUpdate {
-	spu.mutation.ClearModified()
-	return spu
-}
-
-// SetRepoID sets the "repo" edge to the SoftwareRepo entity by ID.
-func (spu *SoftwarePackageUpdate) SetRepoID(id int) *SoftwarePackageUpdate {
-	spu.mutation.SetRepoID(id)
-	return spu
-}
-
-// SetNillableRepoID sets the "repo" edge to the SoftwareRepo entity by ID if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableRepoID(id *int) *SoftwarePackageUpdate {
-	if id != nil {
-		spu = spu.SetRepoID(*id)
-	}
-	return spu
-}
-
-// SetRepo sets the "repo" edge to the SoftwareRepo entity.
-func (spu *SoftwarePackageUpdate) SetRepo(s *SoftwareRepo) *SoftwarePackageUpdate {
-	return spu.SetRepoID(s.ID)
-}
-
-// AddCatalogIDs adds the "catalogs" edge to the SoftwareCatalog entity by IDs.
-func (spu *SoftwarePackageUpdate) AddCatalogIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.AddCatalogIDs(ids...)
-	return spu
-}
-
-// AddCatalogs adds the "catalogs" edges to the SoftwareCatalog entity.
-func (spu *SoftwarePackageUpdate) AddCatalogs(s ...*SoftwareCatalog) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.AddCatalogIDs(ids...)
-}
-
-// SetTenantID sets the "tenant" edge to the Tenant entity by ID.
-func (spu *SoftwarePackageUpdate) SetTenantID(id int) *SoftwarePackageUpdate {
-	spu.mutation.SetTenantID(id)
-	return spu
-}
-
-// SetNillableTenantID sets the "tenant" edge to the Tenant entity by ID if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableTenantID(id *int) *SoftwarePackageUpdate {
-	if id != nil {
-		spu = spu.SetTenantID(*id)
-	}
-	return spu
-}
-
-// SetTenant sets the "tenant" edge to the Tenant entity.
-func (spu *SoftwarePackageUpdate) SetTenant(t *Tenant) *SoftwarePackageUpdate {
-	return spu.SetTenantID(t.ID)
-}
-
-// AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by IDs.
-func (spu *SoftwarePackageUpdate) AddInstallLogIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.AddInstallLogIDs(ids...)
-	return spu
-}
-
-// AddInstallLogs adds the "install_logs" edges to the SoftwareInstallLog entity.
-func (spu *SoftwarePackageUpdate) AddInstallLogs(s ...*SoftwareInstallLog) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.AddInstallLogIDs(ids...)
-}
-
-// AddRequireIDs adds the "requires" edge to the SoftwarePackage entity by IDs.
-func (spu *SoftwarePackageUpdate) AddRequireIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.AddRequireIDs(ids...)
-	return spu
-}
-
-// AddRequires adds the "requires" edges to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) AddRequires(s ...*SoftwarePackage) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.AddRequireIDs(ids...)
-}
-
-// AddUpdateForIDs adds the "update_for" edge to the SoftwarePackage entity by IDs.
-func (spu *SoftwarePackageUpdate) AddUpdateForIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.AddUpdateForIDs(ids...)
-	return spu
-}
-
-// AddUpdateFor adds the "update_for" edges to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) AddUpdateFor(s ...*SoftwarePackage) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.AddUpdateForIDs(ids...)
-}
-
-// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID.
-func (spu *SoftwarePackageUpdate) SetGlobalRefID(id int) *SoftwarePackageUpdate {
-	spu.mutation.SetGlobalRefID(id)
-	return spu
-}
-
-// SetNillableGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID if the given value is not nil.
-func (spu *SoftwarePackageUpdate) SetNillableGlobalRefID(id *int) *SoftwarePackageUpdate {
-	if id != nil {
-		spu = spu.SetGlobalRefID(*id)
-	}
-	return spu
-}
-
-// SetGlobalRef sets the "global_ref" edge to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) SetGlobalRef(s *SoftwarePackage) *SoftwarePackageUpdate {
-	return spu.SetGlobalRefID(s.ID)
-}
-
-// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by IDs.
-func (spu *SoftwarePackageUpdate) AddSubscriberIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.AddSubscriberIDs(ids...)
-	return spu
-}
-
-// AddSubscribers adds the "subscribers" edges to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) AddSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.AddSubscriberIDs(ids...)
 }
 
 // Mutation returns the SoftwarePackageMutation object of the builder.
@@ -725,132 +175,8 @@ func (spu *SoftwarePackageUpdate) Mutation() *SoftwarePackageMutation {
 	return spu.mutation
 }
 
-// ClearRepo clears the "repo" edge to the SoftwareRepo entity.
-func (spu *SoftwarePackageUpdate) ClearRepo() *SoftwarePackageUpdate {
-	spu.mutation.ClearRepo()
-	return spu
-}
-
-// ClearCatalogs clears all "catalogs" edges to the SoftwareCatalog entity.
-func (spu *SoftwarePackageUpdate) ClearCatalogs() *SoftwarePackageUpdate {
-	spu.mutation.ClearCatalogs()
-	return spu
-}
-
-// RemoveCatalogIDs removes the "catalogs" edge to SoftwareCatalog entities by IDs.
-func (spu *SoftwarePackageUpdate) RemoveCatalogIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.RemoveCatalogIDs(ids...)
-	return spu
-}
-
-// RemoveCatalogs removes "catalogs" edges to SoftwareCatalog entities.
-func (spu *SoftwarePackageUpdate) RemoveCatalogs(s ...*SoftwareCatalog) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.RemoveCatalogIDs(ids...)
-}
-
-// ClearTenant clears the "tenant" edge to the Tenant entity.
-func (spu *SoftwarePackageUpdate) ClearTenant() *SoftwarePackageUpdate {
-	spu.mutation.ClearTenant()
-	return spu
-}
-
-// ClearInstallLogs clears all "install_logs" edges to the SoftwareInstallLog entity.
-func (spu *SoftwarePackageUpdate) ClearInstallLogs() *SoftwarePackageUpdate {
-	spu.mutation.ClearInstallLogs()
-	return spu
-}
-
-// RemoveInstallLogIDs removes the "install_logs" edge to SoftwareInstallLog entities by IDs.
-func (spu *SoftwarePackageUpdate) RemoveInstallLogIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.RemoveInstallLogIDs(ids...)
-	return spu
-}
-
-// RemoveInstallLogs removes "install_logs" edges to SoftwareInstallLog entities.
-func (spu *SoftwarePackageUpdate) RemoveInstallLogs(s ...*SoftwareInstallLog) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.RemoveInstallLogIDs(ids...)
-}
-
-// ClearRequires clears all "requires" edges to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) ClearRequires() *SoftwarePackageUpdate {
-	spu.mutation.ClearRequires()
-	return spu
-}
-
-// RemoveRequireIDs removes the "requires" edge to SoftwarePackage entities by IDs.
-func (spu *SoftwarePackageUpdate) RemoveRequireIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.RemoveRequireIDs(ids...)
-	return spu
-}
-
-// RemoveRequires removes "requires" edges to SoftwarePackage entities.
-func (spu *SoftwarePackageUpdate) RemoveRequires(s ...*SoftwarePackage) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.RemoveRequireIDs(ids...)
-}
-
-// ClearUpdateFor clears all "update_for" edges to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) ClearUpdateFor() *SoftwarePackageUpdate {
-	spu.mutation.ClearUpdateFor()
-	return spu
-}
-
-// RemoveUpdateForIDs removes the "update_for" edge to SoftwarePackage entities by IDs.
-func (spu *SoftwarePackageUpdate) RemoveUpdateForIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.RemoveUpdateForIDs(ids...)
-	return spu
-}
-
-// RemoveUpdateFor removes "update_for" edges to SoftwarePackage entities.
-func (spu *SoftwarePackageUpdate) RemoveUpdateFor(s ...*SoftwarePackage) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.RemoveUpdateForIDs(ids...)
-}
-
-// ClearGlobalRef clears the "global_ref" edge to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) ClearGlobalRef() *SoftwarePackageUpdate {
-	spu.mutation.ClearGlobalRef()
-	return spu
-}
-
-// ClearSubscribers clears all "subscribers" edges to the SoftwarePackage entity.
-func (spu *SoftwarePackageUpdate) ClearSubscribers() *SoftwarePackageUpdate {
-	spu.mutation.ClearSubscribers()
-	return spu
-}
-
-// RemoveSubscriberIDs removes the "subscribers" edge to SoftwarePackage entities by IDs.
-func (spu *SoftwarePackageUpdate) RemoveSubscriberIDs(ids ...int) *SoftwarePackageUpdate {
-	spu.mutation.RemoveSubscriberIDs(ids...)
-	return spu
-}
-
-// RemoveSubscribers removes "subscribers" edges to SoftwarePackage entities.
-func (spu *SoftwarePackageUpdate) RemoveSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spu.RemoveSubscriberIDs(ids...)
-}
-
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (spu *SoftwarePackageUpdate) Save(ctx context.Context) (int, error) {
-	spu.defaults()
 	return withHooks(ctx, spu.sqlSave, spu.mutation, spu.hooks)
 }
 
@@ -876,54 +202,6 @@ func (spu *SoftwarePackageUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (spu *SoftwarePackageUpdate) defaults() {
-	if _, ok := spu.mutation.Modified(); !ok && !spu.mutation.ModifiedCleared() {
-		v := softwarepackage.UpdateDefaultModified()
-		spu.mutation.SetModified(v)
-	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (spu *SoftwarePackageUpdate) check() error {
-	if v, ok := spu.mutation.Name(); ok {
-		if err := softwarepackage.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.name": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.Version(); ok {
-		if err := softwarepackage.VersionValidator(v); err != nil {
-			return &ValidationError{Name: "version", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.version": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.Platform(); ok {
-		if err := softwarepackage.PlatformValidator(v); err != nil {
-			return &ValidationError{Name: "platform", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.platform": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.InstallerPath(); ok {
-		if err := softwarepackage.InstallerPathValidator(v); err != nil {
-			return &ValidationError{Name: "installer_path", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_path": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.RestartAction(); ok {
-		if err := softwarepackage.RestartActionValidator(v); err != nil {
-			return &ValidationError{Name: "restart_action", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.restart_action": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.Status(); ok {
-		if err := softwarepackage.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.status": %w`, err)}
-		}
-	}
-	if v, ok := spu.mutation.Source(); ok {
-		if err := softwarepackage.SourceValidator(v); err != nil {
-			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.source": %w`, err)}
-		}
-	}
-	return nil
-}
-
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (spu *SoftwarePackageUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SoftwarePackageUpdate {
 	spu.modifiers = append(spu.modifiers, modifiers...)
@@ -931,10 +209,7 @@ func (spu *SoftwarePackageUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)
 }
 
 func (spu *SoftwarePackageUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := spu.check(); err != nil {
-		return n, err
-	}
-	_spec := sqlgraph.NewUpdateSpec(softwarepackage.Table, softwarepackage.Columns, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(softwarepackage.Table, softwarepackage.Columns, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeUUID))
 	if ps := spu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -942,482 +217,44 @@ func (spu *SoftwarePackageUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
+	if value, ok := spu.mutation.PackageID(); ok {
+		_spec.SetField(softwarepackage.FieldPackageID, field.TypeString, value)
+	}
 	if value, ok := spu.mutation.Name(); ok {
 		_spec.SetField(softwarepackage.FieldName, field.TypeString, value)
-	}
-	if value, ok := spu.mutation.DisplayName(); ok {
-		_spec.SetField(softwarepackage.FieldDisplayName, field.TypeString, value)
-	}
-	if spu.mutation.DisplayNameCleared() {
-		_spec.ClearField(softwarepackage.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := spu.mutation.Version(); ok {
 		_spec.SetField(softwarepackage.FieldVersion, field.TypeString, value)
 	}
-	if value, ok := spu.mutation.Platform(); ok {
-		_spec.SetField(softwarepackage.FieldPlatform, field.TypeEnum, value)
+	if spu.mutation.VersionCleared() {
+		_spec.ClearField(softwarepackage.FieldVersion, field.TypeString)
 	}
-	if value, ok := spu.mutation.InstallerPath(); ok {
-		_spec.SetField(softwarepackage.FieldInstallerPath, field.TypeString, value)
+	if value, ok := spu.mutation.Branch(); ok {
+		_spec.SetField(softwarepackage.FieldBranch, field.TypeString, value)
 	}
-	if value, ok := spu.mutation.ChecksumSha256(); ok {
-		_spec.SetField(softwarepackage.FieldChecksumSha256, field.TypeString, value)
+	if spu.mutation.BranchCleared() {
+		_spec.ClearField(softwarepackage.FieldBranch, field.TypeString)
 	}
-	if spu.mutation.ChecksumSha256Cleared() {
-		_spec.ClearField(softwarepackage.FieldChecksumSha256, field.TypeString)
+	if value, ok := spu.mutation.Arch(); ok {
+		_spec.SetField(softwarepackage.FieldArch, field.TypeString, value)
 	}
-	if value, ok := spu.mutation.SizeBytes(); ok {
-		_spec.SetField(softwarepackage.FieldSizeBytes, field.TypeInt64, value)
+	if spu.mutation.ArchCleared() {
+		_spec.ClearField(softwarepackage.FieldArch, field.TypeString)
 	}
-	if value, ok := spu.mutation.AddedSizeBytes(); ok {
-		_spec.AddField(softwarepackage.FieldSizeBytes, field.TypeInt64, value)
+	if value, ok := spu.mutation.BrewType(); ok {
+		_spec.SetField(softwarepackage.FieldBrewType, field.TypeString, value)
 	}
-	if spu.mutation.SizeBytesCleared() {
-		_spec.ClearField(softwarepackage.FieldSizeBytes, field.TypeInt64)
+	if spu.mutation.BrewTypeCleared() {
+		_spec.ClearField(softwarepackage.FieldBrewType, field.TypeString)
 	}
-	if value, ok := spu.mutation.IconName(); ok {
-		_spec.SetField(softwarepackage.FieldIconName, field.TypeString, value)
+	if value, ok := spu.mutation.Verified(); ok {
+		_spec.SetField(softwarepackage.FieldVerified, field.TypeBool, value)
 	}
-	if spu.mutation.IconNameCleared() {
-		_spec.ClearField(softwarepackage.FieldIconName, field.TypeString)
-	}
-	if value, ok := spu.mutation.Description(); ok {
-		_spec.SetField(softwarepackage.FieldDescription, field.TypeString, value)
-	}
-	if spu.mutation.DescriptionCleared() {
-		_spec.ClearField(softwarepackage.FieldDescription, field.TypeString)
-	}
-	if value, ok := spu.mutation.Category(); ok {
-		_spec.SetField(softwarepackage.FieldCategory, field.TypeString, value)
-	}
-	if spu.mutation.CategoryCleared() {
-		_spec.ClearField(softwarepackage.FieldCategory, field.TypeString)
-	}
-	if value, ok := spu.mutation.Developer(); ok {
-		_spec.SetField(softwarepackage.FieldDeveloper, field.TypeString, value)
-	}
-	if spu.mutation.DeveloperCleared() {
-		_spec.ClearField(softwarepackage.FieldDeveloper, field.TypeString)
-	}
-	if value, ok := spu.mutation.PkginfoData(); ok {
-		_spec.SetField(softwarepackage.FieldPkginfoData, field.TypeString, value)
-	}
-	if spu.mutation.PkginfoDataCleared() {
-		_spec.ClearField(softwarepackage.FieldPkginfoData, field.TypeString)
-	}
-	if value, ok := spu.mutation.PreInstallScript(); ok {
-		_spec.SetField(softwarepackage.FieldPreInstallScript, field.TypeString, value)
-	}
-	if spu.mutation.PreInstallScriptCleared() {
-		_spec.ClearField(softwarepackage.FieldPreInstallScript, field.TypeString)
-	}
-	if value, ok := spu.mutation.PostInstallScript(); ok {
-		_spec.SetField(softwarepackage.FieldPostInstallScript, field.TypeString, value)
-	}
-	if spu.mutation.PostInstallScriptCleared() {
-		_spec.ClearField(softwarepackage.FieldPostInstallScript, field.TypeString)
-	}
-	if value, ok := spu.mutation.UninstallMethod(); ok {
-		_spec.SetField(softwarepackage.FieldUninstallMethod, field.TypeString, value)
-	}
-	if spu.mutation.UninstallMethodCleared() {
-		_spec.ClearField(softwarepackage.FieldUninstallMethod, field.TypeString)
-	}
-	if value, ok := spu.mutation.InstallsItems(); ok {
-		_spec.SetField(softwarepackage.FieldInstallsItems, field.TypeString, value)
-	}
-	if spu.mutation.InstallsItemsCleared() {
-		_spec.ClearField(softwarepackage.FieldInstallsItems, field.TypeString)
-	}
-	if value, ok := spu.mutation.Receipts(); ok {
-		_spec.SetField(softwarepackage.FieldReceipts, field.TypeString, value)
-	}
-	if spu.mutation.ReceiptsCleared() {
-		_spec.ClearField(softwarepackage.FieldReceipts, field.TypeString)
-	}
-	if value, ok := spu.mutation.BlockingApps(); ok {
-		_spec.SetField(softwarepackage.FieldBlockingApps, field.TypeString, value)
-	}
-	if spu.mutation.BlockingAppsCleared() {
-		_spec.ClearField(softwarepackage.FieldBlockingApps, field.TypeString)
-	}
-	if value, ok := spu.mutation.RestartAction(); ok {
-		_spec.SetField(softwarepackage.FieldRestartAction, field.TypeEnum, value)
-	}
-	if spu.mutation.RestartActionCleared() {
-		_spec.ClearField(softwarepackage.FieldRestartAction, field.TypeEnum)
-	}
-	if value, ok := spu.mutation.MinOsVersion(); ok {
-		_spec.SetField(softwarepackage.FieldMinOsVersion, field.TypeString, value)
-	}
-	if spu.mutation.MinOsVersionCleared() {
-		_spec.ClearField(softwarepackage.FieldMinOsVersion, field.TypeString)
-	}
-	if value, ok := spu.mutation.MaxOsVersion(); ok {
-		_spec.SetField(softwarepackage.FieldMaxOsVersion, field.TypeString, value)
-	}
-	if spu.mutation.MaxOsVersionCleared() {
-		_spec.ClearField(softwarepackage.FieldMaxOsVersion, field.TypeString)
-	}
-	if value, ok := spu.mutation.SupportedArchitectures(); ok {
-		_spec.SetField(softwarepackage.FieldSupportedArchitectures, field.TypeString, value)
-	}
-	if spu.mutation.SupportedArchitecturesCleared() {
-		_spec.ClearField(softwarepackage.FieldSupportedArchitectures, field.TypeString)
-	}
-	if value, ok := spu.mutation.ForceInstallDate(); ok {
-		_spec.SetField(softwarepackage.FieldForceInstallDate, field.TypeTime, value)
-	}
-	if spu.mutation.ForceInstallDateCleared() {
-		_spec.ClearField(softwarepackage.FieldForceInstallDate, field.TypeTime)
-	}
-	if value, ok := spu.mutation.UnattendedInstall(); ok {
-		_spec.SetField(softwarepackage.FieldUnattendedInstall, field.TypeBool, value)
-	}
-	if spu.mutation.UnattendedInstallCleared() {
-		_spec.ClearField(softwarepackage.FieldUnattendedInstall, field.TypeBool)
-	}
-	if value, ok := spu.mutation.UnattendedUninstall(); ok {
-		_spec.SetField(softwarepackage.FieldUnattendedUninstall, field.TypeBool, value)
-	}
-	if spu.mutation.UnattendedUninstallCleared() {
-		_spec.ClearField(softwarepackage.FieldUnattendedUninstall, field.TypeBool)
-	}
-	if value, ok := spu.mutation.Status(); ok {
-		_spec.SetField(softwarepackage.FieldStatus, field.TypeEnum, value)
-	}
-	if spu.mutation.StatusCleared() {
-		_spec.ClearField(softwarepackage.FieldStatus, field.TypeEnum)
+	if spu.mutation.VerifiedCleared() {
+		_spec.ClearField(softwarepackage.FieldVerified, field.TypeBool)
 	}
 	if value, ok := spu.mutation.Source(); ok {
-		_spec.SetField(softwarepackage.FieldSource, field.TypeEnum, value)
-	}
-	if spu.mutation.SourceCleared() {
-		_spec.ClearField(softwarepackage.FieldSource, field.TypeEnum)
-	}
-	if value, ok := spu.mutation.Created(); ok {
-		_spec.SetField(softwarepackage.FieldCreated, field.TypeTime, value)
-	}
-	if spu.mutation.CreatedCleared() {
-		_spec.ClearField(softwarepackage.FieldCreated, field.TypeTime)
-	}
-	if value, ok := spu.mutation.Modified(); ok {
-		_spec.SetField(softwarepackage.FieldModified, field.TypeTime, value)
-	}
-	if spu.mutation.ModifiedCleared() {
-		_spec.ClearField(softwarepackage.FieldModified, field.TypeTime)
-	}
-	if spu.mutation.RepoCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.RepoTable,
-			Columns: []string{softwarepackage.RepoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RepoIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.RepoTable,
-			Columns: []string{softwarepackage.RepoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.CatalogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RemovedCatalogsIDs(); len(nodes) > 0 && !spu.mutation.CatalogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.CatalogsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.TenantCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.TenantTable,
-			Columns: []string{softwarepackage.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.TenantIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.TenantTable,
-			Columns: []string{softwarepackage.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.InstallLogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RemovedInstallLogsIDs(); len(nodes) > 0 && !spu.mutation.InstallLogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.InstallLogsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.RequiresCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RemovedRequiresIDs(); len(nodes) > 0 && !spu.mutation.RequiresCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RequiresIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.UpdateForCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RemovedUpdateForIDs(); len(nodes) > 0 && !spu.mutation.UpdateForCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.UpdateForIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.GlobalRefCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.GlobalRefTable,
-			Columns: []string{softwarepackage.GlobalRefColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.GlobalRefIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.GlobalRefTable,
-			Columns: []string{softwarepackage.GlobalRefColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spu.mutation.SubscribersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.RemovedSubscribersIDs(); len(nodes) > 0 && !spu.mutation.SubscribersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spu.mutation.SubscribersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+		_spec.SetField(softwarepackage.FieldSource, field.TypeString, value)
 	}
 	_spec.AddModifiers(spu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, spu.driver, _spec); err != nil {
@@ -1441,6 +278,20 @@ type SoftwarePackageUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
+// SetPackageID sets the "package_id" field.
+func (spuo *SoftwarePackageUpdateOne) SetPackageID(s string) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetPackageID(s)
+	return spuo
+}
+
+// SetNillablePackageID sets the "package_id" field if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillablePackageID(s *string) *SoftwarePackageUpdateOne {
+	if s != nil {
+		spuo.SetPackageID(*s)
+	}
+	return spuo
+}
+
 // SetName sets the "name" field.
 func (spuo *SoftwarePackageUpdateOne) SetName(s string) *SoftwarePackageUpdateOne {
 	spuo.mutation.SetName(s)
@@ -1452,26 +303,6 @@ func (spuo *SoftwarePackageUpdateOne) SetNillableName(s *string) *SoftwarePackag
 	if s != nil {
 		spuo.SetName(*s)
 	}
-	return spuo
-}
-
-// SetDisplayName sets the "display_name" field.
-func (spuo *SoftwarePackageUpdateOne) SetDisplayName(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetDisplayName(s)
-	return spuo
-}
-
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableDisplayName(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetDisplayName(*s)
-	}
-	return spuo
-}
-
-// ClearDisplayName clears the value of the "display_name" field.
-func (spuo *SoftwarePackageUpdateOne) ClearDisplayName() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearDisplayName()
 	return spuo
 }
 
@@ -1489,771 +320,109 @@ func (spuo *SoftwarePackageUpdateOne) SetNillableVersion(s *string) *SoftwarePac
 	return spuo
 }
 
-// SetPlatform sets the "platform" field.
-func (spuo *SoftwarePackageUpdateOne) SetPlatform(s softwarepackage.Platform) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetPlatform(s)
+// ClearVersion clears the value of the "version" field.
+func (spuo *SoftwarePackageUpdateOne) ClearVersion() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearVersion()
 	return spuo
 }
 
-// SetNillablePlatform sets the "platform" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillablePlatform(s *softwarepackage.Platform) *SoftwarePackageUpdateOne {
+// SetBranch sets the "branch" field.
+func (spuo *SoftwarePackageUpdateOne) SetBranch(s string) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetBranch(s)
+	return spuo
+}
+
+// SetNillableBranch sets the "branch" field if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillableBranch(s *string) *SoftwarePackageUpdateOne {
 	if s != nil {
-		spuo.SetPlatform(*s)
+		spuo.SetBranch(*s)
 	}
 	return spuo
 }
 
-// SetInstallerPath sets the "installer_path" field.
-func (spuo *SoftwarePackageUpdateOne) SetInstallerPath(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetInstallerPath(s)
+// ClearBranch clears the value of the "branch" field.
+func (spuo *SoftwarePackageUpdateOne) ClearBranch() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearBranch()
 	return spuo
 }
 
-// SetNillableInstallerPath sets the "installer_path" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableInstallerPath(s *string) *SoftwarePackageUpdateOne {
+// SetArch sets the "arch" field.
+func (spuo *SoftwarePackageUpdateOne) SetArch(s string) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetArch(s)
+	return spuo
+}
+
+// SetNillableArch sets the "arch" field if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillableArch(s *string) *SoftwarePackageUpdateOne {
 	if s != nil {
-		spuo.SetInstallerPath(*s)
+		spuo.SetArch(*s)
 	}
 	return spuo
 }
 
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (spuo *SoftwarePackageUpdateOne) SetChecksumSha256(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetChecksumSha256(s)
+// ClearArch clears the value of the "arch" field.
+func (spuo *SoftwarePackageUpdateOne) ClearArch() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearArch()
 	return spuo
 }
 
-// SetNillableChecksumSha256 sets the "checksum_sha256" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableChecksumSha256(s *string) *SoftwarePackageUpdateOne {
+// SetBrewType sets the "brew_type" field.
+func (spuo *SoftwarePackageUpdateOne) SetBrewType(s string) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetBrewType(s)
+	return spuo
+}
+
+// SetNillableBrewType sets the "brew_type" field if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillableBrewType(s *string) *SoftwarePackageUpdateOne {
 	if s != nil {
-		spuo.SetChecksumSha256(*s)
+		spuo.SetBrewType(*s)
 	}
 	return spuo
 }
 
-// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
-func (spuo *SoftwarePackageUpdateOne) ClearChecksumSha256() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearChecksumSha256()
+// ClearBrewType clears the value of the "brew_type" field.
+func (spuo *SoftwarePackageUpdateOne) ClearBrewType() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearBrewType()
 	return spuo
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (spuo *SoftwarePackageUpdateOne) SetSizeBytes(i int64) *SoftwarePackageUpdateOne {
-	spuo.mutation.ResetSizeBytes()
-	spuo.mutation.SetSizeBytes(i)
+// SetVerified sets the "verified" field.
+func (spuo *SoftwarePackageUpdateOne) SetVerified(b bool) *SoftwarePackageUpdateOne {
+	spuo.mutation.SetVerified(b)
 	return spuo
 }
 
-// SetNillableSizeBytes sets the "size_bytes" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableSizeBytes(i *int64) *SoftwarePackageUpdateOne {
-	if i != nil {
-		spuo.SetSizeBytes(*i)
-	}
-	return spuo
-}
-
-// AddSizeBytes adds i to the "size_bytes" field.
-func (spuo *SoftwarePackageUpdateOne) AddSizeBytes(i int64) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddSizeBytes(i)
-	return spuo
-}
-
-// ClearSizeBytes clears the value of the "size_bytes" field.
-func (spuo *SoftwarePackageUpdateOne) ClearSizeBytes() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearSizeBytes()
-	return spuo
-}
-
-// SetIconName sets the "icon_name" field.
-func (spuo *SoftwarePackageUpdateOne) SetIconName(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetIconName(s)
-	return spuo
-}
-
-// SetNillableIconName sets the "icon_name" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableIconName(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetIconName(*s)
-	}
-	return spuo
-}
-
-// ClearIconName clears the value of the "icon_name" field.
-func (spuo *SoftwarePackageUpdateOne) ClearIconName() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearIconName()
-	return spuo
-}
-
-// SetDescription sets the "description" field.
-func (spuo *SoftwarePackageUpdateOne) SetDescription(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetDescription(s)
-	return spuo
-}
-
-// SetNillableDescription sets the "description" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableDescription(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetDescription(*s)
-	}
-	return spuo
-}
-
-// ClearDescription clears the value of the "description" field.
-func (spuo *SoftwarePackageUpdateOne) ClearDescription() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearDescription()
-	return spuo
-}
-
-// SetCategory sets the "category" field.
-func (spuo *SoftwarePackageUpdateOne) SetCategory(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetCategory(s)
-	return spuo
-}
-
-// SetNillableCategory sets the "category" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableCategory(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetCategory(*s)
-	}
-	return spuo
-}
-
-// ClearCategory clears the value of the "category" field.
-func (spuo *SoftwarePackageUpdateOne) ClearCategory() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearCategory()
-	return spuo
-}
-
-// SetDeveloper sets the "developer" field.
-func (spuo *SoftwarePackageUpdateOne) SetDeveloper(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetDeveloper(s)
-	return spuo
-}
-
-// SetNillableDeveloper sets the "developer" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableDeveloper(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetDeveloper(*s)
-	}
-	return spuo
-}
-
-// ClearDeveloper clears the value of the "developer" field.
-func (spuo *SoftwarePackageUpdateOne) ClearDeveloper() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearDeveloper()
-	return spuo
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (spuo *SoftwarePackageUpdateOne) SetPkginfoData(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetPkginfoData(s)
-	return spuo
-}
-
-// SetNillablePkginfoData sets the "pkginfo_data" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillablePkginfoData(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetPkginfoData(*s)
-	}
-	return spuo
-}
-
-// ClearPkginfoData clears the value of the "pkginfo_data" field.
-func (spuo *SoftwarePackageUpdateOne) ClearPkginfoData() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearPkginfoData()
-	return spuo
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (spuo *SoftwarePackageUpdateOne) SetPreInstallScript(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetPreInstallScript(s)
-	return spuo
-}
-
-// SetNillablePreInstallScript sets the "pre_install_script" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillablePreInstallScript(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetPreInstallScript(*s)
-	}
-	return spuo
-}
-
-// ClearPreInstallScript clears the value of the "pre_install_script" field.
-func (spuo *SoftwarePackageUpdateOne) ClearPreInstallScript() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearPreInstallScript()
-	return spuo
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (spuo *SoftwarePackageUpdateOne) SetPostInstallScript(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetPostInstallScript(s)
-	return spuo
-}
-
-// SetNillablePostInstallScript sets the "post_install_script" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillablePostInstallScript(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetPostInstallScript(*s)
-	}
-	return spuo
-}
-
-// ClearPostInstallScript clears the value of the "post_install_script" field.
-func (spuo *SoftwarePackageUpdateOne) ClearPostInstallScript() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearPostInstallScript()
-	return spuo
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (spuo *SoftwarePackageUpdateOne) SetUninstallMethod(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetUninstallMethod(s)
-	return spuo
-}
-
-// SetNillableUninstallMethod sets the "uninstall_method" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableUninstallMethod(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetUninstallMethod(*s)
-	}
-	return spuo
-}
-
-// ClearUninstallMethod clears the value of the "uninstall_method" field.
-func (spuo *SoftwarePackageUpdateOne) ClearUninstallMethod() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearUninstallMethod()
-	return spuo
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (spuo *SoftwarePackageUpdateOne) SetInstallsItems(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetInstallsItems(s)
-	return spuo
-}
-
-// SetNillableInstallsItems sets the "installs_items" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableInstallsItems(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetInstallsItems(*s)
-	}
-	return spuo
-}
-
-// ClearInstallsItems clears the value of the "installs_items" field.
-func (spuo *SoftwarePackageUpdateOne) ClearInstallsItems() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearInstallsItems()
-	return spuo
-}
-
-// SetReceipts sets the "receipts" field.
-func (spuo *SoftwarePackageUpdateOne) SetReceipts(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetReceipts(s)
-	return spuo
-}
-
-// SetNillableReceipts sets the "receipts" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableReceipts(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetReceipts(*s)
-	}
-	return spuo
-}
-
-// ClearReceipts clears the value of the "receipts" field.
-func (spuo *SoftwarePackageUpdateOne) ClearReceipts() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearReceipts()
-	return spuo
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (spuo *SoftwarePackageUpdateOne) SetBlockingApps(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetBlockingApps(s)
-	return spuo
-}
-
-// SetNillableBlockingApps sets the "blocking_apps" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableBlockingApps(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetBlockingApps(*s)
-	}
-	return spuo
-}
-
-// ClearBlockingApps clears the value of the "blocking_apps" field.
-func (spuo *SoftwarePackageUpdateOne) ClearBlockingApps() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearBlockingApps()
-	return spuo
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (spuo *SoftwarePackageUpdateOne) SetRestartAction(sa softwarepackage.RestartAction) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetRestartAction(sa)
-	return spuo
-}
-
-// SetNillableRestartAction sets the "restart_action" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableRestartAction(sa *softwarepackage.RestartAction) *SoftwarePackageUpdateOne {
-	if sa != nil {
-		spuo.SetRestartAction(*sa)
-	}
-	return spuo
-}
-
-// ClearRestartAction clears the value of the "restart_action" field.
-func (spuo *SoftwarePackageUpdateOne) ClearRestartAction() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearRestartAction()
-	return spuo
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (spuo *SoftwarePackageUpdateOne) SetMinOsVersion(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetMinOsVersion(s)
-	return spuo
-}
-
-// SetNillableMinOsVersion sets the "min_os_version" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableMinOsVersion(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetMinOsVersion(*s)
-	}
-	return spuo
-}
-
-// ClearMinOsVersion clears the value of the "min_os_version" field.
-func (spuo *SoftwarePackageUpdateOne) ClearMinOsVersion() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearMinOsVersion()
-	return spuo
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (spuo *SoftwarePackageUpdateOne) SetMaxOsVersion(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetMaxOsVersion(s)
-	return spuo
-}
-
-// SetNillableMaxOsVersion sets the "max_os_version" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableMaxOsVersion(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetMaxOsVersion(*s)
-	}
-	return spuo
-}
-
-// ClearMaxOsVersion clears the value of the "max_os_version" field.
-func (spuo *SoftwarePackageUpdateOne) ClearMaxOsVersion() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearMaxOsVersion()
-	return spuo
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (spuo *SoftwarePackageUpdateOne) SetSupportedArchitectures(s string) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetSupportedArchitectures(s)
-	return spuo
-}
-
-// SetNillableSupportedArchitectures sets the "supported_architectures" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableSupportedArchitectures(s *string) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetSupportedArchitectures(*s)
-	}
-	return spuo
-}
-
-// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
-func (spuo *SoftwarePackageUpdateOne) ClearSupportedArchitectures() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearSupportedArchitectures()
-	return spuo
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (spuo *SoftwarePackageUpdateOne) SetForceInstallDate(t time.Time) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetForceInstallDate(t)
-	return spuo
-}
-
-// SetNillableForceInstallDate sets the "force_install_date" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableForceInstallDate(t *time.Time) *SoftwarePackageUpdateOne {
-	if t != nil {
-		spuo.SetForceInstallDate(*t)
-	}
-	return spuo
-}
-
-// ClearForceInstallDate clears the value of the "force_install_date" field.
-func (spuo *SoftwarePackageUpdateOne) ClearForceInstallDate() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearForceInstallDate()
-	return spuo
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (spuo *SoftwarePackageUpdateOne) SetUnattendedInstall(b bool) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetUnattendedInstall(b)
-	return spuo
-}
-
-// SetNillableUnattendedInstall sets the "unattended_install" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableUnattendedInstall(b *bool) *SoftwarePackageUpdateOne {
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (spuo *SoftwarePackageUpdateOne) SetNillableVerified(b *bool) *SoftwarePackageUpdateOne {
 	if b != nil {
-		spuo.SetUnattendedInstall(*b)
+		spuo.SetVerified(*b)
 	}
 	return spuo
 }
 
-// ClearUnattendedInstall clears the value of the "unattended_install" field.
-func (spuo *SoftwarePackageUpdateOne) ClearUnattendedInstall() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearUnattendedInstall()
-	return spuo
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (spuo *SoftwarePackageUpdateOne) SetUnattendedUninstall(b bool) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetUnattendedUninstall(b)
-	return spuo
-}
-
-// SetNillableUnattendedUninstall sets the "unattended_uninstall" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableUnattendedUninstall(b *bool) *SoftwarePackageUpdateOne {
-	if b != nil {
-		spuo.SetUnattendedUninstall(*b)
-	}
-	return spuo
-}
-
-// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
-func (spuo *SoftwarePackageUpdateOne) ClearUnattendedUninstall() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearUnattendedUninstall()
-	return spuo
-}
-
-// SetStatus sets the "status" field.
-func (spuo *SoftwarePackageUpdateOne) SetStatus(s softwarepackage.Status) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetStatus(s)
-	return spuo
-}
-
-// SetNillableStatus sets the "status" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableStatus(s *softwarepackage.Status) *SoftwarePackageUpdateOne {
-	if s != nil {
-		spuo.SetStatus(*s)
-	}
-	return spuo
-}
-
-// ClearStatus clears the value of the "status" field.
-func (spuo *SoftwarePackageUpdateOne) ClearStatus() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearStatus()
+// ClearVerified clears the value of the "verified" field.
+func (spuo *SoftwarePackageUpdateOne) ClearVerified() *SoftwarePackageUpdateOne {
+	spuo.mutation.ClearVerified()
 	return spuo
 }
 
 // SetSource sets the "source" field.
-func (spuo *SoftwarePackageUpdateOne) SetSource(s softwarepackage.Source) *SoftwarePackageUpdateOne {
+func (spuo *SoftwarePackageUpdateOne) SetSource(s string) *SoftwarePackageUpdateOne {
 	spuo.mutation.SetSource(s)
 	return spuo
 }
 
 // SetNillableSource sets the "source" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableSource(s *softwarepackage.Source) *SoftwarePackageUpdateOne {
+func (spuo *SoftwarePackageUpdateOne) SetNillableSource(s *string) *SoftwarePackageUpdateOne {
 	if s != nil {
 		spuo.SetSource(*s)
 	}
 	return spuo
 }
 
-// ClearSource clears the value of the "source" field.
-func (spuo *SoftwarePackageUpdateOne) ClearSource() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearSource()
-	return spuo
-}
-
-// SetCreated sets the "created" field.
-func (spuo *SoftwarePackageUpdateOne) SetCreated(t time.Time) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetCreated(t)
-	return spuo
-}
-
-// SetNillableCreated sets the "created" field if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableCreated(t *time.Time) *SoftwarePackageUpdateOne {
-	if t != nil {
-		spuo.SetCreated(*t)
-	}
-	return spuo
-}
-
-// ClearCreated clears the value of the "created" field.
-func (spuo *SoftwarePackageUpdateOne) ClearCreated() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearCreated()
-	return spuo
-}
-
-// SetModified sets the "modified" field.
-func (spuo *SoftwarePackageUpdateOne) SetModified(t time.Time) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetModified(t)
-	return spuo
-}
-
-// ClearModified clears the value of the "modified" field.
-func (spuo *SoftwarePackageUpdateOne) ClearModified() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearModified()
-	return spuo
-}
-
-// SetRepoID sets the "repo" edge to the SoftwareRepo entity by ID.
-func (spuo *SoftwarePackageUpdateOne) SetRepoID(id int) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetRepoID(id)
-	return spuo
-}
-
-// SetNillableRepoID sets the "repo" edge to the SoftwareRepo entity by ID if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableRepoID(id *int) *SoftwarePackageUpdateOne {
-	if id != nil {
-		spuo = spuo.SetRepoID(*id)
-	}
-	return spuo
-}
-
-// SetRepo sets the "repo" edge to the SoftwareRepo entity.
-func (spuo *SoftwarePackageUpdateOne) SetRepo(s *SoftwareRepo) *SoftwarePackageUpdateOne {
-	return spuo.SetRepoID(s.ID)
-}
-
-// AddCatalogIDs adds the "catalogs" edge to the SoftwareCatalog entity by IDs.
-func (spuo *SoftwarePackageUpdateOne) AddCatalogIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddCatalogIDs(ids...)
-	return spuo
-}
-
-// AddCatalogs adds the "catalogs" edges to the SoftwareCatalog entity.
-func (spuo *SoftwarePackageUpdateOne) AddCatalogs(s ...*SoftwareCatalog) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.AddCatalogIDs(ids...)
-}
-
-// SetTenantID sets the "tenant" edge to the Tenant entity by ID.
-func (spuo *SoftwarePackageUpdateOne) SetTenantID(id int) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetTenantID(id)
-	return spuo
-}
-
-// SetNillableTenantID sets the "tenant" edge to the Tenant entity by ID if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableTenantID(id *int) *SoftwarePackageUpdateOne {
-	if id != nil {
-		spuo = spuo.SetTenantID(*id)
-	}
-	return spuo
-}
-
-// SetTenant sets the "tenant" edge to the Tenant entity.
-func (spuo *SoftwarePackageUpdateOne) SetTenant(t *Tenant) *SoftwarePackageUpdateOne {
-	return spuo.SetTenantID(t.ID)
-}
-
-// AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by IDs.
-func (spuo *SoftwarePackageUpdateOne) AddInstallLogIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddInstallLogIDs(ids...)
-	return spuo
-}
-
-// AddInstallLogs adds the "install_logs" edges to the SoftwareInstallLog entity.
-func (spuo *SoftwarePackageUpdateOne) AddInstallLogs(s ...*SoftwareInstallLog) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.AddInstallLogIDs(ids...)
-}
-
-// AddRequireIDs adds the "requires" edge to the SoftwarePackage entity by IDs.
-func (spuo *SoftwarePackageUpdateOne) AddRequireIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddRequireIDs(ids...)
-	return spuo
-}
-
-// AddRequires adds the "requires" edges to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) AddRequires(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.AddRequireIDs(ids...)
-}
-
-// AddUpdateForIDs adds the "update_for" edge to the SoftwarePackage entity by IDs.
-func (spuo *SoftwarePackageUpdateOne) AddUpdateForIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddUpdateForIDs(ids...)
-	return spuo
-}
-
-// AddUpdateFor adds the "update_for" edges to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) AddUpdateFor(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.AddUpdateForIDs(ids...)
-}
-
-// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID.
-func (spuo *SoftwarePackageUpdateOne) SetGlobalRefID(id int) *SoftwarePackageUpdateOne {
-	spuo.mutation.SetGlobalRefID(id)
-	return spuo
-}
-
-// SetNillableGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by ID if the given value is not nil.
-func (spuo *SoftwarePackageUpdateOne) SetNillableGlobalRefID(id *int) *SoftwarePackageUpdateOne {
-	if id != nil {
-		spuo = spuo.SetGlobalRefID(*id)
-	}
-	return spuo
-}
-
-// SetGlobalRef sets the "global_ref" edge to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) SetGlobalRef(s *SoftwarePackage) *SoftwarePackageUpdateOne {
-	return spuo.SetGlobalRefID(s.ID)
-}
-
-// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by IDs.
-func (spuo *SoftwarePackageUpdateOne) AddSubscriberIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.AddSubscriberIDs(ids...)
-	return spuo
-}
-
-// AddSubscribers adds the "subscribers" edges to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) AddSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.AddSubscriberIDs(ids...)
-}
-
 // Mutation returns the SoftwarePackageMutation object of the builder.
 func (spuo *SoftwarePackageUpdateOne) Mutation() *SoftwarePackageMutation {
 	return spuo.mutation
-}
-
-// ClearRepo clears the "repo" edge to the SoftwareRepo entity.
-func (spuo *SoftwarePackageUpdateOne) ClearRepo() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearRepo()
-	return spuo
-}
-
-// ClearCatalogs clears all "catalogs" edges to the SoftwareCatalog entity.
-func (spuo *SoftwarePackageUpdateOne) ClearCatalogs() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearCatalogs()
-	return spuo
-}
-
-// RemoveCatalogIDs removes the "catalogs" edge to SoftwareCatalog entities by IDs.
-func (spuo *SoftwarePackageUpdateOne) RemoveCatalogIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.RemoveCatalogIDs(ids...)
-	return spuo
-}
-
-// RemoveCatalogs removes "catalogs" edges to SoftwareCatalog entities.
-func (spuo *SoftwarePackageUpdateOne) RemoveCatalogs(s ...*SoftwareCatalog) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.RemoveCatalogIDs(ids...)
-}
-
-// ClearTenant clears the "tenant" edge to the Tenant entity.
-func (spuo *SoftwarePackageUpdateOne) ClearTenant() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearTenant()
-	return spuo
-}
-
-// ClearInstallLogs clears all "install_logs" edges to the SoftwareInstallLog entity.
-func (spuo *SoftwarePackageUpdateOne) ClearInstallLogs() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearInstallLogs()
-	return spuo
-}
-
-// RemoveInstallLogIDs removes the "install_logs" edge to SoftwareInstallLog entities by IDs.
-func (spuo *SoftwarePackageUpdateOne) RemoveInstallLogIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.RemoveInstallLogIDs(ids...)
-	return spuo
-}
-
-// RemoveInstallLogs removes "install_logs" edges to SoftwareInstallLog entities.
-func (spuo *SoftwarePackageUpdateOne) RemoveInstallLogs(s ...*SoftwareInstallLog) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.RemoveInstallLogIDs(ids...)
-}
-
-// ClearRequires clears all "requires" edges to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) ClearRequires() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearRequires()
-	return spuo
-}
-
-// RemoveRequireIDs removes the "requires" edge to SoftwarePackage entities by IDs.
-func (spuo *SoftwarePackageUpdateOne) RemoveRequireIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.RemoveRequireIDs(ids...)
-	return spuo
-}
-
-// RemoveRequires removes "requires" edges to SoftwarePackage entities.
-func (spuo *SoftwarePackageUpdateOne) RemoveRequires(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.RemoveRequireIDs(ids...)
-}
-
-// ClearUpdateFor clears all "update_for" edges to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) ClearUpdateFor() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearUpdateFor()
-	return spuo
-}
-
-// RemoveUpdateForIDs removes the "update_for" edge to SoftwarePackage entities by IDs.
-func (spuo *SoftwarePackageUpdateOne) RemoveUpdateForIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.RemoveUpdateForIDs(ids...)
-	return spuo
-}
-
-// RemoveUpdateFor removes "update_for" edges to SoftwarePackage entities.
-func (spuo *SoftwarePackageUpdateOne) RemoveUpdateFor(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.RemoveUpdateForIDs(ids...)
-}
-
-// ClearGlobalRef clears the "global_ref" edge to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) ClearGlobalRef() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearGlobalRef()
-	return spuo
-}
-
-// ClearSubscribers clears all "subscribers" edges to the SoftwarePackage entity.
-func (spuo *SoftwarePackageUpdateOne) ClearSubscribers() *SoftwarePackageUpdateOne {
-	spuo.mutation.ClearSubscribers()
-	return spuo
-}
-
-// RemoveSubscriberIDs removes the "subscribers" edge to SoftwarePackage entities by IDs.
-func (spuo *SoftwarePackageUpdateOne) RemoveSubscriberIDs(ids ...int) *SoftwarePackageUpdateOne {
-	spuo.mutation.RemoveSubscriberIDs(ids...)
-	return spuo
-}
-
-// RemoveSubscribers removes "subscribers" edges to SoftwarePackage entities.
-func (spuo *SoftwarePackageUpdateOne) RemoveSubscribers(s ...*SoftwarePackage) *SoftwarePackageUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return spuo.RemoveSubscriberIDs(ids...)
 }
 
 // Where appends a list predicates to the SoftwarePackageUpdate builder.
@@ -2271,7 +440,6 @@ func (spuo *SoftwarePackageUpdateOne) Select(field string, fields ...string) *So
 
 // Save executes the query and returns the updated SoftwarePackage entity.
 func (spuo *SoftwarePackageUpdateOne) Save(ctx context.Context) (*SoftwarePackage, error) {
-	spuo.defaults()
 	return withHooks(ctx, spuo.sqlSave, spuo.mutation, spuo.hooks)
 }
 
@@ -2297,54 +465,6 @@ func (spuo *SoftwarePackageUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (spuo *SoftwarePackageUpdateOne) defaults() {
-	if _, ok := spuo.mutation.Modified(); !ok && !spuo.mutation.ModifiedCleared() {
-		v := softwarepackage.UpdateDefaultModified()
-		spuo.mutation.SetModified(v)
-	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (spuo *SoftwarePackageUpdateOne) check() error {
-	if v, ok := spuo.mutation.Name(); ok {
-		if err := softwarepackage.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.name": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.Version(); ok {
-		if err := softwarepackage.VersionValidator(v); err != nil {
-			return &ValidationError{Name: "version", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.version": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.Platform(); ok {
-		if err := softwarepackage.PlatformValidator(v); err != nil {
-			return &ValidationError{Name: "platform", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.platform": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.InstallerPath(); ok {
-		if err := softwarepackage.InstallerPathValidator(v); err != nil {
-			return &ValidationError{Name: "installer_path", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.installer_path": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.RestartAction(); ok {
-		if err := softwarepackage.RestartActionValidator(v); err != nil {
-			return &ValidationError{Name: "restart_action", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.restart_action": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.Status(); ok {
-		if err := softwarepackage.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.status": %w`, err)}
-		}
-	}
-	if v, ok := spuo.mutation.Source(); ok {
-		if err := softwarepackage.SourceValidator(v); err != nil {
-			return &ValidationError{Name: "source", err: fmt.Errorf(`ent: validator failed for field "SoftwarePackage.source": %w`, err)}
-		}
-	}
-	return nil
-}
-
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (spuo *SoftwarePackageUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SoftwarePackageUpdateOne {
 	spuo.modifiers = append(spuo.modifiers, modifiers...)
@@ -2352,10 +472,7 @@ func (spuo *SoftwarePackageUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuil
 }
 
 func (spuo *SoftwarePackageUpdateOne) sqlSave(ctx context.Context) (_node *SoftwarePackage, err error) {
-	if err := spuo.check(); err != nil {
-		return _node, err
-	}
-	_spec := sqlgraph.NewUpdateSpec(softwarepackage.Table, softwarepackage.Columns, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(softwarepackage.Table, softwarepackage.Columns, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeUUID))
 	id, ok := spuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SoftwarePackage.id" for update`)}
@@ -2380,482 +497,44 @@ func (spuo *SoftwarePackageUpdateOne) sqlSave(ctx context.Context) (_node *Softw
 			}
 		}
 	}
+	if value, ok := spuo.mutation.PackageID(); ok {
+		_spec.SetField(softwarepackage.FieldPackageID, field.TypeString, value)
+	}
 	if value, ok := spuo.mutation.Name(); ok {
 		_spec.SetField(softwarepackage.FieldName, field.TypeString, value)
-	}
-	if value, ok := spuo.mutation.DisplayName(); ok {
-		_spec.SetField(softwarepackage.FieldDisplayName, field.TypeString, value)
-	}
-	if spuo.mutation.DisplayNameCleared() {
-		_spec.ClearField(softwarepackage.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := spuo.mutation.Version(); ok {
 		_spec.SetField(softwarepackage.FieldVersion, field.TypeString, value)
 	}
-	if value, ok := spuo.mutation.Platform(); ok {
-		_spec.SetField(softwarepackage.FieldPlatform, field.TypeEnum, value)
+	if spuo.mutation.VersionCleared() {
+		_spec.ClearField(softwarepackage.FieldVersion, field.TypeString)
 	}
-	if value, ok := spuo.mutation.InstallerPath(); ok {
-		_spec.SetField(softwarepackage.FieldInstallerPath, field.TypeString, value)
+	if value, ok := spuo.mutation.Branch(); ok {
+		_spec.SetField(softwarepackage.FieldBranch, field.TypeString, value)
 	}
-	if value, ok := spuo.mutation.ChecksumSha256(); ok {
-		_spec.SetField(softwarepackage.FieldChecksumSha256, field.TypeString, value)
+	if spuo.mutation.BranchCleared() {
+		_spec.ClearField(softwarepackage.FieldBranch, field.TypeString)
 	}
-	if spuo.mutation.ChecksumSha256Cleared() {
-		_spec.ClearField(softwarepackage.FieldChecksumSha256, field.TypeString)
+	if value, ok := spuo.mutation.Arch(); ok {
+		_spec.SetField(softwarepackage.FieldArch, field.TypeString, value)
 	}
-	if value, ok := spuo.mutation.SizeBytes(); ok {
-		_spec.SetField(softwarepackage.FieldSizeBytes, field.TypeInt64, value)
+	if spuo.mutation.ArchCleared() {
+		_spec.ClearField(softwarepackage.FieldArch, field.TypeString)
 	}
-	if value, ok := spuo.mutation.AddedSizeBytes(); ok {
-		_spec.AddField(softwarepackage.FieldSizeBytes, field.TypeInt64, value)
+	if value, ok := spuo.mutation.BrewType(); ok {
+		_spec.SetField(softwarepackage.FieldBrewType, field.TypeString, value)
 	}
-	if spuo.mutation.SizeBytesCleared() {
-		_spec.ClearField(softwarepackage.FieldSizeBytes, field.TypeInt64)
+	if spuo.mutation.BrewTypeCleared() {
+		_spec.ClearField(softwarepackage.FieldBrewType, field.TypeString)
 	}
-	if value, ok := spuo.mutation.IconName(); ok {
-		_spec.SetField(softwarepackage.FieldIconName, field.TypeString, value)
+	if value, ok := spuo.mutation.Verified(); ok {
+		_spec.SetField(softwarepackage.FieldVerified, field.TypeBool, value)
 	}
-	if spuo.mutation.IconNameCleared() {
-		_spec.ClearField(softwarepackage.FieldIconName, field.TypeString)
-	}
-	if value, ok := spuo.mutation.Description(); ok {
-		_spec.SetField(softwarepackage.FieldDescription, field.TypeString, value)
-	}
-	if spuo.mutation.DescriptionCleared() {
-		_spec.ClearField(softwarepackage.FieldDescription, field.TypeString)
-	}
-	if value, ok := spuo.mutation.Category(); ok {
-		_spec.SetField(softwarepackage.FieldCategory, field.TypeString, value)
-	}
-	if spuo.mutation.CategoryCleared() {
-		_spec.ClearField(softwarepackage.FieldCategory, field.TypeString)
-	}
-	if value, ok := spuo.mutation.Developer(); ok {
-		_spec.SetField(softwarepackage.FieldDeveloper, field.TypeString, value)
-	}
-	if spuo.mutation.DeveloperCleared() {
-		_spec.ClearField(softwarepackage.FieldDeveloper, field.TypeString)
-	}
-	if value, ok := spuo.mutation.PkginfoData(); ok {
-		_spec.SetField(softwarepackage.FieldPkginfoData, field.TypeString, value)
-	}
-	if spuo.mutation.PkginfoDataCleared() {
-		_spec.ClearField(softwarepackage.FieldPkginfoData, field.TypeString)
-	}
-	if value, ok := spuo.mutation.PreInstallScript(); ok {
-		_spec.SetField(softwarepackage.FieldPreInstallScript, field.TypeString, value)
-	}
-	if spuo.mutation.PreInstallScriptCleared() {
-		_spec.ClearField(softwarepackage.FieldPreInstallScript, field.TypeString)
-	}
-	if value, ok := spuo.mutation.PostInstallScript(); ok {
-		_spec.SetField(softwarepackage.FieldPostInstallScript, field.TypeString, value)
-	}
-	if spuo.mutation.PostInstallScriptCleared() {
-		_spec.ClearField(softwarepackage.FieldPostInstallScript, field.TypeString)
-	}
-	if value, ok := spuo.mutation.UninstallMethod(); ok {
-		_spec.SetField(softwarepackage.FieldUninstallMethod, field.TypeString, value)
-	}
-	if spuo.mutation.UninstallMethodCleared() {
-		_spec.ClearField(softwarepackage.FieldUninstallMethod, field.TypeString)
-	}
-	if value, ok := spuo.mutation.InstallsItems(); ok {
-		_spec.SetField(softwarepackage.FieldInstallsItems, field.TypeString, value)
-	}
-	if spuo.mutation.InstallsItemsCleared() {
-		_spec.ClearField(softwarepackage.FieldInstallsItems, field.TypeString)
-	}
-	if value, ok := spuo.mutation.Receipts(); ok {
-		_spec.SetField(softwarepackage.FieldReceipts, field.TypeString, value)
-	}
-	if spuo.mutation.ReceiptsCleared() {
-		_spec.ClearField(softwarepackage.FieldReceipts, field.TypeString)
-	}
-	if value, ok := spuo.mutation.BlockingApps(); ok {
-		_spec.SetField(softwarepackage.FieldBlockingApps, field.TypeString, value)
-	}
-	if spuo.mutation.BlockingAppsCleared() {
-		_spec.ClearField(softwarepackage.FieldBlockingApps, field.TypeString)
-	}
-	if value, ok := spuo.mutation.RestartAction(); ok {
-		_spec.SetField(softwarepackage.FieldRestartAction, field.TypeEnum, value)
-	}
-	if spuo.mutation.RestartActionCleared() {
-		_spec.ClearField(softwarepackage.FieldRestartAction, field.TypeEnum)
-	}
-	if value, ok := spuo.mutation.MinOsVersion(); ok {
-		_spec.SetField(softwarepackage.FieldMinOsVersion, field.TypeString, value)
-	}
-	if spuo.mutation.MinOsVersionCleared() {
-		_spec.ClearField(softwarepackage.FieldMinOsVersion, field.TypeString)
-	}
-	if value, ok := spuo.mutation.MaxOsVersion(); ok {
-		_spec.SetField(softwarepackage.FieldMaxOsVersion, field.TypeString, value)
-	}
-	if spuo.mutation.MaxOsVersionCleared() {
-		_spec.ClearField(softwarepackage.FieldMaxOsVersion, field.TypeString)
-	}
-	if value, ok := spuo.mutation.SupportedArchitectures(); ok {
-		_spec.SetField(softwarepackage.FieldSupportedArchitectures, field.TypeString, value)
-	}
-	if spuo.mutation.SupportedArchitecturesCleared() {
-		_spec.ClearField(softwarepackage.FieldSupportedArchitectures, field.TypeString)
-	}
-	if value, ok := spuo.mutation.ForceInstallDate(); ok {
-		_spec.SetField(softwarepackage.FieldForceInstallDate, field.TypeTime, value)
-	}
-	if spuo.mutation.ForceInstallDateCleared() {
-		_spec.ClearField(softwarepackage.FieldForceInstallDate, field.TypeTime)
-	}
-	if value, ok := spuo.mutation.UnattendedInstall(); ok {
-		_spec.SetField(softwarepackage.FieldUnattendedInstall, field.TypeBool, value)
-	}
-	if spuo.mutation.UnattendedInstallCleared() {
-		_spec.ClearField(softwarepackage.FieldUnattendedInstall, field.TypeBool)
-	}
-	if value, ok := spuo.mutation.UnattendedUninstall(); ok {
-		_spec.SetField(softwarepackage.FieldUnattendedUninstall, field.TypeBool, value)
-	}
-	if spuo.mutation.UnattendedUninstallCleared() {
-		_spec.ClearField(softwarepackage.FieldUnattendedUninstall, field.TypeBool)
-	}
-	if value, ok := spuo.mutation.Status(); ok {
-		_spec.SetField(softwarepackage.FieldStatus, field.TypeEnum, value)
-	}
-	if spuo.mutation.StatusCleared() {
-		_spec.ClearField(softwarepackage.FieldStatus, field.TypeEnum)
+	if spuo.mutation.VerifiedCleared() {
+		_spec.ClearField(softwarepackage.FieldVerified, field.TypeBool)
 	}
 	if value, ok := spuo.mutation.Source(); ok {
-		_spec.SetField(softwarepackage.FieldSource, field.TypeEnum, value)
-	}
-	if spuo.mutation.SourceCleared() {
-		_spec.ClearField(softwarepackage.FieldSource, field.TypeEnum)
-	}
-	if value, ok := spuo.mutation.Created(); ok {
-		_spec.SetField(softwarepackage.FieldCreated, field.TypeTime, value)
-	}
-	if spuo.mutation.CreatedCleared() {
-		_spec.ClearField(softwarepackage.FieldCreated, field.TypeTime)
-	}
-	if value, ok := spuo.mutation.Modified(); ok {
-		_spec.SetField(softwarepackage.FieldModified, field.TypeTime, value)
-	}
-	if spuo.mutation.ModifiedCleared() {
-		_spec.ClearField(softwarepackage.FieldModified, field.TypeTime)
-	}
-	if spuo.mutation.RepoCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.RepoTable,
-			Columns: []string{softwarepackage.RepoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RepoIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.RepoTable,
-			Columns: []string{softwarepackage.RepoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarerepo.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.CatalogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RemovedCatalogsIDs(); len(nodes) > 0 && !spuo.mutation.CatalogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.CatalogsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   softwarepackage.CatalogsTable,
-			Columns: softwarepackage.CatalogsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarecatalog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.TenantCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.TenantTable,
-			Columns: []string{softwarepackage.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.TenantIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.TenantTable,
-			Columns: []string{softwarepackage.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.InstallLogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RemovedInstallLogsIDs(); len(nodes) > 0 && !spuo.mutation.InstallLogsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.InstallLogsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.InstallLogsTable,
-			Columns: []string{softwarepackage.InstallLogsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwareinstalllog.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.RequiresCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RemovedRequiresIDs(); len(nodes) > 0 && !spuo.mutation.RequiresCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RequiresIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.RequiresTable,
-			Columns: softwarepackage.RequiresPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.UpdateForCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RemovedUpdateForIDs(); len(nodes) > 0 && !spuo.mutation.UpdateForCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.UpdateForIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: false,
-			Table:   softwarepackage.UpdateForTable,
-			Columns: softwarepackage.UpdateForPrimaryKey,
-			Bidi:    true,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.GlobalRefCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.GlobalRefTable,
-			Columns: []string{softwarepackage.GlobalRefColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.GlobalRefIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   softwarepackage.GlobalRefTable,
-			Columns: []string{softwarepackage.GlobalRefColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if spuo.mutation.SubscribersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.RemovedSubscribersIDs(); len(nodes) > 0 && !spuo.mutation.SubscribersCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := spuo.mutation.SubscribersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   softwarepackage.SubscribersTable,
-			Columns: []string{softwarepackage.SubscribersColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+		_spec.SetField(softwarepackage.FieldSource, field.TypeString, value)
 	}
 	_spec.AddModifiers(spuo.modifiers...)
 	_node = &SoftwarePackage{config: spuo.config}

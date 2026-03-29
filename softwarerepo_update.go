@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/predicate"
-	"github.com/EigerCode/ent/softwarepackage"
 	"github.com/EigerCode/ent/softwarerepo"
 	"github.com/EigerCode/ent/tenant"
 )
@@ -285,17 +285,17 @@ func (sru *SoftwareRepoUpdate) SetTenant(t *Tenant) *SoftwareRepoUpdate {
 	return sru.SetTenantID(t.ID)
 }
 
-// AddPackageIDs adds the "packages" edge to the SoftwarePackage entity by IDs.
+// AddPackageIDs adds the "packages" edge to the ManagedPackage entity by IDs.
 func (sru *SoftwareRepoUpdate) AddPackageIDs(ids ...int) *SoftwareRepoUpdate {
 	sru.mutation.AddPackageIDs(ids...)
 	return sru
 }
 
-// AddPackages adds the "packages" edges to the SoftwarePackage entity.
-func (sru *SoftwareRepoUpdate) AddPackages(s ...*SoftwarePackage) *SoftwareRepoUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+// AddPackages adds the "packages" edges to the ManagedPackage entity.
+func (sru *SoftwareRepoUpdate) AddPackages(m ...*ManagedPackage) *SoftwareRepoUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
 	return sru.AddPackageIDs(ids...)
 }
@@ -311,23 +311,23 @@ func (sru *SoftwareRepoUpdate) ClearTenant() *SoftwareRepoUpdate {
 	return sru
 }
 
-// ClearPackages clears all "packages" edges to the SoftwarePackage entity.
+// ClearPackages clears all "packages" edges to the ManagedPackage entity.
 func (sru *SoftwareRepoUpdate) ClearPackages() *SoftwareRepoUpdate {
 	sru.mutation.ClearPackages()
 	return sru
 }
 
-// RemovePackageIDs removes the "packages" edge to SoftwarePackage entities by IDs.
+// RemovePackageIDs removes the "packages" edge to ManagedPackage entities by IDs.
 func (sru *SoftwareRepoUpdate) RemovePackageIDs(ids ...int) *SoftwareRepoUpdate {
 	sru.mutation.RemovePackageIDs(ids...)
 	return sru
 }
 
-// RemovePackages removes "packages" edges to SoftwarePackage entities.
-func (sru *SoftwareRepoUpdate) RemovePackages(s ...*SoftwarePackage) *SoftwareRepoUpdate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+// RemovePackages removes "packages" edges to ManagedPackage entities.
+func (sru *SoftwareRepoUpdate) RemovePackages(m ...*ManagedPackage) *SoftwareRepoUpdate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
 	return sru.RemovePackageIDs(ids...)
 }
@@ -517,7 +517,7 @@ func (sru *SoftwareRepoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{softwarerepo.PackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -530,7 +530,7 @@ func (sru *SoftwareRepoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{softwarerepo.PackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -546,7 +546,7 @@ func (sru *SoftwareRepoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{softwarerepo.PackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -830,17 +830,17 @@ func (sruo *SoftwareRepoUpdateOne) SetTenant(t *Tenant) *SoftwareRepoUpdateOne {
 	return sruo.SetTenantID(t.ID)
 }
 
-// AddPackageIDs adds the "packages" edge to the SoftwarePackage entity by IDs.
+// AddPackageIDs adds the "packages" edge to the ManagedPackage entity by IDs.
 func (sruo *SoftwareRepoUpdateOne) AddPackageIDs(ids ...int) *SoftwareRepoUpdateOne {
 	sruo.mutation.AddPackageIDs(ids...)
 	return sruo
 }
 
-// AddPackages adds the "packages" edges to the SoftwarePackage entity.
-func (sruo *SoftwareRepoUpdateOne) AddPackages(s ...*SoftwarePackage) *SoftwareRepoUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+// AddPackages adds the "packages" edges to the ManagedPackage entity.
+func (sruo *SoftwareRepoUpdateOne) AddPackages(m ...*ManagedPackage) *SoftwareRepoUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
 	return sruo.AddPackageIDs(ids...)
 }
@@ -856,23 +856,23 @@ func (sruo *SoftwareRepoUpdateOne) ClearTenant() *SoftwareRepoUpdateOne {
 	return sruo
 }
 
-// ClearPackages clears all "packages" edges to the SoftwarePackage entity.
+// ClearPackages clears all "packages" edges to the ManagedPackage entity.
 func (sruo *SoftwareRepoUpdateOne) ClearPackages() *SoftwareRepoUpdateOne {
 	sruo.mutation.ClearPackages()
 	return sruo
 }
 
-// RemovePackageIDs removes the "packages" edge to SoftwarePackage entities by IDs.
+// RemovePackageIDs removes the "packages" edge to ManagedPackage entities by IDs.
 func (sruo *SoftwareRepoUpdateOne) RemovePackageIDs(ids ...int) *SoftwareRepoUpdateOne {
 	sruo.mutation.RemovePackageIDs(ids...)
 	return sruo
 }
 
-// RemovePackages removes "packages" edges to SoftwarePackage entities.
-func (sruo *SoftwareRepoUpdateOne) RemovePackages(s ...*SoftwarePackage) *SoftwareRepoUpdateOne {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+// RemovePackages removes "packages" edges to ManagedPackage entities.
+func (sruo *SoftwareRepoUpdateOne) RemovePackages(m ...*ManagedPackage) *SoftwareRepoUpdateOne {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
 	return sruo.RemovePackageIDs(ids...)
 }
@@ -1092,7 +1092,7 @@ func (sruo *SoftwareRepoUpdateOne) sqlSave(ctx context.Context) (_node *Software
 			Columns: []string{softwarerepo.PackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1105,7 +1105,7 @@ func (sruo *SoftwareRepoUpdateOne) sqlSave(ctx context.Context) (_node *Software
 			Columns: []string{softwarerepo.PackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1121,7 +1121,7 @@ func (sruo *SoftwareRepoUpdateOne) sqlSave(ctx context.Context) (_node *Software
 			Columns: []string{softwarerepo.PackagesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

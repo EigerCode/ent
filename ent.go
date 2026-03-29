@@ -22,6 +22,7 @@ import (
 	"github.com/EigerCode/ent/deployment"
 	"github.com/EigerCode/ent/enrollmenttoken"
 	"github.com/EigerCode/ent/logicaldisk"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/memoryslot"
 	"github.com/EigerCode/ent/metadata"
 	"github.com/EigerCode/ent/monitor"
@@ -127,6 +128,7 @@ func checkColumn(table, column string) error {
 			deployment.Table:            deployment.ValidColumn,
 			enrollmenttoken.Table:       enrollmenttoken.ValidColumn,
 			logicaldisk.Table:           logicaldisk.ValidColumn,
+			managedpackage.Table:        managedpackage.ValidColumn,
 			memoryslot.Table:            memoryslot.ValidColumn,
 			metadata.Table:              metadata.ValidColumn,
 			monitor.Table:               monitor.ValidColumn,

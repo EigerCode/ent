@@ -32,6 +32,8 @@ type Tx struct {
 	EnrollmentToken *EnrollmentTokenClient
 	// LogicalDisk is the client for interacting with the LogicalDisk builders.
 	LogicalDisk *LogicalDiskClient
+	// ManagedPackage is the client for interacting with the ManagedPackage builders.
+	ManagedPackage *ManagedPackageClient
 	// MemorySlot is the client for interacting with the MemorySlot builders.
 	MemorySlot *MemorySlotClient
 	// Metadata is the client for interacting with the Metadata builders.
@@ -243,6 +245,7 @@ func (tx *Tx) init() {
 	tx.Deployment = NewDeploymentClient(tx.config)
 	tx.EnrollmentToken = NewEnrollmentTokenClient(tx.config)
 	tx.LogicalDisk = NewLogicalDiskClient(tx.config)
+	tx.ManagedPackage = NewManagedPackageClient(tx.config)
 	tx.MemorySlot = NewMemorySlotClient(tx.config)
 	tx.Metadata = NewMetadataClient(tx.config)
 	tx.Monitor = NewMonitorClient(tx.config)

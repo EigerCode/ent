@@ -12,9 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/predicate"
 	"github.com/EigerCode/ent/softwareinstalllog"
-	"github.com/EigerCode/ent/softwarepackage"
 )
 
 // SoftwareInstallLogQuery is the builder for querying SoftwareInstallLog entities.
@@ -25,7 +25,7 @@ type SoftwareInstallLogQuery struct {
 	inters      []Interceptor
 	predicates  []predicate.SoftwareInstallLog
 	withAgent   *AgentQuery
-	withPackage *SoftwarePackageQuery
+	withPackage *ManagedPackageQuery
 	withFKs     bool
 	modifiers   []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -87,8 +87,8 @@ func (silq *SoftwareInstallLogQuery) QueryAgent() *AgentQuery {
 }
 
 // QueryPackage chains the current query on the "package" edge.
-func (silq *SoftwareInstallLogQuery) QueryPackage() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: silq.config}).Query()
+func (silq *SoftwareInstallLogQuery) QueryPackage() *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: silq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := silq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -99,7 +99,7 @@ func (silq *SoftwareInstallLogQuery) QueryPackage() *SoftwarePackageQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(softwareinstalllog.Table, softwareinstalllog.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, softwareinstalllog.PackageTable, softwareinstalllog.PackageColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(silq.driver.Dialect(), step)
@@ -322,8 +322,8 @@ func (silq *SoftwareInstallLogQuery) WithAgent(opts ...func(*AgentQuery)) *Softw
 
 // WithPackage tells the query-builder to eager-load the nodes that are connected to
 // the "package" edge. The optional arguments are used to configure the query builder of the edge.
-func (silq *SoftwareInstallLogQuery) WithPackage(opts ...func(*SoftwarePackageQuery)) *SoftwareInstallLogQuery {
-	query := (&SoftwarePackageClient{config: silq.config}).Query()
+func (silq *SoftwareInstallLogQuery) WithPackage(opts ...func(*ManagedPackageQuery)) *SoftwareInstallLogQuery {
+	query := (&ManagedPackageClient{config: silq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -450,7 +450,7 @@ func (silq *SoftwareInstallLogQuery) sqlAll(ctx context.Context, hooks ...queryH
 	}
 	if query := silq.withPackage; query != nil {
 		if err := silq.loadPackage(ctx, query, nodes, nil,
-			func(n *SoftwareInstallLog, e *SoftwarePackage) { n.Edges.Package = e }); err != nil {
+			func(n *SoftwareInstallLog, e *ManagedPackage) { n.Edges.Package = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -489,14 +489,14 @@ func (silq *SoftwareInstallLogQuery) loadAgent(ctx context.Context, query *Agent
 	}
 	return nil
 }
-func (silq *SoftwareInstallLogQuery) loadPackage(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwareInstallLog, init func(*SoftwareInstallLog), assign func(*SoftwareInstallLog, *SoftwarePackage)) error {
+func (silq *SoftwareInstallLogQuery) loadPackage(ctx context.Context, query *ManagedPackageQuery, nodes []*SoftwareInstallLog, init func(*SoftwareInstallLog), assign func(*SoftwareInstallLog, *ManagedPackage)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*SoftwareInstallLog)
 	for i := range nodes {
-		if nodes[i].software_package_install_logs == nil {
+		if nodes[i].managed_package_install_logs == nil {
 			continue
 		}
-		fk := *nodes[i].software_package_install_logs
+		fk := *nodes[i].managed_package_install_logs
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -505,7 +505,7 @@ func (silq *SoftwareInstallLogQuery) loadPackage(ctx context.Context, query *Sof
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(softwarepackage.IDIn(ids...))
+	query.Where(managedpackage.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -513,7 +513,7 @@ func (silq *SoftwareInstallLogQuery) loadPackage(ctx context.Context, query *Sof
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "software_package_install_logs" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "managed_package_install_logs" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

@@ -12,9 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/predicate"
 	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwarepackage"
 	"github.com/EigerCode/ent/tenant"
 )
 
@@ -26,7 +26,7 @@ type SoftwareCatalogQuery struct {
 	inters       []Interceptor
 	predicates   []predicate.SoftwareCatalog
 	withTenant   *TenantQuery
-	withPackages *SoftwarePackageQuery
+	withPackages *ManagedPackageQuery
 	withFKs      bool
 	modifiers    []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -88,8 +88,8 @@ func (scq *SoftwareCatalogQuery) QueryTenant() *TenantQuery {
 }
 
 // QueryPackages chains the current query on the "packages" edge.
-func (scq *SoftwareCatalogQuery) QueryPackages() *SoftwarePackageQuery {
-	query := (&SoftwarePackageClient{config: scq.config}).Query()
+func (scq *SoftwareCatalogQuery) QueryPackages() *ManagedPackageQuery {
+	query := (&ManagedPackageClient{config: scq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := scq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -100,7 +100,7 @@ func (scq *SoftwareCatalogQuery) QueryPackages() *SoftwarePackageQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(softwarecatalog.Table, softwarecatalog.FieldID, selector),
-			sqlgraph.To(softwarepackage.Table, softwarepackage.FieldID),
+			sqlgraph.To(managedpackage.Table, managedpackage.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, false, softwarecatalog.PackagesTable, softwarecatalog.PackagesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(scq.driver.Dialect(), step)
@@ -323,8 +323,8 @@ func (scq *SoftwareCatalogQuery) WithTenant(opts ...func(*TenantQuery)) *Softwar
 
 // WithPackages tells the query-builder to eager-load the nodes that are connected to
 // the "packages" edge. The optional arguments are used to configure the query builder of the edge.
-func (scq *SoftwareCatalogQuery) WithPackages(opts ...func(*SoftwarePackageQuery)) *SoftwareCatalogQuery {
-	query := (&SoftwarePackageClient{config: scq.config}).Query()
+func (scq *SoftwareCatalogQuery) WithPackages(opts ...func(*ManagedPackageQuery)) *SoftwareCatalogQuery {
+	query := (&ManagedPackageClient{config: scq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -451,8 +451,8 @@ func (scq *SoftwareCatalogQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	}
 	if query := scq.withPackages; query != nil {
 		if err := scq.loadPackages(ctx, query, nodes,
-			func(n *SoftwareCatalog) { n.Edges.Packages = []*SoftwarePackage{} },
-			func(n *SoftwareCatalog, e *SoftwarePackage) { n.Edges.Packages = append(n.Edges.Packages, e) }); err != nil {
+			func(n *SoftwareCatalog) { n.Edges.Packages = []*ManagedPackage{} },
+			func(n *SoftwareCatalog, e *ManagedPackage) { n.Edges.Packages = append(n.Edges.Packages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -491,7 +491,7 @@ func (scq *SoftwareCatalogQuery) loadTenant(ctx context.Context, query *TenantQu
 	}
 	return nil
 }
-func (scq *SoftwareCatalogQuery) loadPackages(ctx context.Context, query *SoftwarePackageQuery, nodes []*SoftwareCatalog, init func(*SoftwareCatalog), assign func(*SoftwareCatalog, *SoftwarePackage)) error {
+func (scq *SoftwareCatalogQuery) loadPackages(ctx context.Context, query *ManagedPackageQuery, nodes []*SoftwareCatalog, init func(*SoftwareCatalog), assign func(*SoftwareCatalog, *ManagedPackage)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int]*SoftwareCatalog)
 	nids := make(map[int]map[*SoftwareCatalog]struct{})
@@ -504,7 +504,7 @@ func (scq *SoftwareCatalogQuery) loadPackages(ctx context.Context, query *Softwa
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(softwarecatalog.PackagesTable)
-		s.Join(joinT).On(s.C(softwarepackage.FieldID), joinT.C(softwarecatalog.PackagesPrimaryKey[1]))
+		s.Join(joinT).On(s.C(managedpackage.FieldID), joinT.C(softwarecatalog.PackagesPrimaryKey[1]))
 		s.Where(sql.InValues(joinT.C(softwarecatalog.PackagesPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
 		s.Select(joinT.C(softwarecatalog.PackagesPrimaryKey[0]))
@@ -537,7 +537,7 @@ func (scq *SoftwareCatalogQuery) loadPackages(ctx context.Context, query *Softwa
 			}
 		})
 	})
-	neighbors, err := withInterceptors[[]*SoftwarePackage](ctx, query, qr, query.inters)
+	neighbors, err := withInterceptors[[]*ManagedPackage](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}

@@ -480,6 +480,21 @@ func Order(v int) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldOrder, v))
 }
 
+// PackageBranch applies equality check predicate on the "package_branch" field. It's identical to PackageBranchEQ.
+func PackageBranch(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldPackageBranch, v))
+}
+
+// PackageArch applies equality check predicate on the "package_arch" field. It's identical to PackageArchEQ.
+func PackageArch(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldPackageArch, v))
+}
+
+// PackageBrewType applies equality check predicate on the "package_brew_type" field. It's identical to PackageBrewTypeEQ.
+func PackageBrewType(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldPackageBrewType, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldName, v))
@@ -5253,6 +5268,231 @@ func OrderIsNil() predicate.Task {
 // OrderNotNil applies the NotNil predicate on the "order" field.
 func OrderNotNil() predicate.Task {
 	return predicate.Task(sql.FieldNotNull(FieldOrder))
+}
+
+// PackageBranchEQ applies the EQ predicate on the "package_branch" field.
+func PackageBranchEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldPackageBranch, v))
+}
+
+// PackageBranchNEQ applies the NEQ predicate on the "package_branch" field.
+func PackageBranchNEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldPackageBranch, v))
+}
+
+// PackageBranchIn applies the In predicate on the "package_branch" field.
+func PackageBranchIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldPackageBranch, vs...))
+}
+
+// PackageBranchNotIn applies the NotIn predicate on the "package_branch" field.
+func PackageBranchNotIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldPackageBranch, vs...))
+}
+
+// PackageBranchGT applies the GT predicate on the "package_branch" field.
+func PackageBranchGT(v string) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldPackageBranch, v))
+}
+
+// PackageBranchGTE applies the GTE predicate on the "package_branch" field.
+func PackageBranchGTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldPackageBranch, v))
+}
+
+// PackageBranchLT applies the LT predicate on the "package_branch" field.
+func PackageBranchLT(v string) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldPackageBranch, v))
+}
+
+// PackageBranchLTE applies the LTE predicate on the "package_branch" field.
+func PackageBranchLTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldPackageBranch, v))
+}
+
+// PackageBranchContains applies the Contains predicate on the "package_branch" field.
+func PackageBranchContains(v string) predicate.Task {
+	return predicate.Task(sql.FieldContains(FieldPackageBranch, v))
+}
+
+// PackageBranchHasPrefix applies the HasPrefix predicate on the "package_branch" field.
+func PackageBranchHasPrefix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasPrefix(FieldPackageBranch, v))
+}
+
+// PackageBranchHasSuffix applies the HasSuffix predicate on the "package_branch" field.
+func PackageBranchHasSuffix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasSuffix(FieldPackageBranch, v))
+}
+
+// PackageBranchIsNil applies the IsNil predicate on the "package_branch" field.
+func PackageBranchIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldPackageBranch))
+}
+
+// PackageBranchNotNil applies the NotNil predicate on the "package_branch" field.
+func PackageBranchNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldPackageBranch))
+}
+
+// PackageBranchEqualFold applies the EqualFold predicate on the "package_branch" field.
+func PackageBranchEqualFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldEqualFold(FieldPackageBranch, v))
+}
+
+// PackageBranchContainsFold applies the ContainsFold predicate on the "package_branch" field.
+func PackageBranchContainsFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldContainsFold(FieldPackageBranch, v))
+}
+
+// PackageArchEQ applies the EQ predicate on the "package_arch" field.
+func PackageArchEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldPackageArch, v))
+}
+
+// PackageArchNEQ applies the NEQ predicate on the "package_arch" field.
+func PackageArchNEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldPackageArch, v))
+}
+
+// PackageArchIn applies the In predicate on the "package_arch" field.
+func PackageArchIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldPackageArch, vs...))
+}
+
+// PackageArchNotIn applies the NotIn predicate on the "package_arch" field.
+func PackageArchNotIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldPackageArch, vs...))
+}
+
+// PackageArchGT applies the GT predicate on the "package_arch" field.
+func PackageArchGT(v string) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldPackageArch, v))
+}
+
+// PackageArchGTE applies the GTE predicate on the "package_arch" field.
+func PackageArchGTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldPackageArch, v))
+}
+
+// PackageArchLT applies the LT predicate on the "package_arch" field.
+func PackageArchLT(v string) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldPackageArch, v))
+}
+
+// PackageArchLTE applies the LTE predicate on the "package_arch" field.
+func PackageArchLTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldPackageArch, v))
+}
+
+// PackageArchContains applies the Contains predicate on the "package_arch" field.
+func PackageArchContains(v string) predicate.Task {
+	return predicate.Task(sql.FieldContains(FieldPackageArch, v))
+}
+
+// PackageArchHasPrefix applies the HasPrefix predicate on the "package_arch" field.
+func PackageArchHasPrefix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasPrefix(FieldPackageArch, v))
+}
+
+// PackageArchHasSuffix applies the HasSuffix predicate on the "package_arch" field.
+func PackageArchHasSuffix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasSuffix(FieldPackageArch, v))
+}
+
+// PackageArchIsNil applies the IsNil predicate on the "package_arch" field.
+func PackageArchIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldPackageArch))
+}
+
+// PackageArchNotNil applies the NotNil predicate on the "package_arch" field.
+func PackageArchNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldPackageArch))
+}
+
+// PackageArchEqualFold applies the EqualFold predicate on the "package_arch" field.
+func PackageArchEqualFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldEqualFold(FieldPackageArch, v))
+}
+
+// PackageArchContainsFold applies the ContainsFold predicate on the "package_arch" field.
+func PackageArchContainsFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldContainsFold(FieldPackageArch, v))
+}
+
+// PackageBrewTypeEQ applies the EQ predicate on the "package_brew_type" field.
+func PackageBrewTypeEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeNEQ applies the NEQ predicate on the "package_brew_type" field.
+func PackageBrewTypeNEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeIn applies the In predicate on the "package_brew_type" field.
+func PackageBrewTypeIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldPackageBrewType, vs...))
+}
+
+// PackageBrewTypeNotIn applies the NotIn predicate on the "package_brew_type" field.
+func PackageBrewTypeNotIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldPackageBrewType, vs...))
+}
+
+// PackageBrewTypeGT applies the GT predicate on the "package_brew_type" field.
+func PackageBrewTypeGT(v string) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeGTE applies the GTE predicate on the "package_brew_type" field.
+func PackageBrewTypeGTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeLT applies the LT predicate on the "package_brew_type" field.
+func PackageBrewTypeLT(v string) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeLTE applies the LTE predicate on the "package_brew_type" field.
+func PackageBrewTypeLTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeContains applies the Contains predicate on the "package_brew_type" field.
+func PackageBrewTypeContains(v string) predicate.Task {
+	return predicate.Task(sql.FieldContains(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeHasPrefix applies the HasPrefix predicate on the "package_brew_type" field.
+func PackageBrewTypeHasPrefix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasPrefix(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeHasSuffix applies the HasSuffix predicate on the "package_brew_type" field.
+func PackageBrewTypeHasSuffix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasSuffix(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeIsNil applies the IsNil predicate on the "package_brew_type" field.
+func PackageBrewTypeIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldPackageBrewType))
+}
+
+// PackageBrewTypeNotNil applies the NotNil predicate on the "package_brew_type" field.
+func PackageBrewTypeNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldPackageBrewType))
+}
+
+// PackageBrewTypeEqualFold applies the EqualFold predicate on the "package_brew_type" field.
+func PackageBrewTypeEqualFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldEqualFold(FieldPackageBrewType, v))
+}
+
+// PackageBrewTypeContainsFold applies the ContainsFold predicate on the "package_brew_type" field.
+func PackageBrewTypeContainsFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldContainsFold(FieldPackageBrewType, v))
 }
 
 // HasTags applies the HasEdge predicate on the "tags" edge.

@@ -40,7 +40,7 @@ func (spd *SoftwarePackageDelete) ExecX(ctx context.Context) int {
 }
 
 func (spd *SoftwarePackageDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(softwarepackage.Table, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(softwarepackage.Table, sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeUUID))
 	if ps := spd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

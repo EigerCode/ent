@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/softwarecatalog"
-	"github.com/EigerCode/ent/softwarepackage"
 	"github.com/EigerCode/ent/tenant"
 )
 
@@ -111,17 +111,17 @@ func (scc *SoftwareCatalogCreate) SetTenant(t *Tenant) *SoftwareCatalogCreate {
 	return scc.SetTenantID(t.ID)
 }
 
-// AddPackageIDs adds the "packages" edge to the SoftwarePackage entity by IDs.
+// AddPackageIDs adds the "packages" edge to the ManagedPackage entity by IDs.
 func (scc *SoftwareCatalogCreate) AddPackageIDs(ids ...int) *SoftwareCatalogCreate {
 	scc.mutation.AddPackageIDs(ids...)
 	return scc
 }
 
-// AddPackages adds the "packages" edges to the SoftwarePackage entity.
-func (scc *SoftwareCatalogCreate) AddPackages(s ...*SoftwarePackage) *SoftwareCatalogCreate {
-	ids := make([]int, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
+// AddPackages adds the "packages" edges to the ManagedPackage entity.
+func (scc *SoftwareCatalogCreate) AddPackages(m ...*ManagedPackage) *SoftwareCatalogCreate {
+	ids := make([]int, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
 	return scc.AddPackageIDs(ids...)
 }
@@ -268,7 +268,7 @@ func (scc *SoftwareCatalogCreate) createSpec() (*SoftwareCatalog, *sqlgraph.Crea
 			Columns: softwarecatalog.PackagesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

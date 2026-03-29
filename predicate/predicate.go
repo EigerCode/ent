@@ -36,6 +36,9 @@ type EnrollmentToken func(*sql.Selector)
 // LogicalDisk is the predicate function for logicaldisk builders.
 type LogicalDisk func(*sql.Selector)
 
+// ManagedPackage is the predicate function for managedpackage builders.
+type ManagedPackage func(*sql.Selector)
+
 // MemorySlot is the predicate function for memoryslot builders.
 type MemorySlot func(*sql.Selector)
 

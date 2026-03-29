@@ -12,9 +12,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/EigerCode/ent/agent"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/predicate"
 	"github.com/EigerCode/ent/softwareinstalllog"
-	"github.com/EigerCode/ent/softwarepackage"
 )
 
 // SoftwareInstallLogUpdate is the builder for updating SoftwareInstallLog entities.
@@ -170,13 +170,13 @@ func (silu *SoftwareInstallLogUpdate) SetAgent(a *Agent) *SoftwareInstallLogUpda
 	return silu.SetAgentID(a.ID)
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by ID.
+// SetPackageID sets the "package" edge to the ManagedPackage entity by ID.
 func (silu *SoftwareInstallLogUpdate) SetPackageID(id int) *SoftwareInstallLogUpdate {
 	silu.mutation.SetPackageID(id)
 	return silu
 }
 
-// SetNillablePackageID sets the "package" edge to the SoftwarePackage entity by ID if the given value is not nil.
+// SetNillablePackageID sets the "package" edge to the ManagedPackage entity by ID if the given value is not nil.
 func (silu *SoftwareInstallLogUpdate) SetNillablePackageID(id *int) *SoftwareInstallLogUpdate {
 	if id != nil {
 		silu = silu.SetPackageID(*id)
@@ -184,9 +184,9 @@ func (silu *SoftwareInstallLogUpdate) SetNillablePackageID(id *int) *SoftwareIns
 	return silu
 }
 
-// SetPackage sets the "package" edge to the SoftwarePackage entity.
-func (silu *SoftwareInstallLogUpdate) SetPackage(s *SoftwarePackage) *SoftwareInstallLogUpdate {
-	return silu.SetPackageID(s.ID)
+// SetPackage sets the "package" edge to the ManagedPackage entity.
+func (silu *SoftwareInstallLogUpdate) SetPackage(m *ManagedPackage) *SoftwareInstallLogUpdate {
+	return silu.SetPackageID(m.ID)
 }
 
 // Mutation returns the SoftwareInstallLogMutation object of the builder.
@@ -200,7 +200,7 @@ func (silu *SoftwareInstallLogUpdate) ClearAgent() *SoftwareInstallLogUpdate {
 	return silu
 }
 
-// ClearPackage clears the "package" edge to the SoftwarePackage entity.
+// ClearPackage clears the "package" edge to the ManagedPackage entity.
 func (silu *SoftwareInstallLogUpdate) ClearPackage() *SoftwareInstallLogUpdate {
 	silu.mutation.ClearPackage()
 	return silu
@@ -342,7 +342,7 @@ func (silu *SoftwareInstallLogUpdate) sqlSave(ctx context.Context) (n int, err e
 			Columns: []string{softwareinstalllog.PackageColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -355,7 +355,7 @@ func (silu *SoftwareInstallLogUpdate) sqlSave(ctx context.Context) (n int, err e
 			Columns: []string{softwareinstalllog.PackageColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -524,13 +524,13 @@ func (siluo *SoftwareInstallLogUpdateOne) SetAgent(a *Agent) *SoftwareInstallLog
 	return siluo.SetAgentID(a.ID)
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by ID.
+// SetPackageID sets the "package" edge to the ManagedPackage entity by ID.
 func (siluo *SoftwareInstallLogUpdateOne) SetPackageID(id int) *SoftwareInstallLogUpdateOne {
 	siluo.mutation.SetPackageID(id)
 	return siluo
 }
 
-// SetNillablePackageID sets the "package" edge to the SoftwarePackage entity by ID if the given value is not nil.
+// SetNillablePackageID sets the "package" edge to the ManagedPackage entity by ID if the given value is not nil.
 func (siluo *SoftwareInstallLogUpdateOne) SetNillablePackageID(id *int) *SoftwareInstallLogUpdateOne {
 	if id != nil {
 		siluo = siluo.SetPackageID(*id)
@@ -538,9 +538,9 @@ func (siluo *SoftwareInstallLogUpdateOne) SetNillablePackageID(id *int) *Softwar
 	return siluo
 }
 
-// SetPackage sets the "package" edge to the SoftwarePackage entity.
-func (siluo *SoftwareInstallLogUpdateOne) SetPackage(s *SoftwarePackage) *SoftwareInstallLogUpdateOne {
-	return siluo.SetPackageID(s.ID)
+// SetPackage sets the "package" edge to the ManagedPackage entity.
+func (siluo *SoftwareInstallLogUpdateOne) SetPackage(m *ManagedPackage) *SoftwareInstallLogUpdateOne {
+	return siluo.SetPackageID(m.ID)
 }
 
 // Mutation returns the SoftwareInstallLogMutation object of the builder.
@@ -554,7 +554,7 @@ func (siluo *SoftwareInstallLogUpdateOne) ClearAgent() *SoftwareInstallLogUpdate
 	return siluo
 }
 
-// ClearPackage clears the "package" edge to the SoftwarePackage entity.
+// ClearPackage clears the "package" edge to the ManagedPackage entity.
 func (siluo *SoftwareInstallLogUpdateOne) ClearPackage() *SoftwareInstallLogUpdateOne {
 	siluo.mutation.ClearPackage()
 	return siluo
@@ -726,7 +726,7 @@ func (siluo *SoftwareInstallLogUpdateOne) sqlSave(ctx context.Context) (_node *S
 			Columns: []string{softwareinstalllog.PackageColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -739,7 +739,7 @@ func (siluo *SoftwareInstallLogUpdateOne) sqlSave(ctx context.Context) (_node *S
 			Columns: []string{softwareinstalllog.PackageColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(softwarepackage.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(managedpackage.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

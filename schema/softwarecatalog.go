@@ -33,7 +33,7 @@ func (SoftwareCatalog) Fields() []ent.Field {
 func (SoftwareCatalog) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("tenant", Tenant.Type).Unique().Ref("software_catalogs"),
-		edge.To("packages", SoftwarePackage.Type).
+		edge.To("packages", ManagedPackage.Type).
 			Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/EigerCode/ent/deployment"
 	"github.com/EigerCode/ent/enrollmenttoken"
 	"github.com/EigerCode/ent/logicaldisk"
+	"github.com/EigerCode/ent/managedpackage"
 	"github.com/EigerCode/ent/memoryslot"
 	"github.com/EigerCode/ent/metadata"
 	"github.com/EigerCode/ent/monitor"
@@ -57,6 +58,7 @@ import (
 	"github.com/EigerCode/ent/user"
 	"github.com/EigerCode/ent/usertenant"
 	"github.com/EigerCode/ent/wingetconfigexclusion"
+	"github.com/google/uuid"
 )
 
 const (
@@ -78,6 +80,7 @@ const (
 	TypeDeployment            = "Deployment"
 	TypeEnrollmentToken       = "EnrollmentToken"
 	TypeLogicalDisk           = "LogicalDisk"
+	TypeManagedPackage        = "ManagedPackage"
 	TypeMemorySlot            = "MemorySlot"
 	TypeMetadata              = "Metadata"
 	TypeMonitor               = "Monitor"
@@ -9199,6 +9202,9 @@ type DeploymentMutation struct {
 	package_id    *string
 	name          *string
 	version       *string
+	branch        *string
+	brew_type     *string
+	verified      *bool
 	installed     *time.Time
 	updated       *time.Time
 	failed        *bool
@@ -9429,6 +9435,153 @@ func (m *DeploymentMutation) VersionCleared() bool {
 func (m *DeploymentMutation) ResetVersion() {
 	m.version = nil
 	delete(m.clearedFields, deployment.FieldVersion)
+}
+
+// SetBranch sets the "branch" field.
+func (m *DeploymentMutation) SetBranch(s string) {
+	m.branch = &s
+}
+
+// Branch returns the value of the "branch" field in the mutation.
+func (m *DeploymentMutation) Branch() (r string, exists bool) {
+	v := m.branch
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBranch returns the old "branch" field's value of the Deployment entity.
+// If the Deployment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeploymentMutation) OldBranch(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBranch is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBranch requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBranch: %w", err)
+	}
+	return oldValue.Branch, nil
+}
+
+// ClearBranch clears the value of the "branch" field.
+func (m *DeploymentMutation) ClearBranch() {
+	m.branch = nil
+	m.clearedFields[deployment.FieldBranch] = struct{}{}
+}
+
+// BranchCleared returns if the "branch" field was cleared in this mutation.
+func (m *DeploymentMutation) BranchCleared() bool {
+	_, ok := m.clearedFields[deployment.FieldBranch]
+	return ok
+}
+
+// ResetBranch resets all changes to the "branch" field.
+func (m *DeploymentMutation) ResetBranch() {
+	m.branch = nil
+	delete(m.clearedFields, deployment.FieldBranch)
+}
+
+// SetBrewType sets the "brew_type" field.
+func (m *DeploymentMutation) SetBrewType(s string) {
+	m.brew_type = &s
+}
+
+// BrewType returns the value of the "brew_type" field in the mutation.
+func (m *DeploymentMutation) BrewType() (r string, exists bool) {
+	v := m.brew_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBrewType returns the old "brew_type" field's value of the Deployment entity.
+// If the Deployment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeploymentMutation) OldBrewType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBrewType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBrewType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBrewType: %w", err)
+	}
+	return oldValue.BrewType, nil
+}
+
+// ClearBrewType clears the value of the "brew_type" field.
+func (m *DeploymentMutation) ClearBrewType() {
+	m.brew_type = nil
+	m.clearedFields[deployment.FieldBrewType] = struct{}{}
+}
+
+// BrewTypeCleared returns if the "brew_type" field was cleared in this mutation.
+func (m *DeploymentMutation) BrewTypeCleared() bool {
+	_, ok := m.clearedFields[deployment.FieldBrewType]
+	return ok
+}
+
+// ResetBrewType resets all changes to the "brew_type" field.
+func (m *DeploymentMutation) ResetBrewType() {
+	m.brew_type = nil
+	delete(m.clearedFields, deployment.FieldBrewType)
+}
+
+// SetVerified sets the "verified" field.
+func (m *DeploymentMutation) SetVerified(b bool) {
+	m.verified = &b
+}
+
+// Verified returns the value of the "verified" field in the mutation.
+func (m *DeploymentMutation) Verified() (r bool, exists bool) {
+	v := m.verified
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerified returns the old "verified" field's value of the Deployment entity.
+// If the Deployment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DeploymentMutation) OldVerified(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerified is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerified requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerified: %w", err)
+	}
+	return oldValue.Verified, nil
+}
+
+// ClearVerified clears the value of the "verified" field.
+func (m *DeploymentMutation) ClearVerified() {
+	m.verified = nil
+	m.clearedFields[deployment.FieldVerified] = struct{}{}
+}
+
+// VerifiedCleared returns if the "verified" field was cleared in this mutation.
+func (m *DeploymentMutation) VerifiedCleared() bool {
+	_, ok := m.clearedFields[deployment.FieldVerified]
+	return ok
+}
+
+// ResetVerified resets all changes to the "verified" field.
+func (m *DeploymentMutation) ResetVerified() {
+	m.verified = nil
+	delete(m.clearedFields, deployment.FieldVerified)
 }
 
 // SetInstalled sets the "installed" field.
@@ -9749,7 +9902,7 @@ func (m *DeploymentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *DeploymentMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 11)
 	if m.package_id != nil {
 		fields = append(fields, deployment.FieldPackageID)
 	}
@@ -9758,6 +9911,15 @@ func (m *DeploymentMutation) Fields() []string {
 	}
 	if m.version != nil {
 		fields = append(fields, deployment.FieldVersion)
+	}
+	if m.branch != nil {
+		fields = append(fields, deployment.FieldBranch)
+	}
+	if m.brew_type != nil {
+		fields = append(fields, deployment.FieldBrewType)
+	}
+	if m.verified != nil {
+		fields = append(fields, deployment.FieldVerified)
 	}
 	if m.installed != nil {
 		fields = append(fields, deployment.FieldInstalled)
@@ -9788,6 +9950,12 @@ func (m *DeploymentMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case deployment.FieldVersion:
 		return m.Version()
+	case deployment.FieldBranch:
+		return m.Branch()
+	case deployment.FieldBrewType:
+		return m.BrewType()
+	case deployment.FieldVerified:
+		return m.Verified()
 	case deployment.FieldInstalled:
 		return m.Installed()
 	case deployment.FieldUpdated:
@@ -9813,6 +9981,12 @@ func (m *DeploymentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldName(ctx)
 	case deployment.FieldVersion:
 		return m.OldVersion(ctx)
+	case deployment.FieldBranch:
+		return m.OldBranch(ctx)
+	case deployment.FieldBrewType:
+		return m.OldBrewType(ctx)
+	case deployment.FieldVerified:
+		return m.OldVerified(ctx)
 	case deployment.FieldInstalled:
 		return m.OldInstalled(ctx)
 	case deployment.FieldUpdated:
@@ -9852,6 +10026,27 @@ func (m *DeploymentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVersion(v)
+		return nil
+	case deployment.FieldBranch:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBranch(v)
+		return nil
+	case deployment.FieldBrewType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBrewType(v)
+		return nil
+	case deployment.FieldVerified:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerified(v)
 		return nil
 	case deployment.FieldInstalled:
 		v, ok := value.(time.Time)
@@ -9921,6 +10116,15 @@ func (m *DeploymentMutation) ClearedFields() []string {
 	if m.FieldCleared(deployment.FieldVersion) {
 		fields = append(fields, deployment.FieldVersion)
 	}
+	if m.FieldCleared(deployment.FieldBranch) {
+		fields = append(fields, deployment.FieldBranch)
+	}
+	if m.FieldCleared(deployment.FieldBrewType) {
+		fields = append(fields, deployment.FieldBrewType)
+	}
+	if m.FieldCleared(deployment.FieldVerified) {
+		fields = append(fields, deployment.FieldVerified)
+	}
 	if m.FieldCleared(deployment.FieldInstalled) {
 		fields = append(fields, deployment.FieldInstalled)
 	}
@@ -9953,6 +10157,15 @@ func (m *DeploymentMutation) ClearField(name string) error {
 	case deployment.FieldVersion:
 		m.ClearVersion()
 		return nil
+	case deployment.FieldBranch:
+		m.ClearBranch()
+		return nil
+	case deployment.FieldBrewType:
+		m.ClearBrewType()
+		return nil
+	case deployment.FieldVerified:
+		m.ClearVerified()
+		return nil
 	case deployment.FieldInstalled:
 		m.ClearInstalled()
 		return nil
@@ -9984,6 +10197,15 @@ func (m *DeploymentMutation) ResetField(name string) error {
 		return nil
 	case deployment.FieldVersion:
 		m.ResetVersion()
+		return nil
+	case deployment.FieldBranch:
+		m.ResetBranch()
+		return nil
+	case deployment.FieldBrewType:
+		m.ResetBrewType()
+		return nil
+	case deployment.FieldVerified:
+		m.ResetVerified()
 		return nil
 	case deployment.FieldInstalled:
 		m.ResetInstalled()
@@ -11905,6 +12127,2961 @@ func (m *LogicalDiskMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown LogicalDisk edge %s", name)
+}
+
+// ManagedPackageMutation represents an operation that mutates the ManagedPackage nodes in the graph.
+type ManagedPackageMutation struct {
+	config
+	op                      Op
+	typ                     string
+	id                      *int
+	name                    *string
+	display_name            *string
+	version                 *string
+	platform                *managedpackage.Platform
+	installer_path          *string
+	checksum_sha256         *string
+	size_bytes              *int64
+	addsize_bytes           *int64
+	icon_name               *string
+	description             *string
+	category                *string
+	developer               *string
+	pkginfo_data            *string
+	pre_install_script      *string
+	post_install_script     *string
+	uninstall_method        *string
+	installs_items          *string
+	receipts                *string
+	blocking_apps           *string
+	restart_action          *managedpackage.RestartAction
+	min_os_version          *string
+	max_os_version          *string
+	supported_architectures *string
+	force_install_date      *time.Time
+	unattended_install      *bool
+	unattended_uninstall    *bool
+	status                  *managedpackage.Status
+	source                  *managedpackage.Source
+	created                 *time.Time
+	modified                *time.Time
+	clearedFields           map[string]struct{}
+	repo                    *int
+	clearedrepo             bool
+	catalogs                map[int]struct{}
+	removedcatalogs         map[int]struct{}
+	clearedcatalogs         bool
+	tenant                  *int
+	clearedtenant           bool
+	install_logs            map[int]struct{}
+	removedinstall_logs     map[int]struct{}
+	clearedinstall_logs     bool
+	requires                map[int]struct{}
+	removedrequires         map[int]struct{}
+	clearedrequires         bool
+	update_for              map[int]struct{}
+	removedupdate_for       map[int]struct{}
+	clearedupdate_for       bool
+	global_ref              *int
+	clearedglobal_ref       bool
+	subscribers             map[int]struct{}
+	removedsubscribers      map[int]struct{}
+	clearedsubscribers      bool
+	done                    bool
+	oldValue                func(context.Context) (*ManagedPackage, error)
+	predicates              []predicate.ManagedPackage
+}
+
+var _ ent.Mutation = (*ManagedPackageMutation)(nil)
+
+// managedpackageOption allows management of the mutation configuration using functional options.
+type managedpackageOption func(*ManagedPackageMutation)
+
+// newManagedPackageMutation creates new mutation for the ManagedPackage entity.
+func newManagedPackageMutation(c config, op Op, opts ...managedpackageOption) *ManagedPackageMutation {
+	m := &ManagedPackageMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeManagedPackage,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withManagedPackageID sets the ID field of the mutation.
+func withManagedPackageID(id int) managedpackageOption {
+	return func(m *ManagedPackageMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ManagedPackage
+		)
+		m.oldValue = func(ctx context.Context) (*ManagedPackage, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ManagedPackage.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withManagedPackage sets the old ManagedPackage of the mutation.
+func withManagedPackage(node *ManagedPackage) managedpackageOption {
+	return func(m *ManagedPackageMutation) {
+		m.oldValue = func(context.Context) (*ManagedPackage, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ManagedPackageMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ManagedPackageMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ManagedPackageMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ManagedPackageMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ManagedPackage.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *ManagedPackageMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ManagedPackageMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ManagedPackageMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDisplayName sets the "display_name" field.
+func (m *ManagedPackageMutation) SetDisplayName(s string) {
+	m.display_name = &s
+}
+
+// DisplayName returns the value of the "display_name" field in the mutation.
+func (m *ManagedPackageMutation) DisplayName() (r string, exists bool) {
+	v := m.display_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisplayName returns the old "display_name" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldDisplayName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisplayName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
+	}
+	return oldValue.DisplayName, nil
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (m *ManagedPackageMutation) ClearDisplayName() {
+	m.display_name = nil
+	m.clearedFields[managedpackage.FieldDisplayName] = struct{}{}
+}
+
+// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
+func (m *ManagedPackageMutation) DisplayNameCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldDisplayName]
+	return ok
+}
+
+// ResetDisplayName resets all changes to the "display_name" field.
+func (m *ManagedPackageMutation) ResetDisplayName() {
+	m.display_name = nil
+	delete(m.clearedFields, managedpackage.FieldDisplayName)
+}
+
+// SetVersion sets the "version" field.
+func (m *ManagedPackageMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *ManagedPackageMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *ManagedPackageMutation) ResetVersion() {
+	m.version = nil
+}
+
+// SetPlatform sets the "platform" field.
+func (m *ManagedPackageMutation) SetPlatform(value managedpackage.Platform) {
+	m.platform = &value
+}
+
+// Platform returns the value of the "platform" field in the mutation.
+func (m *ManagedPackageMutation) Platform() (r managedpackage.Platform, exists bool) {
+	v := m.platform
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPlatform returns the old "platform" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldPlatform(ctx context.Context) (v managedpackage.Platform, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPlatform is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPlatform requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPlatform: %w", err)
+	}
+	return oldValue.Platform, nil
+}
+
+// ResetPlatform resets all changes to the "platform" field.
+func (m *ManagedPackageMutation) ResetPlatform() {
+	m.platform = nil
+}
+
+// SetInstallerPath sets the "installer_path" field.
+func (m *ManagedPackageMutation) SetInstallerPath(s string) {
+	m.installer_path = &s
+}
+
+// InstallerPath returns the value of the "installer_path" field in the mutation.
+func (m *ManagedPackageMutation) InstallerPath() (r string, exists bool) {
+	v := m.installer_path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInstallerPath returns the old "installer_path" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldInstallerPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInstallerPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInstallerPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInstallerPath: %w", err)
+	}
+	return oldValue.InstallerPath, nil
+}
+
+// ResetInstallerPath resets all changes to the "installer_path" field.
+func (m *ManagedPackageMutation) ResetInstallerPath() {
+	m.installer_path = nil
+}
+
+// SetChecksumSha256 sets the "checksum_sha256" field.
+func (m *ManagedPackageMutation) SetChecksumSha256(s string) {
+	m.checksum_sha256 = &s
+}
+
+// ChecksumSha256 returns the value of the "checksum_sha256" field in the mutation.
+func (m *ManagedPackageMutation) ChecksumSha256() (r string, exists bool) {
+	v := m.checksum_sha256
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChecksumSha256 returns the old "checksum_sha256" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldChecksumSha256(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChecksumSha256 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChecksumSha256 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChecksumSha256: %w", err)
+	}
+	return oldValue.ChecksumSha256, nil
+}
+
+// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
+func (m *ManagedPackageMutation) ClearChecksumSha256() {
+	m.checksum_sha256 = nil
+	m.clearedFields[managedpackage.FieldChecksumSha256] = struct{}{}
+}
+
+// ChecksumSha256Cleared returns if the "checksum_sha256" field was cleared in this mutation.
+func (m *ManagedPackageMutation) ChecksumSha256Cleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldChecksumSha256]
+	return ok
+}
+
+// ResetChecksumSha256 resets all changes to the "checksum_sha256" field.
+func (m *ManagedPackageMutation) ResetChecksumSha256() {
+	m.checksum_sha256 = nil
+	delete(m.clearedFields, managedpackage.FieldChecksumSha256)
+}
+
+// SetSizeBytes sets the "size_bytes" field.
+func (m *ManagedPackageMutation) SetSizeBytes(i int64) {
+	m.size_bytes = &i
+	m.addsize_bytes = nil
+}
+
+// SizeBytes returns the value of the "size_bytes" field in the mutation.
+func (m *ManagedPackageMutation) SizeBytes() (r int64, exists bool) {
+	v := m.size_bytes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSizeBytes returns the old "size_bytes" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldSizeBytes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSizeBytes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSizeBytes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSizeBytes: %w", err)
+	}
+	return oldValue.SizeBytes, nil
+}
+
+// AddSizeBytes adds i to the "size_bytes" field.
+func (m *ManagedPackageMutation) AddSizeBytes(i int64) {
+	if m.addsize_bytes != nil {
+		*m.addsize_bytes += i
+	} else {
+		m.addsize_bytes = &i
+	}
+}
+
+// AddedSizeBytes returns the value that was added to the "size_bytes" field in this mutation.
+func (m *ManagedPackageMutation) AddedSizeBytes() (r int64, exists bool) {
+	v := m.addsize_bytes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSizeBytes clears the value of the "size_bytes" field.
+func (m *ManagedPackageMutation) ClearSizeBytes() {
+	m.size_bytes = nil
+	m.addsize_bytes = nil
+	m.clearedFields[managedpackage.FieldSizeBytes] = struct{}{}
+}
+
+// SizeBytesCleared returns if the "size_bytes" field was cleared in this mutation.
+func (m *ManagedPackageMutation) SizeBytesCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldSizeBytes]
+	return ok
+}
+
+// ResetSizeBytes resets all changes to the "size_bytes" field.
+func (m *ManagedPackageMutation) ResetSizeBytes() {
+	m.size_bytes = nil
+	m.addsize_bytes = nil
+	delete(m.clearedFields, managedpackage.FieldSizeBytes)
+}
+
+// SetIconName sets the "icon_name" field.
+func (m *ManagedPackageMutation) SetIconName(s string) {
+	m.icon_name = &s
+}
+
+// IconName returns the value of the "icon_name" field in the mutation.
+func (m *ManagedPackageMutation) IconName() (r string, exists bool) {
+	v := m.icon_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIconName returns the old "icon_name" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldIconName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIconName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIconName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIconName: %w", err)
+	}
+	return oldValue.IconName, nil
+}
+
+// ClearIconName clears the value of the "icon_name" field.
+func (m *ManagedPackageMutation) ClearIconName() {
+	m.icon_name = nil
+	m.clearedFields[managedpackage.FieldIconName] = struct{}{}
+}
+
+// IconNameCleared returns if the "icon_name" field was cleared in this mutation.
+func (m *ManagedPackageMutation) IconNameCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldIconName]
+	return ok
+}
+
+// ResetIconName resets all changes to the "icon_name" field.
+func (m *ManagedPackageMutation) ResetIconName() {
+	m.icon_name = nil
+	delete(m.clearedFields, managedpackage.FieldIconName)
+}
+
+// SetDescription sets the "description" field.
+func (m *ManagedPackageMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ManagedPackageMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *ManagedPackageMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[managedpackage.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *ManagedPackageMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ManagedPackageMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, managedpackage.FieldDescription)
+}
+
+// SetCategory sets the "category" field.
+func (m *ManagedPackageMutation) SetCategory(s string) {
+	m.category = &s
+}
+
+// Category returns the value of the "category" field in the mutation.
+func (m *ManagedPackageMutation) Category() (r string, exists bool) {
+	v := m.category
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCategory returns the old "category" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldCategory(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCategory is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCategory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCategory: %w", err)
+	}
+	return oldValue.Category, nil
+}
+
+// ClearCategory clears the value of the "category" field.
+func (m *ManagedPackageMutation) ClearCategory() {
+	m.category = nil
+	m.clearedFields[managedpackage.FieldCategory] = struct{}{}
+}
+
+// CategoryCleared returns if the "category" field was cleared in this mutation.
+func (m *ManagedPackageMutation) CategoryCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldCategory]
+	return ok
+}
+
+// ResetCategory resets all changes to the "category" field.
+func (m *ManagedPackageMutation) ResetCategory() {
+	m.category = nil
+	delete(m.clearedFields, managedpackage.FieldCategory)
+}
+
+// SetDeveloper sets the "developer" field.
+func (m *ManagedPackageMutation) SetDeveloper(s string) {
+	m.developer = &s
+}
+
+// Developer returns the value of the "developer" field in the mutation.
+func (m *ManagedPackageMutation) Developer() (r string, exists bool) {
+	v := m.developer
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeveloper returns the old "developer" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldDeveloper(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeveloper is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeveloper requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeveloper: %w", err)
+	}
+	return oldValue.Developer, nil
+}
+
+// ClearDeveloper clears the value of the "developer" field.
+func (m *ManagedPackageMutation) ClearDeveloper() {
+	m.developer = nil
+	m.clearedFields[managedpackage.FieldDeveloper] = struct{}{}
+}
+
+// DeveloperCleared returns if the "developer" field was cleared in this mutation.
+func (m *ManagedPackageMutation) DeveloperCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldDeveloper]
+	return ok
+}
+
+// ResetDeveloper resets all changes to the "developer" field.
+func (m *ManagedPackageMutation) ResetDeveloper() {
+	m.developer = nil
+	delete(m.clearedFields, managedpackage.FieldDeveloper)
+}
+
+// SetPkginfoData sets the "pkginfo_data" field.
+func (m *ManagedPackageMutation) SetPkginfoData(s string) {
+	m.pkginfo_data = &s
+}
+
+// PkginfoData returns the value of the "pkginfo_data" field in the mutation.
+func (m *ManagedPackageMutation) PkginfoData() (r string, exists bool) {
+	v := m.pkginfo_data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPkginfoData returns the old "pkginfo_data" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldPkginfoData(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPkginfoData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPkginfoData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPkginfoData: %w", err)
+	}
+	return oldValue.PkginfoData, nil
+}
+
+// ClearPkginfoData clears the value of the "pkginfo_data" field.
+func (m *ManagedPackageMutation) ClearPkginfoData() {
+	m.pkginfo_data = nil
+	m.clearedFields[managedpackage.FieldPkginfoData] = struct{}{}
+}
+
+// PkginfoDataCleared returns if the "pkginfo_data" field was cleared in this mutation.
+func (m *ManagedPackageMutation) PkginfoDataCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldPkginfoData]
+	return ok
+}
+
+// ResetPkginfoData resets all changes to the "pkginfo_data" field.
+func (m *ManagedPackageMutation) ResetPkginfoData() {
+	m.pkginfo_data = nil
+	delete(m.clearedFields, managedpackage.FieldPkginfoData)
+}
+
+// SetPreInstallScript sets the "pre_install_script" field.
+func (m *ManagedPackageMutation) SetPreInstallScript(s string) {
+	m.pre_install_script = &s
+}
+
+// PreInstallScript returns the value of the "pre_install_script" field in the mutation.
+func (m *ManagedPackageMutation) PreInstallScript() (r string, exists bool) {
+	v := m.pre_install_script
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreInstallScript returns the old "pre_install_script" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldPreInstallScript(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPreInstallScript is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPreInstallScript requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreInstallScript: %w", err)
+	}
+	return oldValue.PreInstallScript, nil
+}
+
+// ClearPreInstallScript clears the value of the "pre_install_script" field.
+func (m *ManagedPackageMutation) ClearPreInstallScript() {
+	m.pre_install_script = nil
+	m.clearedFields[managedpackage.FieldPreInstallScript] = struct{}{}
+}
+
+// PreInstallScriptCleared returns if the "pre_install_script" field was cleared in this mutation.
+func (m *ManagedPackageMutation) PreInstallScriptCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldPreInstallScript]
+	return ok
+}
+
+// ResetPreInstallScript resets all changes to the "pre_install_script" field.
+func (m *ManagedPackageMutation) ResetPreInstallScript() {
+	m.pre_install_script = nil
+	delete(m.clearedFields, managedpackage.FieldPreInstallScript)
+}
+
+// SetPostInstallScript sets the "post_install_script" field.
+func (m *ManagedPackageMutation) SetPostInstallScript(s string) {
+	m.post_install_script = &s
+}
+
+// PostInstallScript returns the value of the "post_install_script" field in the mutation.
+func (m *ManagedPackageMutation) PostInstallScript() (r string, exists bool) {
+	v := m.post_install_script
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostInstallScript returns the old "post_install_script" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldPostInstallScript(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostInstallScript is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostInstallScript requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostInstallScript: %w", err)
+	}
+	return oldValue.PostInstallScript, nil
+}
+
+// ClearPostInstallScript clears the value of the "post_install_script" field.
+func (m *ManagedPackageMutation) ClearPostInstallScript() {
+	m.post_install_script = nil
+	m.clearedFields[managedpackage.FieldPostInstallScript] = struct{}{}
+}
+
+// PostInstallScriptCleared returns if the "post_install_script" field was cleared in this mutation.
+func (m *ManagedPackageMutation) PostInstallScriptCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldPostInstallScript]
+	return ok
+}
+
+// ResetPostInstallScript resets all changes to the "post_install_script" field.
+func (m *ManagedPackageMutation) ResetPostInstallScript() {
+	m.post_install_script = nil
+	delete(m.clearedFields, managedpackage.FieldPostInstallScript)
+}
+
+// SetUninstallMethod sets the "uninstall_method" field.
+func (m *ManagedPackageMutation) SetUninstallMethod(s string) {
+	m.uninstall_method = &s
+}
+
+// UninstallMethod returns the value of the "uninstall_method" field in the mutation.
+func (m *ManagedPackageMutation) UninstallMethod() (r string, exists bool) {
+	v := m.uninstall_method
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUninstallMethod returns the old "uninstall_method" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldUninstallMethod(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUninstallMethod is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUninstallMethod requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUninstallMethod: %w", err)
+	}
+	return oldValue.UninstallMethod, nil
+}
+
+// ClearUninstallMethod clears the value of the "uninstall_method" field.
+func (m *ManagedPackageMutation) ClearUninstallMethod() {
+	m.uninstall_method = nil
+	m.clearedFields[managedpackage.FieldUninstallMethod] = struct{}{}
+}
+
+// UninstallMethodCleared returns if the "uninstall_method" field was cleared in this mutation.
+func (m *ManagedPackageMutation) UninstallMethodCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldUninstallMethod]
+	return ok
+}
+
+// ResetUninstallMethod resets all changes to the "uninstall_method" field.
+func (m *ManagedPackageMutation) ResetUninstallMethod() {
+	m.uninstall_method = nil
+	delete(m.clearedFields, managedpackage.FieldUninstallMethod)
+}
+
+// SetInstallsItems sets the "installs_items" field.
+func (m *ManagedPackageMutation) SetInstallsItems(s string) {
+	m.installs_items = &s
+}
+
+// InstallsItems returns the value of the "installs_items" field in the mutation.
+func (m *ManagedPackageMutation) InstallsItems() (r string, exists bool) {
+	v := m.installs_items
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInstallsItems returns the old "installs_items" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldInstallsItems(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInstallsItems is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInstallsItems requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInstallsItems: %w", err)
+	}
+	return oldValue.InstallsItems, nil
+}
+
+// ClearInstallsItems clears the value of the "installs_items" field.
+func (m *ManagedPackageMutation) ClearInstallsItems() {
+	m.installs_items = nil
+	m.clearedFields[managedpackage.FieldInstallsItems] = struct{}{}
+}
+
+// InstallsItemsCleared returns if the "installs_items" field was cleared in this mutation.
+func (m *ManagedPackageMutation) InstallsItemsCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldInstallsItems]
+	return ok
+}
+
+// ResetInstallsItems resets all changes to the "installs_items" field.
+func (m *ManagedPackageMutation) ResetInstallsItems() {
+	m.installs_items = nil
+	delete(m.clearedFields, managedpackage.FieldInstallsItems)
+}
+
+// SetReceipts sets the "receipts" field.
+func (m *ManagedPackageMutation) SetReceipts(s string) {
+	m.receipts = &s
+}
+
+// Receipts returns the value of the "receipts" field in the mutation.
+func (m *ManagedPackageMutation) Receipts() (r string, exists bool) {
+	v := m.receipts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReceipts returns the old "receipts" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldReceipts(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReceipts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReceipts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReceipts: %w", err)
+	}
+	return oldValue.Receipts, nil
+}
+
+// ClearReceipts clears the value of the "receipts" field.
+func (m *ManagedPackageMutation) ClearReceipts() {
+	m.receipts = nil
+	m.clearedFields[managedpackage.FieldReceipts] = struct{}{}
+}
+
+// ReceiptsCleared returns if the "receipts" field was cleared in this mutation.
+func (m *ManagedPackageMutation) ReceiptsCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldReceipts]
+	return ok
+}
+
+// ResetReceipts resets all changes to the "receipts" field.
+func (m *ManagedPackageMutation) ResetReceipts() {
+	m.receipts = nil
+	delete(m.clearedFields, managedpackage.FieldReceipts)
+}
+
+// SetBlockingApps sets the "blocking_apps" field.
+func (m *ManagedPackageMutation) SetBlockingApps(s string) {
+	m.blocking_apps = &s
+}
+
+// BlockingApps returns the value of the "blocking_apps" field in the mutation.
+func (m *ManagedPackageMutation) BlockingApps() (r string, exists bool) {
+	v := m.blocking_apps
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBlockingApps returns the old "blocking_apps" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldBlockingApps(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBlockingApps is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBlockingApps requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBlockingApps: %w", err)
+	}
+	return oldValue.BlockingApps, nil
+}
+
+// ClearBlockingApps clears the value of the "blocking_apps" field.
+func (m *ManagedPackageMutation) ClearBlockingApps() {
+	m.blocking_apps = nil
+	m.clearedFields[managedpackage.FieldBlockingApps] = struct{}{}
+}
+
+// BlockingAppsCleared returns if the "blocking_apps" field was cleared in this mutation.
+func (m *ManagedPackageMutation) BlockingAppsCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldBlockingApps]
+	return ok
+}
+
+// ResetBlockingApps resets all changes to the "blocking_apps" field.
+func (m *ManagedPackageMutation) ResetBlockingApps() {
+	m.blocking_apps = nil
+	delete(m.clearedFields, managedpackage.FieldBlockingApps)
+}
+
+// SetRestartAction sets the "restart_action" field.
+func (m *ManagedPackageMutation) SetRestartAction(ma managedpackage.RestartAction) {
+	m.restart_action = &ma
+}
+
+// RestartAction returns the value of the "restart_action" field in the mutation.
+func (m *ManagedPackageMutation) RestartAction() (r managedpackage.RestartAction, exists bool) {
+	v := m.restart_action
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRestartAction returns the old "restart_action" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldRestartAction(ctx context.Context) (v managedpackage.RestartAction, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRestartAction is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRestartAction requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRestartAction: %w", err)
+	}
+	return oldValue.RestartAction, nil
+}
+
+// ClearRestartAction clears the value of the "restart_action" field.
+func (m *ManagedPackageMutation) ClearRestartAction() {
+	m.restart_action = nil
+	m.clearedFields[managedpackage.FieldRestartAction] = struct{}{}
+}
+
+// RestartActionCleared returns if the "restart_action" field was cleared in this mutation.
+func (m *ManagedPackageMutation) RestartActionCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldRestartAction]
+	return ok
+}
+
+// ResetRestartAction resets all changes to the "restart_action" field.
+func (m *ManagedPackageMutation) ResetRestartAction() {
+	m.restart_action = nil
+	delete(m.clearedFields, managedpackage.FieldRestartAction)
+}
+
+// SetMinOsVersion sets the "min_os_version" field.
+func (m *ManagedPackageMutation) SetMinOsVersion(s string) {
+	m.min_os_version = &s
+}
+
+// MinOsVersion returns the value of the "min_os_version" field in the mutation.
+func (m *ManagedPackageMutation) MinOsVersion() (r string, exists bool) {
+	v := m.min_os_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMinOsVersion returns the old "min_os_version" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldMinOsVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMinOsVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMinOsVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMinOsVersion: %w", err)
+	}
+	return oldValue.MinOsVersion, nil
+}
+
+// ClearMinOsVersion clears the value of the "min_os_version" field.
+func (m *ManagedPackageMutation) ClearMinOsVersion() {
+	m.min_os_version = nil
+	m.clearedFields[managedpackage.FieldMinOsVersion] = struct{}{}
+}
+
+// MinOsVersionCleared returns if the "min_os_version" field was cleared in this mutation.
+func (m *ManagedPackageMutation) MinOsVersionCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldMinOsVersion]
+	return ok
+}
+
+// ResetMinOsVersion resets all changes to the "min_os_version" field.
+func (m *ManagedPackageMutation) ResetMinOsVersion() {
+	m.min_os_version = nil
+	delete(m.clearedFields, managedpackage.FieldMinOsVersion)
+}
+
+// SetMaxOsVersion sets the "max_os_version" field.
+func (m *ManagedPackageMutation) SetMaxOsVersion(s string) {
+	m.max_os_version = &s
+}
+
+// MaxOsVersion returns the value of the "max_os_version" field in the mutation.
+func (m *ManagedPackageMutation) MaxOsVersion() (r string, exists bool) {
+	v := m.max_os_version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxOsVersion returns the old "max_os_version" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldMaxOsVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxOsVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxOsVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxOsVersion: %w", err)
+	}
+	return oldValue.MaxOsVersion, nil
+}
+
+// ClearMaxOsVersion clears the value of the "max_os_version" field.
+func (m *ManagedPackageMutation) ClearMaxOsVersion() {
+	m.max_os_version = nil
+	m.clearedFields[managedpackage.FieldMaxOsVersion] = struct{}{}
+}
+
+// MaxOsVersionCleared returns if the "max_os_version" field was cleared in this mutation.
+func (m *ManagedPackageMutation) MaxOsVersionCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldMaxOsVersion]
+	return ok
+}
+
+// ResetMaxOsVersion resets all changes to the "max_os_version" field.
+func (m *ManagedPackageMutation) ResetMaxOsVersion() {
+	m.max_os_version = nil
+	delete(m.clearedFields, managedpackage.FieldMaxOsVersion)
+}
+
+// SetSupportedArchitectures sets the "supported_architectures" field.
+func (m *ManagedPackageMutation) SetSupportedArchitectures(s string) {
+	m.supported_architectures = &s
+}
+
+// SupportedArchitectures returns the value of the "supported_architectures" field in the mutation.
+func (m *ManagedPackageMutation) SupportedArchitectures() (r string, exists bool) {
+	v := m.supported_architectures
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportedArchitectures returns the old "supported_architectures" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldSupportedArchitectures(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportedArchitectures is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportedArchitectures requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportedArchitectures: %w", err)
+	}
+	return oldValue.SupportedArchitectures, nil
+}
+
+// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
+func (m *ManagedPackageMutation) ClearSupportedArchitectures() {
+	m.supported_architectures = nil
+	m.clearedFields[managedpackage.FieldSupportedArchitectures] = struct{}{}
+}
+
+// SupportedArchitecturesCleared returns if the "supported_architectures" field was cleared in this mutation.
+func (m *ManagedPackageMutation) SupportedArchitecturesCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldSupportedArchitectures]
+	return ok
+}
+
+// ResetSupportedArchitectures resets all changes to the "supported_architectures" field.
+func (m *ManagedPackageMutation) ResetSupportedArchitectures() {
+	m.supported_architectures = nil
+	delete(m.clearedFields, managedpackage.FieldSupportedArchitectures)
+}
+
+// SetForceInstallDate sets the "force_install_date" field.
+func (m *ManagedPackageMutation) SetForceInstallDate(t time.Time) {
+	m.force_install_date = &t
+}
+
+// ForceInstallDate returns the value of the "force_install_date" field in the mutation.
+func (m *ManagedPackageMutation) ForceInstallDate() (r time.Time, exists bool) {
+	v := m.force_install_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldForceInstallDate returns the old "force_install_date" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldForceInstallDate(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldForceInstallDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldForceInstallDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldForceInstallDate: %w", err)
+	}
+	return oldValue.ForceInstallDate, nil
+}
+
+// ClearForceInstallDate clears the value of the "force_install_date" field.
+func (m *ManagedPackageMutation) ClearForceInstallDate() {
+	m.force_install_date = nil
+	m.clearedFields[managedpackage.FieldForceInstallDate] = struct{}{}
+}
+
+// ForceInstallDateCleared returns if the "force_install_date" field was cleared in this mutation.
+func (m *ManagedPackageMutation) ForceInstallDateCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldForceInstallDate]
+	return ok
+}
+
+// ResetForceInstallDate resets all changes to the "force_install_date" field.
+func (m *ManagedPackageMutation) ResetForceInstallDate() {
+	m.force_install_date = nil
+	delete(m.clearedFields, managedpackage.FieldForceInstallDate)
+}
+
+// SetUnattendedInstall sets the "unattended_install" field.
+func (m *ManagedPackageMutation) SetUnattendedInstall(b bool) {
+	m.unattended_install = &b
+}
+
+// UnattendedInstall returns the value of the "unattended_install" field in the mutation.
+func (m *ManagedPackageMutation) UnattendedInstall() (r bool, exists bool) {
+	v := m.unattended_install
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnattendedInstall returns the old "unattended_install" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldUnattendedInstall(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnattendedInstall is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnattendedInstall requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnattendedInstall: %w", err)
+	}
+	return oldValue.UnattendedInstall, nil
+}
+
+// ClearUnattendedInstall clears the value of the "unattended_install" field.
+func (m *ManagedPackageMutation) ClearUnattendedInstall() {
+	m.unattended_install = nil
+	m.clearedFields[managedpackage.FieldUnattendedInstall] = struct{}{}
+}
+
+// UnattendedInstallCleared returns if the "unattended_install" field was cleared in this mutation.
+func (m *ManagedPackageMutation) UnattendedInstallCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldUnattendedInstall]
+	return ok
+}
+
+// ResetUnattendedInstall resets all changes to the "unattended_install" field.
+func (m *ManagedPackageMutation) ResetUnattendedInstall() {
+	m.unattended_install = nil
+	delete(m.clearedFields, managedpackage.FieldUnattendedInstall)
+}
+
+// SetUnattendedUninstall sets the "unattended_uninstall" field.
+func (m *ManagedPackageMutation) SetUnattendedUninstall(b bool) {
+	m.unattended_uninstall = &b
+}
+
+// UnattendedUninstall returns the value of the "unattended_uninstall" field in the mutation.
+func (m *ManagedPackageMutation) UnattendedUninstall() (r bool, exists bool) {
+	v := m.unattended_uninstall
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUnattendedUninstall returns the old "unattended_uninstall" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldUnattendedUninstall(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUnattendedUninstall is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUnattendedUninstall requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUnattendedUninstall: %w", err)
+	}
+	return oldValue.UnattendedUninstall, nil
+}
+
+// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
+func (m *ManagedPackageMutation) ClearUnattendedUninstall() {
+	m.unattended_uninstall = nil
+	m.clearedFields[managedpackage.FieldUnattendedUninstall] = struct{}{}
+}
+
+// UnattendedUninstallCleared returns if the "unattended_uninstall" field was cleared in this mutation.
+func (m *ManagedPackageMutation) UnattendedUninstallCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldUnattendedUninstall]
+	return ok
+}
+
+// ResetUnattendedUninstall resets all changes to the "unattended_uninstall" field.
+func (m *ManagedPackageMutation) ResetUnattendedUninstall() {
+	m.unattended_uninstall = nil
+	delete(m.clearedFields, managedpackage.FieldUnattendedUninstall)
+}
+
+// SetStatus sets the "status" field.
+func (m *ManagedPackageMutation) SetStatus(value managedpackage.Status) {
+	m.status = &value
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ManagedPackageMutation) Status() (r managedpackage.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldStatus(ctx context.Context) (v managedpackage.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *ManagedPackageMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[managedpackage.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *ManagedPackageMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ManagedPackageMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, managedpackage.FieldStatus)
+}
+
+// SetSource sets the "source" field.
+func (m *ManagedPackageMutation) SetSource(value managedpackage.Source) {
+	m.source = &value
+}
+
+// Source returns the value of the "source" field in the mutation.
+func (m *ManagedPackageMutation) Source() (r managedpackage.Source, exists bool) {
+	v := m.source
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSource returns the old "source" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldSource(ctx context.Context) (v managedpackage.Source, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSource is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSource requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSource: %w", err)
+	}
+	return oldValue.Source, nil
+}
+
+// ClearSource clears the value of the "source" field.
+func (m *ManagedPackageMutation) ClearSource() {
+	m.source = nil
+	m.clearedFields[managedpackage.FieldSource] = struct{}{}
+}
+
+// SourceCleared returns if the "source" field was cleared in this mutation.
+func (m *ManagedPackageMutation) SourceCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldSource]
+	return ok
+}
+
+// ResetSource resets all changes to the "source" field.
+func (m *ManagedPackageMutation) ResetSource() {
+	m.source = nil
+	delete(m.clearedFields, managedpackage.FieldSource)
+}
+
+// SetCreated sets the "created" field.
+func (m *ManagedPackageMutation) SetCreated(t time.Time) {
+	m.created = &t
+}
+
+// Created returns the value of the "created" field in the mutation.
+func (m *ManagedPackageMutation) Created() (r time.Time, exists bool) {
+	v := m.created
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreated returns the old "created" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldCreated(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreated is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreated requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreated: %w", err)
+	}
+	return oldValue.Created, nil
+}
+
+// ClearCreated clears the value of the "created" field.
+func (m *ManagedPackageMutation) ClearCreated() {
+	m.created = nil
+	m.clearedFields[managedpackage.FieldCreated] = struct{}{}
+}
+
+// CreatedCleared returns if the "created" field was cleared in this mutation.
+func (m *ManagedPackageMutation) CreatedCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldCreated]
+	return ok
+}
+
+// ResetCreated resets all changes to the "created" field.
+func (m *ManagedPackageMutation) ResetCreated() {
+	m.created = nil
+	delete(m.clearedFields, managedpackage.FieldCreated)
+}
+
+// SetModified sets the "modified" field.
+func (m *ManagedPackageMutation) SetModified(t time.Time) {
+	m.modified = &t
+}
+
+// Modified returns the value of the "modified" field in the mutation.
+func (m *ManagedPackageMutation) Modified() (r time.Time, exists bool) {
+	v := m.modified
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldModified returns the old "modified" field's value of the ManagedPackage entity.
+// If the ManagedPackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ManagedPackageMutation) OldModified(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldModified is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldModified requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldModified: %w", err)
+	}
+	return oldValue.Modified, nil
+}
+
+// ClearModified clears the value of the "modified" field.
+func (m *ManagedPackageMutation) ClearModified() {
+	m.modified = nil
+	m.clearedFields[managedpackage.FieldModified] = struct{}{}
+}
+
+// ModifiedCleared returns if the "modified" field was cleared in this mutation.
+func (m *ManagedPackageMutation) ModifiedCleared() bool {
+	_, ok := m.clearedFields[managedpackage.FieldModified]
+	return ok
+}
+
+// ResetModified resets all changes to the "modified" field.
+func (m *ManagedPackageMutation) ResetModified() {
+	m.modified = nil
+	delete(m.clearedFields, managedpackage.FieldModified)
+}
+
+// SetRepoID sets the "repo" edge to the SoftwareRepo entity by id.
+func (m *ManagedPackageMutation) SetRepoID(id int) {
+	m.repo = &id
+}
+
+// ClearRepo clears the "repo" edge to the SoftwareRepo entity.
+func (m *ManagedPackageMutation) ClearRepo() {
+	m.clearedrepo = true
+}
+
+// RepoCleared reports if the "repo" edge to the SoftwareRepo entity was cleared.
+func (m *ManagedPackageMutation) RepoCleared() bool {
+	return m.clearedrepo
+}
+
+// RepoID returns the "repo" edge ID in the mutation.
+func (m *ManagedPackageMutation) RepoID() (id int, exists bool) {
+	if m.repo != nil {
+		return *m.repo, true
+	}
+	return
+}
+
+// RepoIDs returns the "repo" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// RepoID instead. It exists only for internal usage by the builders.
+func (m *ManagedPackageMutation) RepoIDs() (ids []int) {
+	if id := m.repo; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetRepo resets all changes to the "repo" edge.
+func (m *ManagedPackageMutation) ResetRepo() {
+	m.repo = nil
+	m.clearedrepo = false
+}
+
+// AddCatalogIDs adds the "catalogs" edge to the SoftwareCatalog entity by ids.
+func (m *ManagedPackageMutation) AddCatalogIDs(ids ...int) {
+	if m.catalogs == nil {
+		m.catalogs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.catalogs[ids[i]] = struct{}{}
+	}
+}
+
+// ClearCatalogs clears the "catalogs" edge to the SoftwareCatalog entity.
+func (m *ManagedPackageMutation) ClearCatalogs() {
+	m.clearedcatalogs = true
+}
+
+// CatalogsCleared reports if the "catalogs" edge to the SoftwareCatalog entity was cleared.
+func (m *ManagedPackageMutation) CatalogsCleared() bool {
+	return m.clearedcatalogs
+}
+
+// RemoveCatalogIDs removes the "catalogs" edge to the SoftwareCatalog entity by IDs.
+func (m *ManagedPackageMutation) RemoveCatalogIDs(ids ...int) {
+	if m.removedcatalogs == nil {
+		m.removedcatalogs = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.catalogs, ids[i])
+		m.removedcatalogs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCatalogs returns the removed IDs of the "catalogs" edge to the SoftwareCatalog entity.
+func (m *ManagedPackageMutation) RemovedCatalogsIDs() (ids []int) {
+	for id := range m.removedcatalogs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CatalogsIDs returns the "catalogs" edge IDs in the mutation.
+func (m *ManagedPackageMutation) CatalogsIDs() (ids []int) {
+	for id := range m.catalogs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCatalogs resets all changes to the "catalogs" edge.
+func (m *ManagedPackageMutation) ResetCatalogs() {
+	m.catalogs = nil
+	m.clearedcatalogs = false
+	m.removedcatalogs = nil
+}
+
+// SetTenantID sets the "tenant" edge to the Tenant entity by id.
+func (m *ManagedPackageMutation) SetTenantID(id int) {
+	m.tenant = &id
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (m *ManagedPackageMutation) ClearTenant() {
+	m.clearedtenant = true
+}
+
+// TenantCleared reports if the "tenant" edge to the Tenant entity was cleared.
+func (m *ManagedPackageMutation) TenantCleared() bool {
+	return m.clearedtenant
+}
+
+// TenantID returns the "tenant" edge ID in the mutation.
+func (m *ManagedPackageMutation) TenantID() (id int, exists bool) {
+	if m.tenant != nil {
+		return *m.tenant, true
+	}
+	return
+}
+
+// TenantIDs returns the "tenant" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TenantID instead. It exists only for internal usage by the builders.
+func (m *ManagedPackageMutation) TenantIDs() (ids []int) {
+	if id := m.tenant; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTenant resets all changes to the "tenant" edge.
+func (m *ManagedPackageMutation) ResetTenant() {
+	m.tenant = nil
+	m.clearedtenant = false
+}
+
+// AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by ids.
+func (m *ManagedPackageMutation) AddInstallLogIDs(ids ...int) {
+	if m.install_logs == nil {
+		m.install_logs = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.install_logs[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInstallLogs clears the "install_logs" edge to the SoftwareInstallLog entity.
+func (m *ManagedPackageMutation) ClearInstallLogs() {
+	m.clearedinstall_logs = true
+}
+
+// InstallLogsCleared reports if the "install_logs" edge to the SoftwareInstallLog entity was cleared.
+func (m *ManagedPackageMutation) InstallLogsCleared() bool {
+	return m.clearedinstall_logs
+}
+
+// RemoveInstallLogIDs removes the "install_logs" edge to the SoftwareInstallLog entity by IDs.
+func (m *ManagedPackageMutation) RemoveInstallLogIDs(ids ...int) {
+	if m.removedinstall_logs == nil {
+		m.removedinstall_logs = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.install_logs, ids[i])
+		m.removedinstall_logs[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInstallLogs returns the removed IDs of the "install_logs" edge to the SoftwareInstallLog entity.
+func (m *ManagedPackageMutation) RemovedInstallLogsIDs() (ids []int) {
+	for id := range m.removedinstall_logs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InstallLogsIDs returns the "install_logs" edge IDs in the mutation.
+func (m *ManagedPackageMutation) InstallLogsIDs() (ids []int) {
+	for id := range m.install_logs {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInstallLogs resets all changes to the "install_logs" edge.
+func (m *ManagedPackageMutation) ResetInstallLogs() {
+	m.install_logs = nil
+	m.clearedinstall_logs = false
+	m.removedinstall_logs = nil
+}
+
+// AddRequireIDs adds the "requires" edge to the ManagedPackage entity by ids.
+func (m *ManagedPackageMutation) AddRequireIDs(ids ...int) {
+	if m.requires == nil {
+		m.requires = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.requires[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRequires clears the "requires" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) ClearRequires() {
+	m.clearedrequires = true
+}
+
+// RequiresCleared reports if the "requires" edge to the ManagedPackage entity was cleared.
+func (m *ManagedPackageMutation) RequiresCleared() bool {
+	return m.clearedrequires
+}
+
+// RemoveRequireIDs removes the "requires" edge to the ManagedPackage entity by IDs.
+func (m *ManagedPackageMutation) RemoveRequireIDs(ids ...int) {
+	if m.removedrequires == nil {
+		m.removedrequires = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.requires, ids[i])
+		m.removedrequires[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRequires returns the removed IDs of the "requires" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) RemovedRequiresIDs() (ids []int) {
+	for id := range m.removedrequires {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RequiresIDs returns the "requires" edge IDs in the mutation.
+func (m *ManagedPackageMutation) RequiresIDs() (ids []int) {
+	for id := range m.requires {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRequires resets all changes to the "requires" edge.
+func (m *ManagedPackageMutation) ResetRequires() {
+	m.requires = nil
+	m.clearedrequires = false
+	m.removedrequires = nil
+}
+
+// AddUpdateForIDs adds the "update_for" edge to the ManagedPackage entity by ids.
+func (m *ManagedPackageMutation) AddUpdateForIDs(ids ...int) {
+	if m.update_for == nil {
+		m.update_for = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.update_for[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUpdateFor clears the "update_for" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) ClearUpdateFor() {
+	m.clearedupdate_for = true
+}
+
+// UpdateForCleared reports if the "update_for" edge to the ManagedPackage entity was cleared.
+func (m *ManagedPackageMutation) UpdateForCleared() bool {
+	return m.clearedupdate_for
+}
+
+// RemoveUpdateForIDs removes the "update_for" edge to the ManagedPackage entity by IDs.
+func (m *ManagedPackageMutation) RemoveUpdateForIDs(ids ...int) {
+	if m.removedupdate_for == nil {
+		m.removedupdate_for = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.update_for, ids[i])
+		m.removedupdate_for[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUpdateFor returns the removed IDs of the "update_for" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) RemovedUpdateForIDs() (ids []int) {
+	for id := range m.removedupdate_for {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UpdateForIDs returns the "update_for" edge IDs in the mutation.
+func (m *ManagedPackageMutation) UpdateForIDs() (ids []int) {
+	for id := range m.update_for {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUpdateFor resets all changes to the "update_for" edge.
+func (m *ManagedPackageMutation) ResetUpdateFor() {
+	m.update_for = nil
+	m.clearedupdate_for = false
+	m.removedupdate_for = nil
+}
+
+// SetGlobalRefID sets the "global_ref" edge to the ManagedPackage entity by id.
+func (m *ManagedPackageMutation) SetGlobalRefID(id int) {
+	m.global_ref = &id
+}
+
+// ClearGlobalRef clears the "global_ref" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) ClearGlobalRef() {
+	m.clearedglobal_ref = true
+}
+
+// GlobalRefCleared reports if the "global_ref" edge to the ManagedPackage entity was cleared.
+func (m *ManagedPackageMutation) GlobalRefCleared() bool {
+	return m.clearedglobal_ref
+}
+
+// GlobalRefID returns the "global_ref" edge ID in the mutation.
+func (m *ManagedPackageMutation) GlobalRefID() (id int, exists bool) {
+	if m.global_ref != nil {
+		return *m.global_ref, true
+	}
+	return
+}
+
+// GlobalRefIDs returns the "global_ref" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// GlobalRefID instead. It exists only for internal usage by the builders.
+func (m *ManagedPackageMutation) GlobalRefIDs() (ids []int) {
+	if id := m.global_ref; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetGlobalRef resets all changes to the "global_ref" edge.
+func (m *ManagedPackageMutation) ResetGlobalRef() {
+	m.global_ref = nil
+	m.clearedglobal_ref = false
+}
+
+// AddSubscriberIDs adds the "subscribers" edge to the ManagedPackage entity by ids.
+func (m *ManagedPackageMutation) AddSubscriberIDs(ids ...int) {
+	if m.subscribers == nil {
+		m.subscribers = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.subscribers[ids[i]] = struct{}{}
+	}
+}
+
+// ClearSubscribers clears the "subscribers" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) ClearSubscribers() {
+	m.clearedsubscribers = true
+}
+
+// SubscribersCleared reports if the "subscribers" edge to the ManagedPackage entity was cleared.
+func (m *ManagedPackageMutation) SubscribersCleared() bool {
+	return m.clearedsubscribers
+}
+
+// RemoveSubscriberIDs removes the "subscribers" edge to the ManagedPackage entity by IDs.
+func (m *ManagedPackageMutation) RemoveSubscriberIDs(ids ...int) {
+	if m.removedsubscribers == nil {
+		m.removedsubscribers = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.subscribers, ids[i])
+		m.removedsubscribers[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedSubscribers returns the removed IDs of the "subscribers" edge to the ManagedPackage entity.
+func (m *ManagedPackageMutation) RemovedSubscribersIDs() (ids []int) {
+	for id := range m.removedsubscribers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// SubscribersIDs returns the "subscribers" edge IDs in the mutation.
+func (m *ManagedPackageMutation) SubscribersIDs() (ids []int) {
+	for id := range m.subscribers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetSubscribers resets all changes to the "subscribers" edge.
+func (m *ManagedPackageMutation) ResetSubscribers() {
+	m.subscribers = nil
+	m.clearedsubscribers = false
+	m.removedsubscribers = nil
+}
+
+// Where appends a list predicates to the ManagedPackageMutation builder.
+func (m *ManagedPackageMutation) Where(ps ...predicate.ManagedPackage) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ManagedPackageMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ManagedPackageMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ManagedPackage, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ManagedPackageMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ManagedPackageMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ManagedPackage).
+func (m *ManagedPackageMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ManagedPackageMutation) Fields() []string {
+	fields := make([]string, 0, 29)
+	if m.name != nil {
+		fields = append(fields, managedpackage.FieldName)
+	}
+	if m.display_name != nil {
+		fields = append(fields, managedpackage.FieldDisplayName)
+	}
+	if m.version != nil {
+		fields = append(fields, managedpackage.FieldVersion)
+	}
+	if m.platform != nil {
+		fields = append(fields, managedpackage.FieldPlatform)
+	}
+	if m.installer_path != nil {
+		fields = append(fields, managedpackage.FieldInstallerPath)
+	}
+	if m.checksum_sha256 != nil {
+		fields = append(fields, managedpackage.FieldChecksumSha256)
+	}
+	if m.size_bytes != nil {
+		fields = append(fields, managedpackage.FieldSizeBytes)
+	}
+	if m.icon_name != nil {
+		fields = append(fields, managedpackage.FieldIconName)
+	}
+	if m.description != nil {
+		fields = append(fields, managedpackage.FieldDescription)
+	}
+	if m.category != nil {
+		fields = append(fields, managedpackage.FieldCategory)
+	}
+	if m.developer != nil {
+		fields = append(fields, managedpackage.FieldDeveloper)
+	}
+	if m.pkginfo_data != nil {
+		fields = append(fields, managedpackage.FieldPkginfoData)
+	}
+	if m.pre_install_script != nil {
+		fields = append(fields, managedpackage.FieldPreInstallScript)
+	}
+	if m.post_install_script != nil {
+		fields = append(fields, managedpackage.FieldPostInstallScript)
+	}
+	if m.uninstall_method != nil {
+		fields = append(fields, managedpackage.FieldUninstallMethod)
+	}
+	if m.installs_items != nil {
+		fields = append(fields, managedpackage.FieldInstallsItems)
+	}
+	if m.receipts != nil {
+		fields = append(fields, managedpackage.FieldReceipts)
+	}
+	if m.blocking_apps != nil {
+		fields = append(fields, managedpackage.FieldBlockingApps)
+	}
+	if m.restart_action != nil {
+		fields = append(fields, managedpackage.FieldRestartAction)
+	}
+	if m.min_os_version != nil {
+		fields = append(fields, managedpackage.FieldMinOsVersion)
+	}
+	if m.max_os_version != nil {
+		fields = append(fields, managedpackage.FieldMaxOsVersion)
+	}
+	if m.supported_architectures != nil {
+		fields = append(fields, managedpackage.FieldSupportedArchitectures)
+	}
+	if m.force_install_date != nil {
+		fields = append(fields, managedpackage.FieldForceInstallDate)
+	}
+	if m.unattended_install != nil {
+		fields = append(fields, managedpackage.FieldUnattendedInstall)
+	}
+	if m.unattended_uninstall != nil {
+		fields = append(fields, managedpackage.FieldUnattendedUninstall)
+	}
+	if m.status != nil {
+		fields = append(fields, managedpackage.FieldStatus)
+	}
+	if m.source != nil {
+		fields = append(fields, managedpackage.FieldSource)
+	}
+	if m.created != nil {
+		fields = append(fields, managedpackage.FieldCreated)
+	}
+	if m.modified != nil {
+		fields = append(fields, managedpackage.FieldModified)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ManagedPackageMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case managedpackage.FieldName:
+		return m.Name()
+	case managedpackage.FieldDisplayName:
+		return m.DisplayName()
+	case managedpackage.FieldVersion:
+		return m.Version()
+	case managedpackage.FieldPlatform:
+		return m.Platform()
+	case managedpackage.FieldInstallerPath:
+		return m.InstallerPath()
+	case managedpackage.FieldChecksumSha256:
+		return m.ChecksumSha256()
+	case managedpackage.FieldSizeBytes:
+		return m.SizeBytes()
+	case managedpackage.FieldIconName:
+		return m.IconName()
+	case managedpackage.FieldDescription:
+		return m.Description()
+	case managedpackage.FieldCategory:
+		return m.Category()
+	case managedpackage.FieldDeveloper:
+		return m.Developer()
+	case managedpackage.FieldPkginfoData:
+		return m.PkginfoData()
+	case managedpackage.FieldPreInstallScript:
+		return m.PreInstallScript()
+	case managedpackage.FieldPostInstallScript:
+		return m.PostInstallScript()
+	case managedpackage.FieldUninstallMethod:
+		return m.UninstallMethod()
+	case managedpackage.FieldInstallsItems:
+		return m.InstallsItems()
+	case managedpackage.FieldReceipts:
+		return m.Receipts()
+	case managedpackage.FieldBlockingApps:
+		return m.BlockingApps()
+	case managedpackage.FieldRestartAction:
+		return m.RestartAction()
+	case managedpackage.FieldMinOsVersion:
+		return m.MinOsVersion()
+	case managedpackage.FieldMaxOsVersion:
+		return m.MaxOsVersion()
+	case managedpackage.FieldSupportedArchitectures:
+		return m.SupportedArchitectures()
+	case managedpackage.FieldForceInstallDate:
+		return m.ForceInstallDate()
+	case managedpackage.FieldUnattendedInstall:
+		return m.UnattendedInstall()
+	case managedpackage.FieldUnattendedUninstall:
+		return m.UnattendedUninstall()
+	case managedpackage.FieldStatus:
+		return m.Status()
+	case managedpackage.FieldSource:
+		return m.Source()
+	case managedpackage.FieldCreated:
+		return m.Created()
+	case managedpackage.FieldModified:
+		return m.Modified()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ManagedPackageMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case managedpackage.FieldName:
+		return m.OldName(ctx)
+	case managedpackage.FieldDisplayName:
+		return m.OldDisplayName(ctx)
+	case managedpackage.FieldVersion:
+		return m.OldVersion(ctx)
+	case managedpackage.FieldPlatform:
+		return m.OldPlatform(ctx)
+	case managedpackage.FieldInstallerPath:
+		return m.OldInstallerPath(ctx)
+	case managedpackage.FieldChecksumSha256:
+		return m.OldChecksumSha256(ctx)
+	case managedpackage.FieldSizeBytes:
+		return m.OldSizeBytes(ctx)
+	case managedpackage.FieldIconName:
+		return m.OldIconName(ctx)
+	case managedpackage.FieldDescription:
+		return m.OldDescription(ctx)
+	case managedpackage.FieldCategory:
+		return m.OldCategory(ctx)
+	case managedpackage.FieldDeveloper:
+		return m.OldDeveloper(ctx)
+	case managedpackage.FieldPkginfoData:
+		return m.OldPkginfoData(ctx)
+	case managedpackage.FieldPreInstallScript:
+		return m.OldPreInstallScript(ctx)
+	case managedpackage.FieldPostInstallScript:
+		return m.OldPostInstallScript(ctx)
+	case managedpackage.FieldUninstallMethod:
+		return m.OldUninstallMethod(ctx)
+	case managedpackage.FieldInstallsItems:
+		return m.OldInstallsItems(ctx)
+	case managedpackage.FieldReceipts:
+		return m.OldReceipts(ctx)
+	case managedpackage.FieldBlockingApps:
+		return m.OldBlockingApps(ctx)
+	case managedpackage.FieldRestartAction:
+		return m.OldRestartAction(ctx)
+	case managedpackage.FieldMinOsVersion:
+		return m.OldMinOsVersion(ctx)
+	case managedpackage.FieldMaxOsVersion:
+		return m.OldMaxOsVersion(ctx)
+	case managedpackage.FieldSupportedArchitectures:
+		return m.OldSupportedArchitectures(ctx)
+	case managedpackage.FieldForceInstallDate:
+		return m.OldForceInstallDate(ctx)
+	case managedpackage.FieldUnattendedInstall:
+		return m.OldUnattendedInstall(ctx)
+	case managedpackage.FieldUnattendedUninstall:
+		return m.OldUnattendedUninstall(ctx)
+	case managedpackage.FieldStatus:
+		return m.OldStatus(ctx)
+	case managedpackage.FieldSource:
+		return m.OldSource(ctx)
+	case managedpackage.FieldCreated:
+		return m.OldCreated(ctx)
+	case managedpackage.FieldModified:
+		return m.OldModified(ctx)
+	}
+	return nil, fmt.Errorf("unknown ManagedPackage field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ManagedPackageMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case managedpackage.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case managedpackage.FieldDisplayName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisplayName(v)
+		return nil
+	case managedpackage.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case managedpackage.FieldPlatform:
+		v, ok := value.(managedpackage.Platform)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPlatform(v)
+		return nil
+	case managedpackage.FieldInstallerPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInstallerPath(v)
+		return nil
+	case managedpackage.FieldChecksumSha256:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChecksumSha256(v)
+		return nil
+	case managedpackage.FieldSizeBytes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSizeBytes(v)
+		return nil
+	case managedpackage.FieldIconName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIconName(v)
+		return nil
+	case managedpackage.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case managedpackage.FieldCategory:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCategory(v)
+		return nil
+	case managedpackage.FieldDeveloper:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeveloper(v)
+		return nil
+	case managedpackage.FieldPkginfoData:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPkginfoData(v)
+		return nil
+	case managedpackage.FieldPreInstallScript:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPreInstallScript(v)
+		return nil
+	case managedpackage.FieldPostInstallScript:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostInstallScript(v)
+		return nil
+	case managedpackage.FieldUninstallMethod:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUninstallMethod(v)
+		return nil
+	case managedpackage.FieldInstallsItems:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInstallsItems(v)
+		return nil
+	case managedpackage.FieldReceipts:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReceipts(v)
+		return nil
+	case managedpackage.FieldBlockingApps:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBlockingApps(v)
+		return nil
+	case managedpackage.FieldRestartAction:
+		v, ok := value.(managedpackage.RestartAction)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRestartAction(v)
+		return nil
+	case managedpackage.FieldMinOsVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMinOsVersion(v)
+		return nil
+	case managedpackage.FieldMaxOsVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxOsVersion(v)
+		return nil
+	case managedpackage.FieldSupportedArchitectures:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportedArchitectures(v)
+		return nil
+	case managedpackage.FieldForceInstallDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetForceInstallDate(v)
+		return nil
+	case managedpackage.FieldUnattendedInstall:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnattendedInstall(v)
+		return nil
+	case managedpackage.FieldUnattendedUninstall:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUnattendedUninstall(v)
+		return nil
+	case managedpackage.FieldStatus:
+		v, ok := value.(managedpackage.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case managedpackage.FieldSource:
+		v, ok := value.(managedpackage.Source)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSource(v)
+		return nil
+	case managedpackage.FieldCreated:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreated(v)
+		return nil
+	case managedpackage.FieldModified:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetModified(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ManagedPackage field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ManagedPackageMutation) AddedFields() []string {
+	var fields []string
+	if m.addsize_bytes != nil {
+		fields = append(fields, managedpackage.FieldSizeBytes)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ManagedPackageMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case managedpackage.FieldSizeBytes:
+		return m.AddedSizeBytes()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ManagedPackageMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case managedpackage.FieldSizeBytes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSizeBytes(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ManagedPackage numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ManagedPackageMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(managedpackage.FieldDisplayName) {
+		fields = append(fields, managedpackage.FieldDisplayName)
+	}
+	if m.FieldCleared(managedpackage.FieldChecksumSha256) {
+		fields = append(fields, managedpackage.FieldChecksumSha256)
+	}
+	if m.FieldCleared(managedpackage.FieldSizeBytes) {
+		fields = append(fields, managedpackage.FieldSizeBytes)
+	}
+	if m.FieldCleared(managedpackage.FieldIconName) {
+		fields = append(fields, managedpackage.FieldIconName)
+	}
+	if m.FieldCleared(managedpackage.FieldDescription) {
+		fields = append(fields, managedpackage.FieldDescription)
+	}
+	if m.FieldCleared(managedpackage.FieldCategory) {
+		fields = append(fields, managedpackage.FieldCategory)
+	}
+	if m.FieldCleared(managedpackage.FieldDeveloper) {
+		fields = append(fields, managedpackage.FieldDeveloper)
+	}
+	if m.FieldCleared(managedpackage.FieldPkginfoData) {
+		fields = append(fields, managedpackage.FieldPkginfoData)
+	}
+	if m.FieldCleared(managedpackage.FieldPreInstallScript) {
+		fields = append(fields, managedpackage.FieldPreInstallScript)
+	}
+	if m.FieldCleared(managedpackage.FieldPostInstallScript) {
+		fields = append(fields, managedpackage.FieldPostInstallScript)
+	}
+	if m.FieldCleared(managedpackage.FieldUninstallMethod) {
+		fields = append(fields, managedpackage.FieldUninstallMethod)
+	}
+	if m.FieldCleared(managedpackage.FieldInstallsItems) {
+		fields = append(fields, managedpackage.FieldInstallsItems)
+	}
+	if m.FieldCleared(managedpackage.FieldReceipts) {
+		fields = append(fields, managedpackage.FieldReceipts)
+	}
+	if m.FieldCleared(managedpackage.FieldBlockingApps) {
+		fields = append(fields, managedpackage.FieldBlockingApps)
+	}
+	if m.FieldCleared(managedpackage.FieldRestartAction) {
+		fields = append(fields, managedpackage.FieldRestartAction)
+	}
+	if m.FieldCleared(managedpackage.FieldMinOsVersion) {
+		fields = append(fields, managedpackage.FieldMinOsVersion)
+	}
+	if m.FieldCleared(managedpackage.FieldMaxOsVersion) {
+		fields = append(fields, managedpackage.FieldMaxOsVersion)
+	}
+	if m.FieldCleared(managedpackage.FieldSupportedArchitectures) {
+		fields = append(fields, managedpackage.FieldSupportedArchitectures)
+	}
+	if m.FieldCleared(managedpackage.FieldForceInstallDate) {
+		fields = append(fields, managedpackage.FieldForceInstallDate)
+	}
+	if m.FieldCleared(managedpackage.FieldUnattendedInstall) {
+		fields = append(fields, managedpackage.FieldUnattendedInstall)
+	}
+	if m.FieldCleared(managedpackage.FieldUnattendedUninstall) {
+		fields = append(fields, managedpackage.FieldUnattendedUninstall)
+	}
+	if m.FieldCleared(managedpackage.FieldStatus) {
+		fields = append(fields, managedpackage.FieldStatus)
+	}
+	if m.FieldCleared(managedpackage.FieldSource) {
+		fields = append(fields, managedpackage.FieldSource)
+	}
+	if m.FieldCleared(managedpackage.FieldCreated) {
+		fields = append(fields, managedpackage.FieldCreated)
+	}
+	if m.FieldCleared(managedpackage.FieldModified) {
+		fields = append(fields, managedpackage.FieldModified)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ManagedPackageMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ManagedPackageMutation) ClearField(name string) error {
+	switch name {
+	case managedpackage.FieldDisplayName:
+		m.ClearDisplayName()
+		return nil
+	case managedpackage.FieldChecksumSha256:
+		m.ClearChecksumSha256()
+		return nil
+	case managedpackage.FieldSizeBytes:
+		m.ClearSizeBytes()
+		return nil
+	case managedpackage.FieldIconName:
+		m.ClearIconName()
+		return nil
+	case managedpackage.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case managedpackage.FieldCategory:
+		m.ClearCategory()
+		return nil
+	case managedpackage.FieldDeveloper:
+		m.ClearDeveloper()
+		return nil
+	case managedpackage.FieldPkginfoData:
+		m.ClearPkginfoData()
+		return nil
+	case managedpackage.FieldPreInstallScript:
+		m.ClearPreInstallScript()
+		return nil
+	case managedpackage.FieldPostInstallScript:
+		m.ClearPostInstallScript()
+		return nil
+	case managedpackage.FieldUninstallMethod:
+		m.ClearUninstallMethod()
+		return nil
+	case managedpackage.FieldInstallsItems:
+		m.ClearInstallsItems()
+		return nil
+	case managedpackage.FieldReceipts:
+		m.ClearReceipts()
+		return nil
+	case managedpackage.FieldBlockingApps:
+		m.ClearBlockingApps()
+		return nil
+	case managedpackage.FieldRestartAction:
+		m.ClearRestartAction()
+		return nil
+	case managedpackage.FieldMinOsVersion:
+		m.ClearMinOsVersion()
+		return nil
+	case managedpackage.FieldMaxOsVersion:
+		m.ClearMaxOsVersion()
+		return nil
+	case managedpackage.FieldSupportedArchitectures:
+		m.ClearSupportedArchitectures()
+		return nil
+	case managedpackage.FieldForceInstallDate:
+		m.ClearForceInstallDate()
+		return nil
+	case managedpackage.FieldUnattendedInstall:
+		m.ClearUnattendedInstall()
+		return nil
+	case managedpackage.FieldUnattendedUninstall:
+		m.ClearUnattendedUninstall()
+		return nil
+	case managedpackage.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case managedpackage.FieldSource:
+		m.ClearSource()
+		return nil
+	case managedpackage.FieldCreated:
+		m.ClearCreated()
+		return nil
+	case managedpackage.FieldModified:
+		m.ClearModified()
+		return nil
+	}
+	return fmt.Errorf("unknown ManagedPackage nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ManagedPackageMutation) ResetField(name string) error {
+	switch name {
+	case managedpackage.FieldName:
+		m.ResetName()
+		return nil
+	case managedpackage.FieldDisplayName:
+		m.ResetDisplayName()
+		return nil
+	case managedpackage.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case managedpackage.FieldPlatform:
+		m.ResetPlatform()
+		return nil
+	case managedpackage.FieldInstallerPath:
+		m.ResetInstallerPath()
+		return nil
+	case managedpackage.FieldChecksumSha256:
+		m.ResetChecksumSha256()
+		return nil
+	case managedpackage.FieldSizeBytes:
+		m.ResetSizeBytes()
+		return nil
+	case managedpackage.FieldIconName:
+		m.ResetIconName()
+		return nil
+	case managedpackage.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case managedpackage.FieldCategory:
+		m.ResetCategory()
+		return nil
+	case managedpackage.FieldDeveloper:
+		m.ResetDeveloper()
+		return nil
+	case managedpackage.FieldPkginfoData:
+		m.ResetPkginfoData()
+		return nil
+	case managedpackage.FieldPreInstallScript:
+		m.ResetPreInstallScript()
+		return nil
+	case managedpackage.FieldPostInstallScript:
+		m.ResetPostInstallScript()
+		return nil
+	case managedpackage.FieldUninstallMethod:
+		m.ResetUninstallMethod()
+		return nil
+	case managedpackage.FieldInstallsItems:
+		m.ResetInstallsItems()
+		return nil
+	case managedpackage.FieldReceipts:
+		m.ResetReceipts()
+		return nil
+	case managedpackage.FieldBlockingApps:
+		m.ResetBlockingApps()
+		return nil
+	case managedpackage.FieldRestartAction:
+		m.ResetRestartAction()
+		return nil
+	case managedpackage.FieldMinOsVersion:
+		m.ResetMinOsVersion()
+		return nil
+	case managedpackage.FieldMaxOsVersion:
+		m.ResetMaxOsVersion()
+		return nil
+	case managedpackage.FieldSupportedArchitectures:
+		m.ResetSupportedArchitectures()
+		return nil
+	case managedpackage.FieldForceInstallDate:
+		m.ResetForceInstallDate()
+		return nil
+	case managedpackage.FieldUnattendedInstall:
+		m.ResetUnattendedInstall()
+		return nil
+	case managedpackage.FieldUnattendedUninstall:
+		m.ResetUnattendedUninstall()
+		return nil
+	case managedpackage.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case managedpackage.FieldSource:
+		m.ResetSource()
+		return nil
+	case managedpackage.FieldCreated:
+		m.ResetCreated()
+		return nil
+	case managedpackage.FieldModified:
+		m.ResetModified()
+		return nil
+	}
+	return fmt.Errorf("unknown ManagedPackage field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ManagedPackageMutation) AddedEdges() []string {
+	edges := make([]string, 0, 8)
+	if m.repo != nil {
+		edges = append(edges, managedpackage.EdgeRepo)
+	}
+	if m.catalogs != nil {
+		edges = append(edges, managedpackage.EdgeCatalogs)
+	}
+	if m.tenant != nil {
+		edges = append(edges, managedpackage.EdgeTenant)
+	}
+	if m.install_logs != nil {
+		edges = append(edges, managedpackage.EdgeInstallLogs)
+	}
+	if m.requires != nil {
+		edges = append(edges, managedpackage.EdgeRequires)
+	}
+	if m.update_for != nil {
+		edges = append(edges, managedpackage.EdgeUpdateFor)
+	}
+	if m.global_ref != nil {
+		edges = append(edges, managedpackage.EdgeGlobalRef)
+	}
+	if m.subscribers != nil {
+		edges = append(edges, managedpackage.EdgeSubscribers)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ManagedPackageMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case managedpackage.EdgeRepo:
+		if id := m.repo; id != nil {
+			return []ent.Value{*id}
+		}
+	case managedpackage.EdgeCatalogs:
+		ids := make([]ent.Value, 0, len(m.catalogs))
+		for id := range m.catalogs {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeTenant:
+		if id := m.tenant; id != nil {
+			return []ent.Value{*id}
+		}
+	case managedpackage.EdgeInstallLogs:
+		ids := make([]ent.Value, 0, len(m.install_logs))
+		for id := range m.install_logs {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeRequires:
+		ids := make([]ent.Value, 0, len(m.requires))
+		for id := range m.requires {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeUpdateFor:
+		ids := make([]ent.Value, 0, len(m.update_for))
+		for id := range m.update_for {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeGlobalRef:
+		if id := m.global_ref; id != nil {
+			return []ent.Value{*id}
+		}
+	case managedpackage.EdgeSubscribers:
+		ids := make([]ent.Value, 0, len(m.subscribers))
+		for id := range m.subscribers {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ManagedPackageMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 8)
+	if m.removedcatalogs != nil {
+		edges = append(edges, managedpackage.EdgeCatalogs)
+	}
+	if m.removedinstall_logs != nil {
+		edges = append(edges, managedpackage.EdgeInstallLogs)
+	}
+	if m.removedrequires != nil {
+		edges = append(edges, managedpackage.EdgeRequires)
+	}
+	if m.removedupdate_for != nil {
+		edges = append(edges, managedpackage.EdgeUpdateFor)
+	}
+	if m.removedsubscribers != nil {
+		edges = append(edges, managedpackage.EdgeSubscribers)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ManagedPackageMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case managedpackage.EdgeCatalogs:
+		ids := make([]ent.Value, 0, len(m.removedcatalogs))
+		for id := range m.removedcatalogs {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeInstallLogs:
+		ids := make([]ent.Value, 0, len(m.removedinstall_logs))
+		for id := range m.removedinstall_logs {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeRequires:
+		ids := make([]ent.Value, 0, len(m.removedrequires))
+		for id := range m.removedrequires {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeUpdateFor:
+		ids := make([]ent.Value, 0, len(m.removedupdate_for))
+		for id := range m.removedupdate_for {
+			ids = append(ids, id)
+		}
+		return ids
+	case managedpackage.EdgeSubscribers:
+		ids := make([]ent.Value, 0, len(m.removedsubscribers))
+		for id := range m.removedsubscribers {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ManagedPackageMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 8)
+	if m.clearedrepo {
+		edges = append(edges, managedpackage.EdgeRepo)
+	}
+	if m.clearedcatalogs {
+		edges = append(edges, managedpackage.EdgeCatalogs)
+	}
+	if m.clearedtenant {
+		edges = append(edges, managedpackage.EdgeTenant)
+	}
+	if m.clearedinstall_logs {
+		edges = append(edges, managedpackage.EdgeInstallLogs)
+	}
+	if m.clearedrequires {
+		edges = append(edges, managedpackage.EdgeRequires)
+	}
+	if m.clearedupdate_for {
+		edges = append(edges, managedpackage.EdgeUpdateFor)
+	}
+	if m.clearedglobal_ref {
+		edges = append(edges, managedpackage.EdgeGlobalRef)
+	}
+	if m.clearedsubscribers {
+		edges = append(edges, managedpackage.EdgeSubscribers)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ManagedPackageMutation) EdgeCleared(name string) bool {
+	switch name {
+	case managedpackage.EdgeRepo:
+		return m.clearedrepo
+	case managedpackage.EdgeCatalogs:
+		return m.clearedcatalogs
+	case managedpackage.EdgeTenant:
+		return m.clearedtenant
+	case managedpackage.EdgeInstallLogs:
+		return m.clearedinstall_logs
+	case managedpackage.EdgeRequires:
+		return m.clearedrequires
+	case managedpackage.EdgeUpdateFor:
+		return m.clearedupdate_for
+	case managedpackage.EdgeGlobalRef:
+		return m.clearedglobal_ref
+	case managedpackage.EdgeSubscribers:
+		return m.clearedsubscribers
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ManagedPackageMutation) ClearEdge(name string) error {
+	switch name {
+	case managedpackage.EdgeRepo:
+		m.ClearRepo()
+		return nil
+	case managedpackage.EdgeTenant:
+		m.ClearTenant()
+		return nil
+	case managedpackage.EdgeGlobalRef:
+		m.ClearGlobalRef()
+		return nil
+	}
+	return fmt.Errorf("unknown ManagedPackage unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ManagedPackageMutation) ResetEdge(name string) error {
+	switch name {
+	case managedpackage.EdgeRepo:
+		m.ResetRepo()
+		return nil
+	case managedpackage.EdgeCatalogs:
+		m.ResetCatalogs()
+		return nil
+	case managedpackage.EdgeTenant:
+		m.ResetTenant()
+		return nil
+	case managedpackage.EdgeInstallLogs:
+		m.ResetInstallLogs()
+		return nil
+	case managedpackage.EdgeRequires:
+		m.ResetRequires()
+		return nil
+	case managedpackage.EdgeUpdateFor:
+		m.ResetUpdateFor()
+		return nil
+	case managedpackage.EdgeGlobalRef:
+		m.ResetGlobalRef()
+		return nil
+	case managedpackage.EdgeSubscribers:
+		m.ResetSubscribers()
+		return nil
+	}
+	return fmt.Errorf("unknown ManagedPackage edge %s", name)
 }
 
 // MemorySlotMutation represents an operation that mutates the MemorySlot nodes in the graph.
@@ -32475,7 +35652,7 @@ func (m *SoftwareCatalogMutation) ResetTenant() {
 	m.clearedtenant = false
 }
 
-// AddPackageIDs adds the "packages" edge to the SoftwarePackage entity by ids.
+// AddPackageIDs adds the "packages" edge to the ManagedPackage entity by ids.
 func (m *SoftwareCatalogMutation) AddPackageIDs(ids ...int) {
 	if m.packages == nil {
 		m.packages = make(map[int]struct{})
@@ -32485,17 +35662,17 @@ func (m *SoftwareCatalogMutation) AddPackageIDs(ids ...int) {
 	}
 }
 
-// ClearPackages clears the "packages" edge to the SoftwarePackage entity.
+// ClearPackages clears the "packages" edge to the ManagedPackage entity.
 func (m *SoftwareCatalogMutation) ClearPackages() {
 	m.clearedpackages = true
 }
 
-// PackagesCleared reports if the "packages" edge to the SoftwarePackage entity was cleared.
+// PackagesCleared reports if the "packages" edge to the ManagedPackage entity was cleared.
 func (m *SoftwareCatalogMutation) PackagesCleared() bool {
 	return m.clearedpackages
 }
 
-// RemovePackageIDs removes the "packages" edge to the SoftwarePackage entity by IDs.
+// RemovePackageIDs removes the "packages" edge to the ManagedPackage entity by IDs.
 func (m *SoftwareCatalogMutation) RemovePackageIDs(ids ...int) {
 	if m.removedpackages == nil {
 		m.removedpackages = make(map[int]struct{})
@@ -32506,7 +35683,7 @@ func (m *SoftwareCatalogMutation) RemovePackageIDs(ids ...int) {
 	}
 }
 
-// RemovedPackages returns the removed IDs of the "packages" edge to the SoftwarePackage entity.
+// RemovedPackages returns the removed IDs of the "packages" edge to the ManagedPackage entity.
 func (m *SoftwareCatalogMutation) RemovedPackagesIDs() (ids []int) {
 	for id := range m.removedpackages {
 		ids = append(ids, id)
@@ -33366,17 +36543,17 @@ func (m *SoftwareInstallLogMutation) ResetAgent() {
 	m.clearedagent = false
 }
 
-// SetPackageID sets the "package" edge to the SoftwarePackage entity by id.
+// SetPackageID sets the "package" edge to the ManagedPackage entity by id.
 func (m *SoftwareInstallLogMutation) SetPackageID(id int) {
 	m._package = &id
 }
 
-// ClearPackage clears the "package" edge to the SoftwarePackage entity.
+// ClearPackage clears the "package" edge to the ManagedPackage entity.
 func (m *SoftwareInstallLogMutation) ClearPackage() {
 	m.cleared_package = true
 }
 
-// PackageCleared reports if the "package" edge to the SoftwarePackage entity was cleared.
+// PackageCleared reports if the "package" edge to the ManagedPackage entity was cleared.
 func (m *SoftwareInstallLogMutation) PackageCleared() bool {
 	return m.cleared_package
 }
@@ -33766,64 +36943,21 @@ func (m *SoftwareInstallLogMutation) ResetEdge(name string) error {
 // SoftwarePackageMutation represents an operation that mutates the SoftwarePackage nodes in the graph.
 type SoftwarePackageMutation struct {
 	config
-	op                      Op
-	typ                     string
-	id                      *int
-	name                    *string
-	display_name            *string
-	version                 *string
-	platform                *softwarepackage.Platform
-	installer_path          *string
-	checksum_sha256         *string
-	size_bytes              *int64
-	addsize_bytes           *int64
-	icon_name               *string
-	description             *string
-	category                *string
-	developer               *string
-	pkginfo_data            *string
-	pre_install_script      *string
-	post_install_script     *string
-	uninstall_method        *string
-	installs_items          *string
-	receipts                *string
-	blocking_apps           *string
-	restart_action          *softwarepackage.RestartAction
-	min_os_version          *string
-	max_os_version          *string
-	supported_architectures *string
-	force_install_date      *time.Time
-	unattended_install      *bool
-	unattended_uninstall    *bool
-	status                  *softwarepackage.Status
-	source                  *softwarepackage.Source
-	created                 *time.Time
-	modified                *time.Time
-	clearedFields           map[string]struct{}
-	repo                    *int
-	clearedrepo             bool
-	catalogs                map[int]struct{}
-	removedcatalogs         map[int]struct{}
-	clearedcatalogs         bool
-	tenant                  *int
-	clearedtenant           bool
-	install_logs            map[int]struct{}
-	removedinstall_logs     map[int]struct{}
-	clearedinstall_logs     bool
-	requires                map[int]struct{}
-	removedrequires         map[int]struct{}
-	clearedrequires         bool
-	update_for              map[int]struct{}
-	removedupdate_for       map[int]struct{}
-	clearedupdate_for       bool
-	global_ref              *int
-	clearedglobal_ref       bool
-	subscribers             map[int]struct{}
-	removedsubscribers      map[int]struct{}
-	clearedsubscribers      bool
-	done                    bool
-	oldValue                func(context.Context) (*SoftwarePackage, error)
-	predicates              []predicate.SoftwarePackage
+	op            Op
+	typ           string
+	id            *uuid.UUID
+	package_id    *string
+	name          *string
+	version       *string
+	branch        *string
+	arch          *string
+	brew_type     *string
+	verified      *bool
+	source        *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*SoftwarePackage, error)
+	predicates    []predicate.SoftwarePackage
 }
 
 var _ ent.Mutation = (*SoftwarePackageMutation)(nil)
@@ -33846,7 +36980,7 @@ func newSoftwarePackageMutation(c config, op Op, opts ...softwarepackageOption) 
 }
 
 // withSoftwarePackageID sets the ID field of the mutation.
-func withSoftwarePackageID(id int) softwarepackageOption {
+func withSoftwarePackageID(id uuid.UUID) softwarepackageOption {
 	return func(m *SoftwarePackageMutation) {
 		var (
 			err   error
@@ -33896,9 +37030,15 @@ func (m SoftwarePackageMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SoftwarePackage entities.
+func (m *SoftwarePackageMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *SoftwarePackageMutation) ID() (id int, exists bool) {
+func (m *SoftwarePackageMutation) ID() (id uuid.UUID, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -33909,12 +37049,12 @@ func (m *SoftwarePackageMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *SoftwarePackageMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *SoftwarePackageMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []uuid.UUID{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -33922,6 +37062,42 @@ func (m *SoftwarePackageMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetPackageID sets the "package_id" field.
+func (m *SoftwarePackageMutation) SetPackageID(s string) {
+	m.package_id = &s
+}
+
+// PackageID returns the value of the "package_id" field in the mutation.
+func (m *SoftwarePackageMutation) PackageID() (r string, exists bool) {
+	v := m.package_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackageID returns the old "package_id" field's value of the SoftwarePackage entity.
+// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SoftwarePackageMutation) OldPackageID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackageID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackageID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackageID: %w", err)
+	}
+	return oldValue.PackageID, nil
+}
+
+// ResetPackageID resets all changes to the "package_id" field.
+func (m *SoftwarePackageMutation) ResetPackageID() {
+	m.package_id = nil
 }
 
 // SetName sets the "name" field.
@@ -33960,55 +37136,6 @@ func (m *SoftwarePackageMutation) ResetName() {
 	m.name = nil
 }
 
-// SetDisplayName sets the "display_name" field.
-func (m *SoftwarePackageMutation) SetDisplayName(s string) {
-	m.display_name = &s
-}
-
-// DisplayName returns the value of the "display_name" field in the mutation.
-func (m *SoftwarePackageMutation) DisplayName() (r string, exists bool) {
-	v := m.display_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDisplayName returns the old "display_name" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldDisplayName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDisplayName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDisplayName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDisplayName: %w", err)
-	}
-	return oldValue.DisplayName, nil
-}
-
-// ClearDisplayName clears the value of the "display_name" field.
-func (m *SoftwarePackageMutation) ClearDisplayName() {
-	m.display_name = nil
-	m.clearedFields[softwarepackage.FieldDisplayName] = struct{}{}
-}
-
-// DisplayNameCleared returns if the "display_name" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) DisplayNameCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldDisplayName]
-	return ok
-}
-
-// ResetDisplayName resets all changes to the "display_name" field.
-func (m *SoftwarePackageMutation) ResetDisplayName() {
-	m.display_name = nil
-	delete(m.clearedFields, softwarepackage.FieldDisplayName)
-}
-
 // SetVersion sets the "version" field.
 func (m *SoftwarePackageMutation) SetVersion(s string) {
 	m.version = &s
@@ -34040,1140 +37167,227 @@ func (m *SoftwarePackageMutation) OldVersion(ctx context.Context) (v string, err
 	return oldValue.Version, nil
 }
 
+// ClearVersion clears the value of the "version" field.
+func (m *SoftwarePackageMutation) ClearVersion() {
+	m.version = nil
+	m.clearedFields[softwarepackage.FieldVersion] = struct{}{}
+}
+
+// VersionCleared returns if the "version" field was cleared in this mutation.
+func (m *SoftwarePackageMutation) VersionCleared() bool {
+	_, ok := m.clearedFields[softwarepackage.FieldVersion]
+	return ok
+}
+
 // ResetVersion resets all changes to the "version" field.
 func (m *SoftwarePackageMutation) ResetVersion() {
 	m.version = nil
+	delete(m.clearedFields, softwarepackage.FieldVersion)
 }
 
-// SetPlatform sets the "platform" field.
-func (m *SoftwarePackageMutation) SetPlatform(s softwarepackage.Platform) {
-	m.platform = &s
+// SetBranch sets the "branch" field.
+func (m *SoftwarePackageMutation) SetBranch(s string) {
+	m.branch = &s
 }
 
-// Platform returns the value of the "platform" field in the mutation.
-func (m *SoftwarePackageMutation) Platform() (r softwarepackage.Platform, exists bool) {
-	v := m.platform
+// Branch returns the value of the "branch" field in the mutation.
+func (m *SoftwarePackageMutation) Branch() (r string, exists bool) {
+	v := m.branch
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPlatform returns the old "platform" field's value of the SoftwarePackage entity.
+// OldBranch returns the old "branch" field's value of the SoftwarePackage entity.
 // If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldPlatform(ctx context.Context) (v softwarepackage.Platform, err error) {
+func (m *SoftwarePackageMutation) OldBranch(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPlatform is only allowed on UpdateOne operations")
+		return v, errors.New("OldBranch is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPlatform requires an ID field in the mutation")
+		return v, errors.New("OldBranch requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPlatform: %w", err)
+		return v, fmt.Errorf("querying old value for OldBranch: %w", err)
 	}
-	return oldValue.Platform, nil
+	return oldValue.Branch, nil
 }
 
-// ResetPlatform resets all changes to the "platform" field.
-func (m *SoftwarePackageMutation) ResetPlatform() {
-	m.platform = nil
+// ClearBranch clears the value of the "branch" field.
+func (m *SoftwarePackageMutation) ClearBranch() {
+	m.branch = nil
+	m.clearedFields[softwarepackage.FieldBranch] = struct{}{}
 }
 
-// SetInstallerPath sets the "installer_path" field.
-func (m *SoftwarePackageMutation) SetInstallerPath(s string) {
-	m.installer_path = &s
-}
-
-// InstallerPath returns the value of the "installer_path" field in the mutation.
-func (m *SoftwarePackageMutation) InstallerPath() (r string, exists bool) {
-	v := m.installer_path
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldInstallerPath returns the old "installer_path" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldInstallerPath(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInstallerPath is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInstallerPath requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInstallerPath: %w", err)
-	}
-	return oldValue.InstallerPath, nil
-}
-
-// ResetInstallerPath resets all changes to the "installer_path" field.
-func (m *SoftwarePackageMutation) ResetInstallerPath() {
-	m.installer_path = nil
-}
-
-// SetChecksumSha256 sets the "checksum_sha256" field.
-func (m *SoftwarePackageMutation) SetChecksumSha256(s string) {
-	m.checksum_sha256 = &s
-}
-
-// ChecksumSha256 returns the value of the "checksum_sha256" field in the mutation.
-func (m *SoftwarePackageMutation) ChecksumSha256() (r string, exists bool) {
-	v := m.checksum_sha256
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldChecksumSha256 returns the old "checksum_sha256" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldChecksumSha256(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldChecksumSha256 is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldChecksumSha256 requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldChecksumSha256: %w", err)
-	}
-	return oldValue.ChecksumSha256, nil
-}
-
-// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
-func (m *SoftwarePackageMutation) ClearChecksumSha256() {
-	m.checksum_sha256 = nil
-	m.clearedFields[softwarepackage.FieldChecksumSha256] = struct{}{}
-}
-
-// ChecksumSha256Cleared returns if the "checksum_sha256" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) ChecksumSha256Cleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldChecksumSha256]
+// BranchCleared returns if the "branch" field was cleared in this mutation.
+func (m *SoftwarePackageMutation) BranchCleared() bool {
+	_, ok := m.clearedFields[softwarepackage.FieldBranch]
 	return ok
 }
 
-// ResetChecksumSha256 resets all changes to the "checksum_sha256" field.
-func (m *SoftwarePackageMutation) ResetChecksumSha256() {
-	m.checksum_sha256 = nil
-	delete(m.clearedFields, softwarepackage.FieldChecksumSha256)
+// ResetBranch resets all changes to the "branch" field.
+func (m *SoftwarePackageMutation) ResetBranch() {
+	m.branch = nil
+	delete(m.clearedFields, softwarepackage.FieldBranch)
 }
 
-// SetSizeBytes sets the "size_bytes" field.
-func (m *SoftwarePackageMutation) SetSizeBytes(i int64) {
-	m.size_bytes = &i
-	m.addsize_bytes = nil
+// SetArch sets the "arch" field.
+func (m *SoftwarePackageMutation) SetArch(s string) {
+	m.arch = &s
 }
 
-// SizeBytes returns the value of the "size_bytes" field in the mutation.
-func (m *SoftwarePackageMutation) SizeBytes() (r int64, exists bool) {
-	v := m.size_bytes
+// Arch returns the value of the "arch" field in the mutation.
+func (m *SoftwarePackageMutation) Arch() (r string, exists bool) {
+	v := m.arch
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSizeBytes returns the old "size_bytes" field's value of the SoftwarePackage entity.
+// OldArch returns the old "arch" field's value of the SoftwarePackage entity.
 // If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldSizeBytes(ctx context.Context) (v int64, err error) {
+func (m *SoftwarePackageMutation) OldArch(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSizeBytes is only allowed on UpdateOne operations")
+		return v, errors.New("OldArch is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSizeBytes requires an ID field in the mutation")
+		return v, errors.New("OldArch requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSizeBytes: %w", err)
+		return v, fmt.Errorf("querying old value for OldArch: %w", err)
 	}
-	return oldValue.SizeBytes, nil
+	return oldValue.Arch, nil
 }
 
-// AddSizeBytes adds i to the "size_bytes" field.
-func (m *SoftwarePackageMutation) AddSizeBytes(i int64) {
-	if m.addsize_bytes != nil {
-		*m.addsize_bytes += i
-	} else {
-		m.addsize_bytes = &i
-	}
+// ClearArch clears the value of the "arch" field.
+func (m *SoftwarePackageMutation) ClearArch() {
+	m.arch = nil
+	m.clearedFields[softwarepackage.FieldArch] = struct{}{}
 }
 
-// AddedSizeBytes returns the value that was added to the "size_bytes" field in this mutation.
-func (m *SoftwarePackageMutation) AddedSizeBytes() (r int64, exists bool) {
-	v := m.addsize_bytes
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearSizeBytes clears the value of the "size_bytes" field.
-func (m *SoftwarePackageMutation) ClearSizeBytes() {
-	m.size_bytes = nil
-	m.addsize_bytes = nil
-	m.clearedFields[softwarepackage.FieldSizeBytes] = struct{}{}
-}
-
-// SizeBytesCleared returns if the "size_bytes" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) SizeBytesCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldSizeBytes]
+// ArchCleared returns if the "arch" field was cleared in this mutation.
+func (m *SoftwarePackageMutation) ArchCleared() bool {
+	_, ok := m.clearedFields[softwarepackage.FieldArch]
 	return ok
 }
 
-// ResetSizeBytes resets all changes to the "size_bytes" field.
-func (m *SoftwarePackageMutation) ResetSizeBytes() {
-	m.size_bytes = nil
-	m.addsize_bytes = nil
-	delete(m.clearedFields, softwarepackage.FieldSizeBytes)
+// ResetArch resets all changes to the "arch" field.
+func (m *SoftwarePackageMutation) ResetArch() {
+	m.arch = nil
+	delete(m.clearedFields, softwarepackage.FieldArch)
 }
 
-// SetIconName sets the "icon_name" field.
-func (m *SoftwarePackageMutation) SetIconName(s string) {
-	m.icon_name = &s
+// SetBrewType sets the "brew_type" field.
+func (m *SoftwarePackageMutation) SetBrewType(s string) {
+	m.brew_type = &s
 }
 
-// IconName returns the value of the "icon_name" field in the mutation.
-func (m *SoftwarePackageMutation) IconName() (r string, exists bool) {
-	v := m.icon_name
+// BrewType returns the value of the "brew_type" field in the mutation.
+func (m *SoftwarePackageMutation) BrewType() (r string, exists bool) {
+	v := m.brew_type
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIconName returns the old "icon_name" field's value of the SoftwarePackage entity.
+// OldBrewType returns the old "brew_type" field's value of the SoftwarePackage entity.
 // If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldIconName(ctx context.Context) (v string, err error) {
+func (m *SoftwarePackageMutation) OldBrewType(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIconName is only allowed on UpdateOne operations")
+		return v, errors.New("OldBrewType is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIconName requires an ID field in the mutation")
+		return v, errors.New("OldBrewType requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIconName: %w", err)
+		return v, fmt.Errorf("querying old value for OldBrewType: %w", err)
 	}
-	return oldValue.IconName, nil
+	return oldValue.BrewType, nil
 }
 
-// ClearIconName clears the value of the "icon_name" field.
-func (m *SoftwarePackageMutation) ClearIconName() {
-	m.icon_name = nil
-	m.clearedFields[softwarepackage.FieldIconName] = struct{}{}
+// ClearBrewType clears the value of the "brew_type" field.
+func (m *SoftwarePackageMutation) ClearBrewType() {
+	m.brew_type = nil
+	m.clearedFields[softwarepackage.FieldBrewType] = struct{}{}
 }
 
-// IconNameCleared returns if the "icon_name" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) IconNameCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldIconName]
+// BrewTypeCleared returns if the "brew_type" field was cleared in this mutation.
+func (m *SoftwarePackageMutation) BrewTypeCleared() bool {
+	_, ok := m.clearedFields[softwarepackage.FieldBrewType]
 	return ok
 }
 
-// ResetIconName resets all changes to the "icon_name" field.
-func (m *SoftwarePackageMutation) ResetIconName() {
-	m.icon_name = nil
-	delete(m.clearedFields, softwarepackage.FieldIconName)
+// ResetBrewType resets all changes to the "brew_type" field.
+func (m *SoftwarePackageMutation) ResetBrewType() {
+	m.brew_type = nil
+	delete(m.clearedFields, softwarepackage.FieldBrewType)
 }
 
-// SetDescription sets the "description" field.
-func (m *SoftwarePackageMutation) SetDescription(s string) {
-	m.description = &s
+// SetVerified sets the "verified" field.
+func (m *SoftwarePackageMutation) SetVerified(b bool) {
+	m.verified = &b
 }
 
-// Description returns the value of the "description" field in the mutation.
-func (m *SoftwarePackageMutation) Description() (r string, exists bool) {
-	v := m.description
+// Verified returns the value of the "verified" field in the mutation.
+func (m *SoftwarePackageMutation) Verified() (r bool, exists bool) {
+	v := m.verified
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDescription returns the old "description" field's value of the SoftwarePackage entity.
+// OldVerified returns the old "verified" field's value of the SoftwarePackage entity.
 // If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldDescription(ctx context.Context) (v string, err error) {
+func (m *SoftwarePackageMutation) OldVerified(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+		return v, errors.New("OldVerified is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDescription requires an ID field in the mutation")
+		return v, errors.New("OldVerified requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+		return v, fmt.Errorf("querying old value for OldVerified: %w", err)
 	}
-	return oldValue.Description, nil
+	return oldValue.Verified, nil
 }
 
-// ClearDescription clears the value of the "description" field.
-func (m *SoftwarePackageMutation) ClearDescription() {
-	m.description = nil
-	m.clearedFields[softwarepackage.FieldDescription] = struct{}{}
+// ClearVerified clears the value of the "verified" field.
+func (m *SoftwarePackageMutation) ClearVerified() {
+	m.verified = nil
+	m.clearedFields[softwarepackage.FieldVerified] = struct{}{}
 }
 
-// DescriptionCleared returns if the "description" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) DescriptionCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldDescription]
+// VerifiedCleared returns if the "verified" field was cleared in this mutation.
+func (m *SoftwarePackageMutation) VerifiedCleared() bool {
+	_, ok := m.clearedFields[softwarepackage.FieldVerified]
 	return ok
 }
 
-// ResetDescription resets all changes to the "description" field.
-func (m *SoftwarePackageMutation) ResetDescription() {
-	m.description = nil
-	delete(m.clearedFields, softwarepackage.FieldDescription)
-}
-
-// SetCategory sets the "category" field.
-func (m *SoftwarePackageMutation) SetCategory(s string) {
-	m.category = &s
-}
-
-// Category returns the value of the "category" field in the mutation.
-func (m *SoftwarePackageMutation) Category() (r string, exists bool) {
-	v := m.category
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCategory returns the old "category" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldCategory(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCategory is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCategory requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCategory: %w", err)
-	}
-	return oldValue.Category, nil
-}
-
-// ClearCategory clears the value of the "category" field.
-func (m *SoftwarePackageMutation) ClearCategory() {
-	m.category = nil
-	m.clearedFields[softwarepackage.FieldCategory] = struct{}{}
-}
-
-// CategoryCleared returns if the "category" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) CategoryCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldCategory]
-	return ok
-}
-
-// ResetCategory resets all changes to the "category" field.
-func (m *SoftwarePackageMutation) ResetCategory() {
-	m.category = nil
-	delete(m.clearedFields, softwarepackage.FieldCategory)
-}
-
-// SetDeveloper sets the "developer" field.
-func (m *SoftwarePackageMutation) SetDeveloper(s string) {
-	m.developer = &s
-}
-
-// Developer returns the value of the "developer" field in the mutation.
-func (m *SoftwarePackageMutation) Developer() (r string, exists bool) {
-	v := m.developer
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeveloper returns the old "developer" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldDeveloper(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeveloper is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeveloper requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeveloper: %w", err)
-	}
-	return oldValue.Developer, nil
-}
-
-// ClearDeveloper clears the value of the "developer" field.
-func (m *SoftwarePackageMutation) ClearDeveloper() {
-	m.developer = nil
-	m.clearedFields[softwarepackage.FieldDeveloper] = struct{}{}
-}
-
-// DeveloperCleared returns if the "developer" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) DeveloperCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldDeveloper]
-	return ok
-}
-
-// ResetDeveloper resets all changes to the "developer" field.
-func (m *SoftwarePackageMutation) ResetDeveloper() {
-	m.developer = nil
-	delete(m.clearedFields, softwarepackage.FieldDeveloper)
-}
-
-// SetPkginfoData sets the "pkginfo_data" field.
-func (m *SoftwarePackageMutation) SetPkginfoData(s string) {
-	m.pkginfo_data = &s
-}
-
-// PkginfoData returns the value of the "pkginfo_data" field in the mutation.
-func (m *SoftwarePackageMutation) PkginfoData() (r string, exists bool) {
-	v := m.pkginfo_data
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPkginfoData returns the old "pkginfo_data" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldPkginfoData(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPkginfoData is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPkginfoData requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPkginfoData: %w", err)
-	}
-	return oldValue.PkginfoData, nil
-}
-
-// ClearPkginfoData clears the value of the "pkginfo_data" field.
-func (m *SoftwarePackageMutation) ClearPkginfoData() {
-	m.pkginfo_data = nil
-	m.clearedFields[softwarepackage.FieldPkginfoData] = struct{}{}
-}
-
-// PkginfoDataCleared returns if the "pkginfo_data" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) PkginfoDataCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldPkginfoData]
-	return ok
-}
-
-// ResetPkginfoData resets all changes to the "pkginfo_data" field.
-func (m *SoftwarePackageMutation) ResetPkginfoData() {
-	m.pkginfo_data = nil
-	delete(m.clearedFields, softwarepackage.FieldPkginfoData)
-}
-
-// SetPreInstallScript sets the "pre_install_script" field.
-func (m *SoftwarePackageMutation) SetPreInstallScript(s string) {
-	m.pre_install_script = &s
-}
-
-// PreInstallScript returns the value of the "pre_install_script" field in the mutation.
-func (m *SoftwarePackageMutation) PreInstallScript() (r string, exists bool) {
-	v := m.pre_install_script
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPreInstallScript returns the old "pre_install_script" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldPreInstallScript(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPreInstallScript is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPreInstallScript requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPreInstallScript: %w", err)
-	}
-	return oldValue.PreInstallScript, nil
-}
-
-// ClearPreInstallScript clears the value of the "pre_install_script" field.
-func (m *SoftwarePackageMutation) ClearPreInstallScript() {
-	m.pre_install_script = nil
-	m.clearedFields[softwarepackage.FieldPreInstallScript] = struct{}{}
-}
-
-// PreInstallScriptCleared returns if the "pre_install_script" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) PreInstallScriptCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldPreInstallScript]
-	return ok
-}
-
-// ResetPreInstallScript resets all changes to the "pre_install_script" field.
-func (m *SoftwarePackageMutation) ResetPreInstallScript() {
-	m.pre_install_script = nil
-	delete(m.clearedFields, softwarepackage.FieldPreInstallScript)
-}
-
-// SetPostInstallScript sets the "post_install_script" field.
-func (m *SoftwarePackageMutation) SetPostInstallScript(s string) {
-	m.post_install_script = &s
-}
-
-// PostInstallScript returns the value of the "post_install_script" field in the mutation.
-func (m *SoftwarePackageMutation) PostInstallScript() (r string, exists bool) {
-	v := m.post_install_script
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPostInstallScript returns the old "post_install_script" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldPostInstallScript(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPostInstallScript is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPostInstallScript requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPostInstallScript: %w", err)
-	}
-	return oldValue.PostInstallScript, nil
-}
-
-// ClearPostInstallScript clears the value of the "post_install_script" field.
-func (m *SoftwarePackageMutation) ClearPostInstallScript() {
-	m.post_install_script = nil
-	m.clearedFields[softwarepackage.FieldPostInstallScript] = struct{}{}
-}
-
-// PostInstallScriptCleared returns if the "post_install_script" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) PostInstallScriptCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldPostInstallScript]
-	return ok
-}
-
-// ResetPostInstallScript resets all changes to the "post_install_script" field.
-func (m *SoftwarePackageMutation) ResetPostInstallScript() {
-	m.post_install_script = nil
-	delete(m.clearedFields, softwarepackage.FieldPostInstallScript)
-}
-
-// SetUninstallMethod sets the "uninstall_method" field.
-func (m *SoftwarePackageMutation) SetUninstallMethod(s string) {
-	m.uninstall_method = &s
-}
-
-// UninstallMethod returns the value of the "uninstall_method" field in the mutation.
-func (m *SoftwarePackageMutation) UninstallMethod() (r string, exists bool) {
-	v := m.uninstall_method
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUninstallMethod returns the old "uninstall_method" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldUninstallMethod(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUninstallMethod is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUninstallMethod requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUninstallMethod: %w", err)
-	}
-	return oldValue.UninstallMethod, nil
-}
-
-// ClearUninstallMethod clears the value of the "uninstall_method" field.
-func (m *SoftwarePackageMutation) ClearUninstallMethod() {
-	m.uninstall_method = nil
-	m.clearedFields[softwarepackage.FieldUninstallMethod] = struct{}{}
-}
-
-// UninstallMethodCleared returns if the "uninstall_method" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) UninstallMethodCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldUninstallMethod]
-	return ok
-}
-
-// ResetUninstallMethod resets all changes to the "uninstall_method" field.
-func (m *SoftwarePackageMutation) ResetUninstallMethod() {
-	m.uninstall_method = nil
-	delete(m.clearedFields, softwarepackage.FieldUninstallMethod)
-}
-
-// SetInstallsItems sets the "installs_items" field.
-func (m *SoftwarePackageMutation) SetInstallsItems(s string) {
-	m.installs_items = &s
-}
-
-// InstallsItems returns the value of the "installs_items" field in the mutation.
-func (m *SoftwarePackageMutation) InstallsItems() (r string, exists bool) {
-	v := m.installs_items
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldInstallsItems returns the old "installs_items" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldInstallsItems(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInstallsItems is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInstallsItems requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInstallsItems: %w", err)
-	}
-	return oldValue.InstallsItems, nil
-}
-
-// ClearInstallsItems clears the value of the "installs_items" field.
-func (m *SoftwarePackageMutation) ClearInstallsItems() {
-	m.installs_items = nil
-	m.clearedFields[softwarepackage.FieldInstallsItems] = struct{}{}
-}
-
-// InstallsItemsCleared returns if the "installs_items" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) InstallsItemsCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldInstallsItems]
-	return ok
-}
-
-// ResetInstallsItems resets all changes to the "installs_items" field.
-func (m *SoftwarePackageMutation) ResetInstallsItems() {
-	m.installs_items = nil
-	delete(m.clearedFields, softwarepackage.FieldInstallsItems)
-}
-
-// SetReceipts sets the "receipts" field.
-func (m *SoftwarePackageMutation) SetReceipts(s string) {
-	m.receipts = &s
-}
-
-// Receipts returns the value of the "receipts" field in the mutation.
-func (m *SoftwarePackageMutation) Receipts() (r string, exists bool) {
-	v := m.receipts
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldReceipts returns the old "receipts" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldReceipts(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldReceipts is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldReceipts requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldReceipts: %w", err)
-	}
-	return oldValue.Receipts, nil
-}
-
-// ClearReceipts clears the value of the "receipts" field.
-func (m *SoftwarePackageMutation) ClearReceipts() {
-	m.receipts = nil
-	m.clearedFields[softwarepackage.FieldReceipts] = struct{}{}
-}
-
-// ReceiptsCleared returns if the "receipts" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) ReceiptsCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldReceipts]
-	return ok
-}
-
-// ResetReceipts resets all changes to the "receipts" field.
-func (m *SoftwarePackageMutation) ResetReceipts() {
-	m.receipts = nil
-	delete(m.clearedFields, softwarepackage.FieldReceipts)
-}
-
-// SetBlockingApps sets the "blocking_apps" field.
-func (m *SoftwarePackageMutation) SetBlockingApps(s string) {
-	m.blocking_apps = &s
-}
-
-// BlockingApps returns the value of the "blocking_apps" field in the mutation.
-func (m *SoftwarePackageMutation) BlockingApps() (r string, exists bool) {
-	v := m.blocking_apps
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldBlockingApps returns the old "blocking_apps" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldBlockingApps(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBlockingApps is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBlockingApps requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBlockingApps: %w", err)
-	}
-	return oldValue.BlockingApps, nil
-}
-
-// ClearBlockingApps clears the value of the "blocking_apps" field.
-func (m *SoftwarePackageMutation) ClearBlockingApps() {
-	m.blocking_apps = nil
-	m.clearedFields[softwarepackage.FieldBlockingApps] = struct{}{}
-}
-
-// BlockingAppsCleared returns if the "blocking_apps" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) BlockingAppsCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldBlockingApps]
-	return ok
-}
-
-// ResetBlockingApps resets all changes to the "blocking_apps" field.
-func (m *SoftwarePackageMutation) ResetBlockingApps() {
-	m.blocking_apps = nil
-	delete(m.clearedFields, softwarepackage.FieldBlockingApps)
-}
-
-// SetRestartAction sets the "restart_action" field.
-func (m *SoftwarePackageMutation) SetRestartAction(sa softwarepackage.RestartAction) {
-	m.restart_action = &sa
-}
-
-// RestartAction returns the value of the "restart_action" field in the mutation.
-func (m *SoftwarePackageMutation) RestartAction() (r softwarepackage.RestartAction, exists bool) {
-	v := m.restart_action
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRestartAction returns the old "restart_action" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldRestartAction(ctx context.Context) (v softwarepackage.RestartAction, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRestartAction is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRestartAction requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRestartAction: %w", err)
-	}
-	return oldValue.RestartAction, nil
-}
-
-// ClearRestartAction clears the value of the "restart_action" field.
-func (m *SoftwarePackageMutation) ClearRestartAction() {
-	m.restart_action = nil
-	m.clearedFields[softwarepackage.FieldRestartAction] = struct{}{}
-}
-
-// RestartActionCleared returns if the "restart_action" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) RestartActionCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldRestartAction]
-	return ok
-}
-
-// ResetRestartAction resets all changes to the "restart_action" field.
-func (m *SoftwarePackageMutation) ResetRestartAction() {
-	m.restart_action = nil
-	delete(m.clearedFields, softwarepackage.FieldRestartAction)
-}
-
-// SetMinOsVersion sets the "min_os_version" field.
-func (m *SoftwarePackageMutation) SetMinOsVersion(s string) {
-	m.min_os_version = &s
-}
-
-// MinOsVersion returns the value of the "min_os_version" field in the mutation.
-func (m *SoftwarePackageMutation) MinOsVersion() (r string, exists bool) {
-	v := m.min_os_version
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMinOsVersion returns the old "min_os_version" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldMinOsVersion(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMinOsVersion is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMinOsVersion requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMinOsVersion: %w", err)
-	}
-	return oldValue.MinOsVersion, nil
-}
-
-// ClearMinOsVersion clears the value of the "min_os_version" field.
-func (m *SoftwarePackageMutation) ClearMinOsVersion() {
-	m.min_os_version = nil
-	m.clearedFields[softwarepackage.FieldMinOsVersion] = struct{}{}
-}
-
-// MinOsVersionCleared returns if the "min_os_version" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) MinOsVersionCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldMinOsVersion]
-	return ok
-}
-
-// ResetMinOsVersion resets all changes to the "min_os_version" field.
-func (m *SoftwarePackageMutation) ResetMinOsVersion() {
-	m.min_os_version = nil
-	delete(m.clearedFields, softwarepackage.FieldMinOsVersion)
-}
-
-// SetMaxOsVersion sets the "max_os_version" field.
-func (m *SoftwarePackageMutation) SetMaxOsVersion(s string) {
-	m.max_os_version = &s
-}
-
-// MaxOsVersion returns the value of the "max_os_version" field in the mutation.
-func (m *SoftwarePackageMutation) MaxOsVersion() (r string, exists bool) {
-	v := m.max_os_version
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldMaxOsVersion returns the old "max_os_version" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldMaxOsVersion(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldMaxOsVersion is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldMaxOsVersion requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldMaxOsVersion: %w", err)
-	}
-	return oldValue.MaxOsVersion, nil
-}
-
-// ClearMaxOsVersion clears the value of the "max_os_version" field.
-func (m *SoftwarePackageMutation) ClearMaxOsVersion() {
-	m.max_os_version = nil
-	m.clearedFields[softwarepackage.FieldMaxOsVersion] = struct{}{}
-}
-
-// MaxOsVersionCleared returns if the "max_os_version" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) MaxOsVersionCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldMaxOsVersion]
-	return ok
-}
-
-// ResetMaxOsVersion resets all changes to the "max_os_version" field.
-func (m *SoftwarePackageMutation) ResetMaxOsVersion() {
-	m.max_os_version = nil
-	delete(m.clearedFields, softwarepackage.FieldMaxOsVersion)
-}
-
-// SetSupportedArchitectures sets the "supported_architectures" field.
-func (m *SoftwarePackageMutation) SetSupportedArchitectures(s string) {
-	m.supported_architectures = &s
-}
-
-// SupportedArchitectures returns the value of the "supported_architectures" field in the mutation.
-func (m *SoftwarePackageMutation) SupportedArchitectures() (r string, exists bool) {
-	v := m.supported_architectures
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSupportedArchitectures returns the old "supported_architectures" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldSupportedArchitectures(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSupportedArchitectures is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSupportedArchitectures requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSupportedArchitectures: %w", err)
-	}
-	return oldValue.SupportedArchitectures, nil
-}
-
-// ClearSupportedArchitectures clears the value of the "supported_architectures" field.
-func (m *SoftwarePackageMutation) ClearSupportedArchitectures() {
-	m.supported_architectures = nil
-	m.clearedFields[softwarepackage.FieldSupportedArchitectures] = struct{}{}
-}
-
-// SupportedArchitecturesCleared returns if the "supported_architectures" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) SupportedArchitecturesCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldSupportedArchitectures]
-	return ok
-}
-
-// ResetSupportedArchitectures resets all changes to the "supported_architectures" field.
-func (m *SoftwarePackageMutation) ResetSupportedArchitectures() {
-	m.supported_architectures = nil
-	delete(m.clearedFields, softwarepackage.FieldSupportedArchitectures)
-}
-
-// SetForceInstallDate sets the "force_install_date" field.
-func (m *SoftwarePackageMutation) SetForceInstallDate(t time.Time) {
-	m.force_install_date = &t
-}
-
-// ForceInstallDate returns the value of the "force_install_date" field in the mutation.
-func (m *SoftwarePackageMutation) ForceInstallDate() (r time.Time, exists bool) {
-	v := m.force_install_date
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldForceInstallDate returns the old "force_install_date" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldForceInstallDate(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldForceInstallDate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldForceInstallDate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldForceInstallDate: %w", err)
-	}
-	return oldValue.ForceInstallDate, nil
-}
-
-// ClearForceInstallDate clears the value of the "force_install_date" field.
-func (m *SoftwarePackageMutation) ClearForceInstallDate() {
-	m.force_install_date = nil
-	m.clearedFields[softwarepackage.FieldForceInstallDate] = struct{}{}
-}
-
-// ForceInstallDateCleared returns if the "force_install_date" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) ForceInstallDateCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldForceInstallDate]
-	return ok
-}
-
-// ResetForceInstallDate resets all changes to the "force_install_date" field.
-func (m *SoftwarePackageMutation) ResetForceInstallDate() {
-	m.force_install_date = nil
-	delete(m.clearedFields, softwarepackage.FieldForceInstallDate)
-}
-
-// SetUnattendedInstall sets the "unattended_install" field.
-func (m *SoftwarePackageMutation) SetUnattendedInstall(b bool) {
-	m.unattended_install = &b
-}
-
-// UnattendedInstall returns the value of the "unattended_install" field in the mutation.
-func (m *SoftwarePackageMutation) UnattendedInstall() (r bool, exists bool) {
-	v := m.unattended_install
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUnattendedInstall returns the old "unattended_install" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldUnattendedInstall(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUnattendedInstall is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUnattendedInstall requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUnattendedInstall: %w", err)
-	}
-	return oldValue.UnattendedInstall, nil
-}
-
-// ClearUnattendedInstall clears the value of the "unattended_install" field.
-func (m *SoftwarePackageMutation) ClearUnattendedInstall() {
-	m.unattended_install = nil
-	m.clearedFields[softwarepackage.FieldUnattendedInstall] = struct{}{}
-}
-
-// UnattendedInstallCleared returns if the "unattended_install" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) UnattendedInstallCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldUnattendedInstall]
-	return ok
-}
-
-// ResetUnattendedInstall resets all changes to the "unattended_install" field.
-func (m *SoftwarePackageMutation) ResetUnattendedInstall() {
-	m.unattended_install = nil
-	delete(m.clearedFields, softwarepackage.FieldUnattendedInstall)
-}
-
-// SetUnattendedUninstall sets the "unattended_uninstall" field.
-func (m *SoftwarePackageMutation) SetUnattendedUninstall(b bool) {
-	m.unattended_uninstall = &b
-}
-
-// UnattendedUninstall returns the value of the "unattended_uninstall" field in the mutation.
-func (m *SoftwarePackageMutation) UnattendedUninstall() (r bool, exists bool) {
-	v := m.unattended_uninstall
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUnattendedUninstall returns the old "unattended_uninstall" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldUnattendedUninstall(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUnattendedUninstall is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUnattendedUninstall requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUnattendedUninstall: %w", err)
-	}
-	return oldValue.UnattendedUninstall, nil
-}
-
-// ClearUnattendedUninstall clears the value of the "unattended_uninstall" field.
-func (m *SoftwarePackageMutation) ClearUnattendedUninstall() {
-	m.unattended_uninstall = nil
-	m.clearedFields[softwarepackage.FieldUnattendedUninstall] = struct{}{}
-}
-
-// UnattendedUninstallCleared returns if the "unattended_uninstall" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) UnattendedUninstallCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldUnattendedUninstall]
-	return ok
-}
-
-// ResetUnattendedUninstall resets all changes to the "unattended_uninstall" field.
-func (m *SoftwarePackageMutation) ResetUnattendedUninstall() {
-	m.unattended_uninstall = nil
-	delete(m.clearedFields, softwarepackage.FieldUnattendedUninstall)
-}
-
-// SetStatus sets the "status" field.
-func (m *SoftwarePackageMutation) SetStatus(s softwarepackage.Status) {
-	m.status = &s
-}
-
-// Status returns the value of the "status" field in the mutation.
-func (m *SoftwarePackageMutation) Status() (r softwarepackage.Status, exists bool) {
-	v := m.status
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldStatus returns the old "status" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldStatus(ctx context.Context) (v softwarepackage.Status, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStatus requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
-	}
-	return oldValue.Status, nil
-}
-
-// ClearStatus clears the value of the "status" field.
-func (m *SoftwarePackageMutation) ClearStatus() {
-	m.status = nil
-	m.clearedFields[softwarepackage.FieldStatus] = struct{}{}
-}
-
-// StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldStatus]
-	return ok
-}
-
-// ResetStatus resets all changes to the "status" field.
-func (m *SoftwarePackageMutation) ResetStatus() {
-	m.status = nil
-	delete(m.clearedFields, softwarepackage.FieldStatus)
+// ResetVerified resets all changes to the "verified" field.
+func (m *SoftwarePackageMutation) ResetVerified() {
+	m.verified = nil
+	delete(m.clearedFields, softwarepackage.FieldVerified)
 }
 
 // SetSource sets the "source" field.
-func (m *SoftwarePackageMutation) SetSource(s softwarepackage.Source) {
+func (m *SoftwarePackageMutation) SetSource(s string) {
 	m.source = &s
 }
 
 // Source returns the value of the "source" field in the mutation.
-func (m *SoftwarePackageMutation) Source() (r softwarepackage.Source, exists bool) {
+func (m *SoftwarePackageMutation) Source() (r string, exists bool) {
 	v := m.source
 	if v == nil {
 		return
@@ -35184,7 +37398,7 @@ func (m *SoftwarePackageMutation) Source() (r softwarepackage.Source, exists boo
 // OldSource returns the old "source" field's value of the SoftwarePackage entity.
 // If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldSource(ctx context.Context) (v softwarepackage.Source, err error) {
+func (m *SoftwarePackageMutation) OldSource(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSource is only allowed on UpdateOne operations")
 	}
@@ -35198,507 +37412,9 @@ func (m *SoftwarePackageMutation) OldSource(ctx context.Context) (v softwarepack
 	return oldValue.Source, nil
 }
 
-// ClearSource clears the value of the "source" field.
-func (m *SoftwarePackageMutation) ClearSource() {
-	m.source = nil
-	m.clearedFields[softwarepackage.FieldSource] = struct{}{}
-}
-
-// SourceCleared returns if the "source" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) SourceCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldSource]
-	return ok
-}
-
 // ResetSource resets all changes to the "source" field.
 func (m *SoftwarePackageMutation) ResetSource() {
 	m.source = nil
-	delete(m.clearedFields, softwarepackage.FieldSource)
-}
-
-// SetCreated sets the "created" field.
-func (m *SoftwarePackageMutation) SetCreated(t time.Time) {
-	m.created = &t
-}
-
-// Created returns the value of the "created" field in the mutation.
-func (m *SoftwarePackageMutation) Created() (r time.Time, exists bool) {
-	v := m.created
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreated returns the old "created" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldCreated(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreated is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreated requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreated: %w", err)
-	}
-	return oldValue.Created, nil
-}
-
-// ClearCreated clears the value of the "created" field.
-func (m *SoftwarePackageMutation) ClearCreated() {
-	m.created = nil
-	m.clearedFields[softwarepackage.FieldCreated] = struct{}{}
-}
-
-// CreatedCleared returns if the "created" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) CreatedCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldCreated]
-	return ok
-}
-
-// ResetCreated resets all changes to the "created" field.
-func (m *SoftwarePackageMutation) ResetCreated() {
-	m.created = nil
-	delete(m.clearedFields, softwarepackage.FieldCreated)
-}
-
-// SetModified sets the "modified" field.
-func (m *SoftwarePackageMutation) SetModified(t time.Time) {
-	m.modified = &t
-}
-
-// Modified returns the value of the "modified" field in the mutation.
-func (m *SoftwarePackageMutation) Modified() (r time.Time, exists bool) {
-	v := m.modified
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldModified returns the old "modified" field's value of the SoftwarePackage entity.
-// If the SoftwarePackage object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SoftwarePackageMutation) OldModified(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldModified is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldModified requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldModified: %w", err)
-	}
-	return oldValue.Modified, nil
-}
-
-// ClearModified clears the value of the "modified" field.
-func (m *SoftwarePackageMutation) ClearModified() {
-	m.modified = nil
-	m.clearedFields[softwarepackage.FieldModified] = struct{}{}
-}
-
-// ModifiedCleared returns if the "modified" field was cleared in this mutation.
-func (m *SoftwarePackageMutation) ModifiedCleared() bool {
-	_, ok := m.clearedFields[softwarepackage.FieldModified]
-	return ok
-}
-
-// ResetModified resets all changes to the "modified" field.
-func (m *SoftwarePackageMutation) ResetModified() {
-	m.modified = nil
-	delete(m.clearedFields, softwarepackage.FieldModified)
-}
-
-// SetRepoID sets the "repo" edge to the SoftwareRepo entity by id.
-func (m *SoftwarePackageMutation) SetRepoID(id int) {
-	m.repo = &id
-}
-
-// ClearRepo clears the "repo" edge to the SoftwareRepo entity.
-func (m *SoftwarePackageMutation) ClearRepo() {
-	m.clearedrepo = true
-}
-
-// RepoCleared reports if the "repo" edge to the SoftwareRepo entity was cleared.
-func (m *SoftwarePackageMutation) RepoCleared() bool {
-	return m.clearedrepo
-}
-
-// RepoID returns the "repo" edge ID in the mutation.
-func (m *SoftwarePackageMutation) RepoID() (id int, exists bool) {
-	if m.repo != nil {
-		return *m.repo, true
-	}
-	return
-}
-
-// RepoIDs returns the "repo" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// RepoID instead. It exists only for internal usage by the builders.
-func (m *SoftwarePackageMutation) RepoIDs() (ids []int) {
-	if id := m.repo; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetRepo resets all changes to the "repo" edge.
-func (m *SoftwarePackageMutation) ResetRepo() {
-	m.repo = nil
-	m.clearedrepo = false
-}
-
-// AddCatalogIDs adds the "catalogs" edge to the SoftwareCatalog entity by ids.
-func (m *SoftwarePackageMutation) AddCatalogIDs(ids ...int) {
-	if m.catalogs == nil {
-		m.catalogs = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.catalogs[ids[i]] = struct{}{}
-	}
-}
-
-// ClearCatalogs clears the "catalogs" edge to the SoftwareCatalog entity.
-func (m *SoftwarePackageMutation) ClearCatalogs() {
-	m.clearedcatalogs = true
-}
-
-// CatalogsCleared reports if the "catalogs" edge to the SoftwareCatalog entity was cleared.
-func (m *SoftwarePackageMutation) CatalogsCleared() bool {
-	return m.clearedcatalogs
-}
-
-// RemoveCatalogIDs removes the "catalogs" edge to the SoftwareCatalog entity by IDs.
-func (m *SoftwarePackageMutation) RemoveCatalogIDs(ids ...int) {
-	if m.removedcatalogs == nil {
-		m.removedcatalogs = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.catalogs, ids[i])
-		m.removedcatalogs[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedCatalogs returns the removed IDs of the "catalogs" edge to the SoftwareCatalog entity.
-func (m *SoftwarePackageMutation) RemovedCatalogsIDs() (ids []int) {
-	for id := range m.removedcatalogs {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// CatalogsIDs returns the "catalogs" edge IDs in the mutation.
-func (m *SoftwarePackageMutation) CatalogsIDs() (ids []int) {
-	for id := range m.catalogs {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetCatalogs resets all changes to the "catalogs" edge.
-func (m *SoftwarePackageMutation) ResetCatalogs() {
-	m.catalogs = nil
-	m.clearedcatalogs = false
-	m.removedcatalogs = nil
-}
-
-// SetTenantID sets the "tenant" edge to the Tenant entity by id.
-func (m *SoftwarePackageMutation) SetTenantID(id int) {
-	m.tenant = &id
-}
-
-// ClearTenant clears the "tenant" edge to the Tenant entity.
-func (m *SoftwarePackageMutation) ClearTenant() {
-	m.clearedtenant = true
-}
-
-// TenantCleared reports if the "tenant" edge to the Tenant entity was cleared.
-func (m *SoftwarePackageMutation) TenantCleared() bool {
-	return m.clearedtenant
-}
-
-// TenantID returns the "tenant" edge ID in the mutation.
-func (m *SoftwarePackageMutation) TenantID() (id int, exists bool) {
-	if m.tenant != nil {
-		return *m.tenant, true
-	}
-	return
-}
-
-// TenantIDs returns the "tenant" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// TenantID instead. It exists only for internal usage by the builders.
-func (m *SoftwarePackageMutation) TenantIDs() (ids []int) {
-	if id := m.tenant; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetTenant resets all changes to the "tenant" edge.
-func (m *SoftwarePackageMutation) ResetTenant() {
-	m.tenant = nil
-	m.clearedtenant = false
-}
-
-// AddInstallLogIDs adds the "install_logs" edge to the SoftwareInstallLog entity by ids.
-func (m *SoftwarePackageMutation) AddInstallLogIDs(ids ...int) {
-	if m.install_logs == nil {
-		m.install_logs = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.install_logs[ids[i]] = struct{}{}
-	}
-}
-
-// ClearInstallLogs clears the "install_logs" edge to the SoftwareInstallLog entity.
-func (m *SoftwarePackageMutation) ClearInstallLogs() {
-	m.clearedinstall_logs = true
-}
-
-// InstallLogsCleared reports if the "install_logs" edge to the SoftwareInstallLog entity was cleared.
-func (m *SoftwarePackageMutation) InstallLogsCleared() bool {
-	return m.clearedinstall_logs
-}
-
-// RemoveInstallLogIDs removes the "install_logs" edge to the SoftwareInstallLog entity by IDs.
-func (m *SoftwarePackageMutation) RemoveInstallLogIDs(ids ...int) {
-	if m.removedinstall_logs == nil {
-		m.removedinstall_logs = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.install_logs, ids[i])
-		m.removedinstall_logs[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedInstallLogs returns the removed IDs of the "install_logs" edge to the SoftwareInstallLog entity.
-func (m *SoftwarePackageMutation) RemovedInstallLogsIDs() (ids []int) {
-	for id := range m.removedinstall_logs {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// InstallLogsIDs returns the "install_logs" edge IDs in the mutation.
-func (m *SoftwarePackageMutation) InstallLogsIDs() (ids []int) {
-	for id := range m.install_logs {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetInstallLogs resets all changes to the "install_logs" edge.
-func (m *SoftwarePackageMutation) ResetInstallLogs() {
-	m.install_logs = nil
-	m.clearedinstall_logs = false
-	m.removedinstall_logs = nil
-}
-
-// AddRequireIDs adds the "requires" edge to the SoftwarePackage entity by ids.
-func (m *SoftwarePackageMutation) AddRequireIDs(ids ...int) {
-	if m.requires == nil {
-		m.requires = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.requires[ids[i]] = struct{}{}
-	}
-}
-
-// ClearRequires clears the "requires" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) ClearRequires() {
-	m.clearedrequires = true
-}
-
-// RequiresCleared reports if the "requires" edge to the SoftwarePackage entity was cleared.
-func (m *SoftwarePackageMutation) RequiresCleared() bool {
-	return m.clearedrequires
-}
-
-// RemoveRequireIDs removes the "requires" edge to the SoftwarePackage entity by IDs.
-func (m *SoftwarePackageMutation) RemoveRequireIDs(ids ...int) {
-	if m.removedrequires == nil {
-		m.removedrequires = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.requires, ids[i])
-		m.removedrequires[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedRequires returns the removed IDs of the "requires" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) RemovedRequiresIDs() (ids []int) {
-	for id := range m.removedrequires {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// RequiresIDs returns the "requires" edge IDs in the mutation.
-func (m *SoftwarePackageMutation) RequiresIDs() (ids []int) {
-	for id := range m.requires {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetRequires resets all changes to the "requires" edge.
-func (m *SoftwarePackageMutation) ResetRequires() {
-	m.requires = nil
-	m.clearedrequires = false
-	m.removedrequires = nil
-}
-
-// AddUpdateForIDs adds the "update_for" edge to the SoftwarePackage entity by ids.
-func (m *SoftwarePackageMutation) AddUpdateForIDs(ids ...int) {
-	if m.update_for == nil {
-		m.update_for = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.update_for[ids[i]] = struct{}{}
-	}
-}
-
-// ClearUpdateFor clears the "update_for" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) ClearUpdateFor() {
-	m.clearedupdate_for = true
-}
-
-// UpdateForCleared reports if the "update_for" edge to the SoftwarePackage entity was cleared.
-func (m *SoftwarePackageMutation) UpdateForCleared() bool {
-	return m.clearedupdate_for
-}
-
-// RemoveUpdateForIDs removes the "update_for" edge to the SoftwarePackage entity by IDs.
-func (m *SoftwarePackageMutation) RemoveUpdateForIDs(ids ...int) {
-	if m.removedupdate_for == nil {
-		m.removedupdate_for = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.update_for, ids[i])
-		m.removedupdate_for[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUpdateFor returns the removed IDs of the "update_for" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) RemovedUpdateForIDs() (ids []int) {
-	for id := range m.removedupdate_for {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// UpdateForIDs returns the "update_for" edge IDs in the mutation.
-func (m *SoftwarePackageMutation) UpdateForIDs() (ids []int) {
-	for id := range m.update_for {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetUpdateFor resets all changes to the "update_for" edge.
-func (m *SoftwarePackageMutation) ResetUpdateFor() {
-	m.update_for = nil
-	m.clearedupdate_for = false
-	m.removedupdate_for = nil
-}
-
-// SetGlobalRefID sets the "global_ref" edge to the SoftwarePackage entity by id.
-func (m *SoftwarePackageMutation) SetGlobalRefID(id int) {
-	m.global_ref = &id
-}
-
-// ClearGlobalRef clears the "global_ref" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) ClearGlobalRef() {
-	m.clearedglobal_ref = true
-}
-
-// GlobalRefCleared reports if the "global_ref" edge to the SoftwarePackage entity was cleared.
-func (m *SoftwarePackageMutation) GlobalRefCleared() bool {
-	return m.clearedglobal_ref
-}
-
-// GlobalRefID returns the "global_ref" edge ID in the mutation.
-func (m *SoftwarePackageMutation) GlobalRefID() (id int, exists bool) {
-	if m.global_ref != nil {
-		return *m.global_ref, true
-	}
-	return
-}
-
-// GlobalRefIDs returns the "global_ref" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// GlobalRefID instead. It exists only for internal usage by the builders.
-func (m *SoftwarePackageMutation) GlobalRefIDs() (ids []int) {
-	if id := m.global_ref; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetGlobalRef resets all changes to the "global_ref" edge.
-func (m *SoftwarePackageMutation) ResetGlobalRef() {
-	m.global_ref = nil
-	m.clearedglobal_ref = false
-}
-
-// AddSubscriberIDs adds the "subscribers" edge to the SoftwarePackage entity by ids.
-func (m *SoftwarePackageMutation) AddSubscriberIDs(ids ...int) {
-	if m.subscribers == nil {
-		m.subscribers = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.subscribers[ids[i]] = struct{}{}
-	}
-}
-
-// ClearSubscribers clears the "subscribers" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) ClearSubscribers() {
-	m.clearedsubscribers = true
-}
-
-// SubscribersCleared reports if the "subscribers" edge to the SoftwarePackage entity was cleared.
-func (m *SoftwarePackageMutation) SubscribersCleared() bool {
-	return m.clearedsubscribers
-}
-
-// RemoveSubscriberIDs removes the "subscribers" edge to the SoftwarePackage entity by IDs.
-func (m *SoftwarePackageMutation) RemoveSubscriberIDs(ids ...int) {
-	if m.removedsubscribers == nil {
-		m.removedsubscribers = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.subscribers, ids[i])
-		m.removedsubscribers[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedSubscribers returns the removed IDs of the "subscribers" edge to the SoftwarePackage entity.
-func (m *SoftwarePackageMutation) RemovedSubscribersIDs() (ids []int) {
-	for id := range m.removedsubscribers {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// SubscribersIDs returns the "subscribers" edge IDs in the mutation.
-func (m *SoftwarePackageMutation) SubscribersIDs() (ids []int) {
-	for id := range m.subscribers {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetSubscribers resets all changes to the "subscribers" edge.
-func (m *SoftwarePackageMutation) ResetSubscribers() {
-	m.subscribers = nil
-	m.clearedsubscribers = false
-	m.removedsubscribers = nil
 }
 
 // Where appends a list predicates to the SoftwarePackageMutation builder.
@@ -35735,93 +37451,30 @@ func (m *SoftwarePackageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SoftwarePackageMutation) Fields() []string {
-	fields := make([]string, 0, 29)
+	fields := make([]string, 0, 8)
+	if m.package_id != nil {
+		fields = append(fields, softwarepackage.FieldPackageID)
+	}
 	if m.name != nil {
 		fields = append(fields, softwarepackage.FieldName)
-	}
-	if m.display_name != nil {
-		fields = append(fields, softwarepackage.FieldDisplayName)
 	}
 	if m.version != nil {
 		fields = append(fields, softwarepackage.FieldVersion)
 	}
-	if m.platform != nil {
-		fields = append(fields, softwarepackage.FieldPlatform)
+	if m.branch != nil {
+		fields = append(fields, softwarepackage.FieldBranch)
 	}
-	if m.installer_path != nil {
-		fields = append(fields, softwarepackage.FieldInstallerPath)
+	if m.arch != nil {
+		fields = append(fields, softwarepackage.FieldArch)
 	}
-	if m.checksum_sha256 != nil {
-		fields = append(fields, softwarepackage.FieldChecksumSha256)
+	if m.brew_type != nil {
+		fields = append(fields, softwarepackage.FieldBrewType)
 	}
-	if m.size_bytes != nil {
-		fields = append(fields, softwarepackage.FieldSizeBytes)
-	}
-	if m.icon_name != nil {
-		fields = append(fields, softwarepackage.FieldIconName)
-	}
-	if m.description != nil {
-		fields = append(fields, softwarepackage.FieldDescription)
-	}
-	if m.category != nil {
-		fields = append(fields, softwarepackage.FieldCategory)
-	}
-	if m.developer != nil {
-		fields = append(fields, softwarepackage.FieldDeveloper)
-	}
-	if m.pkginfo_data != nil {
-		fields = append(fields, softwarepackage.FieldPkginfoData)
-	}
-	if m.pre_install_script != nil {
-		fields = append(fields, softwarepackage.FieldPreInstallScript)
-	}
-	if m.post_install_script != nil {
-		fields = append(fields, softwarepackage.FieldPostInstallScript)
-	}
-	if m.uninstall_method != nil {
-		fields = append(fields, softwarepackage.FieldUninstallMethod)
-	}
-	if m.installs_items != nil {
-		fields = append(fields, softwarepackage.FieldInstallsItems)
-	}
-	if m.receipts != nil {
-		fields = append(fields, softwarepackage.FieldReceipts)
-	}
-	if m.blocking_apps != nil {
-		fields = append(fields, softwarepackage.FieldBlockingApps)
-	}
-	if m.restart_action != nil {
-		fields = append(fields, softwarepackage.FieldRestartAction)
-	}
-	if m.min_os_version != nil {
-		fields = append(fields, softwarepackage.FieldMinOsVersion)
-	}
-	if m.max_os_version != nil {
-		fields = append(fields, softwarepackage.FieldMaxOsVersion)
-	}
-	if m.supported_architectures != nil {
-		fields = append(fields, softwarepackage.FieldSupportedArchitectures)
-	}
-	if m.force_install_date != nil {
-		fields = append(fields, softwarepackage.FieldForceInstallDate)
-	}
-	if m.unattended_install != nil {
-		fields = append(fields, softwarepackage.FieldUnattendedInstall)
-	}
-	if m.unattended_uninstall != nil {
-		fields = append(fields, softwarepackage.FieldUnattendedUninstall)
-	}
-	if m.status != nil {
-		fields = append(fields, softwarepackage.FieldStatus)
+	if m.verified != nil {
+		fields = append(fields, softwarepackage.FieldVerified)
 	}
 	if m.source != nil {
 		fields = append(fields, softwarepackage.FieldSource)
-	}
-	if m.created != nil {
-		fields = append(fields, softwarepackage.FieldCreated)
-	}
-	if m.modified != nil {
-		fields = append(fields, softwarepackage.FieldModified)
 	}
 	return fields
 }
@@ -35831,64 +37484,22 @@ func (m *SoftwarePackageMutation) Fields() []string {
 // schema.
 func (m *SoftwarePackageMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case softwarepackage.FieldPackageID:
+		return m.PackageID()
 	case softwarepackage.FieldName:
 		return m.Name()
-	case softwarepackage.FieldDisplayName:
-		return m.DisplayName()
 	case softwarepackage.FieldVersion:
 		return m.Version()
-	case softwarepackage.FieldPlatform:
-		return m.Platform()
-	case softwarepackage.FieldInstallerPath:
-		return m.InstallerPath()
-	case softwarepackage.FieldChecksumSha256:
-		return m.ChecksumSha256()
-	case softwarepackage.FieldSizeBytes:
-		return m.SizeBytes()
-	case softwarepackage.FieldIconName:
-		return m.IconName()
-	case softwarepackage.FieldDescription:
-		return m.Description()
-	case softwarepackage.FieldCategory:
-		return m.Category()
-	case softwarepackage.FieldDeveloper:
-		return m.Developer()
-	case softwarepackage.FieldPkginfoData:
-		return m.PkginfoData()
-	case softwarepackage.FieldPreInstallScript:
-		return m.PreInstallScript()
-	case softwarepackage.FieldPostInstallScript:
-		return m.PostInstallScript()
-	case softwarepackage.FieldUninstallMethod:
-		return m.UninstallMethod()
-	case softwarepackage.FieldInstallsItems:
-		return m.InstallsItems()
-	case softwarepackage.FieldReceipts:
-		return m.Receipts()
-	case softwarepackage.FieldBlockingApps:
-		return m.BlockingApps()
-	case softwarepackage.FieldRestartAction:
-		return m.RestartAction()
-	case softwarepackage.FieldMinOsVersion:
-		return m.MinOsVersion()
-	case softwarepackage.FieldMaxOsVersion:
-		return m.MaxOsVersion()
-	case softwarepackage.FieldSupportedArchitectures:
-		return m.SupportedArchitectures()
-	case softwarepackage.FieldForceInstallDate:
-		return m.ForceInstallDate()
-	case softwarepackage.FieldUnattendedInstall:
-		return m.UnattendedInstall()
-	case softwarepackage.FieldUnattendedUninstall:
-		return m.UnattendedUninstall()
-	case softwarepackage.FieldStatus:
-		return m.Status()
+	case softwarepackage.FieldBranch:
+		return m.Branch()
+	case softwarepackage.FieldArch:
+		return m.Arch()
+	case softwarepackage.FieldBrewType:
+		return m.BrewType()
+	case softwarepackage.FieldVerified:
+		return m.Verified()
 	case softwarepackage.FieldSource:
 		return m.Source()
-	case softwarepackage.FieldCreated:
-		return m.Created()
-	case softwarepackage.FieldModified:
-		return m.Modified()
 	}
 	return nil, false
 }
@@ -35898,64 +37509,22 @@ func (m *SoftwarePackageMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *SoftwarePackageMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case softwarepackage.FieldPackageID:
+		return m.OldPackageID(ctx)
 	case softwarepackage.FieldName:
 		return m.OldName(ctx)
-	case softwarepackage.FieldDisplayName:
-		return m.OldDisplayName(ctx)
 	case softwarepackage.FieldVersion:
 		return m.OldVersion(ctx)
-	case softwarepackage.FieldPlatform:
-		return m.OldPlatform(ctx)
-	case softwarepackage.FieldInstallerPath:
-		return m.OldInstallerPath(ctx)
-	case softwarepackage.FieldChecksumSha256:
-		return m.OldChecksumSha256(ctx)
-	case softwarepackage.FieldSizeBytes:
-		return m.OldSizeBytes(ctx)
-	case softwarepackage.FieldIconName:
-		return m.OldIconName(ctx)
-	case softwarepackage.FieldDescription:
-		return m.OldDescription(ctx)
-	case softwarepackage.FieldCategory:
-		return m.OldCategory(ctx)
-	case softwarepackage.FieldDeveloper:
-		return m.OldDeveloper(ctx)
-	case softwarepackage.FieldPkginfoData:
-		return m.OldPkginfoData(ctx)
-	case softwarepackage.FieldPreInstallScript:
-		return m.OldPreInstallScript(ctx)
-	case softwarepackage.FieldPostInstallScript:
-		return m.OldPostInstallScript(ctx)
-	case softwarepackage.FieldUninstallMethod:
-		return m.OldUninstallMethod(ctx)
-	case softwarepackage.FieldInstallsItems:
-		return m.OldInstallsItems(ctx)
-	case softwarepackage.FieldReceipts:
-		return m.OldReceipts(ctx)
-	case softwarepackage.FieldBlockingApps:
-		return m.OldBlockingApps(ctx)
-	case softwarepackage.FieldRestartAction:
-		return m.OldRestartAction(ctx)
-	case softwarepackage.FieldMinOsVersion:
-		return m.OldMinOsVersion(ctx)
-	case softwarepackage.FieldMaxOsVersion:
-		return m.OldMaxOsVersion(ctx)
-	case softwarepackage.FieldSupportedArchitectures:
-		return m.OldSupportedArchitectures(ctx)
-	case softwarepackage.FieldForceInstallDate:
-		return m.OldForceInstallDate(ctx)
-	case softwarepackage.FieldUnattendedInstall:
-		return m.OldUnattendedInstall(ctx)
-	case softwarepackage.FieldUnattendedUninstall:
-		return m.OldUnattendedUninstall(ctx)
-	case softwarepackage.FieldStatus:
-		return m.OldStatus(ctx)
+	case softwarepackage.FieldBranch:
+		return m.OldBranch(ctx)
+	case softwarepackage.FieldArch:
+		return m.OldArch(ctx)
+	case softwarepackage.FieldBrewType:
+		return m.OldBrewType(ctx)
+	case softwarepackage.FieldVerified:
+		return m.OldVerified(ctx)
 	case softwarepackage.FieldSource:
 		return m.OldSource(ctx)
-	case softwarepackage.FieldCreated:
-		return m.OldCreated(ctx)
-	case softwarepackage.FieldModified:
-		return m.OldModified(ctx)
 	}
 	return nil, fmt.Errorf("unknown SoftwarePackage field %s", name)
 }
@@ -35965,19 +37534,19 @@ func (m *SoftwarePackageMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *SoftwarePackageMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case softwarepackage.FieldPackageID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackageID(v)
+		return nil
 	case softwarepackage.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
-		return nil
-	case softwarepackage.FieldDisplayName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDisplayName(v)
 		return nil
 	case softwarepackage.FieldVersion:
 		v, ok := value.(string)
@@ -35986,187 +37555,40 @@ func (m *SoftwarePackageMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetVersion(v)
 		return nil
-	case softwarepackage.FieldPlatform:
-		v, ok := value.(softwarepackage.Platform)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPlatform(v)
-		return nil
-	case softwarepackage.FieldInstallerPath:
+	case softwarepackage.FieldBranch:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetInstallerPath(v)
+		m.SetBranch(v)
 		return nil
-	case softwarepackage.FieldChecksumSha256:
+	case softwarepackage.FieldArch:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetChecksumSha256(v)
+		m.SetArch(v)
 		return nil
-	case softwarepackage.FieldSizeBytes:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSizeBytes(v)
-		return nil
-	case softwarepackage.FieldIconName:
+	case softwarepackage.FieldBrewType:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIconName(v)
+		m.SetBrewType(v)
 		return nil
-	case softwarepackage.FieldDescription:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDescription(v)
-		return nil
-	case softwarepackage.FieldCategory:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCategory(v)
-		return nil
-	case softwarepackage.FieldDeveloper:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeveloper(v)
-		return nil
-	case softwarepackage.FieldPkginfoData:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPkginfoData(v)
-		return nil
-	case softwarepackage.FieldPreInstallScript:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPreInstallScript(v)
-		return nil
-	case softwarepackage.FieldPostInstallScript:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPostInstallScript(v)
-		return nil
-	case softwarepackage.FieldUninstallMethod:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUninstallMethod(v)
-		return nil
-	case softwarepackage.FieldInstallsItems:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetInstallsItems(v)
-		return nil
-	case softwarepackage.FieldReceipts:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetReceipts(v)
-		return nil
-	case softwarepackage.FieldBlockingApps:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetBlockingApps(v)
-		return nil
-	case softwarepackage.FieldRestartAction:
-		v, ok := value.(softwarepackage.RestartAction)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRestartAction(v)
-		return nil
-	case softwarepackage.FieldMinOsVersion:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMinOsVersion(v)
-		return nil
-	case softwarepackage.FieldMaxOsVersion:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetMaxOsVersion(v)
-		return nil
-	case softwarepackage.FieldSupportedArchitectures:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSupportedArchitectures(v)
-		return nil
-	case softwarepackage.FieldForceInstallDate:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetForceInstallDate(v)
-		return nil
-	case softwarepackage.FieldUnattendedInstall:
+	case softwarepackage.FieldVerified:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetUnattendedInstall(v)
-		return nil
-	case softwarepackage.FieldUnattendedUninstall:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUnattendedUninstall(v)
-		return nil
-	case softwarepackage.FieldStatus:
-		v, ok := value.(softwarepackage.Status)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetStatus(v)
+		m.SetVerified(v)
 		return nil
 	case softwarepackage.FieldSource:
-		v, ok := value.(softwarepackage.Source)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSource(v)
-		return nil
-	case softwarepackage.FieldCreated:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreated(v)
-		return nil
-	case softwarepackage.FieldModified:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetModified(v)
 		return nil
 	}
 	return fmt.Errorf("unknown SoftwarePackage field %s", name)
@@ -36175,21 +37597,13 @@ func (m *SoftwarePackageMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *SoftwarePackageMutation) AddedFields() []string {
-	var fields []string
-	if m.addsize_bytes != nil {
-		fields = append(fields, softwarepackage.FieldSizeBytes)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *SoftwarePackageMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case softwarepackage.FieldSizeBytes:
-		return m.AddedSizeBytes()
-	}
 	return nil, false
 }
 
@@ -36198,13 +37612,6 @@ func (m *SoftwarePackageMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *SoftwarePackageMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case softwarepackage.FieldSizeBytes:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddSizeBytes(v)
-		return nil
 	}
 	return fmt.Errorf("unknown SoftwarePackage numeric field %s", name)
 }
@@ -36213,80 +37620,20 @@ func (m *SoftwarePackageMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *SoftwarePackageMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(softwarepackage.FieldDisplayName) {
-		fields = append(fields, softwarepackage.FieldDisplayName)
+	if m.FieldCleared(softwarepackage.FieldVersion) {
+		fields = append(fields, softwarepackage.FieldVersion)
 	}
-	if m.FieldCleared(softwarepackage.FieldChecksumSha256) {
-		fields = append(fields, softwarepackage.FieldChecksumSha256)
+	if m.FieldCleared(softwarepackage.FieldBranch) {
+		fields = append(fields, softwarepackage.FieldBranch)
 	}
-	if m.FieldCleared(softwarepackage.FieldSizeBytes) {
-		fields = append(fields, softwarepackage.FieldSizeBytes)
+	if m.FieldCleared(softwarepackage.FieldArch) {
+		fields = append(fields, softwarepackage.FieldArch)
 	}
-	if m.FieldCleared(softwarepackage.FieldIconName) {
-		fields = append(fields, softwarepackage.FieldIconName)
+	if m.FieldCleared(softwarepackage.FieldBrewType) {
+		fields = append(fields, softwarepackage.FieldBrewType)
 	}
-	if m.FieldCleared(softwarepackage.FieldDescription) {
-		fields = append(fields, softwarepackage.FieldDescription)
-	}
-	if m.FieldCleared(softwarepackage.FieldCategory) {
-		fields = append(fields, softwarepackage.FieldCategory)
-	}
-	if m.FieldCleared(softwarepackage.FieldDeveloper) {
-		fields = append(fields, softwarepackage.FieldDeveloper)
-	}
-	if m.FieldCleared(softwarepackage.FieldPkginfoData) {
-		fields = append(fields, softwarepackage.FieldPkginfoData)
-	}
-	if m.FieldCleared(softwarepackage.FieldPreInstallScript) {
-		fields = append(fields, softwarepackage.FieldPreInstallScript)
-	}
-	if m.FieldCleared(softwarepackage.FieldPostInstallScript) {
-		fields = append(fields, softwarepackage.FieldPostInstallScript)
-	}
-	if m.FieldCleared(softwarepackage.FieldUninstallMethod) {
-		fields = append(fields, softwarepackage.FieldUninstallMethod)
-	}
-	if m.FieldCleared(softwarepackage.FieldInstallsItems) {
-		fields = append(fields, softwarepackage.FieldInstallsItems)
-	}
-	if m.FieldCleared(softwarepackage.FieldReceipts) {
-		fields = append(fields, softwarepackage.FieldReceipts)
-	}
-	if m.FieldCleared(softwarepackage.FieldBlockingApps) {
-		fields = append(fields, softwarepackage.FieldBlockingApps)
-	}
-	if m.FieldCleared(softwarepackage.FieldRestartAction) {
-		fields = append(fields, softwarepackage.FieldRestartAction)
-	}
-	if m.FieldCleared(softwarepackage.FieldMinOsVersion) {
-		fields = append(fields, softwarepackage.FieldMinOsVersion)
-	}
-	if m.FieldCleared(softwarepackage.FieldMaxOsVersion) {
-		fields = append(fields, softwarepackage.FieldMaxOsVersion)
-	}
-	if m.FieldCleared(softwarepackage.FieldSupportedArchitectures) {
-		fields = append(fields, softwarepackage.FieldSupportedArchitectures)
-	}
-	if m.FieldCleared(softwarepackage.FieldForceInstallDate) {
-		fields = append(fields, softwarepackage.FieldForceInstallDate)
-	}
-	if m.FieldCleared(softwarepackage.FieldUnattendedInstall) {
-		fields = append(fields, softwarepackage.FieldUnattendedInstall)
-	}
-	if m.FieldCleared(softwarepackage.FieldUnattendedUninstall) {
-		fields = append(fields, softwarepackage.FieldUnattendedUninstall)
-	}
-	if m.FieldCleared(softwarepackage.FieldStatus) {
-		fields = append(fields, softwarepackage.FieldStatus)
-	}
-	if m.FieldCleared(softwarepackage.FieldSource) {
-		fields = append(fields, softwarepackage.FieldSource)
-	}
-	if m.FieldCleared(softwarepackage.FieldCreated) {
-		fields = append(fields, softwarepackage.FieldCreated)
-	}
-	if m.FieldCleared(softwarepackage.FieldModified) {
-		fields = append(fields, softwarepackage.FieldModified)
+	if m.FieldCleared(softwarepackage.FieldVerified) {
+		fields = append(fields, softwarepackage.FieldVerified)
 	}
 	return fields
 }
@@ -36302,80 +37649,20 @@ func (m *SoftwarePackageMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *SoftwarePackageMutation) ClearField(name string) error {
 	switch name {
-	case softwarepackage.FieldDisplayName:
-		m.ClearDisplayName()
+	case softwarepackage.FieldVersion:
+		m.ClearVersion()
 		return nil
-	case softwarepackage.FieldChecksumSha256:
-		m.ClearChecksumSha256()
+	case softwarepackage.FieldBranch:
+		m.ClearBranch()
 		return nil
-	case softwarepackage.FieldSizeBytes:
-		m.ClearSizeBytes()
+	case softwarepackage.FieldArch:
+		m.ClearArch()
 		return nil
-	case softwarepackage.FieldIconName:
-		m.ClearIconName()
+	case softwarepackage.FieldBrewType:
+		m.ClearBrewType()
 		return nil
-	case softwarepackage.FieldDescription:
-		m.ClearDescription()
-		return nil
-	case softwarepackage.FieldCategory:
-		m.ClearCategory()
-		return nil
-	case softwarepackage.FieldDeveloper:
-		m.ClearDeveloper()
-		return nil
-	case softwarepackage.FieldPkginfoData:
-		m.ClearPkginfoData()
-		return nil
-	case softwarepackage.FieldPreInstallScript:
-		m.ClearPreInstallScript()
-		return nil
-	case softwarepackage.FieldPostInstallScript:
-		m.ClearPostInstallScript()
-		return nil
-	case softwarepackage.FieldUninstallMethod:
-		m.ClearUninstallMethod()
-		return nil
-	case softwarepackage.FieldInstallsItems:
-		m.ClearInstallsItems()
-		return nil
-	case softwarepackage.FieldReceipts:
-		m.ClearReceipts()
-		return nil
-	case softwarepackage.FieldBlockingApps:
-		m.ClearBlockingApps()
-		return nil
-	case softwarepackage.FieldRestartAction:
-		m.ClearRestartAction()
-		return nil
-	case softwarepackage.FieldMinOsVersion:
-		m.ClearMinOsVersion()
-		return nil
-	case softwarepackage.FieldMaxOsVersion:
-		m.ClearMaxOsVersion()
-		return nil
-	case softwarepackage.FieldSupportedArchitectures:
-		m.ClearSupportedArchitectures()
-		return nil
-	case softwarepackage.FieldForceInstallDate:
-		m.ClearForceInstallDate()
-		return nil
-	case softwarepackage.FieldUnattendedInstall:
-		m.ClearUnattendedInstall()
-		return nil
-	case softwarepackage.FieldUnattendedUninstall:
-		m.ClearUnattendedUninstall()
-		return nil
-	case softwarepackage.FieldStatus:
-		m.ClearStatus()
-		return nil
-	case softwarepackage.FieldSource:
-		m.ClearSource()
-		return nil
-	case softwarepackage.FieldCreated:
-		m.ClearCreated()
-		return nil
-	case softwarepackage.FieldModified:
-		m.ClearModified()
+	case softwarepackage.FieldVerified:
+		m.ClearVerified()
 		return nil
 	}
 	return fmt.Errorf("unknown SoftwarePackage nullable field %s", name)
@@ -36385,92 +37672,29 @@ func (m *SoftwarePackageMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *SoftwarePackageMutation) ResetField(name string) error {
 	switch name {
+	case softwarepackage.FieldPackageID:
+		m.ResetPackageID()
+		return nil
 	case softwarepackage.FieldName:
 		m.ResetName()
-		return nil
-	case softwarepackage.FieldDisplayName:
-		m.ResetDisplayName()
 		return nil
 	case softwarepackage.FieldVersion:
 		m.ResetVersion()
 		return nil
-	case softwarepackage.FieldPlatform:
-		m.ResetPlatform()
+	case softwarepackage.FieldBranch:
+		m.ResetBranch()
 		return nil
-	case softwarepackage.FieldInstallerPath:
-		m.ResetInstallerPath()
+	case softwarepackage.FieldArch:
+		m.ResetArch()
 		return nil
-	case softwarepackage.FieldChecksumSha256:
-		m.ResetChecksumSha256()
+	case softwarepackage.FieldBrewType:
+		m.ResetBrewType()
 		return nil
-	case softwarepackage.FieldSizeBytes:
-		m.ResetSizeBytes()
-		return nil
-	case softwarepackage.FieldIconName:
-		m.ResetIconName()
-		return nil
-	case softwarepackage.FieldDescription:
-		m.ResetDescription()
-		return nil
-	case softwarepackage.FieldCategory:
-		m.ResetCategory()
-		return nil
-	case softwarepackage.FieldDeveloper:
-		m.ResetDeveloper()
-		return nil
-	case softwarepackage.FieldPkginfoData:
-		m.ResetPkginfoData()
-		return nil
-	case softwarepackage.FieldPreInstallScript:
-		m.ResetPreInstallScript()
-		return nil
-	case softwarepackage.FieldPostInstallScript:
-		m.ResetPostInstallScript()
-		return nil
-	case softwarepackage.FieldUninstallMethod:
-		m.ResetUninstallMethod()
-		return nil
-	case softwarepackage.FieldInstallsItems:
-		m.ResetInstallsItems()
-		return nil
-	case softwarepackage.FieldReceipts:
-		m.ResetReceipts()
-		return nil
-	case softwarepackage.FieldBlockingApps:
-		m.ResetBlockingApps()
-		return nil
-	case softwarepackage.FieldRestartAction:
-		m.ResetRestartAction()
-		return nil
-	case softwarepackage.FieldMinOsVersion:
-		m.ResetMinOsVersion()
-		return nil
-	case softwarepackage.FieldMaxOsVersion:
-		m.ResetMaxOsVersion()
-		return nil
-	case softwarepackage.FieldSupportedArchitectures:
-		m.ResetSupportedArchitectures()
-		return nil
-	case softwarepackage.FieldForceInstallDate:
-		m.ResetForceInstallDate()
-		return nil
-	case softwarepackage.FieldUnattendedInstall:
-		m.ResetUnattendedInstall()
-		return nil
-	case softwarepackage.FieldUnattendedUninstall:
-		m.ResetUnattendedUninstall()
-		return nil
-	case softwarepackage.FieldStatus:
-		m.ResetStatus()
+	case softwarepackage.FieldVerified:
+		m.ResetVerified()
 		return nil
 	case softwarepackage.FieldSource:
 		m.ResetSource()
-		return nil
-	case softwarepackage.FieldCreated:
-		m.ResetCreated()
-		return nil
-	case softwarepackage.FieldModified:
-		m.ResetModified()
 		return nil
 	}
 	return fmt.Errorf("unknown SoftwarePackage field %s", name)
@@ -36478,243 +37702,49 @@ func (m *SoftwarePackageMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *SoftwarePackageMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
-	if m.repo != nil {
-		edges = append(edges, softwarepackage.EdgeRepo)
-	}
-	if m.catalogs != nil {
-		edges = append(edges, softwarepackage.EdgeCatalogs)
-	}
-	if m.tenant != nil {
-		edges = append(edges, softwarepackage.EdgeTenant)
-	}
-	if m.install_logs != nil {
-		edges = append(edges, softwarepackage.EdgeInstallLogs)
-	}
-	if m.requires != nil {
-		edges = append(edges, softwarepackage.EdgeRequires)
-	}
-	if m.update_for != nil {
-		edges = append(edges, softwarepackage.EdgeUpdateFor)
-	}
-	if m.global_ref != nil {
-		edges = append(edges, softwarepackage.EdgeGlobalRef)
-	}
-	if m.subscribers != nil {
-		edges = append(edges, softwarepackage.EdgeSubscribers)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *SoftwarePackageMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case softwarepackage.EdgeRepo:
-		if id := m.repo; id != nil {
-			return []ent.Value{*id}
-		}
-	case softwarepackage.EdgeCatalogs:
-		ids := make([]ent.Value, 0, len(m.catalogs))
-		for id := range m.catalogs {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeTenant:
-		if id := m.tenant; id != nil {
-			return []ent.Value{*id}
-		}
-	case softwarepackage.EdgeInstallLogs:
-		ids := make([]ent.Value, 0, len(m.install_logs))
-		for id := range m.install_logs {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeRequires:
-		ids := make([]ent.Value, 0, len(m.requires))
-		for id := range m.requires {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeUpdateFor:
-		ids := make([]ent.Value, 0, len(m.update_for))
-		for id := range m.update_for {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeGlobalRef:
-		if id := m.global_ref; id != nil {
-			return []ent.Value{*id}
-		}
-	case softwarepackage.EdgeSubscribers:
-		ids := make([]ent.Value, 0, len(m.subscribers))
-		for id := range m.subscribers {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SoftwarePackageMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
-	if m.removedcatalogs != nil {
-		edges = append(edges, softwarepackage.EdgeCatalogs)
-	}
-	if m.removedinstall_logs != nil {
-		edges = append(edges, softwarepackage.EdgeInstallLogs)
-	}
-	if m.removedrequires != nil {
-		edges = append(edges, softwarepackage.EdgeRequires)
-	}
-	if m.removedupdate_for != nil {
-		edges = append(edges, softwarepackage.EdgeUpdateFor)
-	}
-	if m.removedsubscribers != nil {
-		edges = append(edges, softwarepackage.EdgeSubscribers)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *SoftwarePackageMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case softwarepackage.EdgeCatalogs:
-		ids := make([]ent.Value, 0, len(m.removedcatalogs))
-		for id := range m.removedcatalogs {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeInstallLogs:
-		ids := make([]ent.Value, 0, len(m.removedinstall_logs))
-		for id := range m.removedinstall_logs {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeRequires:
-		ids := make([]ent.Value, 0, len(m.removedrequires))
-		for id := range m.removedrequires {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeUpdateFor:
-		ids := make([]ent.Value, 0, len(m.removedupdate_for))
-		for id := range m.removedupdate_for {
-			ids = append(ids, id)
-		}
-		return ids
-	case softwarepackage.EdgeSubscribers:
-		ids := make([]ent.Value, 0, len(m.removedsubscribers))
-		for id := range m.removedsubscribers {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *SoftwarePackageMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
-	if m.clearedrepo {
-		edges = append(edges, softwarepackage.EdgeRepo)
-	}
-	if m.clearedcatalogs {
-		edges = append(edges, softwarepackage.EdgeCatalogs)
-	}
-	if m.clearedtenant {
-		edges = append(edges, softwarepackage.EdgeTenant)
-	}
-	if m.clearedinstall_logs {
-		edges = append(edges, softwarepackage.EdgeInstallLogs)
-	}
-	if m.clearedrequires {
-		edges = append(edges, softwarepackage.EdgeRequires)
-	}
-	if m.clearedupdate_for {
-		edges = append(edges, softwarepackage.EdgeUpdateFor)
-	}
-	if m.clearedglobal_ref {
-		edges = append(edges, softwarepackage.EdgeGlobalRef)
-	}
-	if m.clearedsubscribers {
-		edges = append(edges, softwarepackage.EdgeSubscribers)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *SoftwarePackageMutation) EdgeCleared(name string) bool {
-	switch name {
-	case softwarepackage.EdgeRepo:
-		return m.clearedrepo
-	case softwarepackage.EdgeCatalogs:
-		return m.clearedcatalogs
-	case softwarepackage.EdgeTenant:
-		return m.clearedtenant
-	case softwarepackage.EdgeInstallLogs:
-		return m.clearedinstall_logs
-	case softwarepackage.EdgeRequires:
-		return m.clearedrequires
-	case softwarepackage.EdgeUpdateFor:
-		return m.clearedupdate_for
-	case softwarepackage.EdgeGlobalRef:
-		return m.clearedglobal_ref
-	case softwarepackage.EdgeSubscribers:
-		return m.clearedsubscribers
-	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *SoftwarePackageMutation) ClearEdge(name string) error {
-	switch name {
-	case softwarepackage.EdgeRepo:
-		m.ClearRepo()
-		return nil
-	case softwarepackage.EdgeTenant:
-		m.ClearTenant()
-		return nil
-	case softwarepackage.EdgeGlobalRef:
-		m.ClearGlobalRef()
-		return nil
-	}
 	return fmt.Errorf("unknown SoftwarePackage unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *SoftwarePackageMutation) ResetEdge(name string) error {
-	switch name {
-	case softwarepackage.EdgeRepo:
-		m.ResetRepo()
-		return nil
-	case softwarepackage.EdgeCatalogs:
-		m.ResetCatalogs()
-		return nil
-	case softwarepackage.EdgeTenant:
-		m.ResetTenant()
-		return nil
-	case softwarepackage.EdgeInstallLogs:
-		m.ResetInstallLogs()
-		return nil
-	case softwarepackage.EdgeRequires:
-		m.ResetRequires()
-		return nil
-	case softwarepackage.EdgeUpdateFor:
-		m.ResetUpdateFor()
-		return nil
-	case softwarepackage.EdgeGlobalRef:
-		m.ResetGlobalRef()
-		return nil
-	case softwarepackage.EdgeSubscribers:
-		m.ResetSubscribers()
-		return nil
-	}
 	return fmt.Errorf("unknown SoftwarePackage edge %s", name)
 }
 
@@ -37492,7 +38522,7 @@ func (m *SoftwareRepoMutation) ResetTenant() {
 	m.clearedtenant = false
 }
 
-// AddPackageIDs adds the "packages" edge to the SoftwarePackage entity by ids.
+// AddPackageIDs adds the "packages" edge to the ManagedPackage entity by ids.
 func (m *SoftwareRepoMutation) AddPackageIDs(ids ...int) {
 	if m.packages == nil {
 		m.packages = make(map[int]struct{})
@@ -37502,17 +38532,17 @@ func (m *SoftwareRepoMutation) AddPackageIDs(ids ...int) {
 	}
 }
 
-// ClearPackages clears the "packages" edge to the SoftwarePackage entity.
+// ClearPackages clears the "packages" edge to the ManagedPackage entity.
 func (m *SoftwareRepoMutation) ClearPackages() {
 	m.clearedpackages = true
 }
 
-// PackagesCleared reports if the "packages" edge to the SoftwarePackage entity was cleared.
+// PackagesCleared reports if the "packages" edge to the ManagedPackage entity was cleared.
 func (m *SoftwareRepoMutation) PackagesCleared() bool {
 	return m.clearedpackages
 }
 
-// RemovePackageIDs removes the "packages" edge to the SoftwarePackage entity by IDs.
+// RemovePackageIDs removes the "packages" edge to the ManagedPackage entity by IDs.
 func (m *SoftwareRepoMutation) RemovePackageIDs(ids ...int) {
 	if m.removedpackages == nil {
 		m.removedpackages = make(map[int]struct{})
@@ -37523,7 +38553,7 @@ func (m *SoftwareRepoMutation) RemovePackageIDs(ids ...int) {
 	}
 }
 
-// RemovedPackages returns the removed IDs of the "packages" edge to the SoftwarePackage entity.
+// RemovedPackages returns the removed IDs of the "packages" edge to the ManagedPackage entity.
 func (m *SoftwareRepoMutation) RemovedPackagesIDs() (ids []int) {
 	for id := range m.removedpackages {
 		ids = append(ids, id)
@@ -39616,6 +40646,9 @@ type TaskMutation struct {
 	disabled                                   *bool
 	_order                                     *int
 	add_order                                  *int
+	package_branch                             *string
+	package_arch                               *string
+	package_brew_type                          *string
 	clearedFields                              map[string]struct{}
 	tags                                       map[int]struct{}
 	removedtags                                map[int]struct{}
@@ -44211,6 +45244,153 @@ func (m *TaskMutation) ResetOrder() {
 	delete(m.clearedFields, task.FieldOrder)
 }
 
+// SetPackageBranch sets the "package_branch" field.
+func (m *TaskMutation) SetPackageBranch(s string) {
+	m.package_branch = &s
+}
+
+// PackageBranch returns the value of the "package_branch" field in the mutation.
+func (m *TaskMutation) PackageBranch() (r string, exists bool) {
+	v := m.package_branch
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackageBranch returns the old "package_branch" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldPackageBranch(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackageBranch is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackageBranch requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackageBranch: %w", err)
+	}
+	return oldValue.PackageBranch, nil
+}
+
+// ClearPackageBranch clears the value of the "package_branch" field.
+func (m *TaskMutation) ClearPackageBranch() {
+	m.package_branch = nil
+	m.clearedFields[task.FieldPackageBranch] = struct{}{}
+}
+
+// PackageBranchCleared returns if the "package_branch" field was cleared in this mutation.
+func (m *TaskMutation) PackageBranchCleared() bool {
+	_, ok := m.clearedFields[task.FieldPackageBranch]
+	return ok
+}
+
+// ResetPackageBranch resets all changes to the "package_branch" field.
+func (m *TaskMutation) ResetPackageBranch() {
+	m.package_branch = nil
+	delete(m.clearedFields, task.FieldPackageBranch)
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (m *TaskMutation) SetPackageArch(s string) {
+	m.package_arch = &s
+}
+
+// PackageArch returns the value of the "package_arch" field in the mutation.
+func (m *TaskMutation) PackageArch() (r string, exists bool) {
+	v := m.package_arch
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackageArch returns the old "package_arch" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldPackageArch(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackageArch is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackageArch requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackageArch: %w", err)
+	}
+	return oldValue.PackageArch, nil
+}
+
+// ClearPackageArch clears the value of the "package_arch" field.
+func (m *TaskMutation) ClearPackageArch() {
+	m.package_arch = nil
+	m.clearedFields[task.FieldPackageArch] = struct{}{}
+}
+
+// PackageArchCleared returns if the "package_arch" field was cleared in this mutation.
+func (m *TaskMutation) PackageArchCleared() bool {
+	_, ok := m.clearedFields[task.FieldPackageArch]
+	return ok
+}
+
+// ResetPackageArch resets all changes to the "package_arch" field.
+func (m *TaskMutation) ResetPackageArch() {
+	m.package_arch = nil
+	delete(m.clearedFields, task.FieldPackageArch)
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (m *TaskMutation) SetPackageBrewType(s string) {
+	m.package_brew_type = &s
+}
+
+// PackageBrewType returns the value of the "package_brew_type" field in the mutation.
+func (m *TaskMutation) PackageBrewType() (r string, exists bool) {
+	v := m.package_brew_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackageBrewType returns the old "package_brew_type" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldPackageBrewType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackageBrewType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackageBrewType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackageBrewType: %w", err)
+	}
+	return oldValue.PackageBrewType, nil
+}
+
+// ClearPackageBrewType clears the value of the "package_brew_type" field.
+func (m *TaskMutation) ClearPackageBrewType() {
+	m.package_brew_type = nil
+	m.clearedFields[task.FieldPackageBrewType] = struct{}{}
+}
+
+// PackageBrewTypeCleared returns if the "package_brew_type" field was cleared in this mutation.
+func (m *TaskMutation) PackageBrewTypeCleared() bool {
+	_, ok := m.clearedFields[task.FieldPackageBrewType]
+	return ok
+}
+
+// ResetPackageBrewType resets all changes to the "package_brew_type" field.
+func (m *TaskMutation) ResetPackageBrewType() {
+	m.package_brew_type = nil
+	delete(m.clearedFields, task.FieldPackageBrewType)
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by ids.
 func (m *TaskMutation) AddTagIDs(ids ...int) {
 	if m.tags == nil {
@@ -44392,7 +45572,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 91)
+	fields := make([]string, 0, 94)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -44666,6 +45846,15 @@ func (m *TaskMutation) Fields() []string {
 	if m._order != nil {
 		fields = append(fields, task.FieldOrder)
 	}
+	if m.package_branch != nil {
+		fields = append(fields, task.FieldPackageBranch)
+	}
+	if m.package_arch != nil {
+		fields = append(fields, task.FieldPackageArch)
+	}
+	if m.package_brew_type != nil {
+		fields = append(fields, task.FieldPackageBrewType)
+	}
 	return fields
 }
 
@@ -44856,6 +46045,12 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.Disabled()
 	case task.FieldOrder:
 		return m.Order()
+	case task.FieldPackageBranch:
+		return m.PackageBranch()
+	case task.FieldPackageArch:
+		return m.PackageArch()
+	case task.FieldPackageBrewType:
+		return m.PackageBrewType()
 	}
 	return nil, false
 }
@@ -45047,6 +46242,12 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDisabled(ctx)
 	case task.FieldOrder:
 		return m.OldOrder(ctx)
+	case task.FieldPackageBranch:
+		return m.OldPackageBranch(ctx)
+	case task.FieldPackageArch:
+		return m.OldPackageArch(ctx)
+	case task.FieldPackageBrewType:
+		return m.OldPackageBrewType(ctx)
 	}
 	return nil, fmt.Errorf("unknown Task field %s", name)
 }
@@ -45693,6 +46894,27 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOrder(v)
 		return nil
+	case task.FieldPackageBranch:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackageBranch(v)
+		return nil
+	case task.FieldPackageArch:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackageArch(v)
+		return nil
+	case task.FieldPackageBrewType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackageBrewType(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
@@ -46026,6 +47248,15 @@ func (m *TaskMutation) ClearedFields() []string {
 	if m.FieldCleared(task.FieldOrder) {
 		fields = append(fields, task.FieldOrder)
 	}
+	if m.FieldCleared(task.FieldPackageBranch) {
+		fields = append(fields, task.FieldPackageBranch)
+	}
+	if m.FieldCleared(task.FieldPackageArch) {
+		fields = append(fields, task.FieldPackageArch)
+	}
+	if m.FieldCleared(task.FieldPackageBrewType) {
+		fields = append(fields, task.FieldPackageBrewType)
+	}
 	return fields
 }
 
@@ -46303,6 +47534,15 @@ func (m *TaskMutation) ClearField(name string) error {
 		return nil
 	case task.FieldOrder:
 		m.ClearOrder()
+		return nil
+	case task.FieldPackageBranch:
+		m.ClearPackageBranch()
+		return nil
+	case task.FieldPackageArch:
+		m.ClearPackageArch()
+		return nil
+	case task.FieldPackageBrewType:
+		m.ClearPackageBrewType()
 		return nil
 	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
@@ -46584,6 +47824,15 @@ func (m *TaskMutation) ResetField(name string) error {
 		return nil
 	case task.FieldOrder:
 		m.ResetOrder()
+		return nil
+	case task.FieldPackageBranch:
+		m.ResetPackageBranch()
+		return nil
+	case task.FieldPackageArch:
+		m.ResetPackageArch()
+		return nil
+	case task.FieldPackageBrewType:
+		m.ResetPackageBrewType()
 		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
@@ -48291,7 +49540,7 @@ func (m *TenantMutation) ResetSoftwareRepos() {
 	m.removedsoftware_repos = nil
 }
 
-// AddSoftwarePackageIDs adds the "software_packages" edge to the SoftwarePackage entity by ids.
+// AddSoftwarePackageIDs adds the "software_packages" edge to the ManagedPackage entity by ids.
 func (m *TenantMutation) AddSoftwarePackageIDs(ids ...int) {
 	if m.software_packages == nil {
 		m.software_packages = make(map[int]struct{})
@@ -48301,17 +49550,17 @@ func (m *TenantMutation) AddSoftwarePackageIDs(ids ...int) {
 	}
 }
 
-// ClearSoftwarePackages clears the "software_packages" edge to the SoftwarePackage entity.
+// ClearSoftwarePackages clears the "software_packages" edge to the ManagedPackage entity.
 func (m *TenantMutation) ClearSoftwarePackages() {
 	m.clearedsoftware_packages = true
 }
 
-// SoftwarePackagesCleared reports if the "software_packages" edge to the SoftwarePackage entity was cleared.
+// SoftwarePackagesCleared reports if the "software_packages" edge to the ManagedPackage entity was cleared.
 func (m *TenantMutation) SoftwarePackagesCleared() bool {
 	return m.clearedsoftware_packages
 }
 
-// RemoveSoftwarePackageIDs removes the "software_packages" edge to the SoftwarePackage entity by IDs.
+// RemoveSoftwarePackageIDs removes the "software_packages" edge to the ManagedPackage entity by IDs.
 func (m *TenantMutation) RemoveSoftwarePackageIDs(ids ...int) {
 	if m.removedsoftware_packages == nil {
 		m.removedsoftware_packages = make(map[int]struct{})
@@ -48322,7 +49571,7 @@ func (m *TenantMutation) RemoveSoftwarePackageIDs(ids ...int) {
 	}
 }
 
-// RemovedSoftwarePackages returns the removed IDs of the "software_packages" edge to the SoftwarePackage entity.
+// RemovedSoftwarePackages returns the removed IDs of the "software_packages" edge to the ManagedPackage entity.
 func (m *TenantMutation) RemovedSoftwarePackagesIDs() (ids []int) {
 	for id := range m.removedsoftware_packages {
 		ids = append(ids, id)

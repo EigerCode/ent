@@ -1855,6 +1855,66 @@ func (tu *TaskUpdate) ClearOrder() *TaskUpdate {
 	return tu
 }
 
+// SetPackageBranch sets the "package_branch" field.
+func (tu *TaskUpdate) SetPackageBranch(s string) *TaskUpdate {
+	tu.mutation.SetPackageBranch(s)
+	return tu
+}
+
+// SetNillablePackageBranch sets the "package_branch" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillablePackageBranch(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetPackageBranch(*s)
+	}
+	return tu
+}
+
+// ClearPackageBranch clears the value of the "package_branch" field.
+func (tu *TaskUpdate) ClearPackageBranch() *TaskUpdate {
+	tu.mutation.ClearPackageBranch()
+	return tu
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (tu *TaskUpdate) SetPackageArch(s string) *TaskUpdate {
+	tu.mutation.SetPackageArch(s)
+	return tu
+}
+
+// SetNillablePackageArch sets the "package_arch" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillablePackageArch(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetPackageArch(*s)
+	}
+	return tu
+}
+
+// ClearPackageArch clears the value of the "package_arch" field.
+func (tu *TaskUpdate) ClearPackageArch() *TaskUpdate {
+	tu.mutation.ClearPackageArch()
+	return tu
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (tu *TaskUpdate) SetPackageBrewType(s string) *TaskUpdate {
+	tu.mutation.SetPackageBrewType(s)
+	return tu
+}
+
+// SetNillablePackageBrewType sets the "package_brew_type" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillablePackageBrewType(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetPackageBrewType(*s)
+	}
+	return tu
+}
+
+// ClearPackageBrewType clears the value of the "package_brew_type" field.
+func (tu *TaskUpdate) ClearPackageBrewType() *TaskUpdate {
+	tu.mutation.ClearPackageBrewType()
+	return tu
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tu *TaskUpdate) AddTagIDs(ids ...int) *TaskUpdate {
 	tu.mutation.AddTagIDs(ids...)
@@ -2587,6 +2647,24 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.OrderCleared() {
 		_spec.ClearField(task.FieldOrder, field.TypeInt)
+	}
+	if value, ok := tu.mutation.PackageBranch(); ok {
+		_spec.SetField(task.FieldPackageBranch, field.TypeString, value)
+	}
+	if tu.mutation.PackageBranchCleared() {
+		_spec.ClearField(task.FieldPackageBranch, field.TypeString)
+	}
+	if value, ok := tu.mutation.PackageArch(); ok {
+		_spec.SetField(task.FieldPackageArch, field.TypeString, value)
+	}
+	if tu.mutation.PackageArchCleared() {
+		_spec.ClearField(task.FieldPackageArch, field.TypeString)
+	}
+	if value, ok := tu.mutation.PackageBrewType(); ok {
+		_spec.SetField(task.FieldPackageBrewType, field.TypeString, value)
+	}
+	if tu.mutation.PackageBrewTypeCleared() {
+		_spec.ClearField(task.FieldPackageBrewType, field.TypeString)
 	}
 	if tu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4552,6 +4630,66 @@ func (tuo *TaskUpdateOne) ClearOrder() *TaskUpdateOne {
 	return tuo
 }
 
+// SetPackageBranch sets the "package_branch" field.
+func (tuo *TaskUpdateOne) SetPackageBranch(s string) *TaskUpdateOne {
+	tuo.mutation.SetPackageBranch(s)
+	return tuo
+}
+
+// SetNillablePackageBranch sets the "package_branch" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillablePackageBranch(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetPackageBranch(*s)
+	}
+	return tuo
+}
+
+// ClearPackageBranch clears the value of the "package_branch" field.
+func (tuo *TaskUpdateOne) ClearPackageBranch() *TaskUpdateOne {
+	tuo.mutation.ClearPackageBranch()
+	return tuo
+}
+
+// SetPackageArch sets the "package_arch" field.
+func (tuo *TaskUpdateOne) SetPackageArch(s string) *TaskUpdateOne {
+	tuo.mutation.SetPackageArch(s)
+	return tuo
+}
+
+// SetNillablePackageArch sets the "package_arch" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillablePackageArch(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetPackageArch(*s)
+	}
+	return tuo
+}
+
+// ClearPackageArch clears the value of the "package_arch" field.
+func (tuo *TaskUpdateOne) ClearPackageArch() *TaskUpdateOne {
+	tuo.mutation.ClearPackageArch()
+	return tuo
+}
+
+// SetPackageBrewType sets the "package_brew_type" field.
+func (tuo *TaskUpdateOne) SetPackageBrewType(s string) *TaskUpdateOne {
+	tuo.mutation.SetPackageBrewType(s)
+	return tuo
+}
+
+// SetNillablePackageBrewType sets the "package_brew_type" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillablePackageBrewType(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetPackageBrewType(*s)
+	}
+	return tuo
+}
+
+// ClearPackageBrewType clears the value of the "package_brew_type" field.
+func (tuo *TaskUpdateOne) ClearPackageBrewType() *TaskUpdateOne {
+	tuo.mutation.ClearPackageBrewType()
+	return tuo
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tuo *TaskUpdateOne) AddTagIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.AddTagIDs(ids...)
@@ -5314,6 +5452,24 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.OrderCleared() {
 		_spec.ClearField(task.FieldOrder, field.TypeInt)
+	}
+	if value, ok := tuo.mutation.PackageBranch(); ok {
+		_spec.SetField(task.FieldPackageBranch, field.TypeString, value)
+	}
+	if tuo.mutation.PackageBranchCleared() {
+		_spec.ClearField(task.FieldPackageBranch, field.TypeString)
+	}
+	if value, ok := tuo.mutation.PackageArch(); ok {
+		_spec.SetField(task.FieldPackageArch, field.TypeString, value)
+	}
+	if tuo.mutation.PackageArchCleared() {
+		_spec.ClearField(task.FieldPackageArch, field.TypeString)
+	}
+	if value, ok := tuo.mutation.PackageBrewType(); ok {
+		_spec.SetField(task.FieldPackageBrewType, field.TypeString, value)
+	}
+	if tuo.mutation.PackageBrewTypeCleared() {
+		_spec.ClearField(task.FieldPackageBrewType, field.TypeString)
 	}
 	if tuo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{

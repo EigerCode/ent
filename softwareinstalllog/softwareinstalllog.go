@@ -46,11 +46,11 @@ const (
 	AgentColumn = "agent_software_install_logs"
 	// PackageTable is the table that holds the package relation/edge.
 	PackageTable = "software_install_logs"
-	// PackageInverseTable is the table name for the SoftwarePackage entity.
-	// It exists in this package in order to avoid circular dependency with the "softwarepackage" package.
-	PackageInverseTable = "software_packages"
+	// PackageInverseTable is the table name for the ManagedPackage entity.
+	// It exists in this package in order to avoid circular dependency with the "managedpackage" package.
+	PackageInverseTable = "managed_packages"
 	// PackageColumn is the table column denoting the package relation/edge.
-	PackageColumn = "software_package_install_logs"
+	PackageColumn = "managed_package_install_logs"
 )
 
 // Columns holds all SQL columns for softwareinstalllog fields.
@@ -69,7 +69,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"agent_software_install_logs",
-	"software_package_install_logs",
+	"managed_package_install_logs",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
