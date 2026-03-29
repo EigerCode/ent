@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"crypto/rand"
+	"math/big"
 	"time"
 
 	"entgo.io/ent"
@@ -17,6 +19,10 @@ type Tenant struct {
 // Fields of the Tenant.
 func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
+		field.Int("id").DefaultFunc(func() int {
+			n, _ := rand.Int(rand.Reader, big.NewInt(9_000_000_000))
+			return int(n.Int64()) + 1_000_000_000
+		}).Immutable(),
 		field.String("description").Optional(),
 		field.Bool("is_default").Optional(),
 		field.String("oidc_org_id").
